@@ -1,0 +1,9 @@
+*
+!src/**/*
+!public/**/*
+!tsconfig.json
+!webpack.config.js
+!package.json
+!yarn.lock
+!.yarnrc.yml
+!nginx.default.conf

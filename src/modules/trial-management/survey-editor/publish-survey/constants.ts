@@ -1,0 +1,3 @@
+export const DEFAULT_VALID_DURATION_VALUE = 1;
+
+export const VARIABLE_CLOSING_DAYS_OF_MONTH = [29, 30, 31];

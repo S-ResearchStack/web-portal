@@ -1,0 +1,49 @@
+{
+  "env": {
+    "es6": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint", "react-hooks"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb",
+    "airbnb-typescript",
+    "prettier",
+    "plugin:storybook/recommended"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(warn|error|info|trace)$/]",
+        "message": "Unexpected property on console object was called"
+      }
+    ],
+    "react/function-component-definition": [
+      "error",
+      {
+        "namedComponents": "arrow-function"
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/prefer-default-export": "off",
+    "no-param-reassign": ["error", { "props": false }],
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-expressions": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.stories.tsx", "src/modules/store/storybook.tsx"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "react/prop-types": "off"
+      }
+    }
+  ]
+}

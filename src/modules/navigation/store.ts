@@ -1,0 +1,44 @@
+import { createSelector } from '@reduxjs/toolkit';
+import { matchPath } from 'react-router-dom';
+import { createBrowserHistory, Location } from 'history';
+
+import { RootState } from 'src/modules/store/store';
+
+export enum Path {
+  Root = '/',
+
+  SignIn = '/signin',
+  AccountActivation = '/account-activation',
+  CreateStudy = '/create-study',
+
+  Overview = '/overview',
+  OverviewSubject = '/overview/participants/:subjectId',
+  TrialManagement = '/trial-management',
+  TrialManagementSubject = '/trial-management/participants/:subjectId',
+  TrialManagementEditSurvey = '/trial-management/surveys/:surveyId/edit',
+  TrialManagementSurveyResults = '/trial-management/surveys/:surveyId/results',
+  UserAnalytics = '/user-analytics',
+  DataCollection = '/data-collection',
+  DataCollectionSubject = '/data-collection/participants/:subjectId',
+  StudySettings = '/study-settings',
+}
+
+export type LocationState = {
+  from: Location;
+};
+
+export const history = createBrowserHistory({ basename: env.PUBLIC_PATH });
+
+const sectionPaths = [
+  Path.Overview,
+  Path.OverviewSubject,
+  Path.TrialManagement,
+  Path.UserAnalytics,
+  Path.DataCollection,
+  Path.StudySettings,
+] as const;
+
+export const sectionPathSelector = createSelector(
+  (state: RootState) => state.router,
+  (r) => sectionPaths.find((s) => matchPath((r.location as unknown as Location).pathname, s))
+);

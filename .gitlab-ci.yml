@@ -1,0 +1,66 @@
+image: node:16.15-alpine
+
+# job rules cannot access variables which are not declared globally
+# so we need to define defaults here and then redefine in workflow rules
+variables:
+  IS_MERGE_REQUEST: '0'
+  IS_MAIN_BRANCH: '0'
+  IS_SCHEDULE: '0'
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        IS_MERGE_REQUEST: '1'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        IS_MAIN_BRANCH: '1'
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      variables:
+        IS_SCHEDULE: '1'
+
+default:
+  before_script:
+    - corepack enable
+
+test:
+  stage: test
+  script:
+    - yarn install --immutable
+    - yarn format:check
+    - yarn lint
+    - yarn build
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - .yarn
+  rules:
+    - if: $IS_MAIN_BRANCH == "1"
+
+bump_version:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: clone
+    GIT_DEPTH: ''
+  script:
+    - apk add --no-cache git
+    - git config --global user.email "Alexey.Vladimirov@swtecnn.com"
+    - git config --global user.name "Gitlab CI"
+    - git checkout -b ${CI_COMMIT_BRANCH}
+    - yarn plugin import version
+    - yarn version patch
+    - git add package.json
+    - VERSION=$(echo "console.log(require('./package.json').version)" | node)
+    - git commit -m "version ${VERSION}"
+    - git push https://${CI_REGISTRY_USER}:${API_TOKEN}@${CI_REPOSITORY_URL#*@} ${CI_COMMIT_BRANCH} -o ci.skip
+  rules:
+    - if: $IS_MAIN_BRANCH == "1"
+
+check_vulnerabilities:
+  script:
+    - yarn npm audit
+  rules:
+    - if: $IS_SCHEDULE == "1"

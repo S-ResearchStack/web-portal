@@ -1,0 +1,18 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "./build/",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
+    "noImplicitAny": true,
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
