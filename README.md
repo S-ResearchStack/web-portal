@@ -1,4 +1,11 @@
-# open-source-portal-frontend
+# Samsung Health Stack Web Portal
+
+The web portal for the Samsung Health Stack consists of functionality for survey creation, participant management, and data analysis that makes it easy to analyze data and manage users for clinical/medical studies. The stack also includes:
+
+-   A backend system consisting of services and a data engine available through application programming interface (API) endpoints
+-  A software development kit (SDK) for app development
+
+Refer to https://s-healthstack.io for documentation, including complete installation instructions and getting statred tutorial.
 
 ## Development environment setup
 
