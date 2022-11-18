@@ -2,9 +2,10 @@ import React, { FC, useMemo, useState } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import Portal from 'src/common/components/Portal';
-import Fade, { FadeProps } from 'src/common/components/animations/Fade';
 import { colors, px } from 'src/styles';
+
+import Fade, { FadeProps } from './animations/Fade';
+import Portal from './Portal';
 
 const BackdropContainer = styled.div<{ show: boolean }>`
   position: relative;
@@ -21,7 +22,7 @@ export const BackdropBase = styled.div`
 `;
 
 const Backdrop = styled(BackdropBase)<{ loaderBackdrop?: boolean }>`
-  background-color: ${colors.backdrop};
+  background-color: ${colors.black40};
   ${({ loaderBackdrop }) =>
     loaderBackdrop &&
     css`
@@ -79,8 +80,10 @@ const BackdropOverlay: FC<BackdropOverlayProps> = ({
 
   return (
     <Portal id={portalId} enabled>
-      <BackdropContainer show={showContent}>
-        <BackdropContent loaderBackdrop={loaderBackdrop}>{children}</BackdropContent>
+      <BackdropContainer show={showContent} data-testid="backdrop-container">
+        <BackdropContent loaderBackdrop={loaderBackdrop} data-testid="backdrop-content">
+          {children}
+        </BackdropContent>
         <Fade
           {...fadeProps}
           in={open}
@@ -94,7 +97,7 @@ const BackdropOverlay: FC<BackdropOverlayProps> = ({
             setShowContent(false);
           }}
         >
-          <Backdrop {...props} loaderBackdrop={loaderBackdrop} />
+          <Backdrop {...props} loaderBackdrop={loaderBackdrop} data-testid="backdrop" />
         </Fade>
       </BackdropContainer>
     </Portal>

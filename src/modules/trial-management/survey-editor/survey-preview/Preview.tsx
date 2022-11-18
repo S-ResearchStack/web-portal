@@ -1,15 +1,17 @@
-import styled from 'styled-components';
-import React, { FC, useState, useCallback, useMemo } from 'react';
+import React, { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useLifecycles, useUpdateEffect } from 'react-use';
 
+import styled from 'styled-components';
+import usePrevious from 'react-use/lib/usePrevious';
+
 import AppbarBack from 'src/assets/icons/appbar_back.svg';
-import Plus from 'src/assets/icons/plus.svg';
+import Close from 'src/assets/icons/close.svg';
 import Button from 'src/common/components/Button';
 import Dropdown from 'src/common/components/Dropdown';
 import { animation, colors, px, typography, boxShadow } from 'src/styles';
 import { useAppDispatch } from 'src/modules/store';
 import { setSidebarForceCollapsed } from 'src/modules/main-layout/sidebar/sidebar.slice';
-import { useSurveyEditor } from '../surveyEditor.slice';
+import { SurveyItem, useSurveyEditor } from '../surveyEditor.slice';
 import PreviewScreen from './PreviewScreen';
 import PreviewButton from './PreviewButton';
 
@@ -20,7 +22,7 @@ const PreviewContainer = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   box-shadow: ${boxShadow.card};
-  background-color: ${colors.updSurface};
+  background-color: ${colors.surface};
   position: sticky;
   top: 0;
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
@@ -28,9 +30,13 @@ const PreviewContainer = styled.div<{ $isOpen: boolean }>`
   grid-area: preview;
 `;
 
-const CloseButtonWrapper = styled.div`
-  height: ${px(48)};
-  padding: 0 ${px(37)};
+const CloseButton = styled(Button)`
+  margin-left: ${px(24)};
+  > div {
+    svg {
+      margin-right: ${px(4)};
+    }
+  }
 `;
 
 const DropdownLabel = styled.div`
@@ -46,10 +52,10 @@ const DropdownWrapper = styled.div`
   padding: 0 ${px(40)};
 `;
 
-const ScrollableScreenContainer = styled.div`
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+const Container = styled.div`
+  // height: ${px(800)};
+  // min-height: ${px(800)};
+  flex: 1;
   width: ${px(270)};
   position: relative;
   box-shadow: ${boxShadow.previewScreen};
@@ -57,27 +63,34 @@ const ScrollableScreenContainer = styled.div`
   flex-direction: row;
   max-height: ${px(600)};
   margin: 0 ${px(40)};
+  overflow: hidden;
 `;
 
 const Screen = styled.div`
   width: ${px(360)};
-  height: ${px(800)};
-  min-height: ${px(800)};
+  height: 134%;
+  overflow: hidden;
   position: absolute;
   top: 0;
   left: 0;
   transform: scale(0.75) translateY(-17%) translateX(-17%);
-  padding: ${px(32)} ${px(24)} 0;
+`;
+
+const Content = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: ${px(32)} ${px(24)} ${px(56)};
 `;
 
 const Header = styled.div`
   display: flex;
   height: ${px(56)};
   align-items: center;
-  margin-bottom: ${px(12)};
+  margin-bottom: ${px(14)};
 
   svg {
-    margin-right: ${px(8)};
+    margin-right: ${px(16)};
   }
 `;
 
@@ -92,18 +105,92 @@ const SurveyTitle = styled.div`
 const Buttons = styled.div`
   display: flex;
   justify-content: space-between;
-  height: ${px(56)};
   align-items: center;
   position: absolute;
-  bottom: ${px(48)};
   left: ${px(24)};
-  width: ${px(312)};
-  self-align: flex-end;
-
-  button div {
-    ${typography.headingXMedium}
-  }
+  right: ${px(24)};
+  bottom: 0;
+  height: ${px(75)};
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 50%);
 `;
+
+type AnswerItem = Record<string, number | undefined>;
+
+type AnswersMap = Record<string, AnswerItem | undefined>;
+
+const useAnswers = (survey: SurveyItem) => {
+  const [answers, setAnswers] = useState<AnswersMap>({});
+  const prevSurvey = usePrevious(survey);
+
+  useEffect(() => {
+    const preparedAnswers: AnswersMap = Object.fromEntries(
+      survey.questions.map((question) => {
+        const prevQuestion = prevSurvey?.questions.find((q) => q.id === question.id);
+        const isTypeChanged = prevQuestion && prevQuestion.type !== question.type;
+
+        switch (question.type) {
+          case 'multiple':
+          case 'single':
+            return [
+              question.id,
+              !isTypeChanged
+                ? Object.fromEntries(
+                    question.answers.map((answer) => [
+                      answer.id,
+                      answers[question.id]?.[answer.id] || 0,
+                    ])
+                  )
+                : undefined,
+            ];
+
+          case 'slider':
+            return [
+              question.id,
+              typeof answers[question.id]?.[question.id] !== 'undefined' && !isTypeChanged
+                ? {
+                    [question.id]:
+                      typeof answers[question.id]?.[question.id] === 'number'
+                        ? Math.min(
+                            Math.max(
+                              answers[question.id]?.[question.id] as number,
+                              question.answers[0].value as number
+                            ),
+                            question.answers[1].value as number
+                          )
+                        : undefined,
+                  }
+                : undefined,
+            ];
+
+          default:
+            throw new Error('Unexpected question type');
+        }
+      })
+    );
+
+    setAnswers(preparedAnswers);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [survey]);
+
+  const setAnswer = useCallback(
+    (idx: string, answer: AnswerItem) => {
+      const currentAnswer = survey.questions.find((q) => q.id === idx);
+
+      if (currentAnswer) {
+        setAnswers({
+          ...answers,
+          [idx]: currentAnswer.type === 'multiple' ? { ...answers[idx], ...answer } : answer,
+        });
+      }
+    },
+    [answers, survey]
+  );
+
+  return {
+    answers,
+    setAnswer,
+  };
+};
 
 interface PreviewProps {
   isOpen?: boolean;
@@ -113,6 +200,8 @@ interface PreviewProps {
 const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
   const dispatch = useAppDispatch();
   const { survey } = useSurveyEditor();
+  const { answers, setAnswer } = useAnswers(survey);
+
   const dropdownItems = useMemo(
     () =>
       survey.questions.map((q, index) => ({
@@ -122,6 +211,11 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
     [survey.questions]
   );
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+
+  const activeQuestion = useMemo(
+    () => survey.questions[activeQuestionIndex],
+    [activeQuestionIndex, survey]
+  );
 
   const handleChangeActiveQuestion = useCallback(
     (index: number) => {
@@ -149,13 +243,21 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
     }
   );
 
+  const isNextDisabled = useMemo(
+    () =>
+      activeQuestion &&
+      !Object.values(answers[activeQuestion.id] || {}).some((v) =>
+        activeQuestion.type === 'slider' ? typeof v !== 'undefined' : v
+      ) &&
+      !survey.questions[activeQuestionIndex].optional,
+    [activeQuestion, activeQuestionIndex, answers, survey.questions]
+  );
+
   return (
     <PreviewContainer $isOpen={!!isOpen}>
-      <CloseButtonWrapper>
-        <Button icon={<Plus />} fill="text" width={138} onClick={onClose}>
-          Close Preview
-        </Button>
-      </CloseButtonWrapper>
+      <CloseButton icon={<Close />} fill="text" width={164} onClick={onClose}>
+        Close Preview
+      </CloseButton>
       <DropdownWrapper>
         <DropdownLabel>Switch to</DropdownLabel>
         <Dropdown
@@ -164,15 +266,22 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
           onChange={setActiveQuestionIndex}
         />
       </DropdownWrapper>
-      <ScrollableScreenContainer>
+      <Container>
         <Screen>
-          <Header>
-            <AppbarBack />
-            <SurveyTitle>{survey.title}</SurveyTitle>
-          </Header>
-          {survey.questions.length ? (
-            <PreviewScreen activeQuestionIndex={activeQuestionIndex} />
-          ) : null}
+          <Content>
+            <Header>
+              <AppbarBack />
+              <SurveyTitle>{survey.title || 'Survey title goes here'}</SurveyTitle>
+            </Header>
+            {survey.questions.length ? (
+              <PreviewScreen
+                activeQuestion={activeQuestion}
+                activeQuestionIndex={activeQuestionIndex}
+                answers={answers}
+                setAnswer={setAnswer}
+              />
+            ) : null}
+          </Content>
           <Buttons>
             <PreviewButton
               disabled={activeQuestionIndex === 0}
@@ -184,12 +293,13 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
             <PreviewButton
               width={activeQuestionIndex === survey.questions.length - 1 ? 60 : 41}
               onClick={() => handleChangeActiveQuestion(activeQuestionIndex + 1)}
+              disabled={isNextDisabled}
             >
               {activeQuestionIndex === survey.questions.length - 1 ? 'Submit' : 'Next'}
             </PreviewButton>
           </Buttons>
         </Screen>
-      </ScrollableScreenContainer>
+      </Container>
     </PreviewContainer>
   );
 };

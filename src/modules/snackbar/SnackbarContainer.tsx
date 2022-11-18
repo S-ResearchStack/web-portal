@@ -4,11 +4,13 @@ import { useResizeDetector } from 'react-resize-detector';
 import useTimeoutFn from 'react-use/lib/useTimeoutFn';
 import useUpdateEffect from 'react-use/lib/useUpdateEffect';
 import useHoverDirty from 'react-use/lib/useHoverDirty';
-import SimpleGrid from 'src/common/components/SimpleGrid';
+import _isEqual from 'lodash/isEqual';
 
+import SimpleGrid from 'src/common/components/SimpleGrid';
 import { animation, px } from 'src/styles';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
 import Portal from 'src/common/components/Portal';
+import { useLayoutContentRef } from 'src/modules/main-layout/LayoutContentCtx';
 
 import { currentSnackbarSelector, snackbarActionTriggered } from './snackbar.slice';
 import Snackbar from './Snackbar';
@@ -48,11 +50,7 @@ const PositionTracker = styled.div`
   pointer-events: none;
 `;
 
-const SnackbarContainer = (props: {
-  className?: string;
-  mainContainerRef?: React.RefObject<HTMLDivElement>;
-  useSimpleGrid?: boolean;
-}) => {
+const SnackbarContainer = (props: { className?: string; useSimpleGrid?: boolean }) => {
   const { width: trackerWidth, ref: sizeTrackerRef } = useResizeDetector<HTMLDivElement>({
     handleHeight: false,
   });
@@ -66,7 +64,9 @@ const SnackbarContainer = (props: {
     }
   }, [trackerWidth, sizeTrackerRef]);
 
-  const { mainContainerRef, useSimpleGrid } = props;
+  const { useSimpleGrid } = props;
+
+  const mainContainerRef = useLayoutContentRef();
 
   const pendingSnackbar = useAppSelector(currentSnackbarSelector);
 
@@ -98,7 +98,7 @@ const SnackbarContainer = (props: {
   }, [mainContainerRef]);
 
   useUpdateEffect(() => {
-    if (pendingSnackbar === snackbar) {
+    if (_isEqual(pendingSnackbar, snackbar)) {
       return;
     }
 
@@ -114,6 +114,7 @@ const SnackbarContainer = (props: {
   const snackBar = useMemo(
     () => (
       <Snackbar
+        key={snackbar?.id}
         text={snackbar?.text || ''}
         actionLabel={snackbar?.actionLabel}
         onAction={() => {
@@ -121,14 +122,17 @@ const SnackbarContainer = (props: {
           // causing isSnackbarHovered to be stuck at 'true'.
           anchorRef.current?.dispatchEvent(new Event('mouseout'));
 
-          hideCurrentAndShowPending();
           if (snackbar?.id) {
             dispatch(snackbarActionTriggered(snackbar.id));
           }
         }}
+        onClose={() => setSnackbarVisible(false)}
+        showCloseIcon={snackbar?.showCloseIcon}
+        showErrorIcon={snackbar?.showErrorIcon}
+        showSuccessIcon={snackbar?.showSuccessIcon}
       />
     ),
-    [dispatch, hideCurrentAndShowPending, snackbar]
+    [dispatch, snackbar]
   );
 
   const wrappedSnackbar = useMemo(

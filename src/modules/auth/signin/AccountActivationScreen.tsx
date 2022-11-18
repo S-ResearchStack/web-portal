@@ -99,7 +99,7 @@ const RequirementsWrapper = styled.div`
 `;
 
 const StyledRequirement = styled.div`
-  ${typography.titleRegular16};
+  ${typography.headingXSmall};
   height: ${px(40)};
   &:nth-child(2) {
     height: ${px(62)};
@@ -109,7 +109,7 @@ const StyledRequirement = styled.div`
 
 const RequirementText = styled.span<{ disabled: boolean }>`
   color: ${({ disabled, theme }) =>
-    disabled ? theme.colors.updTextDisabled : theme.colors.updTextPrimary};
+    disabled ? theme.colors.textDisabled : theme.colors.textPrimary};
 `;
 
 const AccountActivationScreen: React.FC = () => {
@@ -201,7 +201,7 @@ const AccountActivationScreen: React.FC = () => {
                     readOnly
                     key={`${requirement.rule}-radio`}
                     kind={(!password && 'success') || (requirement.passed ? 'success' : 'error')}
-                    color={requirement.passed ? 'updStatusSuccess' : 'disabled'}
+                    color={requirement.passed ? 'statusSuccess' : 'disabled'}
                     checked
                     disabled={!password}
                   >

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import styled, { useTheme } from 'styled-components';
 import * as d3 from 'd3';
 
@@ -6,10 +6,16 @@ import Tooltip from 'src/common/components/Tooltip';
 import { SpecColorType } from 'src/styles/theme';
 import { colors, typography, px } from 'src/styles';
 import { drawPieChartShape } from './pieChartShape';
-import { TooltipProps, TooltipContent } from './common-helpers';
+import {
+  TooltipProps,
+  TooltipContent,
+  NO_RESPONSES_LABEL,
+  getEmptyStateData,
+} from './common-helpers';
 
 const SVG_VIEWPORT_SIZE = 100;
 const START_ANGLE = 0;
+const TOOLTIP_THRESHOLD = 100;
 
 interface ContainerProps {
   $width: number;
@@ -28,15 +34,16 @@ const Container = styled.div.attrs<ContainerProps>(({ $width, $height }) => ({
   align-items: center;
 `;
 
-const SvgContainer = styled.svg<{ textScale: number }>`
+const SvgContainer = styled.svg<{ textScale: number; isEmptyState: boolean }>`
   overflow: visible;
   width: 100%;
   height: 100%;
 
   text {
     text-anchor: middle;
-    ${typography.pieChartTitleSemibold24};
-    fill: ${colors.updPrimaryWhite};
+    ${({ isEmptyState }) =>
+      isEmptyState ? typography.headingXMediumRegular : typography.headingMedium};
+    fill: ${({ isEmptyState }) => (isEmptyState ? colors.textPrimary : colors.primaryWhite)};
     transform: scale(${({ textScale }) => textScale});
   }
 `;
@@ -55,12 +62,12 @@ export const TooltipColorPoint = styled.div<{ color: SpecColorType }>`
 export const TooltipNameContent = styled.div`
   ${typography.labelSemibold};
   margin: 0 ${px(8)};
-  color: ${colors.updPrimaryWhite};
+  color: ${colors.primaryWhite};
 `;
 
 export const TooltipCountContent = styled.div`
   ${typography.labelRegular};
-  color: ${colors.updPrimaryWhite};
+  color: ${colors.primaryWhite};
 `;
 
 const getShapeId = (index: number) => `pie-chart-shape-${index}`;
@@ -87,7 +94,7 @@ export function drawPieChartLabels(
     .append('g')
     .attr('transform', (d) => `translate(${pieData.length > 1 ? arcGenerator.centroid(d) : 0})`)
     .append('text')
-    .text((d) => `${d.value}%`)
+    .text((d) => (d.data.name === NO_RESPONSES_LABEL ? d.data.name : `${d.value}%`))
     .attr('id', (d) => getShapeId(d.index))
     .on('mouseenter', (event, d) => onMouseEnter(event, d.index))
     .on('mouseleave', onMouseLeave);
@@ -107,33 +114,39 @@ type Props = {
   height: number;
 };
 
-const TOOLTIP_THRESHOLD = 100;
-
 const PieChart = ({ data, width, height }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const theme = useTheme();
   const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
 
+  const isEmptyState = useMemo(() => data.every((d) => d.total === 0), [data]);
+
+  const filteredData = useMemo(() => data.filter((d) => d.value !== 0), [data]);
+
   const onLabelMouseEnter = useCallback(
     (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
+      if (isEmptyState || !svgRef.current) {
+        return;
+      }
+
       const labelRect = (
         d3
           .select(svgRef.current)
           .select(`#${getShapeId(index)}`)
           .node() as Element
       )?.getBoundingClientRect();
-      const svgRect = d3.select(svgRef.current).node()?.getBoundingClientRect();
-      const position = svgRect && svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
-      const pointX = position === 'r' ? labelRect.right : labelRect.left;
-      const pointY = labelRect.top + labelRect.height / 2;
+      const svgRect = svgRef.current.getBoundingClientRect();
+      const position = svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
+      const pointX = labelRect.left - svgRect.left + (position === 'r' ? labelRect.width : 0);
+      const pointY = labelRect.top - svgRect.top + labelRect.height / 2;
 
       setTooltipProps({
-        content: getTooltipContent(data[index]),
+        content: getTooltipContent(filteredData[index]),
         point: [pointX, pointY],
         position,
       });
     },
-    [data]
+    [filteredData, isEmptyState]
   );
 
   const onLabelMouseLeave = useCallback(() => {
@@ -147,9 +160,12 @@ const PieChart = ({ data, width, height }: Props) => {
           svg: svgRef.current,
           outerRadius: SVG_VIEWPORT_SIZE / 2,
           startAngleDegrees: START_ANGLE,
-          data: data
-            .filter((d) => d.value !== 0)
-            .map(({ color, ...restData }) => ({ ...restData, color: theme.colors[color] })),
+          data: isEmptyState
+            ? [getEmptyStateData(theme.colors.background)]
+            : filteredData.map(({ color, ...restData }) => ({
+                ...restData,
+                color: theme.colors[color],
+              })),
         },
         onLabelMouseEnter,
         onLabelMouseLeave
@@ -157,7 +173,7 @@ const PieChart = ({ data, width, height }: Props) => {
 
       drawPieChartLabels(pieChartShape, onLabelMouseEnter, onLabelMouseLeave);
     }
-  }, [data, onLabelMouseEnter, onLabelMouseLeave, theme]);
+  }, [data, filteredData, isEmptyState, onLabelMouseEnter, onLabelMouseLeave, theme]);
 
   const textScale = SVG_VIEWPORT_SIZE / height;
 
@@ -167,14 +183,15 @@ const PieChart = ({ data, width, height }: Props) => {
         ref={svgRef}
         textScale={textScale}
         viewBox={`0 0 ${SVG_VIEWPORT_SIZE} ${SVG_VIEWPORT_SIZE}`}
+        isEmptyState={isEmptyState}
       />
       <Tooltip
+        static
         content={tooltipProps?.content}
         point={tooltipProps?.point}
         show={!!tooltipProps}
         position={tooltipProps?.position}
         arrow
-        dynamic
       />
     </Container>
   );

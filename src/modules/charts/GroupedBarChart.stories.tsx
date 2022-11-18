@@ -137,7 +137,7 @@ Horizontal.args = {
   data: mockData1,
   width: 700,
   height: 300,
-  barColors: ['secondaryTurquoise', 'secondaryPurple'],
+  barColors: ['secondaryViolet', 'secondaryGreen'],
   numberOfKeys: 2,
   isHorizontal: true,
   maxValue: 8000,
@@ -148,7 +148,7 @@ export const VerticalWithResponsiveContainer = TemplateWithResponsiveContainer.b
 VerticalWithResponsiveContainer.args = {
   data: mockData2,
   height: 400,
-  barColors: ['secondaryTurquoise', 'secondaryBlue', 'secondaryPurple', 'secondaryGreen'],
+  barColors: ['secondaryViolet', 'secondarySkyBlue', 'secondaryTangerine', 'secondaryGreen'],
   numberOfKeys: 4,
   maxValue: 10000,
 };

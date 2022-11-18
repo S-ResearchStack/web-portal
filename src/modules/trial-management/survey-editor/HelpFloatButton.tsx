@@ -6,21 +6,26 @@ import HelpIcon from 'src/assets/icons/help.svg';
 import Tooltip from 'src/common/components/Tooltip/Tooltip';
 
 const Container = styled.div`
-  position: absolute;
+  position: fixed;
+  top: calc(100vh * 2 - ${px(56)} - ${px(40)});
   right: ${px(48)};
-  bottom: 0;
+  z-index: 100;
 `;
 
-export const FloatButton = styled.button`
+const FloatButtonTooltip = styled(Tooltip)`
+  max-width: ${px(280)};
+  transform: translate(${px(-15)}, 0);
+`;
+
+export const FloatButton = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${colors.updTextSecondaryGray};
+  background-color: ${colors.textSecondaryGray};
   border-radius: 50%;
   border: none;
   width: ${px(56)};
   height: ${px(56)};
-  z-index: 10;
   padding: 0;
   overflow: hidden;
   box-shadow: 0 0 ${px(2)} rgba(0, 0, 0, 0.15);
@@ -40,34 +45,33 @@ export const FloatButton = styled.button`
   svg {
     position: relative;
     z-index: 1;
-    fill: ${colors.updTextSecondaryGray};
+    fill: ${colors.textSecondaryGray};
     transition: fill 300ms ${animation.defaultTiming};
   }
 
   &:hover {
-    background-color: ${colors.updTextPrimary};
+    background-color: ${colors.textPrimary};
+    cursor: pointer;
     svg {
-      fill: ${colors.updTextPrimary};
+      fill: ${colors.textPrimary};
     }
   }
 `;
 
+const DOCUMENTATION_URL = 'https://s-healthstack.io/creating-a-survey.html';
+
 const HelpFloatButton = () => (
   <Container>
-    <Tooltip
+    <FloatButtonTooltip
       arrow
       position="atr"
       content="Here you can find the documentation for survey creation!"
       trigger="hover"
-      styles={{
-        maxWidth: px(280),
-        transform: `translate(${px(-15)}, 0)`,
-      }}
     >
-      <FloatButton>
+      <FloatButton href={DOCUMENTATION_URL} target="_blank" rel="noreferrer">
         <HelpIcon />
       </FloatButton>
-    </Tooltip>
+    </FloatButtonTooltip>
   </Container>
 );
 

@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import ErrorIcon from 'src/assets/icons/error.svg';
+import CloseIcon from 'src/assets/icons/close.svg';
+import SuccessIcon from 'src/assets/icons/check_mark.svg';
 import { colors, px, typography } from 'src/styles';
 
 const Container = styled.div`
@@ -10,11 +13,16 @@ const Container = styled.div`
 
   min-width: ${px(288)};
   width: 100%;
-  background-color: ${colors.updOnSurface};
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background-color: ${colors.onSurface};
+  box-shadow: 0 ${px(4)} ${px(4)} rgba(0, 0, 0, 0.25);
   border-radius: ${px(4)};
 
   padding: ${px(14)} ${px(24)}; // TODO: multiline text should use different paddings
+`;
+
+const Content = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Text = styled.div`
@@ -25,22 +33,60 @@ const Text = styled.div`
 `;
 
 const ActionButton = styled.div`
-  ${typography.body2Medium14};
+  ${typography.bodyMediumSemibold};
   color: ${colors.onPrimary};
   text-transform: uppercase;
+  margin-left: ${px(24)};
+`;
+
+const ColoredErrorIcon = styled(ErrorIcon)`
+  fill: ${colors.statusError};
+  margin-right: ${px(16)};
+`;
+
+const ColoredSuccessIcon = styled(SuccessIcon)`
+  path {
+    fill: ${colors.statusSuccess};
+  }
+  margin-right: ${px(16)};
+`;
+
+const ColoredCloseIcon = styled(CloseIcon)`
+  path {
+    fill: ${colors.surface};
+  }
   margin-left: ${px(24)};
 `;
 
 type SnackbarProps = {
   text: string;
   actionLabel?: string;
+  showErrorIcon?: boolean;
+  showCloseIcon?: boolean;
+  showSuccessIcon?: boolean;
   onAction?: () => void;
+  onClose?: () => void;
 };
 
-const Snackbar = ({ text, actionLabel, onAction }: SnackbarProps) => (
+const Snackbar = ({
+  text,
+  actionLabel,
+  showErrorIcon,
+  showCloseIcon,
+  showSuccessIcon,
+  onAction,
+  onClose,
+}: SnackbarProps) => (
   <Container>
-    <Text>{text}</Text>
-    {actionLabel && <ActionButton onClick={onAction}>{actionLabel}</ActionButton>}
+    <Content>
+      {showErrorIcon && !showSuccessIcon && <ColoredErrorIcon />}
+      {showSuccessIcon && !showErrorIcon && <ColoredSuccessIcon />}
+      <Text>{text}</Text>
+    </Content>
+    <Content>
+      {actionLabel && <ActionButton onClick={onAction}>{actionLabel}</ActionButton>}
+      {showCloseIcon && <ColoredCloseIcon onClick={onClose} />}
+    </Content>
   </Container>
 );
 

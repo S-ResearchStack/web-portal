@@ -13,7 +13,7 @@ export default {
           {
             id: 'test',
             name: 'Study Name',
-            color: 'secondaryBlue',
+            color: 'secondarySkyBlue',
           },
         ],
         selectedStudyId: 'test',

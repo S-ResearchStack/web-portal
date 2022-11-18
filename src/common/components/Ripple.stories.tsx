@@ -1,8 +1,8 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import Ripple, { RippleTriggerProps, useRipple, UseRippleArgs } from 'src/common/components/Ripple';
 import styled from 'styled-components';
 import { px } from 'src/styles';
+import Ripple, { RippleTriggerProps, useRipple, UseRippleArgs } from './Ripple';
 
 type RippleTestProps = Partial<RippleTriggerProps<HTMLDivElement>> & {
   children?: React.ReactElement;
@@ -14,12 +14,12 @@ const Trigger = styled.div<RippleTestProps>`
   border: 1px solid lightblue;
 `;
 
-const RippleTest = (args: UseRippleArgs) => {
+export const RippleTest = (args: UseRippleArgs) => {
   const { addRippleTriggerProps, rippleProps } = useRipple<HTMLDivElement, RippleTestProps>(args);
 
   return (
-    <Trigger {...addRippleTriggerProps()}>
-      <Ripple {...rippleProps} />
+    <Trigger {...addRippleTriggerProps()} data-testid="trigger">
+      <Ripple {...rippleProps} data-testid="ripple" />
     </Trigger>
   );
 };

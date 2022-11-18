@@ -23,6 +23,10 @@ export type UserProfile = {
   status?: string;
 };
 
+export type RemoveUserRequest = {
+  accountId: string;
+};
+
 export type GetUsersUserInfo = {
   id: string;
   email: string;

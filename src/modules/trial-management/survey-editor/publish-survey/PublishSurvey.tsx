@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useToggle } from 'react-use';
+import React, { FC, useCallback, useEffect, useState, useMemo } from 'react';
+import { useToggle, useInterval, useUpdateEffect } from 'react-use';
 import { DateTime } from 'luxon';
 
 import styled from 'styled-components';
@@ -23,6 +23,8 @@ import Form from './Form';
 import SurveySchedule from './SurveySchedule';
 import SurveySeries from './SurveySeries';
 import SurveyOccurrence from './SurveyOccurrence';
+import TimeWarning from './TimeWarning';
+import TimeNoLongerValid from './TimeNoLongerValid';
 import { DEFAULT_VALID_DURATION_VALUE } from './constants';
 
 const Centred = styled.div`
@@ -40,7 +42,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: ${px(40)};
-  background-color: ${colors.updPrimaryWhite};
+  background-color: ${colors.primaryWhite};
   border-radius: ${px(4)};
   width: ${px(973)};
   min-height: ${px(857)};
@@ -49,6 +51,7 @@ const Container = styled.div`
 const Content = styled.div``;
 
 const Footer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -57,15 +60,21 @@ const Footer = styled.div`
 
 const Header = styled.div`
   ${typography.headingMedium};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   margin-bottom: ${px(40)};
 `;
 
-const Actions = styled.div`
+const Actions = styled.div<{ timeErrorActive: boolean }>`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  position: absolute;
+  bottom: 0;
+  z-index: ${({ timeErrorActive }) => (timeErrorActive ? 1 : 3)};
 `;
+
+const TIME_WARNING_THRESHOLD = 5 * 60;
 
 interface PublishSurveyProps {
   open: boolean;
@@ -86,28 +95,66 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
   const [lateResponse, toggleLateResponse] = useToggle(false);
   const [durationPeriodValue, setDurationPeriodValue] = useState(DEFAULT_VALID_DURATION_VALUE);
   const [durationPeriodType, setDurationPeriodType] = useState<DurationPeriod>(DurationPeriod.DAY);
+  const [timeWarningHiddenByUser, setTimeWarningHiddenByUser] = useState(false);
+  const [secondsToStart, setSecondsToStart] = useState(0);
 
-  const minAllowedDateTime = useMemo(() => {
+  const [minAllowedDateTime, setMinAllowedDateTime] = useState(0);
+
+  const getMinAllowedDateTime = useCallback(() => {
     const maxTz = getMaxTimezone(participantsTimeZones.data);
     const currentTime = DateTime.local({ zone: maxTz.iana });
     let extraMinutes = 30;
+
     if (currentTime.minute > 30) {
       extraMinutes += 60 - currentTime.minute;
     } else {
       extraMinutes += 30 - currentTime.minute;
     }
 
-    return DateTime.fromObject({
+    const date = DateTime.fromObject({
       ...currentTime.plus({ minute: extraMinutes }).toObject(),
       second: 0,
       millisecond: 0,
     }).toMillis();
+
+    return date;
   }, [participantsTimeZones.data]);
 
+  const updateMinAllowedDateTime = useCallback(() => {
+    const newDate = getMinAllowedDateTime();
+
+    setMinAllowedDateTime(newDate);
+  }, [getMinAllowedDateTime]);
+
+  const getSecondsToStart = useCallback(() => {
+    const maxTz = getMaxTimezone(participantsTimeZones.data);
+    const currentTime = DateTime.local({ zone: maxTz.iana });
+    const curentTimeMs = DateTime.fromObject({
+      ...currentTime.toObject(),
+      millisecond: 0,
+    }).toMillis();
+
+    return (startDateTime - curentTimeMs) / 1000;
+  }, [participantsTimeZones.data, startDateTime]);
+
   useEffect(() => {
-    setStartDateTime(minAllowedDateTime);
-    setEndDate(DateTime.fromMillis(minAllowedDateTime).plus({ month: 3 }).toMillis());
-  }, [minAllowedDateTime]);
+    updateMinAllowedDateTime();
+  }, [participantsTimeZones.data, updateMinAllowedDateTime]);
+
+  useUpdateEffect(() => {
+    if (open) {
+      setStartDateTime(minAllowedDateTime);
+      setEndDate(DateTime.fromMillis(minAllowedDateTime).plus({ month: 3 }).toMillis());
+      setTimeWarningHiddenByUser(false);
+    }
+  }, [open]);
+
+  useInterval(
+    () => {
+      setSecondsToStart(getSecondsToStart());
+    },
+    !open || !startDateTime ? null : 1000
+  );
 
   const handleSend = useCallback(async () => {
     if (!studyId || publishSurvey.isSending) {
@@ -149,9 +196,13 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
           minute: timeDt.minute,
         })
         .toMillis();
+
+      updateMinAllowedDateTime();
+
       setStartDateTime(Math.max(newStartDateTime, minAllowedDateTime));
+      setTimeWarningHiddenByUser(false);
     },
-    [minAllowedDateTime, startDateTime]
+    [startDateTime, updateMinAllowedDateTime, minAllowedDateTime]
   );
 
   const handlePublishTimeChange = useCallback(
@@ -159,9 +210,17 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
       setStartDateTime(
         DateTime.fromMillis(startDateTime).startOf('day').plus({ minute }).toMillis()
       );
+      setTimeWarningHiddenByUser(false);
     },
     [startDateTime]
   );
+
+  const updateExpiredStartDateTime = useCallback(() => {
+    const newDate = getMinAllowedDateTime();
+    setStartDateTime(newDate);
+    setMinAllowedDateTime(newDate);
+    setTimeWarningHiddenByUser(false);
+  }, [getMinAllowedDateTime]);
 
   const handleFrequencyChange = useCallback(
     (key: ScheduleFrequency) => {
@@ -175,11 +234,17 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
     [startDateTime]
   );
 
+  const isTimeWarningHidden = useMemo(
+    () => timeWarningHiddenByUser || secondsToStart < 0 || secondsToStart > TIME_WARNING_THRESHOLD,
+    [secondsToStart, timeWarningHiddenByUser]
+  );
+
   return (
     <BackdropOverlay id="publish-survey" open={open}>
       <Centred>
         <Fade in={open} unmountOnExit>
           <Container>
+            <TimeNoLongerValid open={secondsToStart < 0} onClose={updateExpiredStartDateTime} />
             <Content>
               <Header>Publish Survey</Header>
               <Form>
@@ -209,6 +274,7 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
                   onDurationPeriodTypeChange={setDurationPeriodType}
                   lateResponse={lateResponse}
                   onLateResponseChange={toggleLateResponse}
+                  onPublishTimeClick={updateMinAllowedDateTime}
                 />
               </Form>
             </Content>
@@ -221,7 +287,7 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
                 durationPeriodType={durationPeriodType}
                 noExpiration={noExpiration}
               />
-              <Actions>
+              <Actions timeErrorActive={!isTimeWarningHidden}>
                 <Button fill="text" onClick={onClose} double="left" width={164}>
                   Cancel
                 </Button>
@@ -234,6 +300,10 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
                   Publish
                 </Button>
               </Actions>
+              <TimeWarning
+                seconds={isTimeWarningHidden ? 0 : secondsToStart}
+                onClose={() => setTimeWarningHiddenByUser(true)}
+              />
             </Footer>
           </Container>
         </Fade>

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { boxShadow, colors, px } from 'src/styles';
 
 const StyledCard = styled.div<ScreenCenteredCardProps>`
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   ${({ minWidth, width, ratio }) => {
     const height = width * ratio;
     const minHeight = minWidth * ratio;

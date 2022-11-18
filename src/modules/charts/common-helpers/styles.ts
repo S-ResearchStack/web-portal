@@ -30,6 +30,7 @@ export const TooltipContent = styled.div`
 
 export const TooltipNameBlock = styled.div`
   display: flex;
+  align-items: center;
   margin-right: ${px(8)};
 
   p {
@@ -97,7 +98,7 @@ export const StyledSvg = styled.svg<{
 
   .${Y_AXIS_CLASS_NAME} {
     .tick line {
-      stroke: ${colors.updBackgoundLight};
+      stroke: ${colors.backgoundLight};
     }
   }
 
@@ -158,9 +159,9 @@ export const StyledSvg = styled.svg<{
       transition: fill-opacity 0.3s ${animation.defaultTiming};
     }
   }
+`;
 
-  .zoom {
-    fill: none;
-    pointer-events: all;
-  }
+export const NoResponsesLabel = styled.text<{ width: number; height: number }>`
+  ${typography.headingXMediumRegular};
+  color: ${colors.textPrimary};
 `;

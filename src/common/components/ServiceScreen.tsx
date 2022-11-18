@@ -7,7 +7,7 @@ import Spinner from 'src/common/components/Spinner';
 
 import ErrorServiceIcon from 'src/assets/service/error.svg';
 import EmptyServiceIcon from 'src/assets/service/empty_data.svg';
-import { colors, px, typography } from 'src/styles';
+import { px, typography } from 'src/styles';
 
 const COMPACT_MIN_WIDTH = 420;
 
@@ -22,7 +22,7 @@ enum ServiceScreenType {
 interface ServiceScreenPreparedProps {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   title?: React.ReactNode;
-  description?: React.ReactNode;
+  // description?: React.ReactNode;
 }
 
 export interface ServiceScreenProps
@@ -31,7 +31,7 @@ export interface ServiceScreenProps
   > {
   type: keyof typeof ServiceScreenType;
   title?: React.ReactNode;
-  description?: React.ReactNode;
+  // description?: React.ReactNode;
   onReload?: () => void;
 }
 
@@ -53,14 +53,9 @@ const Image = styled.div<{ $empty?: boolean }>`
 `;
 
 const Title = styled.div<{ $empty?: boolean }>`
-  ${({ $empty }) => ($empty ? typography.bodySmallRegular : typography.titleBold18)};
-  color: ${({ $empty, theme }) => ($empty ? theme.colors.textSecondary : theme.colors.onSurface)};
+  ${typography.bodySmallRegular};
+  color: ${({ $empty, theme }) => ($empty ? theme.colors.textPrimary : theme.colors.onSurface)};
   margin-bottom: ${px(23)};
-`;
-
-const Description = styled.div`
-  ${typography.body1Regular16};
-  color: ${colors.onSurface};
 `;
 
 const ButtonContainer = styled.div`
@@ -71,7 +66,7 @@ const ButtonContainer = styled.div`
 const ServiceScreen: FC<ServiceScreenProps> = ({
   type,
   title,
-  description,
+  // description,
   children,
   onReload,
   ...props
@@ -92,14 +87,9 @@ const ServiceScreen: FC<ServiceScreenProps> = ({
             </Image>
           )}
           <Title>{title || 'Server Error'}</Title>
-          {!isCompact && (
-            <Description>
-              {description || 'The server encountered an error. Try again later.'}
-            </Description>
-          )}
           {onReload && (
             <ButtonContainer>
-              <Button fill="solid" onClick={onReload}>
+              <Button fill="solid" onClick={onReload} data-testid="reload-button">
                 Reload
               </Button>
             </ButtonContainer>
@@ -111,9 +101,9 @@ const ServiceScreen: FC<ServiceScreenProps> = ({
       let icon;
 
       if (type === 'loading') {
-        icon = <Spinner size="l" spin />;
+        icon = <Spinner size="l" data-testid="spinner" />;
       } else if (type === 'empty') {
-        icon = <EmptyServiceIcon />;
+        icon = <EmptyServiceIcon data-testid="empty-icon" />;
       }
 
       return (

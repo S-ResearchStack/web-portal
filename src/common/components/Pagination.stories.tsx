@@ -13,5 +13,5 @@ export const PaginationDefault = Template.bind({});
 PaginationDefault.args = {
   totalCount: 1000,
   pageSize: 10,
-  currentPage: 1,
+  offset: 0,
 };

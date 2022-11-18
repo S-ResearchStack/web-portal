@@ -1,10 +1,8 @@
 import styled from 'styled-components';
-import React, { FC, useState, useMemo } from 'react';
-import { useUpdateEffect } from 'react-use';
-import _without from 'lodash/without';
+import React, { FC, useMemo } from 'react';
 
 import { colors, px, typography } from 'src/styles';
-import { useSurveyEditor, ScalableAnswer } from '../surveyEditor.slice';
+import { useSurveyEditor, ScalableAnswer, QuestionItem } from '../surveyEditor.slice';
 import PreviewProgressBar from './PreviewProgressBar';
 import PreviewSlider from './PreviewSlider';
 import PreviewRadio from './PreviewRadio';
@@ -23,7 +21,7 @@ const QuestionHeader = styled.div`
 
 const QuestionTitle = styled.div`
   ${typography.headingSmall};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -38,7 +36,7 @@ const QuestionDescription = styled.div`
   margin: ${px(4)} 0 ${px(16)};
   ${typography.bodySmallRegular};
   line-height: ${px(18)};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   height: ${px(54)};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -66,34 +64,30 @@ const QuestionItemWrapper = styled.div`
 
 interface PreviewScreenProps {
   activeQuestionIndex: number;
+  activeQuestion: QuestionItem;
+  answers: Record<string, Record<string, number | undefined> | undefined>;
+  setAnswer: (idx: string, answer: Record<string, number | undefined>) => void;
 }
 
-const PreviewScreen: FC<PreviewScreenProps> = ({ activeQuestionIndex }: PreviewScreenProps) => {
+const PreviewScreen: FC<PreviewScreenProps> = ({
+  activeQuestionIndex,
+  activeQuestion,
+  setAnswer,
+  answers,
+}: PreviewScreenProps) => {
   const { survey } = useSurveyEditor();
-  const [selectedIndex, setSelectedIndex] = useState<number | undefined>();
-  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
 
-  const activeQuestion = useMemo(
-    () => survey.questions[activeQuestionIndex],
-    [activeQuestionIndex, survey]
-  );
+  const questionTitle = useMemo(() => {
+    const titlePostfix = !activeQuestion.optional && activeQuestion.title ? '*' : '';
+    const title = activeQuestion.title || 'Question title goes here';
 
-  useUpdateEffect(() => {
-    setSelectedIndex(undefined);
-    setSelectedIndexes([]);
-  }, [activeQuestion, activeQuestionIndex]);
-
-  const questionTitle = useMemo(
-    () => (
+    return (
       <QuestionHeader>
-        <QuestionTitle>
-          {activeQuestion.optional ? activeQuestion.title : `${activeQuestion.title}*`}
-        </QuestionTitle>
+        <QuestionTitle>{`${title}${titlePostfix}`}</QuestionTitle>
         <QuestionDescription>{activeQuestion.description}</QuestionDescription>
       </QuestionHeader>
-    ),
-    [activeQuestion]
-  );
+    );
+  }, [activeQuestion]);
 
   const multipleQuestion = useMemo(
     () => (
@@ -102,21 +96,21 @@ const PreviewScreen: FC<PreviewScreenProps> = ({ activeQuestionIndex }: PreviewS
         {activeQuestion.answers.map((a, idx) => (
           <QuestionItemWrapper key={a.id}>
             <PreviewCheckbox
-              checked={selectedIndexes.includes(idx)}
+              checked={!!answers[activeQuestion.id]?.[a.id]}
               value={idx}
-              onChange={() =>
-                selectedIndexes.includes(idx)
-                  ? setSelectedIndexes(_without(selectedIndexes, idx))
-                  : setSelectedIndexes(selectedIndexes.concat(idx))
-              }
+              onChange={() => {
+                setAnswer(activeQuestion.id, {
+                  [a.id]: answers[activeQuestion.id]?.[a.id] ? 0 : 1,
+                });
+              }}
             >
-              {`${a.value}`}
+              {a.value ? `${a.value}` : `Option ${idx + 1}`}
             </PreviewCheckbox>
           </QuestionItemWrapper>
         ))}
       </QuestionContainer>
     ),
-    [activeQuestion.answers, questionTitle, selectedIndexes]
+    [activeQuestion.answers, activeQuestion.id, answers, questionTitle, setAnswer]
   );
 
   const singleQuestion = useMemo(
@@ -126,18 +120,20 @@ const PreviewScreen: FC<PreviewScreenProps> = ({ activeQuestionIndex }: PreviewS
         {activeQuestion.answers.map((a, idx) => (
           <QuestionItemWrapper key={a.id}>
             <PreviewRadio
-              checked={selectedIndex === idx}
+              checked={!!answers[activeQuestion.id]?.[a.id]}
               value={idx}
               kind="radio"
-              onChange={() => setSelectedIndex(idx)}
+              onChange={() =>
+                setAnswer(activeQuestion.id, { [a.id]: answers[activeQuestion.id]?.[a.id] ? 0 : 1 })
+              }
             >
-              {`${a.value}`}
+              {a.value ? `${a.value}` : `Option ${idx + 1}`}
             </PreviewRadio>
           </QuestionItemWrapper>
         ))}
       </QuestionContainer>
     ),
-    [activeQuestion.answers, questionTitle, selectedIndex]
+    [activeQuestion.answers, activeQuestion.id, answers, questionTitle, setAnswer]
   );
 
   const sliderQuestion = useMemo(() => {
@@ -157,13 +153,13 @@ const PreviewScreen: FC<PreviewScreenProps> = ({ activeQuestionIndex }: PreviewS
             minIndex={+minAnswer.value}
             maxLabel={maxAnswer.label}
             minLabel={minAnswer.label}
-            activeIndex={selectedIndex}
-            onChange={(index) => setSelectedIndex(index)}
+            activeIndex={answers[activeQuestion.id]?.[activeQuestion.id]}
+            onChange={(index) => setAnswer(activeQuestion.id, { [activeQuestion.id]: index })}
           />
         </SliderWrapper>
       </QuestionContainer>
     );
-  }, [activeQuestion, questionTitle, selectedIndex]);
+  }, [activeQuestion.answers, activeQuestion.id, answers, questionTitle, setAnswer]);
 
   const activeQuestionComponent = useMemo(() => {
     switch (activeQuestion.type) {

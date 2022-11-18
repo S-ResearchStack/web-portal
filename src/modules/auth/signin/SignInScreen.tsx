@@ -49,11 +49,15 @@ const ControlsWrapper = styled.div`
 
 const StyledButton = styled(Button)`
   height: ${px(34)};
+
+  &:disabled > div {
+    color: ${colors.textDisabled};
+  }
 `;
 
 const ErrorText = styled.div`
   ${typography.bodySmallRegular};
-  color: ${colors.updStatusErrorText};
+  color: ${colors.statusErrorText};
   height: ${px(40)};
   width: 100%;
   text-align: center;
@@ -97,7 +101,7 @@ const SignInScreen: React.FC = () => {
           })
         );
       } catch (e) {
-        applyDefaultApiErrorHandlers(e);
+        applyDefaultApiErrorHandlers(e, dispatch);
         setError(true);
       } finally {
         setIsLoading(false);
@@ -147,7 +151,7 @@ const SignInScreen: React.FC = () => {
             <Checkbox checked={rememberUser} onChange={handleCheckBoxChange}>
               <div>Remember me</div>
             </Checkbox>
-            <StyledButton fill="text" width={120} rate="small">
+            <StyledButton fill="text" width={120} rate="small" disabled>
               Forgot Password?
             </StyledButton>
           </ControlsWrapper>

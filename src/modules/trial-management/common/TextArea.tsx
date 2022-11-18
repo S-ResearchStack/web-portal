@@ -23,14 +23,16 @@ const TextAreaBaseComponent = withCustomScrollBar(styled.textarea<TextAreaProps>
   border: none;
   background: transparent;
   overflow-y: ${({ autoHeight }) => (autoHeight ? 'hidden' : 'auto')};
-  caret-color: ${colors.updTextPrimaryBlue};
+  caret-color: ${colors.textPrimaryBlue};
+  overflow-x: hidden;
+  resize: none;
   
   ${({ appearance, invalid }) => {
     switch (appearance) {
       case 'description':
         return css`
           ${typography.bodySmallRegular};
-          color: ${colors.updTextSecondaryGray};
+          color: ${colors.textSecondaryGray};
           min-height: ${px(24)};
         `;
 
@@ -38,35 +40,36 @@ const TextAreaBaseComponent = withCustomScrollBar(styled.textarea<TextAreaProps>
       default:
         return css`
           ${typography.bodyMediumRegular};
-          color: ${invalid ? colors.updStatusErrorText : colors.updTextPrimary};
+          color: ${invalid ? colors.statusErrorText : colors.textPrimary};
           padding: ${px(16)};
           border-radius: ${px(4)};
           border: ${px(1)} solid transparent;
-          background-color: ${invalid ? colors.updStatusError10 : colors.updBackground};
+          background-color: ${invalid ? colors.statusError10 : colors.background};
           transition: all 300ms ${animation.defaultTiming};
 
           &:hover:enabled {
-            border-color: ${invalid ? 'transparent' : colors.updPrimaryHovered};
+            border-color: ${invalid ? 'transparent' : colors.primaryHovered};
           }
 
           &:active:enabled,
           &:focus-visible {
             outline: none;
-            border-color: ${invalid ? 'transparent' : colors.updPrimary};
+            border-color: ${invalid ? 'transparent' : colors.primary};
+            caret-color: ${invalid ? colors.statusErrorText : colors.textPrimary};
           }
 
           &:disabled {
-            color: ${colors.updDisabled};
-            border-color: ${colors.updBackground};
-            background-color: ${colors.updDisabled20};
+            color: ${colors.disabled};
+            border-color: ${colors.background};
+            background-color: ${colors.disabled20};
           }
 
           &::placeholder {
-            color: ${colors.updTextSecondaryGray};
+            color: ${colors.textSecondaryGray};
           }
 
           &:disabled::placeholder {
-            color: ${colors.updDisabled};
+            color: ${colors.disabled};
           }
         `;
     }
@@ -76,11 +79,11 @@ const TextAreaBaseComponent = withCustomScrollBar(styled.textarea<TextAreaProps>
 const getScrollbarTrackColor = ({ appearance, invalid }: TextAreaProps) => {
   switch (appearance) {
     case 'description':
-      return theme.colors.updOnPrimary;
+      return theme.colors.onPrimary;
 
     case 'input':
     default:
-      return invalid ? theme.colors.updStatusError10 : theme.colors.updBackground;
+      return invalid ? theme.colors.statusError10 : theme.colors.background;
   }
 };
 

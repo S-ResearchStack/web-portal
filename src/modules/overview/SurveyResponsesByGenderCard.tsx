@@ -15,7 +15,7 @@ const ResponsiveContainerStyled = styled(ResponsiveContainer)`
   margin-bottom: ${px(39)};
 `;
 
-const colors: SpecColorType[] = ['updSecondarySkyBlue', 'updSecondaryViolet'];
+const colors: SpecColorType[] = ['secondarySkyBlue', 'secondaryViolet'];
 
 const SurveyResponsesByGenderCard: React.FC = () => {
   const theme = useTheme();

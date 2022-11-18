@@ -14,10 +14,10 @@ const getTrackColor = ({
   scrollbarTrackColor,
   scrollbarThumbColor,
 }: CustomScrollbarProps): string =>
-  scrollbarTrackColor || scrollbarThumbColor || theme.colors.updBackground;
+  scrollbarTrackColor || scrollbarThumbColor || theme.colors.background;
 
 const getThumbColor = ({ scrollbarThumbColor }: CustomScrollbarProps): string =>
-  scrollbarThumbColor || theme.colors.updPrimary;
+  scrollbarThumbColor || theme.colors.primary;
 
 const getScrollbarWidth = ({ scrollbarOffsetRight }: CustomScrollbarProps): string =>
   px((scrollbarOffsetRight || OFFSET_RIGHT) * 2 + THUMB_WIDTH);

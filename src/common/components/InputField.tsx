@@ -29,10 +29,6 @@ export const InputContainer = styled.div`
   gap: ${px(8)};
 `;
 
-export const InputWrapper = styled.div<Pick<InputFieldProps, 'endExtra'>>`
-  max-height: ${px(56)};
-`;
-
 export const ExtraWrapper = styled.div<Pick<InputFieldProps, 'endExtra'>>`
   > svg {
     position: relative;
@@ -43,15 +39,15 @@ export const ExtraWrapper = styled.div<Pick<InputFieldProps, 'endExtra'>>`
 
 const getDefaultBackgroundColor = ({ error, lighten }: InputFieldProps) => {
   if (error) {
-    return colors.updStatusError10;
+    return colors.statusError10;
   }
 
-  return lighten ? colors.updSurface : colors.updBackground;
+  return lighten ? colors.surface : colors.background;
 };
 
 export const StyledTextField = styled.input<InputFieldProps>`
   ${typography.bodyMediumRegular};
-  color: ${({ error }) => (error ? colors.updStatusErrorText : colors.updTextPrimary)};
+  color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimary)};
   box-sizing: border-box;
   height: ${px(56)};
   width: 100%;
@@ -61,30 +57,30 @@ export const StyledTextField = styled.input<InputFieldProps>`
   border: ${px(1)} solid ${getDefaultBackgroundColor};
   border-radius: ${px(4)};
   transition: border 300ms ${animation.defaultTiming};
-  caret-color: ${({ error }) => (error ? colors.updStatusErrorText : colors.updTextPrimaryBlue)};
+  caret-color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimaryBlue)};
 
   &:hover:enabled {
-    border-color: ${({ error }) => (error ? 'transparent' : colors.updPrimaryHovered)};
+    border-color: ${({ error }) => (error ? 'transparent' : colors.primaryHovered)};
   }
 
   &:active:enabled,
   &:focus-visible {
     outline: none;
-    border-color: ${({ error }) => (error ? 'transparent' : colors.updPrimary)};
+    border-color: ${({ error }) => (error ? 'transparent' : colors.primary)};
   }
 
   &:disabled {
-    color: ${colors.updDisabled};
-    border-color: ${colors.updDisabled20};
-    background-color: ${colors.updDisabled20};
+    color: ${colors.disabled};
+    border-color: ${colors.disabled20};
+    background-color: ${colors.disabled20};
   }
 
   &::placeholder {
-    color: ${colors.updTextSecondaryGray};
+    color: ${colors.textSecondaryGray};
   }
 
   &:disabled::placeholder {
-    color: ${colors.updDisabled};
+    color: ${colors.disabled};
   }
 
   &:-webkit-autofill,
@@ -92,17 +88,28 @@ export const StyledTextField = styled.input<InputFieldProps>`
   &:-webkit-autofill:focus {
     ${({ error, disabled, theme }) => css`
       border: ${px(1)} solid
-        ${(disabled && theme.colors.updDisabled20) ||
-        (error ? theme.colors.updStatusError10 : theme.colors.updPrimary)};
+        ${(disabled && theme.colors.disabled20) ||
+        (error ? theme.colors.statusError10 : theme.colors.primary)};
       transition: background-color 5000s ease-in-out 0s;
-      -webkit-text-fill-color: ${disabled
-        ? theme.colors.updTextDisabled
-        : theme.colors.updTextDisabled};
+      background-color: ${getDefaultBackgroundColor} !important;
+      background-image: unset !important;
+      -webkit-text-fill-color: ${disabled ? theme.colors.textDisabled : theme.colors.textDisabled};
     `};
   }
 
   &:-webkit-autofill:focus {
-    border-color: ${({ error }) => (error ? 'transparent' : colors.updPrimary)};
+    border-color: ${({ error }) => (error ? 'transparent' : colors.primary)};
+  }
+`;
+
+export const InputWrapper = styled.div<Pick<InputFieldProps, 'endExtra' | 'error'>>`
+  max-height: ${px(56)};
+  &:hover {
+    ${StyledTextField} {
+      :enabled {
+        border-color: ${({ error }) => (error ? 'transparent' : colors.primaryHovered)};
+      }
+    }
   }
 `;
 
@@ -113,20 +120,20 @@ interface BlockStatus {
 
 export const Label = styled.div<BlockStatus>`
   ${typography.bodyMediumSemibold};
-  color: ${({ error }) => (error ? colors.updStatusErrorText : colors.updTextPrimary)};
+  color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimary)};
   height: ${px(18)};
 `;
 
 export const InputDescription = styled.div<BlockStatus>`
   ${typography.bodySmallRegular};
-  color: ${({ error }) => (error ? colors.updStatusErrorText : colors.updTextPrimary)};
+  color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimary)};
   gap: ${px(8)};
   height: ${px(18)};
 `;
 
 export const InputErrorText = styled.div<{ withOffset?: boolean }>`
   ${typography.bodySmallRegular};
-  color: ${colors.updStatusErrorText};
+  color: ${colors.statusErrorText};
   padding-left: ${({ withOffset }) => withOffset && px(16)};
   height: ${px(17)};
 `;
@@ -148,7 +155,7 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
     <InputDescription error={!!error} disabled={disabled}>
       {helperText || label || <>&nbsp;</>}
     </InputDescription>
-    <InputWrapper>{children}</InputWrapper>
+    <InputWrapper error={error}>{children}</InputWrapper>
     <InputErrorText withOffset={!helperText}>
       {typeof error === 'string' ? error : <>&nbsp;</>}
     </InputErrorText>
@@ -177,6 +184,7 @@ const InputField = forwardRef(
       disabled={disabled}
     >
       <StyledTextField
+        data-testid="input"
         ref={ref}
         error={error}
         type={type}

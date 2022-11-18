@@ -64,7 +64,7 @@ const Slide: FC<SlideProps> = ({ direction = 'right', children, ...props }) => {
   return (
     <Transition {...props} nodeRef={nodeRef} timeout={ANIMATION_DURATION}>
       {(status) => (
-        <Container ref={nodeRef} status={status} direction={direction}>
+        <Container ref={nodeRef} status={status} direction={direction} data-testid="slide">
           {children}
         </Container>
       )}

@@ -35,20 +35,21 @@ export const SortColumnBtnContainer = styled.div`
   justify-content: center;
 `;
 
-export const HeadCellContainer = styled(BodyCellContainer)<{ active: boolean }>`
+export const HeadCellContainer = styled(BodyCellContainer)<{ sortable: boolean; active: boolean }>`
   user-select: none;
-  color: ${colors.updPrimary};
-  box-shadow: inset 0 ${px(-1)} 0 ${colors.updPrimaryLight};
+  color: ${colors.primary};
+  box-shadow: inset 0 ${px(-1)} 0 ${colors.primaryLight};
 
-  ${({ active, theme }) => css`
-    background-color: ${active ? theme.colors.updTableCellActive : theme.colors.updSurface};
+  ${({ active, theme, sortable }) => css`
+    background-color: ${active ? theme.colors.primary05 : theme.colors.surface};
 
     > * {
       transition: background 0.3s ${animation.defaultTiming};
     }
 
     :hover {
-      background-color: ${theme.colors[active ? 'updTableCellActive' : 'updBackground']};
+      background-color: ${theme.colors[active ? 'primary05' : 'background']};
+      cursor: ${sortable && 'pointer'};
     }
   `};
 
@@ -104,8 +105,11 @@ const HeadCell = <T,>({
     [isActive, isSortedColumnCell]
   );
 
+  const isSortable = !!sortParams && !!column.label;
+
   return (
     <HeadCellContainer
+      sortable={isSortable}
       active={isProcessing}
       $width={column.$width}
       align={column.align}
@@ -116,6 +120,7 @@ const HeadCell = <T,>({
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-testid="table-head-cell"
     >
       <Tooltip
         ref={tooltipRef}
@@ -132,7 +137,7 @@ const HeadCell = <T,>({
       >
         {column.label || ''}
       </Tooltip>
-      {!!sortParams && column.label && (
+      {isSortable && (
         <SortColumnBtnContainer>
           <IconButton $size="m" icon={SortIconButton} color="disabled" />
         </SortColumnBtnContainer>

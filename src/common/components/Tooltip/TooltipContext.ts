@@ -1,17 +1,23 @@
 import { createContext, useContext } from 'react';
 
-import { ITooltipContext } from './types';
+import { ITooltipItemContext, ITooltipListContext } from './types';
 
-const defaultContextValue: ITooltipContext = {
+const defaultContextValue: ITooltipListContext = {
   tooltipsMap: {},
+};
+
+const defaultTooltipContextValue: ITooltipItemContext = {
   create: () => '',
   destroy: () => {},
   setProps: () => {},
   getProps: () => undefined,
+  subscribe: () => () => {},
 };
 
-const TooltipContext = createContext<ITooltipContext>(defaultContextValue);
+export const TooltipListContext = createContext<ITooltipListContext>(defaultContextValue);
+export const TooltipItemContext = createContext<ITooltipItemContext>(defaultTooltipContextValue);
 
-export const useTooltipCtx = (): ITooltipContext => useContext<ITooltipContext>(TooltipContext);
-
-export default TooltipContext;
+export const useTooltipListCtx = (): ITooltipListContext =>
+  useContext<ITooltipListContext>(TooltipListContext);
+export const useTooltipItemCtx = (): ITooltipItemContext =>
+  useContext<ITooltipItemContext>(TooltipItemContext);

@@ -16,7 +16,7 @@ export const TableRowBase = styled.div`
   max-height: ${px(ROW_HEIGHT)};
   min-height: ${px(ROW_HEIGHT)};
   column-gap: ${px(COLUMN_GAP)};
-  box-shadow: inset 0 ${px(-1)} 0 ${colors.updPrimaryLight};
+  box-shadow: inset 0 ${px(-1)} 0 ${colors.primaryLight};
 `;
 
 export type PropsWithProcessing<T = unknown> = T & { isProcessing?: boolean };
@@ -37,13 +37,14 @@ type TableRowProps = React.PropsWithChildren<
   PropsWithProcessing<React.HTMLAttributes<HTMLDivElement>>
 >;
 
-export const TableRow = styled(TableRowBase)<TableRowProps & { withRipple?: boolean }>`
+export const TableRow = styled(TableRowBase)<
+  TableRowProps & { selectable: boolean; withRipple?: boolean }
+>`
   flex: 1;
-  z-index: 0;
   overflow: ${({ withRipple }) => (withRipple ? 'hidden' : 'visible !important')};
   transition: background-color 300ms ${animation.defaultTiming};
   background-color: ${({ isProcessing, theme }) =>
-    isProcessing ? `${theme.colors.updBackground} !important` : theme.colors.background};
+    isProcessing ? `${theme.colors.background} !important` : 'transparent'};
 
   ${BodyCellContainer} {
     z-index: 2;
@@ -54,7 +55,8 @@ export const TableRow = styled(TableRowBase)<TableRowProps & { withRipple?: bool
 
   &:hover {
     background-color: ${({ isProcessing, theme, withRipple }) =>
-      withRipple && !isProcessing && theme.colors.updBackground};
+      withRipple && !isProcessing && theme.colors.background};
+    cursor: ${({ selectable }) => selectable && 'pointer'};
   }
 `;
 
@@ -70,11 +72,11 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
   ...props
 }: RowRendererProps<T>): JSX.Element => {
   const RowComponent = (component || TableRow) as React.ComponentType<
-    TableRowProps & { withRipple?: boolean }
+    TableRowProps & { selectable: boolean; withRipple?: boolean }
   >;
 
   const { addRippleTriggerProps, rippleProps } = useRipple<HTMLDivElement, TableRowProps>({
-    color: 'updPrimaryLight',
+    color: 'primaryLight',
   });
 
   const getKey = useCallback(
@@ -93,10 +95,12 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
       isProcessing={data.isProcessing}
       onClick={handleClick}
       withRipple={withRipple}
+      selectable={!!onSelectRow}
+      data-testid="table-row"
     >
       {data.isProcessing && <Loader />}
       {columns.map((column, columnIdx) => (
-        <BodyCell key={getKey(column, columnIdx)} column={column} sort={sort}>
+        <BodyCell key={getKey(column, columnIdx)} column={column}>
           {_isFunction(column.render)
             ? column.render(data[column.dataKey], data)
             : data[column.dataKey]}

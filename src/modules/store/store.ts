@@ -10,21 +10,25 @@ import { routerMiddleware } from 'connected-react-router';
 
 import { history } from 'src/modules/navigation/store';
 import rootReducer from 'src/modules/store/reducers';
+import { History } from 'history';
 
 export { rootReducer };
 
-export const store = configureStore({
-  reducer: rootReducer,
-  middleware: [...getDefaultMiddleware(), routerMiddleware(history)],
-  devTools: process.env.NODE_ENV !== 'production',
-});
+export const makeStore = (h?: History) =>
+  configureStore({
+    reducer: rootReducer(),
+    middleware: [...getDefaultMiddleware(), routerMiddleware(h ?? history)],
+    devTools: process.env.NODE_ENV !== 'production',
+  });
+
+export const store = makeStore();
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
   module.hot.accept('./reducers', async () => {
     // eslint-disable-next-line import/no-useless-path-segments
     const nextRootReducer = (await import('../store/reducers')).default;
-    store.replaceReducer(nextRootReducer);
+    store.replaceReducer(nextRootReducer());
   });
 }
 

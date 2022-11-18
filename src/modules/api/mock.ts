@@ -4,15 +4,19 @@ import * as endpoints from './endpoints';
 import { Response } from './executeRequest';
 import { SqlResponse } from './models/sql';
 
-type ApiEndpoints = typeof endpoints;
+export type ApiEndpoints = typeof endpoints;
 
 const MOCK_OPTIONS = ['disabled', 'only_non_implemented', 'always'] as const;
 type MockOption = typeof MOCK_OPTIONS[number];
 
 let MOCK: MockOption = 'only_non_implemented'; // TODO: change to 'disabled' by default when all APIs available
 {
-  const mockEnvValue = (localStorage.getItem('MOCK_API') || env.MOCK_API) as MockOption | undefined;
-  if (mockEnvValue) {
+  const mockEnvValue = (localStorage.getItem('MOCK_API') || process.env.MOCK_API) as
+    | MockOption
+    | undefined;
+  if (process.env.NODE_ENV === 'test') {
+    MOCK = 'always';
+  } else if (mockEnvValue) {
     if (MOCK_OPTIONS.includes(mockEnvValue)) {
       console.info(`Using mock option: ${mockEnvValue}`);
       MOCK = mockEnvValue;
@@ -51,13 +55,36 @@ const implementedEndpoints: (keyof ApiEndpoints)[] = [
   'getTaskCompletionTime',
 ];
 
-let mockedEndpoints: Partial<ApiEndpoints> = {};
+export const mockedEndpoints: Partial<ApiEndpoints> = {};
 
 export const provideEndpoints = (mock: Partial<ApiEndpoints>) => {
-  mockedEndpoints = {
-    ...mockedEndpoints,
-    ...mock,
-  };
+  Object.assign(mockedEndpoints, mock);
+};
+
+export const maskEndpointAsFailure = async <T>(
+  endpoint: keyof ApiEndpoints,
+  cb: () => Promise<T>,
+  error?: Partial<typeof failedResponse extends (arg: infer U) => unknown ? U : never>
+) => {
+  const prevMock = mockedEndpoints[endpoint];
+
+  provideEndpoints({
+    [endpoint]() {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      return failedResponse({
+        status: 500,
+        ...error,
+      });
+    },
+  });
+
+  const result = await cb();
+
+  provideEndpoints({
+    [endpoint]: prevMock,
+  });
+
+  return result;
 };
 
 export const createMockEndpointsProxy = <T extends ApiEndpoints>(target: T) =>
@@ -76,8 +103,14 @@ export const createMockEndpointsProxy = <T extends ApiEndpoints>(target: T) =>
     },
   });
 
+const waitIfNeeded = async () => {
+  if (process.env.NODE_ENV !== 'test') {
+    await waitFor(MOCK_REQUEST_DURATION);
+  }
+};
+
 export const response = async <T = void>(body: T): Promise<Response<T>> => {
-  await waitFor(MOCK_REQUEST_DURATION);
+  await waitIfNeeded();
 
   return {
     status: body ? 200 : 204,
@@ -112,7 +145,7 @@ export const failedResponse = async ({
   message?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }): Promise<Response<any>> => {
-  await waitFor(MOCK_REQUEST_DURATION);
+  await waitIfNeeded();
 
   const errorMessage = message || `Status code ${status}`;
 

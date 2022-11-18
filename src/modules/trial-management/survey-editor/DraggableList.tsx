@@ -125,7 +125,7 @@ export const DraggableElement = <T,>({
   });
 };
 
-const DraggableListContainer = styled.div`
+export const DraggableListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -229,11 +229,7 @@ export const DraggableScene = <T,>({
   return (
     <>
       {isDragging ? <DraggableLayer style={style}>{renderPreviewItem()}</DraggableLayer> : null}
-      <DraggableListContainer
-        id="draggable-list-container"
-        ref={draggableListContainerRef}
-        {...props}
-      >
+      <DraggableListContainer ref={draggableListContainerRef} {...props}>
         {itemsEditable.map((listItem, idx) => (
           <DraggableElement
             type={type}

@@ -23,10 +23,10 @@ const getIconColor = (disabled: boolean, active: boolean) => {
   }
 
   if (active) {
-    return 'updPrimary';
+    return 'primary';
   }
 
-  return 'updTextPrimaryDark';
+  return 'textPrimaryDark';
 };
 
 const IconWrapper = styled.div<{ disabled: boolean; active: boolean }>`
@@ -36,14 +36,14 @@ const IconWrapper = styled.div<{ disabled: boolean; active: boolean }>`
     fill: ${({ disabled, active }) => colors[getIconColor(disabled, active)]};
 
     &:active {
-      fill: ${({ disabled }) => !disabled && colors.updPrimary};
+      fill: ${({ disabled }) => !disabled && colors.primary};
     }
   }
 `;
 
 const ZoomHint = styled.div`
   ${typography.bodyXSmallSemibold};
-  color: ${colors.updPrimaryWhite};
+  color: ${colors.primaryWhite};
 `;
 
 type Props = {
@@ -76,7 +76,6 @@ const ZoomControls = ({
       content={<ZoomHint>Draw a rectangle for a marquee zoom</ZoomHint>}
       position="l"
       horizontalPaddings="l"
-      dynamic
       trigger="hover"
     >
       <IconWrapper

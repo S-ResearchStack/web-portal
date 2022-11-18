@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tooltip test tooltip render 1`] = `
+.c0 {
+  display: inline-block;
+  position: static;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;

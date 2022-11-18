@@ -14,6 +14,15 @@ module.exports = {
   core: {
     builder: '@storybook/builder-webpack5',
   },
+  babelDefault(config) {
+    return {
+      ...config,
+      // issue: https://github.com/storybookjs/storybook/issues/13834
+      plugins: config.plugins.filter(
+        (x) => !(typeof x === 'string' && x.includes('plugin-transform-classes'))
+      ),
+    };
+  },
   webpackFinal: (config) => {
     config.resolve.alias = {
       src: path.resolve(__dirname, '..', 'src/'),

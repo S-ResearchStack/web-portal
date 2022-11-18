@@ -1,11 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { colors } from 'src/styles/index';
-
 export default createGlobalStyle`
   * {
     box-sizing: border-box;
-    font-family: 'Roboto', 'Open Sans', sans-serif;
   }
 
   html {
@@ -21,10 +18,10 @@ export default createGlobalStyle`
     position: fixed;
     overflow: hidden;
     overscroll-behavior-y: none;
-    background: ${colors.background};
-    cursor: default;
+    background: ${({ theme }) => theme.colors.background};
     user-select: none;
     -webkit-user-drag: none;
+    font-family: Inter, sans-serif;
   }
   
   input,

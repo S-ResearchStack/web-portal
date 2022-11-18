@@ -3,7 +3,11 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import _random from 'lodash/random';
 import styled from 'styled-components';
 
-import Table, { ColumnOptions, RowKeyExtractor, SortCallback } from 'src/common/components/Table';
+import Table, {
+  ColumnOptions,
+  RowKeyExtractor,
+  SortCallback,
+} from 'src/common/components/Table/index';
 import { TooltipProvider, TooltipsList } from 'src/common/components/Tooltip';
 import { px } from 'src/styles';
 

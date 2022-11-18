@@ -8,6 +8,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { DefinePlugin, ProvidePlugin } = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'build');
 
@@ -15,7 +16,7 @@ const styledComponentsTransformer = createStyledComponentsTransformer();
 
 const transformEnvDefine = (env) =>
   Object.keys(env).reduce((res, k) => {
-    res[`env.${k}`] = JSON.stringify(env[k]);
+    res[`process.env.${k}`] = JSON.stringify(env[k]);
     return res;
   }, {});
 
@@ -129,11 +130,20 @@ module.exports = (env, argv) => {
       new ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
       }),
+      isDev &&
+        new CircularDependencyPlugin({
+          exclude: /node_modules/,
+          include: /src/,
+          failOnError: true,
+          allowAsyncCycles: false,
+          cwd: process.cwd(),
+        }),
     ].filter(Boolean),
     devServer: {
       historyApiFallback: true,
       hot: true,
       proxy,
+      port: process.env.PORT,
     },
   };
 };

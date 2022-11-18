@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useMemo, useState, useEffect } from 'react';
-import { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import * as d3 from 'd3';
 
 import { SpecColorType } from 'src/styles/theme';
@@ -47,6 +47,12 @@ type Props = {
 };
 
 const getDotId = (name: string, ts: number) => `dot-${name}-${ts}`;
+
+const SvgContainer = styled(StyledSvg)`
+  .focus {
+    cursor: default;
+  }
+`;
 
 const LineChart = ({
   width,
@@ -104,7 +110,11 @@ const LineChart = ({
 
   const onDotMouseEnter = useCallback(
     (event: React.MouseEvent<SVGPathElement, MouseEvent>, enteredDot: DotDataItem) => {
-      const svgRect = d3.select(svgRef.current).node()?.getBoundingClientRect();
+      if (!svgRef.current) {
+        return;
+      }
+
+      const svgRect = svgRef.current.getBoundingClientRect();
       const dotNode = d3
         .select(svgRef.current)
         .select<Element>(`#${enteredDot.id}`)
@@ -128,8 +138,11 @@ const LineChart = ({
       setTooltipProps({
         content: tooltipContent,
         point: dotNode
-          ? [dotNode.x + dotNode.width / 2, dotNode.y + dotNode.height / 2]
-          : [event.pageX, event.pageY],
+          ? [
+              dotNode.x - svgRect.left + dotNode.width / 2,
+              dotNode.y - svgRect.top + dotNode.height / 2,
+            ]
+          : [event.pageX - svgRect.left, event.pageY - svgRect.top],
         position: getTooltipPosition(event.pageX, event.pageY, svgRect),
       });
 
@@ -246,7 +259,7 @@ const LineChart = ({
                   xScale={xScale}
                   yScale={yScale}
                   data={{ x: d.ts, y: d.value, lastSync: d.lastSync, name: d.name }}
-                  color={theme.colors.updOnSurface}
+                  color={theme.colors.onSurface}
                   fillOpacity={getDotOpacity(d, `dot-${d.name}-${d.ts}`)}
                   onMouseEnter={onDotMouseEnter}
                   onClick={(event) => onDotClick(event, d)}
@@ -261,7 +274,7 @@ const LineChart = ({
       getDotOpacity,
       onDotClick,
       onDotMouseEnter,
-      theme.colors.updOnSurface,
+      theme.colors.onSurface,
       xScale,
       yScale,
     ]
@@ -279,7 +292,7 @@ const LineChart = ({
 
   return (
     <Container width={width} height={height} ref={containerRef}>
-      <StyledSvg
+      <SvgContainer
         ref={svgRef}
         focusWidth={getFocusWidth(width)}
         viewBox={`0, 0, ${width}, ${height}`}
@@ -298,13 +311,13 @@ const LineChart = ({
           />
         </g>
         {dotItems}
-      </StyledSvg>
+      </SvgContainer>
       <Tooltip
+        static
         content={tooltipProps?.content}
         point={tooltipProps?.point}
         show={!!tooltipProps}
         position={tooltipProps?.position}
-        dynamic
         arrow
       />
     </Container>

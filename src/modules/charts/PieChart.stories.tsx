@@ -24,14 +24,14 @@ const Template: Story<ComponentProps<typeof PieChart> & { size?: number }> = ({
 const dataTwoItems = [
   {
     value: 33,
-    color: 'secondaryTurquoise' as SpecColorType,
+    color: 'secondaryViolet' as SpecColorType,
     name: 'Yes',
     count: 30,
     total: 120,
   },
   {
     value: 27,
-    color: 'secondaryBlue' as SpecColorType,
+    color: 'secondarySkyBlue' as SpecColorType,
     name: 'No',
     count: 20,
     total: 120,
@@ -41,14 +41,14 @@ const dataTwoItems = [
 const dataFourItems = [
   {
     value: 14,
-    color: 'secondaryTurquoise' as SpecColorType,
+    color: 'secondaryViolet' as SpecColorType,
     name: '20-39',
     count: 41,
     total: 120,
   },
   {
     value: 27,
-    color: 'secondaryBlue' as SpecColorType,
+    color: 'secondarySkyBlue' as SpecColorType,
     name: '40-59',
     count: 32,
     total: 120,
@@ -62,7 +62,7 @@ const dataFourItems = [
   },
   {
     value: 25,
-    color: 'secondaryPurple' as SpecColorType,
+    color: 'secondaryTangerine' as SpecColorType,
     name: '80-100',
     count: 10,
     total: 120,

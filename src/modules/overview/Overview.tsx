@@ -2,7 +2,6 @@ import React, { useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { userRoleSelector } from 'src/modules/auth/auth.slice';
-import { useNavigationScrollRestoreCheckpoint } from 'src/modules/main-layout/MainLayout';
 import { Path } from 'src/modules/navigation/store';
 import { useAppSelector } from 'src/modules/store';
 import CollapseSection from 'src/common/components/CollapseSection';
@@ -23,10 +22,6 @@ const Overview: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const userRole = useAppSelector(userRoleSelector);
-
-  useNavigationScrollRestoreCheckpoint({
-    startPath: Path.Overview,
-  });
 
   const content = useMemo(() => {
     const participantManagement = (

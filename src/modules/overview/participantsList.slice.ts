@@ -22,6 +22,7 @@ export interface OverviewParticipantItem extends WithProcessing {
   lastSync: Timestamp;
   localTime: Timestamp;
   avgSleepMins?: number;
+  avgBloodPressure?: string;
 }
 
 export type OverviewParticipantListSortColumn = keyof OverviewParticipantItem;
@@ -32,7 +33,7 @@ export interface OverviewParticipantListSort {
 }
 
 export interface OverviewParticipantListFilter {
-  page: number;
+  offset: number;
   perPage: number;
 }
 
@@ -68,35 +69,41 @@ export const participantListItemMock = (idx = 1) =>
     steps: Random.shared.num(0, 1) > 0.1 ? String(Random.shared.int(1000, 20000)) : '',
     last_synced: new Date(Date.now() - Random.shared.int(1, 24 * 60 * 3) * 60 * 1000).toString(),
     avg_sleep_mins: Random.shared.num(300, 600).toString(),
+    avg_bp_systolic: '120.35',
+    avg_bp_diatolic: '75.111105',
   } as api.ParticipantListItemSqlRow);
 
 export const participantListMock = _range(
   DEFAULT_OVERVIEW_PARTICIPANT_LIST_RECORDS_PER_PAGE * 15
 ).map(participantListItemMock);
 
-API.mock.provideEndpoints({
+export const getParticipantsMock: typeof API.getParticipants = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getParticipantsTotalItems({ projectId }: ProjectIdParams) {
-    return API.mock.response([{ total: String(participantListMock.length) }]);
-  },
-  getParticipants({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    projectId,
-    limit,
-    offset,
-    sort,
-  }: api.GetParticipantListRequest & ProjectIdParams) {
-    let result: api.ParticipantListItemSqlRow[] = [];
+  projectId,
+  limit,
+  offset,
+  sort,
+}) => {
+  let result: api.ParticipantListItemSqlRow[] = [];
 
-    result =
-      sort.direction === 'asc'
-        ? _sortBy(participantListMock, [sort.column])
-        : _sortBy(participantListMock, [sort.column]).reverse();
+  result =
+    sort.direction === 'asc'
+      ? _sortBy(participantListMock, [sort.column])
+      : _sortBy(participantListMock, [sort.column]).reverse();
 
-    result = result.slice(offset, Math.min(result.length, offset + limit));
+  result = result.slice(offset, Math.min(result.length, offset + limit));
 
-    return API.mock.response(result);
-  },
+  return API.mock.response(result);
+};
+
+export const getParticipantsTotalItemsMock: typeof API.getParticipantsTotalItems = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  projectId,
+}: ProjectIdParams) => API.mock.response([{ total: String(participantListMock.length) }]);
+
+API.mock.provideEndpoints({
+  getParticipantsTotalItems: getParticipantsTotalItemsMock,
+  getParticipants: getParticipantsMock,
 });
 
 export const transformParticipantListSortParamsToApi = (
@@ -125,9 +132,22 @@ export const transformParticipantListItemFromApi = (
   lastSync: new Date(item.last_synced).valueOf(),
   localTime: new Date(item.last_synced).valueOf(),
   avgSleepMins: parseNumber(item.avg_sleep_mins, { round: true }),
+  avgBloodPressure: (() => {
+    if (!item.avg_bp_systolic || !item.avg_bp_diastolic) {
+      return undefined;
+    }
+
+    const sys = parseNumber(item.avg_bp_systolic, { round: true });
+    const dia = parseNumber(item.avg_bp_diastolic, { round: true });
+
+    if (!sys || !dia) {
+      return undefined;
+    }
+    return `${sys}/${dia}`;
+  })(),
 });
 
-const transformParticipantListFromRaw = (
+export const transformParticipantListFromRaw = (
   items: api.ParticipantListItemSqlRow[]
 ): OverviewParticipantItem[] => items.map(transformParticipantListItemFromApi);
 
@@ -140,7 +160,7 @@ const slice = createDataSlice({
 
     const getParticipantsOptions = {
       ...baseOptions,
-      offset: params.filter.perPage * (params.filter.page - 1),
+      offset: params.filter.offset,
       limit: params.filter.perPage,
       sort: transformParticipantListSortParamsToApi(params.sort),
     };

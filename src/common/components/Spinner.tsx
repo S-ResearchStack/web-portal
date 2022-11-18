@@ -1,9 +1,11 @@
 import React from 'react';
+
 import styled, { keyframes, css } from 'styled-components';
 
-import { colors, animation } from 'src/styles';
-import SpinnerIconL from 'src/assets/icons/spinner.svg';
 import SpinnerIconXS from 'src/assets/icons/spinner_xs.svg';
+import SpinnerIconM from 'src/assets/icons/spinner_m.svg';
+import SpinnerIconL from 'src/assets/icons/spinner_l.svg';
+import { colors, animation } from 'src/styles';
 
 const spinnerAnimation = keyframes`
   0% {
@@ -14,45 +16,45 @@ const spinnerAnimation = keyframes`
   }
 `;
 
-type Size = 'l' | 'xs';
+type Size = 'xs' | 'm' | 'l';
 
 type Props = {
-  spin?: boolean;
   size: Size;
+  $light?: boolean;
 };
 
-const spinnerStyles = css`
-  fill: ${colors.updPrimary};
+const spinnerStyles = ($light?: boolean) => css`
+  fill: ${$light ? colors.surface : colors.primary};
   animation: 1.1s infinite ${spinnerAnimation} ${animation.defaultTiming};
 `;
 
-const SpinnerIconLStyled = styled(SpinnerIconL)`
-  ${spinnerStyles}
+const SpinnerIconXSStyled = styled(SpinnerIconXS)<{ $light?: boolean }>`
+  ${({ $light }) => spinnerStyles($light)}
 `;
 
-const SpinnerIconXSStyled = styled(SpinnerIconXS)`
-  ${spinnerStyles}
+const SpinnerIconMStyled = styled(SpinnerIconM)<{ $light?: boolean }>`
+  ${({ $light }) => spinnerStyles($light)}
 `;
 
-const getSpinnerWithSize = (s: Size) => {
-  let icon = SpinnerIconLStyled;
-  if (s === 'l') {
-    icon = SpinnerIconLStyled;
-  } else if (s === 'xs') {
-    icon = SpinnerIconXSStyled;
+const SpinnerIconLStyled = styled(SpinnerIconL)<{ $light?: boolean }>`
+  ${({ $light }) => spinnerStyles($light)}
+`;
+
+const getSpinnerWithSize = (s: Size, $light?: boolean) => {
+  let icon = <SpinnerIconXSStyled $light={$light} data-testid="spinner" />;
+  switch (s) {
+    case 'm':
+      icon = <SpinnerIconMStyled $light={$light} data-testid="spinner" />;
+      break;
+    case 'l':
+      icon = <SpinnerIconLStyled $light={$light} data-testid="spinner" />;
+      break;
+    default:
+      break;
   }
-
   return icon;
 };
 
-const Spinner = ({ size, spin }: Props) => {
-  if (!spin) {
-    return null;
-  }
-
-  const Icon = getSpinnerWithSize(size);
-
-  return spin ? <Icon /> : null;
-};
+const Spinner = ({ size, $light }: Props) => getSpinnerWithSize(size, $light);
 
 export default Spinner;

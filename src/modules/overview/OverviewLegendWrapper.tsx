@@ -48,7 +48,7 @@ const OverviewLegendWrapper: React.FC<Props> = ({
     <CardContent>
       {children}
       <ChartLegend
-        canToggle={canToggle}
+        canToggle={!!canToggle}
         items={resultLines.map((l) => ({
           ...l,
           checked: !hiddenDataLines.includes(l.name),

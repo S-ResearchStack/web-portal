@@ -1,16 +1,14 @@
 import React, { FC, useCallback } from 'react';
-import { generatePath, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useHover from 'react-use/lib/useHover';
 
 import * as dt from 'src/common/utils/datetime';
-import SkeletonLoading from 'src/common/components/SkeletonLoading';
-import { Path } from 'src/modules/navigation/store';
+import SkeletonLoading, { SkeletonRect } from 'src/common/components/SkeletonLoading';
 import { animation, colors, px, typography } from 'src/styles';
 import { useAppDispatch } from 'src/modules/store';
 import { useSelectedStudyId } from 'src/modules/studies/studies.slice';
 import Chips from './common/Chips';
-import { editSurvey } from './survey-editor/surveyEditor.slice';
+import { editSurvey, openSurveyResults } from './survey-editor/surveyEditor.slice';
 import { SurveyListItem } from './surveyList.slice';
 
 const Container = styled.div`
@@ -18,7 +16,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: ${px(160)};
-  background: ${colors.updPrimaryWhite};
+  background: ${colors.primaryWhite};
   box-shadow: 0 0 ${px(2)} rgba(0, 0, 0, 0.15); // TODO: unknown color
   border-radius: ${px(4)};
   padding: ${px(16)} ${px(24)};
@@ -26,6 +24,7 @@ const Container = styled.div`
 
   &:hover {
     box-shadow: 0 ${px(2)} ${px(4)} rgba(71, 71, 71, 0.25); // TODO: unknown color
+    cursor: pointer;
   }
 `;
 
@@ -38,7 +37,7 @@ const Head = styled.div`
 
 const Title = styled.h2`
   ${typography.headingXSmall};
-  color: ${colors.updTextPrimaryDark};
+  color: ${colors.textPrimaryDark};
   padding: 0;
   margin: 0;
   margin-top: ${px(16)};
@@ -51,7 +50,7 @@ const Title = styled.h2`
 
 const PublishedAt = styled.div`
   ${typography.bodyXSmallRegular};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   margin-top: ${px(2)};
 `;
 
@@ -63,18 +62,18 @@ const Footer = styled.div``;
 
 const FooterModifiedText = styled.div`
   ${typography.bodyXSmallRegular};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
 `;
 
 const FooterPublishedText = styled.div`
   ${typography.labelRegular};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   text-transform: uppercase;
   letter-spacing: 0.03em;
 
   strong {
     ${typography.labelSemibold};
-    color: ${colors.updTextPrimary};
+    color: ${colors.textPrimary};
   }
 `;
 
@@ -87,19 +86,14 @@ const formatDate = (ts: dt.Timestamp): string => dt.format(ts, 'LLL d, yyyy');
 const SurveyCard: FC<SurveyCardProps> = ({ item, ...props }) => {
   const dispatch = useAppDispatch();
   const studyId = useSelectedStudyId();
-  const history = useHistory();
 
   const handleCardClick = useCallback(() => {
     if (item.status === 'PUBLISHED') {
-      history.push(
-        generatePath(Path.TrialManagementSurveyResults, {
-          surveyId: item.id,
-        })
-      );
+      dispatch(openSurveyResults({ surveyId: item.id }));
     } else {
       studyId && dispatch(editSurvey({ studyId, surveyId: item.id }));
     }
-  }, [dispatch, history, studyId, item.id, item.status]);
+  }, [dispatch, studyId, item.id, item.status]);
 
   const isPublished = item.status === 'PUBLISHED';
 
@@ -155,15 +149,15 @@ const SurveyCard: FC<SurveyCardProps> = ({ item, ...props }) => {
 
 export default SurveyCard;
 
+const SkeletonContainer = styled(SkeletonLoading)`
+  margin-top: ${px(8)};
+`;
+
 export const SurveyCardLoading: FC<React.HTMLAttributes<HTMLDivElement>> = (props) => (
   <Container {...props}>
-    <Body>
-      <Head>
-        <SkeletonLoading style={{ width: 180, height: 24 }} />
-      </Head>
-    </Body>
-    <Footer>
-      <SkeletonLoading style={{ width: 132, height: 56 }} />
-    </Footer>
+    <SkeletonContainer>
+      <SkeletonRect x="0" y="0" width="180" height="24" />
+      <SkeletonRect x="0" y="48" width="132" height="56" />
+    </SkeletonContainer>
   </Container>
 );

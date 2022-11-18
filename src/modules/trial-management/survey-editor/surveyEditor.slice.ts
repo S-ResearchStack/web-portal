@@ -2,22 +2,35 @@ import { useCallback } from 'react';
 import { generatePath } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import _uniqueId from 'lodash/uniqueId';
+import _isUndefined from 'lodash/isUndefined';
 
 import API, { ChoiceQuestion, ScaleQuestion, TaskItemQuestion, TaskUpdate } from 'src/modules/api';
 import { Task, TaskItem } from 'src/modules/api/models/tasks';
 import { Path } from 'src/modules/navigation/store';
 import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { AppThunk, RootState, useAppDispatch, useAppSelector } from 'src/modules/store';
-import { mockTasks, surveyListSlice } from '../surveyList.slice';
+import {
+  mockTasks,
+  surveyListDataSelector,
+  SurveyListItem,
+  surveyListSlice,
+} from '../surveyList.slice';
 
 API.mock.provideEndpoints({
   createTask() {
-    return API.mock.response({
+    const t: Task = {
       id: _uniqueId('task'),
       revisionId: 0,
-    });
+      createdAt: new Date().toISOString(),
+      schedule: '',
+      startTime: new Date().toISOString(),
+      validTime: 0,
+      status: 'DRAFT',
+      items: [],
+    };
+    mockTasks.push(t);
+    return API.mock.response(t);
   },
   updateTask({ id }, task) {
     const idx = mockTasks.findIndex((t) => t.id === id);
@@ -73,7 +86,7 @@ export type SurveyErrors = {
   questions: SurveyQuestionErrors[];
 };
 
-const emptyQuestion = () =>
+export const emptyQuestion = () =>
   ({
     id: newId(),
     type: 'single',
@@ -86,7 +99,7 @@ const emptyQuestion = () =>
     ],
   } as QuestionItem);
 
-const surveyQuestonFromApi = (ti: TaskItem): QuestionItem | undefined => {
+export const surveyQuestionFromApi = (ti: TaskItem): QuestionItem | undefined => {
   if (ti.type !== 'QUESTION') {
     return undefined;
   }
@@ -133,10 +146,10 @@ const surveyQuestonFromApi = (ti: TaskItem): QuestionItem | undefined => {
 export const surveyQuestionListFromApi = (ti: TaskItem[]): QuestionItem[] =>
   ti
     .sort((a, b) => a.sequence - b.sequence)
-    .map(surveyQuestonFromApi)
+    .map(surveyQuestionFromApi)
     .filter(Boolean) as QuestionItem[];
 
-const surveyFromApi = (studyId: string, t: Task): SurveyItem => ({
+export const surveyFromApi = (studyId: string, t: Task): SurveyItem => ({
   studyId,
   id: t.id,
   revisionId: t.revisionId,
@@ -145,7 +158,7 @@ const surveyFromApi = (studyId: string, t: Task): SurveyItem => ({
   questions: surveyQuestionListFromApi(t.items),
 });
 
-const surveyUpdateToApi = (s: SurveyItem): TaskUpdate => ({
+export const surveyUpdateToApi = (s: SurveyItem): TaskUpdate => ({
   title: s.title,
   description: s.description,
   items: s.questions
@@ -199,7 +212,7 @@ const surveyUpdateToApi = (s: SurveyItem): TaskUpdate => ({
     .filter(Boolean) as TaskItem[],
 });
 
-const getSurveyErrors = ({
+export const getSurveyErrors = ({
   survey: s,
   currentErrors: cur,
 }: {
@@ -234,10 +247,14 @@ const getSurveyErrors = ({
   };
 };
 
-const hasSomeSurveyErrors = (se: SurveyErrors) =>
-  se.title.empty || se.questions.some((q) => q.title.empty);
+export const hasSurveyTitleErrors = (se: SurveyErrors) => !!se.title.empty;
 
-type SurveyEditorState = {
+export const hasSurveyQuestionErrors = (qe: SurveyQuestionErrors) => !!qe.title.empty;
+
+export const hasSomeSurveyErrors = (se: SurveyErrors) =>
+  hasSurveyTitleErrors(se) || se.questions.some(hasSurveyQuestionErrors);
+
+export type SurveyEditorState = {
   isSaving: boolean;
   isLoading: boolean;
   isCreating: boolean;
@@ -245,9 +262,10 @@ type SurveyEditorState = {
   savedOn?: number;
   survey?: SurveyItem;
   surveyErrors?: SurveyErrors;
+  isFailedConnection?: boolean;
 };
 
-const initialState: SurveyEditorState = {
+export const surveyEditorInitialState: SurveyEditorState = {
   isSaving: false,
   isLoading: false,
   isCreating: false,
@@ -255,7 +273,7 @@ const initialState: SurveyEditorState = {
 
 export const surveyEditorSlice = createSlice({
   name: 'survey/edit',
-  initialState,
+  initialState: surveyEditorInitialState,
   reducers: {
     loadingStarted: (state) => {
       state.isLoading = true;
@@ -263,7 +281,7 @@ export const surveyEditorSlice = createSlice({
     loadingFinished: (state) => {
       state.isLoading = false;
     },
-    cratingStarted: (state) => {
+    creatingStarted: (state) => {
       state.isCreating = true;
     },
     creatingFinished: (state) => {
@@ -272,11 +290,15 @@ export const surveyEditorSlice = createSlice({
     savingStarted: (state) => {
       state.isSaving = true;
     },
-    savingFinished: (state, action: PayloadAction<{ error?: boolean }>) => {
+    savingFinished: (
+      state,
+      action: PayloadAction<{ error?: boolean; isFailedConnection?: boolean }>
+    ) => {
       state.isSaving = false;
       if (!action.payload.error) {
         state.savedOn = Date.now();
       }
+      state.isFailedConnection = !!action.payload.isFailedConnection;
     },
     setSurvey(state, action: PayloadAction<SurveyItem | undefined>) {
       state.survey = action.payload;
@@ -298,7 +320,7 @@ export const surveyEditorSlice = createSlice({
 const {
   loadingStarted,
   loadingFinished,
-  cratingStarted,
+  creatingStarted,
   creatingFinished,
   savingStarted,
   savingFinished,
@@ -308,11 +330,13 @@ const {
   updateLastTouched,
 } = surveyEditorSlice.actions;
 
+export const CREATE_SURVEY_FAILED_MESSAGE = 'Failed to create survey';
+
 export const createSurvey =
   ({ studyId }: { studyId: string }): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
-      dispatch(cratingStarted());
+      dispatch(creatingStarted());
 
       const { data: task } = await API.createTask({ projectId: studyId });
       dispatch(
@@ -330,15 +354,23 @@ export const createSurvey =
     } catch (err) {
       console.error(err);
       // TODO: what to show?
-      dispatch(showSnackbar({ text: 'Failed to create survey' }));
+      dispatch(showSnackbar({ text: CREATE_SURVEY_FAILED_MESSAGE }));
     } finally {
       // TODO delete when create survey will be fixed
       setTimeout(() => dispatch(creatingFinished()), 100);
     }
   };
 
-const loadSurvey =
-  ({ studyId, surveyId }: { studyId: string; surveyId: string }): AppThunk<Promise<void>> =>
+export const loadSurvey =
+  ({
+    studyId,
+    surveyId,
+    onError,
+  }: {
+    studyId: string;
+    surveyId: string;
+    onError: () => void;
+  }): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       dispatch(loadingStarted());
@@ -346,16 +378,44 @@ const loadSurvey =
       const [task] = data;
       dispatch(setSurvey(surveyFromApi(studyId, task)));
       dispatch(clearSurveyTransientState());
+    } catch (err) {
+      onError();
     } finally {
       dispatch(loadingFinished());
     }
   };
 
+const transformSurveyListItemToSurveyItem = (i: SurveyListItem): SurveyItem => ({
+  studyId: '',
+  id: '',
+  revisionId: !_isUndefined(i.revisionId) ? i.revisionId : -1,
+  title: i.title || '',
+  description: i.description || '',
+  questions: [],
+});
+
+export const openSurveyResults =
+  ({ surveyId }: { surveyId: string }): AppThunk<Promise<void>> =>
+  async (dispatch, getState) => {
+    const surveyList = surveyListDataSelector(getState());
+    const preloadedSurveyItem = surveyList?.published.find((t) => t.id === surveyId);
+    const surveyItem =
+      preloadedSurveyItem && transformSurveyListItemToSurveyItem(preloadedSurveyItem);
+
+    dispatch(setSurvey(surveyItem));
+    dispatch(push(generatePath(Path.TrialManagementSurveyResults, { surveyId })));
+  };
+
 export const editSurvey =
   ({ surveyId }: { studyId: string; surveyId: string }): AppThunk<Promise<void>> =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
-      dispatch(setSurvey(undefined));
+      const surveyList = surveyListDataSelector(getState());
+      const preloadedSurveyItem = surveyList?.drafts.find((t) => t.id === surveyId);
+      const surveyItem =
+        preloadedSurveyItem && transformSurveyListItemToSurveyItem(preloadedSurveyItem);
+
+      dispatch(setSurvey(surveyItem));
       dispatch(clearSurveyTransientState());
       dispatch(push(generatePath(Path.TrialManagementEditSurvey, { surveyId })));
     } catch (err) {
@@ -364,12 +424,13 @@ export const editSurvey =
     }
   };
 
-const AUTOSAVE_DEBOUNCE_INTERVAL = 3000;
+export const AUTOSAVE_DEBOUNCE_INTERVAL = 3000;
 
-const saveIfRequired =
+export const saveSurveyIfRequired =
   ({ force }: { force?: boolean }): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
     const { isSaving, lastTouchedOn, survey } = getState()[surveyEditorSlice.name];
+
     if (
       !survey ||
       isSaving ||
@@ -397,13 +458,13 @@ const saveIfRequired =
         { projectId: survey.studyId, id: survey.id, revisionId: survey.revisionId },
         { ...apiTask, ...surveyUpdateToApi(survey) }
       );
+
       res.checkError();
       // TODO: find a better way to refetch only when necessary
       dispatch(surveyListSlice.actions.refetch());
       dispatch(savingFinished({ error: false }));
     } catch (err) {
-      dispatch(savingFinished({ error: true }));
-      dispatch(showSnackbar({ text: 'Failed to save' }));
+      dispatch(savingFinished({ error: true, isFailedConnection: true }));
     }
   };
 
@@ -414,7 +475,7 @@ export const autoSaveIfRequired = (): AppThunk<void> => (dispatch) => {
     clearTimeout(autoSaveTimeoutId);
   }
   autoSaveTimeoutId = window.setTimeout(async () => {
-    await dispatch(saveIfRequired({ force: false }));
+    await dispatch(saveSurveyIfRequired({ force: false }));
   }, AUTOSAVE_DEBOUNCE_INTERVAL);
 };
 
@@ -429,20 +490,43 @@ export const editedSurveySelector = (state: RootState) =>
     questions: [],
   };
 
-const surveySavedOnSelector = (state: RootState) => state[surveyEditorSlice.name].savedOn;
+export const surveySavedOnSelector = (state: RootState) => state[surveyEditorSlice.name].savedOn;
+export const surveyEditorIsLoadingSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].isLoading;
+export const surveyEditorIsCreatingSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].isCreating;
+export const surveyEditorIsSavingSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].isSaving;
+export const surveyEditorSurveyErrorsSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].surveyErrors;
+export const surveyEditorIsFailedConnectionSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].isFailedConnection;
+export const surveyEditorLastTouchedSelector = (state: RootState) =>
+  state[surveyEditorSlice.name].lastTouchedOn;
 
 export const useSurveyEditor = () => {
   const survey = useAppSelector(editedSurveySelector);
-  const isLoading = useAppSelector((state) => state[surveyEditorSlice.name].isLoading);
-  const isCreating = useAppSelector((state) => state[surveyEditorSlice.name].isCreating);
-  const surveyErrors = useAppSelector((state) => state[surveyEditorSlice.name].surveyErrors);
+  const isLoading = useAppSelector(surveyEditorIsLoadingSelector);
+  const isCreating = useAppSelector(surveyEditorIsCreatingSelector);
+  const isSaving = useAppSelector(surveyEditorIsSavingSelector);
+  const surveyErrors = useAppSelector(surveyEditorSurveyErrorsSelector);
   const savedOn = useAppSelector(surveySavedOnSelector);
+  const isFailedConnection = useAppSelector(surveyEditorIsFailedConnectionSelector);
+  const lastTouchedOn = useAppSelector(surveyEditorLastTouchedSelector);
   const dispatch = useAppDispatch();
 
   const load = useCallback(
-    ({ studyId, surveyId }: { studyId: string; surveyId: string }) => {
+    ({
+      studyId,
+      surveyId,
+      onError,
+    }: {
+      studyId: string;
+      surveyId: string;
+      onError: () => void;
+    }) => {
       if (!isLoading && studyId !== survey?.studyId && surveyId !== survey?.id) {
-        dispatch(loadSurvey({ studyId, surveyId }));
+        dispatch(loadSurvey({ studyId, surveyId, onError }));
       }
     },
     [dispatch, isLoading, survey?.id, survey?.studyId]
@@ -494,13 +578,11 @@ export const useSurveyEditor = () => {
 
   const copyQuestion = useCallback(
     (question: QuestionItem) => {
-      const questions = [...survey.questions];
-      const idx = questions.map((q) => q.id).indexOf(question.id);
       const questionCopy = { ...question, id: `${newId()}` };
-      questions.splice(idx + 1, 0, questionCopy);
-      set({ ...survey, questions });
+      set({ ...survey, questions: [...survey.questions, questionCopy] });
+      dispatch(showSnackbar({ text: 'Question copied successfully!' }));
     },
-    [survey, set]
+    [dispatch, survey, set]
   );
 
   const removeQuestion = useCallback(
@@ -518,17 +600,18 @@ export const useSurveyEditor = () => {
       survey,
     });
     dispatch(setSurveyErrors(se));
-    return !hasSomeSurveyErrors(se);
+    return se;
   }, [survey, dispatch]);
 
   const saveSurvey = useCallback(async () => {
-    await dispatch(saveIfRequired({ force: true }));
+    await dispatch(saveSurveyIfRequired({ force: true }));
   }, [dispatch]);
 
   return {
     survey,
     surveyErrors,
     loadSurvey: load,
+    setSurvey: set,
     isLoading,
     isCreating,
     savedOn,
@@ -539,6 +622,9 @@ export const useSurveyEditor = () => {
     removeQuestion,
     validateSurvey,
     saveSurvey,
+    isFailedConnection,
+    isSaving,
+    lastTouchedOn,
   };
 };
 

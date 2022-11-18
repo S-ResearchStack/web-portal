@@ -35,7 +35,7 @@ const OptionContainer = styled.div`
 
 const Label = styled.div`
   ${typography.bodySmallRegular};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
 `;
 
 interface QuestionCardSelectableOptionsProps {

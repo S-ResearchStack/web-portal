@@ -275,7 +275,7 @@ export const initEditor = (props: {
   );
 
   cm.on('keyup', (instance, event) => {
-    if (!cm.state.completionActive && event.key !== 'Enter') {
+    if (!cm.state.completionActive && event.key !== 'Enter' && event.key !== 'Escape') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (CodeMirror.commands as any).autocomplete(cm, null, { completeSingle: false });
     }

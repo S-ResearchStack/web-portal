@@ -8,7 +8,7 @@ import Tooltip, {
   TooltipPosition,
   TooltipProvider,
   TooltipsList,
-} from 'src/common/components/Tooltip';
+} from 'src/common/components/Tooltip/index';
 
 const MovableArea = styled.div`
   width: ${px(500)};
@@ -23,9 +23,10 @@ const AllPositions = styled.div`
   flex-direction: column;
   overflow: auto;
   > .all {
+    position: relative;
     margin: 100px 0;
     display: grid;
-    max-width: 600px;
+    max-width: 650px;
     grid-gap: 50px;
     grid-template-areas:
       'atr tl t tr atl'
@@ -98,7 +99,22 @@ const TooltipDemo = () => {
         <div className="all">
           {positions.map((position: TooltipPosition) => (
             <div key={position} style={{ gridArea: position }}>
-              <Tooltip show dynamic arrow content="Type in your text here" position={position}>
+              <Tooltip
+                trigger="hover"
+                static
+                arrow
+                content="Type in your text here"
+                position={position}
+              >
+                <button type="button">{position.toUpperCase()}</button>
+              </Tooltip>
+            </div>
+          ))}
+        </div>
+        <div className="all">
+          {positions.map((position: TooltipPosition) => (
+            <div key={position} style={{ gridArea: position }}>
+              <Tooltip show arrow content="Type in your text here" position={position}>
                 <button type="button">{position.toUpperCase()}</button>
               </Tooltip>
             </div>

@@ -1,7 +1,15 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import * as d3 from 'd3';
+import styled from 'styled-components';
+import { typography } from 'src/styles';
 
 import { Y_AXIS_CLASS_NAME } from '../common-helpers';
+
+const AxisGroup = styled.g`
+  > .tick > text {
+    ${typography.labelRegular};
+  }
+`;
 
 type Props = {
   yScale:
@@ -75,7 +83,7 @@ const YAxis: React.FC<Props> = ({
     }
   });
 
-  return <g className={Y_AXIS_CLASS_NAME} ref={yAxisRef} />;
+  return <AxisGroup className={Y_AXIS_CLASS_NAME} ref={yAxisRef} />;
 };
 
 export default YAxis;

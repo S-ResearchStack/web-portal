@@ -10,8 +10,10 @@ import DonutChart from 'src/modules/charts/DonutChart';
 import PieChart from 'src/modules/charts/PieChart';
 import { colors, px, typography } from 'src/styles';
 import { SpecColorType } from 'src/styles/theme';
+import SkeletonLoading, { SkeletonRect } from 'src/common/components/SkeletonLoading';
+
 import OverviewLegendWrapper from '../overview/OverviewLegendWrapper';
-import SurveyAnalyticsCard from './SurveyAnalyticsCard';
+import SurveyAnalyticsCard, { SurveyAnalyticsCardLoading } from './SurveyAnalyticsCard';
 import { SurveyResultsAnalytics } from './surveyPage.slice';
 
 const Content = styled.div`
@@ -22,18 +24,18 @@ const Content = styled.div`
 
 const DefaultText = styled.div`
   ${typography.headingXLargeSemibold};
-  color: ${colors.updTextPrimaryBlue};
+  color: ${colors.textPrimaryBlue};
   margin-right: ${px(4)};
 `;
 
 const Percents = styled.div`
   ${typography.headingLargeSemibold};
-  color: ${colors.updTextPrimaryBlue};
+  color: ${colors.textPrimaryBlue};
 `;
 
 const TimeLabel = styled.div`
   ${typography.headingSmall};
-  color: ${colors.updTextPrimaryBlue};
+  color: ${colors.textPrimaryBlue};
   margin-right: ${px(4)};
 `;
 
@@ -41,43 +43,61 @@ const ChartCard = styled(Card)`
   height: ${px(528)};
 `;
 
+const ChartCardLoading = () => (
+  <ChartCard>
+    <SkeletonLoading>
+      <SkeletonRect x="0" y="0" width="240" height="24" />
+      <SkeletonRect x="0" y="456" width="360" height="24" />
+    </SkeletonLoading>
+  </ChartCard>
+);
+
 const chartColors: SpecColorType[] = [
-  'updSecondaryViolet',
-  'updSecondarySkyBlue',
-  'updSecondaryTangerine',
-  'updSecondaryRed',
+  'secondaryViolet',
+  'secondarySkyBlue',
+  'secondaryTangerine',
+  'secondaryRed',
 ];
 
 type SurveyAnalyticsProps = {
-  analytics: SurveyResultsAnalytics;
+  analytics?: SurveyResultsAnalytics;
+  loading?: boolean;
 };
 
-const SurveyAnalytics = ({ analytics }: SurveyAnalyticsProps) => {
+const SurveyAnalytics = ({ analytics, loading }: SurveyAnalyticsProps) => {
   const byGenderChartData = useMemo(
     () =>
-      analytics.byGender.map((d, idx) => ({
-        value: d.percentage,
-        color: chartColors[idx % chartColors.length],
-        name: d.label,
-        count: d.count,
-        total: d.total,
-      })),
-    [analytics.byGender]
+      analytics
+        ? analytics.byGender.map((d, idx) => ({
+            value: d.percentage,
+            color: chartColors[idx % chartColors.length],
+            name: d.label,
+            count: d.count,
+            total: d.total,
+          }))
+        : [],
+    [analytics]
   );
 
   const byAgeChartData = useMemo(
     () =>
-      analytics.byAge.map((d, idx) => ({
-        value: d.percentage,
-        color: chartColors[idx % chartColors.length],
-        name: d.label,
-        count: d.count,
-        total: d.total,
-      })),
-    [analytics.byAge]
+      analytics
+        ? analytics.byAge.map((d, idx) => ({
+            value: d.percentage,
+            color: chartColors[idx % chartColors.length],
+            name: d.label,
+            count: d.count,
+            total: d.total,
+          }))
+        : [],
+    [analytics]
   );
 
   const avgCompletionTimeLabels = useMemo(() => {
+    if (!analytics) {
+      return [];
+    }
+
     const int = Duration.fromMillis(analytics.avgCompletionTimeMs);
     if (int.as('minutes') < 1) {
       const { seconds } = int.shiftTo('seconds', 'milliseconds');
@@ -95,54 +115,92 @@ const SurveyAnalytics = ({ analytics }: SurveyAnalyticsProps) => {
       [hours, 'hr'],
       [minutes, 'min'],
     ];
-  }, [analytics.avgCompletionTimeMs]);
+  }, [analytics]);
+
+  const analyticsCards = [
+    {
+      title: 'Target participants',
+      children: <DefaultText>{analytics?.targetParticipants}</DefaultText>,
+    },
+    {
+      title: 'Completed participants',
+      children: <DefaultText>{analytics?.completedParticipants}</DefaultText>,
+    },
+    {
+      title: 'Response Rate',
+      children: (
+        <Content>
+          <DefaultText>{analytics?.responseRatePercents}</DefaultText>
+          <Percents>%</Percents>
+        </Content>
+      ),
+    },
+    {
+      title: 'Avg. completion time',
+      children: (
+        <Content>
+          {avgCompletionTimeLabels.map(([value, unit]) => (
+            <React.Fragment key={unit}>
+              <DefaultText>{value}</DefaultText>
+              <TimeLabel>{unit}</TimeLabel>
+            </React.Fragment>
+          ))}
+        </Content>
+      ),
+    },
+  ];
+
+  const chartCards = [
+    {
+      title: 'Survey Responses by Gender',
+      children: (
+        <OverviewLegendWrapper lines={byGenderChartData}>
+          <ResponsiveContainer>
+            <DonutChart
+              width={352}
+              height={352}
+              data={byGenderChartData}
+              totalPercents={_sumBy(byGenderChartData, (d) => d.value)}
+            />
+          </ResponsiveContainer>
+        </OverviewLegendWrapper>
+      ),
+    },
+    {
+      title: 'Survey Responses by Age',
+      children: (
+        <OverviewLegendWrapper lines={byAgeChartData}>
+          <ResponsiveContainer>
+            <PieChart width={352} height={352} data={byAgeChartData} />
+          </ResponsiveContainer>
+        </OverviewLegendWrapper>
+      ),
+    },
+  ];
 
   return (
     <>
       <SimpleGrid columns={{ tablet: 2, laptop: 2, desktop: 4 }}>
-        <SurveyAnalyticsCard title="Target participants">
-          <DefaultText>{analytics.targetParticipants}</DefaultText>
-        </SurveyAnalyticsCard>
-        <SurveyAnalyticsCard title="Completed participants">
-          <DefaultText>{analytics.completedParticipants}</DefaultText>
-        </SurveyAnalyticsCard>
-        <SurveyAnalyticsCard title="Response rate">
-          <Content>
-            <DefaultText>{analytics.responseRatePercents}</DefaultText>
-            <Percents>%</Percents>
-          </Content>
-        </SurveyAnalyticsCard>
-        <SurveyAnalyticsCard title="Avg. completion time">
-          <Content>
-            {avgCompletionTimeLabels.map(([value, unit]) => (
-              <React.Fragment key={unit}>
-                <DefaultText>{value}</DefaultText>
-                <TimeLabel>{unit}</TimeLabel>
-              </React.Fragment>
-            ))}
-          </Content>
-        </SurveyAnalyticsCard>
+        {analyticsCards.map((card) =>
+          loading ? (
+            <SurveyAnalyticsCardLoading key={card.title} />
+          ) : (
+            <SurveyAnalyticsCard key={card.title} title={card.title}>
+              {card.children}
+            </SurveyAnalyticsCard>
+          )
+        )}
       </SimpleGrid>
-      <SimpleGrid columns={{ tablet: 1, laptop: 1, desktop: 2 }}>
-        <ChartCard title="Survey Responses by Gender">
-          <OverviewLegendWrapper lines={byGenderChartData}>
-            <ResponsiveContainer>
-              <DonutChart
-                width={352}
-                height={352}
-                data={byGenderChartData}
-                totalPercents={_sumBy(byGenderChartData, (d) => d.value)}
-              />
-            </ResponsiveContainer>
-          </OverviewLegendWrapper>
-        </ChartCard>
-        <ChartCard title="Survey Responses by Age">
-          <OverviewLegendWrapper lines={byAgeChartData}>
-            <ResponsiveContainer>
-              <PieChart width={352} height={352} data={byAgeChartData} />
-            </ResponsiveContainer>
-          </OverviewLegendWrapper>
-        </ChartCard>
+      <SimpleGrid columns={{ tablet: 1, laptop: 1, desktop: 2 }} verticalGap>
+        {chartCards.map((card) =>
+          loading ? (
+            <ChartCardLoading key={card.title} />
+          ) : (
+            <ChartCard key={card.title} title={card.title}>
+              {card.children}
+            </ChartCard>
+          )
+        )}
       </SimpleGrid>
     </>
   );

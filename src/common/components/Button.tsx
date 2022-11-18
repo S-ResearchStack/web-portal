@@ -2,11 +2,9 @@ import React, { ForwardedRef, forwardRef, useMemo } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import SpinnerGrey from 'src/assets/icons/spinner_animated.svg';
-import SpinnerBlue from 'src/assets/icons/spinner_animated_blue.svg';
-import { isDevShowFocus } from 'src/common/utils/dev';
 import Ripple, { useRipple } from 'src/common/components/Ripple';
 import { px, typography } from 'src/styles';
+import Spinner from './Spinner';
 
 export const RIPPLE_ANIMATION_DURATION = 600;
 
@@ -23,26 +21,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 type ContentProps = {
   icon?: JSX.Element;
-  $loading?: boolean;
 };
-
-const contentVisibleStyles = (visible: boolean | undefined) =>
-  visible
-    ? css`
-        order: 0;
-        opacity: 1;
-      `
-    : css`
-        height: 0;
-        padding: 0 !important;
-        order: 1;
-        opacity: 0;
-      `;
 
 const StyledRippleButton = styled.button<ButtonProps>`
   position: relative;
-  display: block !important;
-  z-index: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   border-radius: ${px(4)};
   margin-left: ${({ double }) => double === 'right' && px(8)};
   margin-right: ${({ double }) => double === 'left' && px(8)};
@@ -53,68 +38,59 @@ const StyledRippleButton = styled.button<ButtonProps>`
   transition-duration: ${({ fill, $loading }) => (fill !== 'text' && !$loading ? '400ms' : 0)};
   transition-property: background-color;
 
-  ${({ rate, $loading }) =>
+  &:hover {
+    cursor: ${({ disabled }) => !disabled && 'pointer'};
+  }
+
+  ${({ rate }) =>
     (rate === 'default' &&
       css`
         height: ${px(48)};
-        line-height: ${!$loading && px(48)};
         > div {
           ${typography.bodyMediumSemibold};
-          top: 50%;
-          transform: translateY(-50%);
-        }
-        svg {
-          margin-right: ${px($loading ? 0 : 8)};
+          svg {
+            margin-right: ${px(4)};
+          }
         }
       `) ||
     (rate === 'small' &&
       css`
         height: ${px(40)};
-        line-height: ${!$loading && px(40)};
         > div {
           ${typography.bodySmallSemibold};
-          top: 50%;
-          transform: translateY(-50%);
-        }
-        svg {
-          margin-right: ${px(8)};
+          svg {
+            margin-right: ${px(4)};
+          }
         }
       `) ||
     (rate === 'icon' &&
       css`
         height: ${px(24)};
         width: ${px(24)};
-        line-height: ${!$loading && px(24)};
-        ${!$loading &&
-        css`
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `}
       `)};
 
   ${({ fill, theme, $loading, dashed }) =>
     (fill === 'solid' &&
       css`
         border: none;
-        background-color: ${theme.colors.updPrimary};
+        background-color: ${theme.colors.primary};
         > div {
-          color: ${theme.colors.updBackgroundOnPrimary};
+          color: ${theme.colors.backgroundOnPrimary};
           svg {
-            fill: ${theme.colors.updBackgroundOnPrimary};
+            fill: ${theme.colors.backgroundOnPrimary};
           }
         }
         :hover:enabled {
-          background-color: ${theme.colors.updPrimaryHovered};
+          background-color: ${theme.colors.primaryHovered};
         }
         :disabled {
-          background-color: ${$loading ? theme.colors.updPrimary : theme.colors.updPrimaryDisabled};
+          background-color: ${$loading ? theme.colors.primary : theme.colors.primaryDisabled};
         }
         :focus-visible:enabled {
           // TODO check if enabled needed
-          border: ${px(2)} solid ${theme.colors.updPrimaryWhite};
-          background-color: ${theme.colors.updPrimary};
-          outline: ${px(2)} solid ${theme.colors.updPrimaryLightFocused};
+          border: ${px(2)} solid ${theme.colors.primaryWhite};
+          background-color: ${theme.colors.primary};
+          outline: ${px(2)} solid ${theme.colors.primaryLightFocused};
         }
       `) ||
     (fill === 'text' &&
@@ -122,41 +98,41 @@ const StyledRippleButton = styled.button<ButtonProps>`
         border: none;
         background-color: transparent;
         > div {
-          color: ${theme.colors.updPrimary};
+          color: ${theme.colors.primary};
           svg {
-            fill: ${theme.colors.updPrimary};
+            fill: ${theme.colors.primary};
           }
         }
         :hover:enabled {
           > div {
-            color: ${theme.colors.updPrimaryHovered};
+            color: ${theme.colors.primaryHovered};
             svg {
-              fill: ${theme.colors.updPrimaryHovered};
+              fill: ${theme.colors.primaryHovered};
             }
           }
           :active {
             > div {
-              color: ${theme.colors.updPrimaryBluePressed};
+              color: ${theme.colors.primaryBluePressed};
               svg {
-                fill: ${theme.colors.updPrimaryBluePressed};
+                fill: ${theme.colors.primaryBluePressed};
               }
             }
           }
         }
         :disabled {
           > div {
-            color: ${theme.colors.updPrimaryDisabled};
+            color: ${theme.colors.primaryDisabled};
             svg {
-              fill: ${!$loading && theme.colors.updPrimaryDisabled};
+              fill: ${theme.colors.primaryDisabled};
             }
           }
         }
         :focus-visible {
-          outline: ${px(2)} solid ${theme.colors.updPrimaryLightFocused};
+          outline: ${px(2)} solid ${theme.colors.primaryLightFocused};
           > div {
-            color: ${theme.colors.updPrimary};
+            color: ${theme.colors.primary};
             svg {
-              fill: ${theme.colors.updPrimary};
+              fill: ${theme.colors.primary};
             }
           }
         }
@@ -164,30 +140,31 @@ const StyledRippleButton = styled.button<ButtonProps>`
     (fill === 'bordered' &&
       css`
         box-sizing: border-box;
-        border: ${px(1)} ${dashed ? 'dashed' : 'solid'} ${theme.colors.updPrimary};
+        border: ${px(1)} ${dashed ? 'dashed' : 'solid'}
+          ${dashed ? theme.colors.primaryDisabled : theme.colors.primary};
         background-color: transparent;
         > div {
           height: ${!$loading && '100%'};
-          color: ${theme.colors.updPrimary};
+          color: ${theme.colors.primary};
           svg {
-            fill: ${theme.colors.updPrimary};
+            fill: ${theme.colors.primary};
           }
         }
         :hover:enabled {
-          background-color: ${theme.colors.updPrimaryLight};
+          background-color: ${theme.colors.primaryLight};
         }
         :disabled {
           border: ${px(1)} ${dashed ? 'dashed' : 'solid'}
-            ${$loading ? theme.colors.updPrimary : theme.colors.updPrimaryDisabled};
+            ${$loading ? theme.colors.primary : theme.colors.primaryDisabled};
           > div {
-            color: ${theme.colors.updPrimaryDisabled};
+            color: ${theme.colors.primaryDisabled};
             svg {
-              fill: ${!$loading && theme.colors.updPrimaryDisabled};
+              fill: ${!$loading && theme.colors.primaryDisabled};
             }
           }
         }
         :focus-visible {
-          outline: ${px(2)} ${dashed ? 'dashed' : 'solid'} ${theme.colors.updPrimaryLightFocused};
+          outline: ${px(2)} ${dashed ? 'dashed' : 'solid'} ${theme.colors.primaryLightFocused};
         }
       `)}
 
@@ -196,18 +173,18 @@ const StyledRippleButton = styled.button<ButtonProps>`
       rate === 'icon' &&
       css`
         :hover:enabled {
-          background-color: ${theme.colors.updPrimaryLight};
+          background-color: ${theme.colors.primaryLight};
           :active {
             > div {
-              color: ${theme.colors.updPrimaryBluePressed};
+              color: ${theme.colors.primaryBluePressed};
               svg {
-                fill: ${theme.colors.updPrimaryBluePressed};
+                fill: ${theme.colors.primaryBluePressed};
               }
             }
           }
         }
         :focus-visible:enabled {
-          background-color: ${theme.colors.updPrimaryLightFocused};
+          background-color: ${theme.colors.primaryLightFocused};
           outline: none;
         }
       `) ||
@@ -216,55 +193,15 @@ const StyledRippleButton = styled.button<ButtonProps>`
       css`
         background-color: ${$loading && 'transparent'} !important;
       `)}
-
-  // TODO: for dev only
-  ${isDevShowFocus &&
-  css`
-    &:focus-visible {
-      outline: 2px solid red !important;
-    }
-  `}
 `;
 
 const Content = styled.div<ContentProps>`
   position: relative;
   z-index: 2;
-  border-radius: ${px(4)};
-  ${({ $loading }) => contentVisibleStyles(!$loading)};
-  ${({ icon }) =>
-    icon &&
-    css`
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    `}
-  }
-`;
-
-const spinnerStyle = (
-  $loading: boolean | undefined,
-  rate: 'default' | 'small' | 'icon' | undefined
-) =>
-  $loading
-    ? css`
-        position: relative;
-        z-index: 2;
-        opacity: 1;
-        order: 0;
-        margin-top: ${(rate === 'default' && px(5)) || (rate === 'small' && px(4))};
-      `
-    : css`
-        height: 0;
-        opacity: 0;
-        order: 1;
-      `;
-
-const AnimatedSpinnerGrey = styled(SpinnerGrey)<Pick<ButtonProps, '$loading' | 'rate'>>`
-  ${({ $loading, rate }) => spinnerStyle($loading, rate)}
-`;
-
-const AnimatedSpinnerBlue = styled(SpinnerBlue)<Pick<ButtonProps, '$loading' | 'rate'>>`
-  ${({ $loading, rate }) => spinnerStyle($loading, rate)}
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate3d(0, 0, ${px(1)}); // fix: z-index for Safari
 `;
 
 const Button = forwardRef(
@@ -294,20 +231,16 @@ const Button = forwardRef(
 
     const spinner = useMemo(
       () =>
-        (fill === 'solid' && rate === 'icon' && (
-          <AnimatedSpinnerBlue $loading={$loading} rate={rate} />
-        )) ||
-        (fill === 'solid' ? (
-          <AnimatedSpinnerGrey $loading={$loading} rate={rate} />
-        ) : (
-          <AnimatedSpinnerBlue $loading={$loading} rate={rate} />
-        )),
-      [fill, rate, $loading]
+        (fill === 'solid' && rate === 'icon' && <Spinner size="xs" />) ||
+        (fill === 'solid' ? <Spinner size="xs" $light /> : <Spinner size="xs" />),
+      [fill, rate]
     );
+
+    const isRippleOn = rippleOff !== true;
 
     return (
       <StyledRippleButton
-        {...addRippleTriggerProps(props)}
+        {...(isRippleOn ? addRippleTriggerProps(props) : props)}
         disabled={disabled || $loading}
         fill={fill}
         $loading={$loading}
@@ -317,15 +250,18 @@ const Button = forwardRef(
         ref={ref}
         {...props}
       >
-        <Content $loading={$loading} icon={icon}>
-          {icon}
-          {children}
-        </Content>
-        {spinner}
-        {rippleOff !== true && (
+        {$loading ? (
+          spinner
+        ) : (
+          <Content icon={icon} data-testid="content">
+            {icon}
+            {children}
+          </Content>
+        )}
+        {isRippleOn && (
           <Ripple
             {...rippleProps}
-            color={fill === 'solid' ? 'updPrimaryPressed' : 'updPrimaryLightPressed'}
+            color={fill === 'solid' ? 'primaryPressed' : 'primaryLightPressed'}
           />
         )}
       </StyledRippleButton>

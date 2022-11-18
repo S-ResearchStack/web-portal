@@ -1,22 +1,19 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import _uniqueId from 'lodash/uniqueId';
-import _throttle from 'lodash/throttle';
-import useUnmount from 'react-use/lib/useUnmount';
-import useEvent from 'react-use/lib/useEvent';
 
-import { TooltipID, TooltipProps } from './types';
-import TooltipContext from './TooltipContext';
+import { TooltipSubscribeListener, TooltipID, TooltipProps } from './types';
+import { TooltipListContext, TooltipItemContext } from './TooltipContext';
 
 interface TooltipProviderState {
   tooltipsMap: Record<TooltipID, TooltipProps>;
 }
 
 const TooltipProvider: FC<React.PropsWithChildren<object>> = ({ children }) => {
-  const lastPointRef = useRef<Record<TooltipID, [number, number]>>({});
-
   const stateRef = useRef<TooltipProviderState>({
     tooltipsMap: {},
   });
+
+  const changeEvents = useRef<Map<TooltipID, TooltipSubscribeListener>>(new Map());
 
   const [state, setState] = useState<TooltipProviderState>({
     tooltipsMap: {},
@@ -44,32 +41,28 @@ const TooltipProvider: FC<React.PropsWithChildren<object>> = ({ children }) => {
 
       return tooltipId;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state, setStateAndSetStateRef]
+    [setStateAndSetStateRef]
   );
 
   const destroy = useCallback(
     (tooltipId: TooltipID) => {
       const tooltipsMap = { ...stateRef.current.tooltipsMap };
-
       delete tooltipsMap[tooltipId];
-
       setStateAndSetStateRef({ tooltipsMap });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state, setStateAndSetStateRef]
+    [setStateAndSetStateRef]
   );
 
   const setProps = useCallback(
     (tooltipId: TooltipID, props: Partial<Omit<TooltipProps, 'id'>>) => {
       const tooltipsMap = { ...stateRef.current.tooltipsMap };
-
       tooltipsMap[tooltipId] = { ...tooltipsMap[tooltipId], ...props };
-
+      if (changeEvents.current.has(tooltipId)) {
+        changeEvents.current.get(tooltipId)?.(tooltipsMap[tooltipId]);
+      }
       setStateAndSetStateRef({ tooltipsMap });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state, setStateAndSetStateRef]
+    [setStateAndSetStateRef]
   );
 
   const getProps = useCallback(
@@ -77,40 +70,23 @@ const TooltipProvider: FC<React.PropsWithChildren<object>> = ({ children }) => {
     []
   );
 
-  const handleCheckTriggerPosition = useMemo(
-    () =>
-      _throttle(() => {
-        for (const tooltipId in stateRef.current.tooltipsMap) {
-          if ({}.hasOwnProperty.call(stateRef.current.tooltipsMap, tooltipId)) {
-            const tooltip = stateRef.current.tooltipsMap[tooltipId];
+  const subscribe = useCallback((tooltipId: TooltipID, cb: (tooltip: TooltipProps) => void) => {
+    changeEvents.current.set(tooltipId, cb);
+    return () => changeEvents.current.delete(tooltipId);
+  }, []);
 
-            if (tooltip.container && tooltip.show && tooltip.dynamic) {
-              const { top, left } = tooltip.container.getBoundingClientRect();
-              const lastPoint = lastPointRef.current[tooltipId];
-
-              if (!lastPoint || lastPoint[0] !== left || lastPoint[1] !== top) {
-                setProps(tooltipId, { show: false });
-                // lastPointRef.current[tooltipId] = [left, top]; // TODO clarify what is it and why do we need it
-                // setProps(tooltipId, { container: tooltip.container });
-              }
-            }
-          }
-        }
-      }, 10),
-    [setProps]
+  const tooltipItemCtxValue = useMemo(
+    () => ({ create, destroy, setProps, getProps, subscribe }),
+    [create, destroy, getProps, setProps, subscribe]
   );
 
-  useUnmount(() => handleCheckTriggerPosition.cancel());
-
-  useEvent('scroll', handleCheckTriggerPosition, document, true);
-  useEvent('resize', handleCheckTriggerPosition);
-
-  const value = useMemo(
-    () => ({ create, destroy, setProps, getProps, tooltipsMap: state.tooltipsMap }),
-    [create, state, destroy, setProps, getProps]
+  return (
+    <TooltipListContext.Provider value={state}>
+      <TooltipItemContext.Provider value={tooltipItemCtxValue}>
+        {children}
+      </TooltipItemContext.Provider>
+    </TooltipListContext.Provider>
   );
-
-  return <TooltipContext.Provider value={value}>{children}</TooltipContext.Provider>;
 };
 
 export default TooltipProvider;

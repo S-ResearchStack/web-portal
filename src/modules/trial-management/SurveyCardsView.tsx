@@ -1,13 +1,12 @@
 import React, { FC, useMemo, useRef, useState } from 'react';
 import useToggle from 'react-use/lib/useToggle';
-import styled, { css, keyframes } from 'styled-components';
-import spring, { toString } from 'css-spring';
+import styled from 'styled-components';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition, { CSSTransitionProps } from 'react-transition-group/CSSTransition';
 import _uniqueId from 'lodash/uniqueId';
 import _range from 'lodash/range';
 
-import { colors, px, typography } from 'src/styles';
+import { animation, colors, px, typography } from 'src/styles';
 import Button from 'src/common/components/Button';
 import SimpleGrid, {
   SimpleGridSchema,
@@ -23,11 +22,11 @@ import { SurveyListItem } from './surveyList.slice';
 const CARD_HEIGHT = 160;
 const CARD_SHADOW_SIZE = 4;
 const CARD_SHADOW_DOUBLE_SIZE = CARD_SHADOW_SIZE * 2;
-const CARD_COMPUTED_HEIGHT = CARD_HEIGHT + CARD_SHADOW_DOUBLE_SIZE;
 const ANIMATION_DURATION = 800;
 const FADE_CLASS_NAME = _uniqueId('fade');
-const COLLAPSE_CLASS_NAME = _uniqueId('collapse');
-const SPRING_CONFIG = { stiffness: 177.8, damping: 20, precision: 6 };
+
+const calculateCollapseHeight = (maxRowsCount: number) =>
+  (CARD_HEIGHT + GRID_GAP) * maxRowsCount - GRID_GAP + CARD_SHADOW_DOUBLE_SIZE;
 
 const CardsGridContainer = styled.div`
   margin-bottom: ${px(16)};
@@ -52,7 +51,7 @@ const SurveyCardsHead = styled.div`
 
 const SurveyCardsTitle = styled.h3`
   ${typography.bodySmallSemibold};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   padding: 0;
   margin: 0;
 `;
@@ -67,17 +66,16 @@ const SurveyCardsSwitchViewButton = styled(Button).attrs({
     display: flex;
     justify-content: end;
     ${typography.bodySmallSemibold};
-    color: ${colors.updPrimary};
+    color: ${colors.primary};
   }
 `;
 
 const SurveyCardsGrid = styled.div`
-  min-height: ${px(CARD_HEIGHT)};
+  min-height: ${px(calculateCollapseHeight(1))};
 `;
 
 const FadeContainer = styled(CSSTransition)`
-  animation-duration: ${ANIMATION_DURATION}ms;
-  animation-fill-mode: forwards;
+  transition: opacity ${ANIMATION_DURATION}ms ${animation.defaultTiming};
 
   &.${FADE_CLASS_NAME}-enter {
     opacity: 0;
@@ -85,9 +83,6 @@ const FadeContainer = styled(CSSTransition)`
 
   &.${FADE_CLASS_NAME}-enter-active {
     opacity: 1;
-    animation-name: ${keyframes`${toString(
-      spring({ opacity: 0 }, { opacity: 1 }, SPRING_CONFIG)
-    )}`};
   }
 
   &.${FADE_CLASS_NAME}-exit {
@@ -96,9 +91,6 @@ const FadeContainer = styled(CSSTransition)`
 
   &.${FADE_CLASS_NAME}-exit-active {
     opacity: 0;
-    animation-name: ${keyframes`${toString(
-      spring({ opacity: 1 }, { opacity: 0 }, SPRING_CONFIG)
-    )}`};
   }
 `;
 
@@ -120,78 +112,21 @@ const FadeAnimation: FC<FadeAnimationProps> = ({ in: inProp, children }) => {
   );
 };
 
-const calculateCollapseHeight = (maxRowsCount: number) =>
-  (CARD_HEIGHT + GRID_GAP) * maxRowsCount - GRID_GAP + CARD_SHADOW_DOUBLE_SIZE;
-
-const getStartCollapseStyles = () => ({ height: px(CARD_COMPUTED_HEIGHT) });
-
-const getEndCollapseStyles = (maxRowsCount: number) => ({
-  height: px(calculateCollapseHeight(maxRowsCount)),
-});
-
-// TODO: fix animation (probably due to size changes)
-const CollapseContainer = styled(CSSTransition)<{ $maxRowsCount: number }>`
-  animation-duration: ${ANIMATION_DURATION}ms;
-  animation-fill-mode: forwards;
+const CollapseContainer = styled.div<{ open: boolean; $maxRowsCount: number }>`
   overflow: hidden;
-  // see TODO: above. This causes shadow to be cut, but animation looks better
-  // margin: ${px(-CARD_SHADOW_SIZE)};
+  margin: ${px(-CARD_SHADOW_SIZE)};
   padding: ${px(CARD_SHADOW_SIZE)};
-  height: ${({ in: inProp, $maxRowsCount }) =>
-    inProp ? getEndCollapseStyles($maxRowsCount).height : getStartCollapseStyles().height};
-
-  &.${COLLAPSE_CLASS_NAME}-enter {
-    height: ${px(CARD_COMPUTED_HEIGHT)};
-  }
-
-  &.${COLLAPSE_CLASS_NAME}-enter-active {
-    ${({ $maxRowsCount }) => {
-      const start = getStartCollapseStyles();
-      const end = getEndCollapseStyles($maxRowsCount);
-
-      return css`
-        height: ${end.height};
-        animation-name: ${keyframes`${toString(spring(start, end, SPRING_CONFIG))}`};
-      `;
-    }};
-  }
-
-  &.${COLLAPSE_CLASS_NAME}-enter-done, &.${COLLAPSE_CLASS_NAME}-exit {
-    height: ${({ $maxRowsCount }) => px(calculateCollapseHeight($maxRowsCount))};
-  }
-
-  &.${COLLAPSE_CLASS_NAME}-exit-active {
-    ${({ $maxRowsCount }) => {
-      const start = getStartCollapseStyles();
-      const end = getEndCollapseStyles($maxRowsCount);
-
-      return css`
-        height: ${start.height};
-        animation-name: ${keyframes`${toString(spring(end, start, SPRING_CONFIG))}`};
-      `;
-    }};
-  }
-
-  &.${COLLAPSE_CLASS_NAME}-exit-done {
-    height: ${px(CARD_COMPUTED_HEIGHT)};
-  }
+  transition: height ${ANIMATION_DURATION}ms ${animation.defaultTiming};
+  height: ${({ open, $maxRowsCount }) => px(calculateCollapseHeight(open ? $maxRowsCount : 1))};
 `;
 
-type CollapseAnimationProps = React.PropsWithChildren<
-  Partial<CSSTransitionProps & { maxRowsCount: number }>
->;
+type CollapseAnimationProps = React.PropsWithChildren<{ open: boolean; maxRowsCount: number }>;
 
-const CollapseAnimation: FC<CollapseAnimationProps> = ({ in: inProp, maxRowsCount, children }) => {
+const CollapseAnimation: FC<CollapseAnimationProps> = ({ open, maxRowsCount, children }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <CollapseContainer
-      nodeRef={containerRef}
-      in={inProp}
-      classNames={COLLAPSE_CLASS_NAME}
-      $maxRowsCount={maxRowsCount}
-      timeout={ANIMATION_DURATION}
-    >
+    <CollapseContainer open={open} $maxRowsCount={maxRowsCount}>
       <div ref={containerRef}>{children}</div>
     </CollapseContainer>
   );
@@ -236,7 +171,7 @@ const SurveyCardsView: FC<SurveyCardsViewProps> = ({ title, list, isLoading }) =
         </SurveyCardsSwitchViewButton>
       </SurveyCardsHead>
       <SurveyCardsGrid>
-        <CollapseAnimation in={showAll} maxRowsCount={maxRowsCount}>
+        <CollapseAnimation open={showAll} maxRowsCount={maxRowsCount}>
           <SimpleGrid columns={columns} onChange={setGrid} verticalGap>
             {isLoading ? (
               loadingRow

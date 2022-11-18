@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 
 import { animation, colors, px } from 'src/styles';
 
-const lineLoaderAnimation = keyframes`
+export const lineLoaderAnimation = keyframes`
   0% {
     width: 0;
     transform: translateX(0%);
@@ -28,13 +28,13 @@ const lineLoaderAnimation = keyframes`
 
 export const LineLoaderRunner = styled.div`
   height: ${px(2)};
-  background: ${colors.updPrimary};
+  background: ${colors.primary};
 `;
 
 const LineLoaderContainer = styled.div`
   width: 100%;
   height: ${px(1)};
-  background: ${colors.updPrimaryDisabled};
+  background: ${colors.primaryDisabled};
   overflow: hidden;
 
   ${LineLoaderRunner} {
@@ -43,8 +43,8 @@ const LineLoaderContainer = styled.div`
 `;
 
 const LineLoader: FC<React.HTMLAttributes<HTMLDivElement>> = (props) => (
-  <LineLoaderContainer {...props}>
-    <LineLoaderRunner />
+  <LineLoaderContainer {...props} data-testid="line-loader">
+    <LineLoaderRunner data-testid="runner" />
   </LineLoaderContainer>
 );
 

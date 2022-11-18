@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback, useRef, useState } from 'react';
+import React, { useMemo, useEffect, useCallback, useRef, useState, useLayoutEffect } from 'react';
 import useMeasureDirty from 'react-use/lib/useMeasureDirty';
 
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ import Dropdown from 'src/common/components/Dropdown';
 import OverviewCard from 'src/modules/overview/OverviewCard';
 import Button from 'src/common/components/Button';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
-import ExportIcon from 'src/assets/icons/export.svg';
+import PlusIcon from 'src/assets/icons/plus_small.svg';
 import { downloadFile } from 'src/common/utils/file';
 import { useSelectedStudyId } from 'src/modules/studies/studies.slice';
 import { px, colors, typography } from 'src/styles';
@@ -34,8 +34,10 @@ import {
   dataFetchData,
   clear,
   setTable,
+  fetchColumns,
   dataLoadingSelector,
   tablesLoadingSelector,
+  tablesProjectIdSelector,
 } from './dataCollection.slice';
 import SqlQueryEditor from './SqlQueryEditor/SqlQueryEditor';
 
@@ -81,8 +83,8 @@ const ErrorContainer = styled.div`
   align-items: center;
   padding: ${px(10)} ${px(18)};
   ${typography.bodySmallRegular};
-  color: ${colors.updStatusErrorText};
-  background-color: ${colors.updStatusError10};
+  color: ${colors.statusErrorText};
+  background-color: ${colors.statusError10};
   border-radius: ${px(4)};
   margin-top: ${px(8)};
 `;
@@ -91,13 +93,8 @@ const ErrorIconContainer = styled.div`
   margin-right: ${px(16)};
 
   svg {
-    fill: ${colors.updStatusError};
+    fill: ${colors.statusError};
   }
-`;
-
-const ExportButton = styled(Button)`
-  width: ${px(164)};
-  height: ${px(40)};
 `;
 
 const DataCollection = () => {
@@ -109,14 +106,18 @@ const DataCollection = () => {
   const queryResult = useAppSelector(queryResultSelector);
   const isDataLoading = useAppSelector(dataLoadingSelector);
   const isTablesLoading = useAppSelector(tablesLoadingSelector);
+  const tablesProjectId = useAppSelector(tablesProjectIdSelector);
+
   const showSnackbar = useShowSnackbar();
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    studyId && dispatch(fetchTables(studyId));
-    dispatch(clear());
-  }, [studyId, dispatch]);
+    if (!isTablesLoading && studyId && tablesProjectId !== studyId) {
+      dispatch(clear());
+      dispatch(fetchTables(studyId));
+    }
+  }, [studyId, tablesProjectId, isTablesLoading, dispatch]);
 
   const executeQuery = useCallback(() => {
     studyId && dispatch(dataFetchData(studyId, query));
@@ -139,7 +140,7 @@ const DataCollection = () => {
 
   useEffect(() => {
     if (containerRef.current?.parentElement?.parentElement) {
-      // TODO: only for demo (colors.updBackground)
+      // TODO: only for demo (colors.background)
       containerRef.current.parentElement.parentElement.style.backgroundColor = '#F7F8FA';
     }
   }, []);
@@ -164,6 +165,8 @@ const DataCollection = () => {
       })) || [],
     [queryResult?.metadata, columnWidth]
   );
+
+  const actualOffset = offset || DEFAULT_PAGINATION_OFFSET;
 
   const tableComponent = queryResult ? (
     <TableStyled
@@ -196,12 +199,12 @@ const DataCollection = () => {
           ? {
               totalCount: queryResult?.totalCount || 0,
               pageSize,
-              currentPage: Math.ceil((offset || DEFAULT_PAGINATION_OFFSET) / pageSize) + 1,
-              onPageChange: (page: number, size: number) =>
+              offset: actualOffset,
+              onPageChange: (newOffset: number, size: number) =>
                 handleSetQuery(
                   updateQsByPagination(query, {
                     limit: size,
-                    offset: size === pageSize ? (page ? page - 1 : 0) * size : offset,
+                    offset: newOffset,
                   }),
                   true
                 ),
@@ -213,7 +216,8 @@ const DataCollection = () => {
     <ServiceScreenStyled type="empty" title="No data selected yet" />
   );
 
-  useEffect(() => {
+  // TODO: move to Table
+  useLayoutEffect(() => {
     if (queryResult?.metadata?.columns?.length) {
       const possibleCellSize =
         (cardParams.width - BASE_CARD_PADDING * 2) / queryResult.metadata.columns.length;
@@ -225,11 +229,23 @@ const DataCollection = () => {
     }
   }, [queryResult, cardParams]);
 
+  const isTableExist = tablesNames.some(({ label }) => tableName === label);
+  const tableColumnsUpdated = tableName && tablesColumnsMap.get(tableName)?.length;
+
+  useEffect(() => {
+    !tableColumnsUpdated &&
+      tableName &&
+      studyId &&
+      isTableExist &&
+      dispatch(fetchColumns(studyId, tableName));
+  }, [tableName, dispatch, studyId, isTableExist, tableColumnsUpdated]);
+
   return (
     <Container>
       <DropdownContainer>
         <Dropdown
           loading={isTablesLoading}
+          disabled={isTablesLoading || isDataLoading}
           items={tablesNames}
           activeKey={tableName || ''}
           onChange={(key) => studyId && dispatch(setTable(studyId, key))}
@@ -261,9 +277,11 @@ const DataCollection = () => {
         title="Query Results"
         action={
           queryResult && (
-            <ExportButton
-              icon={<ExportIcon />}
-              disabled={!queryResult?.data?.length}
+            <Button
+              rate="small"
+              width={164}
+              icon={<PlusIcon />}
+              disabled={!queryResult?.data?.length || isDataLoading || isTablesLoading}
               fill="bordered"
               onClick={() => {
                 const fileName = `${tableName}.csv`;
@@ -272,7 +290,7 @@ const DataCollection = () => {
               }}
             >
               Export .csv
-            </ExportButton>
+            </Button>
           )
         }
       >

@@ -8,8 +8,10 @@ import Indicator from 'src/common/components/Indicator';
 import { px, typography } from 'src/styles';
 
 const TimeWrapper = styled.div`
+  ${typography.bodySmallRegular};
   display: flex;
   align-items: center;
+  line-height: ${px(26)};
 `;
 
 const StyledIndicator = styled(Indicator)`

@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { forwardRef, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import _isNumber from 'lodash/isNumber';
 import _throttle from 'lodash/throttle';
 import useEvent from 'react-use/lib/useEvent';
@@ -8,13 +8,13 @@ import _sum from 'lodash/sum';
 
 import styled, { css } from 'styled-components';
 
-import { px } from 'src/styles';
+import { animation, colors, px, theme } from 'src/styles';
 import combineRefs from 'src/common/utils/combineRefs';
 import Pagination from 'src/common/components/Pagination';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 import { withCustomScrollBar } from 'src/common/components/CustomScrollbar';
 
-import { MIN_COLUMN_WIDTH, ROW_HEIGHT } from './constants';
+import { COLUMN_GAP, MIN_COLUMN_WIDTH, ROW_HEIGHT } from './constants';
 import HeadCell from './HeadCell';
 import { columnSizesToFr } from './utils';
 import { TableRowBase } from './RowRenderer';
@@ -44,12 +44,13 @@ export interface TableHeadProps {
 }
 
 export const TableHead = styled(TableRowBase)<TableHeadProps>`
+  background-color: ${colors.surface};
   ${({ sticky }) =>
     sticky &&
     css`
       position: sticky;
       top: 0;
-      z-index: 1;
+      z-index: 3;
     `}
 `;
 
@@ -71,6 +72,26 @@ const TablePagination = styled(Pagination)`
   margin-left: ${px(2)};
 `;
 
+const ColumnSelectionContainer = styled.div`
+  pointer-events: none;
+  position: absolute;
+  top: ${px(ROW_HEIGHT)};
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+`;
+
+const ColumnSelectionRow = styled.div`
+  display: grid;
+  column-gap: ${px(COLUMN_GAP)};
+`;
+
+const ColumnSelectionColumn = styled.div<{ highlight: boolean }>`
+  transition: background-color 0.3s ${animation.defaultTiming};
+  background: ${({ highlight }) => (highlight ? theme.colors.primary05 : 'transparent')};
+  height: 100%;
+`;
+
 const BaseTable = forwardRef(
   <T,>(
     {
@@ -85,6 +106,7 @@ const BaseTable = forwardRef(
       sort,
       disableActions,
       isLoading,
+      rows,
       ...props
     }: BaseTableProps<T>,
     ref: React.ForwardedRef<HTMLDivElement>
@@ -105,23 +127,26 @@ const BaseTable = forwardRef(
       return {};
     }, [bodyHeight]);
 
+    const [rowStyles, setRowStyles] = useState<React.CSSProperties>({});
+
     const setTableSizes = useCallback((sizes: ColumnsSizes) => {
       const computedSizes = columnSizesToFr(sizes).join(' ');
       const isContentOverflowing = _sum(sizes) > (scrollableRef.current?.offsetWidth ?? 0);
 
+      const styles = {
+        gridTemplateColumns: computedSizes,
+        width: isContentOverflowing ? 'max-content' : '100%',
+      };
+
+      setRowStyles(styles);
+
       if (headRef.current) {
-        headRef.current.style.gridTemplateColumns = computedSizes;
-        if (isContentOverflowing) {
-          headRef.current.style.width = 'max-content';
-        }
+        Object.assign(headRef.current.style, styles);
       }
 
       if (bodyRef.current?.children) {
         [].forEach.call(bodyRef.current.children, (element: HTMLDivElement) => {
-          element.style.gridTemplateColumns = computedSizes;
-          if (isContentOverflowing) {
-            element.style.width = 'max-content';
-          }
+          Object.assign(element.style, styles);
         });
       }
     }, []);
@@ -236,11 +261,23 @@ const BaseTable = forwardRef(
             })}
             {isLoading && <Loader />}
           </TableHead>
+          <ColumnSelectionContainer style={{ height: px(rows.length * ROW_HEIGHT) }}>
+            <ColumnSelectionRow style={rowStyles}>
+              {columns.map((c) => (
+                <ColumnSelectionColumn
+                  key={String(c.dataKey)}
+                  highlight={
+                    !!(sort?.sortings.find((s) => s?.column === c.dataKey) && sort?.isProcessing)
+                  }
+                />
+              ))}
+            </ColumnSelectionRow>
+          </ColumnSelectionContainer>
           <TableBody
             ref={bodyRef}
             style={{ ...bodyStyles, pointerEvents: sort?.isProcessing ? 'none' : 'auto' }}
           >
-            {children && children({ sort })}
+            {children && children({ sort, styles: rowStyles })}
           </TableBody>
         </TableScrollable>
         <TableFooter>

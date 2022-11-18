@@ -18,7 +18,7 @@ import Table, {
   RowKeyExtractor,
   SortCallback,
 } from 'src/common/components/Table';
-import { px } from 'src/styles';
+import { px, typography } from 'src/styles';
 import Indicator, { IndicatorProps } from 'src/common/components/Indicator';
 import * as dt from 'src/common/utils/datetime';
 import * as num from 'src/common/utils/number';
@@ -50,6 +50,7 @@ const ParticipantListContainer = styled(OverviewCard)`
 `;
 
 const LastSyncContainer = styled.div`
+  ${typography.bodyXSmallRegular};
   display: flex;
   align-items: center;
 `;
@@ -78,7 +79,7 @@ const LastSync: FC<React.PropsWithChildren<object>> = ({ children }) => (
 );
 
 const defaultFetchArgs: Pick<GetParticipantListParams, 'filter' | 'sort'> = {
-  filter: { page: 1, perPage: PAGINATION_LIMITS[0] },
+  filter: { offset: 0, perPage: PAGINATION_LIMITS[0] },
   sort: { column: 'email', direction: 'asc' },
 };
 
@@ -120,9 +121,15 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
   const [participantItemFetchArgs, setParticipantItemFetchArgs] =
     useState<GetOverviewSubjectParams | null>(null);
 
-  const participantItem = useOverviewSubject({
-    fetchArgs: !!participantItemFetchArgs && participantItemFetchArgs,
-  });
+  const participantItem = useOverviewSubject(
+    {
+      fetchArgs: !!participantItemFetchArgs && participantItemFetchArgs,
+    },
+    {
+      text: "Can't get participant data.",
+      showErrorIcon: true,
+    }
+  );
 
   const getRowKey: RowKeyExtractor<OverviewParticipantItem> = useCallback((row) => row.id, []);
 
@@ -169,9 +176,9 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
   ];
 
   const onPageChange: PaginationProps['onPageChange'] = useCallback(
-    (page, perPage) => {
+    (offset, perPage) => {
       if (studyId && participantListFetchArgs) {
-        participantList.fetch({ ...participantListFetchArgs, filter: { page, perPage } });
+        participantList.fetch({ ...participantListFetchArgs, filter: { offset, perPage } });
       }
     },
     [studyId, participantListFetchArgs, participantList]
@@ -225,13 +232,19 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
 
     if (participantItemFetchArgs && list.length) {
       const idx = list.findIndex((item) => item.id === participantItemFetchArgs?.id);
-      if (idx) {
-        list[idx] = { ...list[idx], isProcessing: true };
+      if (idx !== -1) {
+        list[idx] = { ...list[idx], isProcessing: participantItem.isLoading };
       }
     }
 
     return list;
-  }, [participantItemFetchArgs, participantList.data?.list, studyId, participantListPrevFetchArgs]);
+  }, [
+    participantItemFetchArgs,
+    participantList.data?.list,
+    studyId,
+    participantListPrevFetchArgs,
+    participantItem.isLoading,
+  ]);
 
   const renderTable = () => (
     <Table
@@ -257,7 +270,7 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
       }}
       pagination={{
         pageSize: participantListFetchArgs?.filter.perPage || defaultFetchArgs.filter.perPage,
-        currentPage: participantListFetchArgs?.filter.page || defaultFetchArgs.filter.page,
+        offset: participantListFetchArgs?.filter.offset || defaultFetchArgs.filter.offset,
         totalCount: participantList.data?.total || 0,
         onPageChange,
       }}

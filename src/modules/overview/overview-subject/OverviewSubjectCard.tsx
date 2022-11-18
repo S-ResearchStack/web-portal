@@ -19,13 +19,13 @@ const Content = styled.div`
 
 const Value = styled.span`
   ${typography.headingXXLargeSemibold};
-  color: ${colors.updPrimary};
+  color: ${colors.primary};
   margin-bottom: ${px(8)};
 `;
 
 const Measure = styled.span`
   ${typography.headingLargeSemibold};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   margin-top: ${px(12)};
 `;
 

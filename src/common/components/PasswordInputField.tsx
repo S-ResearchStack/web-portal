@@ -16,6 +16,10 @@ const StyledEndExtraButton = styled(IconButton)<{ selected: boolean; error?: boo
   position: relative;
   bottom: ${browser.isSafari ? px(43) : px(41)};
   left: calc(100% - ${px(ICON_BUTTON_WIDTH + RIGHT_PADDING)});
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 type EndExtraProps = {
@@ -30,7 +34,7 @@ export const EndExtra = ({ selected, onClick, color, disabled, error }: EndExtra
   <StyledEndExtraButton
     selected={selected}
     onClick={onClick}
-    icon={selected ? Visibility : VisibilityOff}
+    icon={selected ? VisibilityOff : Visibility}
     $size="s"
     color={color}
     disabled={disabled}
@@ -50,13 +54,13 @@ const PasswordInputField = ({
   const toggleChecked = () => setIsPasswordVisible(!isPasswordVisible);
 
   const endExtraColor = useMemo(() => {
-    let color = 'updTextSecondaryGray';
+    let color = 'primary';
     if (error) {
-      color = 'updStatusErrorText';
+      color = 'statusErrorText';
     } else if (disabled) {
       color = 'disabled';
     } else if (isPasswordVisible) {
-      color = 'updPrimary';
+      color = 'textSecondaryGray';
     }
     return color as SpecColorType;
   }, [error, disabled, isPasswordVisible]);

@@ -12,11 +12,12 @@ const StyledButton = styled.button<ButtonProps>`
   width: ${({ width }) => (width ? px(width) : '100%')};
   border: none;
   background-color: transparent;
-  color: ${colors.updPrimary};
+  color: ${colors.primary};
   cursor: pointer;
+  padding: 0;
 
   &:disabled {
-    color: ${colors.updTextPrimary};
+    color: ${colors.textPrimary};
     font-weight: 400;
     cursor: default;
   }

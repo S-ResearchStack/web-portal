@@ -43,7 +43,7 @@ const ActionButton = styled(Button)<{ visible: boolean }>`
 const Content = styled.div`
   ${componentWidth};
   height: ${px(603)};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,7 +123,7 @@ const StudyName = styled.div<{
 
 const StudyCounter = styled.div`
   ${typography.bodySmallRegular};
-  color: ${colors.updPrimary};
+  color: ${colors.primary};
 `;
 
 type Props = {

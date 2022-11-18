@@ -30,7 +30,7 @@ const mockData = _range(200).map(() => {
     max: value + Math.floor(Math.random() * 10 + 1),
     highlighted: Math.random() < 0.1,
     lastSync: randomDate(new Date(2022, 6, 1), new Date()).valueOf(),
-    color: name === 'female' ? 'secondaryTurquoise' : ('secondaryBlue' as SpecColorType),
+    color: name === 'female' ? 'secondaryViolet' : ('secondarySkyBlue' as SpecColorType),
   };
 });
 

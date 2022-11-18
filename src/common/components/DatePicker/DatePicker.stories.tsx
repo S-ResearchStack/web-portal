@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import styled from 'styled-components';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { px } from 'src/styles';
-import DatePicker from './DatePicker';
+import DatePicker from '.';
 
 export default {
   component: DatePicker,

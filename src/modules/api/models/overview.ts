@@ -29,7 +29,9 @@ export interface ParticipantListItemSqlRow {
   avg_hr_bpm: string;
   steps: string;
   last_synced: string;
-  avg_sleep_mins: string;
+  avg_sleep_mins?: string;
+  avg_bp_systolic?: string;
+  avg_bp_diastolic?: string;
 }
 
 export type ParticipantListSortDirection = 'asc' | 'desc';

@@ -13,9 +13,9 @@ const getChipsBgColorByType = (
 ): ((props: PropsWithTheme) => FlattenSimpleInterpolation) | undefined => {
   switch (props.type) {
     case 'success':
-      return colors.updStatusSuccess10;
+      return colors.statusSuccess10;
     case 'disabled':
-      return colors.updDisabled20;
+      return colors.disabled20;
     default:
       return undefined;
   }
@@ -25,9 +25,9 @@ const getChipsFontColorByType = (
 ): ((props: PropsWithTheme) => FlattenSimpleInterpolation) | undefined => {
   switch (props.type) {
     case 'success':
-      return colors.updStatusSuccessText;
+      return colors.statusSuccessText;
     case 'disabled':
-      return colors.updTextPrimary;
+      return colors.textPrimary;
     default:
       return undefined;
   }

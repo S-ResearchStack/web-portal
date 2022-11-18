@@ -36,7 +36,7 @@ const ControlsContainer = styled.div`
 `;
 
 const Text = styled.div`
-  ${typography.body2Medium14};
+  ${typography.bodyMediumRegular};
   height: 18px;
   width: 100%;
   text-align: center;

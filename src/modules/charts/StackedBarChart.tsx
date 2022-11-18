@@ -4,10 +4,10 @@ import _sumBy from 'lodash/sumBy';
 import _slice from 'lodash/slice';
 import styled from 'styled-components';
 
-import { typography, px, colors } from 'src/styles';
+import { typography, px, colors, theme } from 'src/styles';
 import Tooltip from 'src/common/components/Tooltip';
 import { XAxis, YAxis, Area } from './common-components';
-import { TooltipProps } from './common-helpers';
+import { TooltipProps, NoResponsesLabel, NO_RESPONSES_LABEL } from './common-helpers';
 
 const TooltipContent = styled.div`
   display: flex;
@@ -80,7 +80,11 @@ const StackedBarChart = ({
 
   const onAreaMouseEnter = useCallback(
     (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
-      const svgRect = d3.select(svgRef.current).node()?.getBoundingClientRect();
+      if (!svgRef.current) {
+        return;
+      }
+
+      const svgRect = svgRef.current.getBoundingClientRect();
       const areaId = getAreaKeyByIndex(index);
       const areaRect = (
         d3.select(svgRef.current).select(`#${areaId}`).node() as Element
@@ -100,14 +104,11 @@ const StackedBarChart = ({
       );
       const position =
         (svgRect && (areaRect.left + 200 > svgRect.left + svgRect.width ? 'l' : 'r')) || 'l';
-      const pointX =
-        position === 'r'
-          ? areaRect.left - 10 + areaRect.width / 2
-          : areaRect.right + 10 - areaRect.width / 2;
+      const pointX = areaRect.left - svgRect.left - 10 + areaRect.width / 2;
 
       setTooltipProps({
         content: tooltipContent,
-        point: [pointX, areaRect.top + TOOLTIP_MARGIN_TOP],
+        point: [pointX, areaRect.top - svgRect.top + TOOLTIP_MARGIN_TOP],
         position,
       });
     },
@@ -117,6 +118,8 @@ const StackedBarChart = ({
   const onAreaMouseLeave = useCallback(() => {
     setTooltipProps(null);
   }, []);
+
+  const isEmptyState = useMemo(() => data.every((d) => d.percentage === 0), [data]);
 
   return (
     <div className={className}>
@@ -140,14 +143,29 @@ const StackedBarChart = ({
             onMouseLeave={onAreaMouseLeave}
           />
         ))}
+        {isEmptyState && (
+          <rect x="0px" y="0px" width={width} height={height} fill={theme.colors.background} />
+        )}
+        {isEmptyState && (
+          <NoResponsesLabel
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            width={width}
+            height={height}
+          >
+            {NO_RESPONSES_LABEL}
+          </NoResponsesLabel>
+        )}
       </svg>
       <Tooltip
+        static
         content={tooltipProps?.content}
         point={tooltipProps?.point}
         show={!!tooltipProps}
         position={tooltipProps?.position}
         arrow
-        dynamic
       />
     </div>
   );

@@ -8,7 +8,7 @@ import { rootReducer, RootState } from './store';
 
 export const getStoreDecorator = (state: ConfigureStoreOptions<RootState>['preloadedState']) => {
   const store = configureStore({
-    reducer: rootReducer,
+    reducer: rootReducer(),
     preloadedState: state,
   });
 

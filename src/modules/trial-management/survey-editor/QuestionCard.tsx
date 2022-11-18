@@ -1,5 +1,4 @@
 import React, { ChangeEvent, ForwardedRef, forwardRef, useCallback } from 'react';
-
 import styled, { css } from 'styled-components';
 import _uniqueId from 'lodash/uniqueId';
 
@@ -7,12 +6,9 @@ import Checkbox from 'src/common/components/CheckBox';
 import Dropdown from 'src/common/components/Dropdown';
 import CheckboxCheckedIcon from 'src/assets/icons/checkbox_checked.svg';
 import CopyIcon from 'src/assets/icons/copy.svg';
-import DeleteIcon from 'src/assets/icons/delete.svg';
+import DeleteIcon from 'src/assets/icons/trash_can.svg';
 import RadioCheckedIcon from 'src/assets/icons/radio_checked.svg';
 import SliderIcon from 'src/assets/icons/slider.svg';
-import TextArea from 'src/modules/trial-management/common/TextArea';
-import QuestionCardScalableOptions from 'src/modules/trial-management/survey-editor/QuestionCardScalableOptions';
-import QuestionCardSelectableOptions from 'src/modules/trial-management/survey-editor/QuestionCardSelectableOptions';
 import {
   newId,
   QuestionItem,
@@ -22,6 +18,11 @@ import {
   SurveyQuestionErrors,
 } from 'src/modules/trial-management/survey-editor/surveyEditor.slice';
 import { colors, px, typography } from 'src/styles';
+import Button from 'src/common/components/Button';
+
+import TextArea from '../common/TextArea';
+import QuestionCardScalableOptions from './QuestionCardScalableOptions';
+import QuestionCardSelectableOptions from './QuestionCardSelectableOptions';
 
 const Container = styled.div`
   width: 100%;
@@ -30,15 +31,14 @@ const Container = styled.div`
 
 const QuestionNumber = styled.div`
   ${typography.headingXSmall};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
 `;
 
-const TitleTextField = styled(TextArea)<{ $error?: boolean }>`
+const TitleTextField = styled(TextArea)`
   max-height: ${px(80)};
   &::placeholder {
-    color: ${({ theme, $error }) => $error && theme.colors.updStatusErrorText};
+    color: ${({ theme, invalid }) => invalid && theme.colors.statusErrorText};
   }
-  background-color: ${({ theme, $error }) => $error && theme.colors.updStatusError10};
 `;
 
 const DescriptionTextField = styled(TextArea)`
@@ -59,24 +59,6 @@ const MainInformation = styled.div`
   margin-bottom: ${px(20)};
 `;
 
-// TODO: replace to common component
-const IconButton = styled.button`
-  width: ${px(24)};
-  height: ${px(24)};
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  outline: 0;
-
-  svg {
-    fill: ${colors.updPrimary};
-  }
-`;
-
 const Footer = styled.div`
   display: flex;
   align-items: flex-end;
@@ -92,7 +74,7 @@ const CardActions = styled.div`
   grid-template-columns: repeat(2, ${px(24)});
 `;
 
-const DeleteIconButton = styled(IconButton)<{ $visible?: boolean }>`
+const DeleteIconButton = styled(Button)<{ $visible?: boolean }>`
   ${({ $visible }) =>
     !$visible &&
     css`
@@ -216,7 +198,7 @@ const QuestionCard = forwardRef(
     };
 
     return (
-      <Container className={className} ref={ref}>
+      <Container className={className} ref={ref} data-id={question.id}>
         <QuestionNumber>Question {index + 1}</QuestionNumber>
         <MainInformation>
           <TitleContainer>
@@ -225,7 +207,7 @@ const QuestionCard = forwardRef(
               placeholder="Enter question*"
               value={question.title}
               onChange={handleTitleChange}
-              $error={errors?.title.empty}
+              invalid={errors?.title.empty}
             />
             <DescriptionTextField
               autoHeight
@@ -243,12 +225,14 @@ const QuestionCard = forwardRef(
             Mark as optional
           </Checkbox>
           <CardActions>
-            <DeleteIconButton onClick={handleQuestionRemove} $visible={isDeleteButtonVisible}>
-              <DeleteIcon />
-            </DeleteIconButton>
-            <IconButton onClick={handleQuestionCopy}>
-              <CopyIcon />
-            </IconButton>
+            <DeleteIconButton
+              onClick={handleQuestionRemove}
+              $visible={isDeleteButtonVisible}
+              fill="text"
+              icon={<DeleteIcon />}
+              rate="icon"
+            />
+            <Button onClick={handleQuestionCopy} fill="text" icon={<CopyIcon />} rate="icon" />
           </CardActions>
         </Footer>
       </Container>

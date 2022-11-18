@@ -43,8 +43,9 @@ const VirtualTable = <T,>({
       {...{ columns, getRowKey, disableActions, ...props }}
       ref={parentRef}
       bodyHeight={totalSize}
+      rows={rows}
     >
-      {({ sort }) =>
+      {({ sort, styles }) =>
         virtualItems.map(({ key, start, size, index: rowIdx }) => (
           <RowRenderer
             sort={sort}
@@ -55,6 +56,7 @@ const VirtualTable = <T,>({
             disabled={disableActions}
             onSelectRow={onSelectRow}
             style={{
+              ...styles,
               height: px(size),
               transform: `translateY(${px(start)})`,
             }}

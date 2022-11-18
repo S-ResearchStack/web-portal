@@ -17,7 +17,7 @@ const mockDotsData = _range(300).map(() => {
     age: Math.floor(Math.random() * 80) + 20,
     value: Math.floor(Math.random() * 40) + 50,
     lastSync: randomDate(new Date(2022, 6, 1), new Date()).valueOf(),
-    color: name === 'female' ? 'secondaryTurquoise' : ('secondaryBlue' as SpecColorType),
+    color: name === 'female' ? 'secondaryViolet' : ('secondarySkyBlue' as SpecColorType),
   };
 });
 
@@ -26,25 +26,25 @@ const mockLinesData = [
     name: 'male',
     age: 20,
     value: 65,
-    color: 'secondaryBlue' as SpecColorType,
+    color: 'secondarySkyBlue' as SpecColorType,
   },
   {
     name: 'male',
     age: 100,
     value: 80,
-    color: 'secondaryBlue' as SpecColorType,
+    color: 'secondarySkyBlue' as SpecColorType,
   },
   {
     name: 'female',
     age: 20,
     value: 69,
-    color: 'secondaryTurquoise' as SpecColorType,
+    color: 'secondaryViolet' as SpecColorType,
   },
   {
     name: 'female',
     age: 100,
     value: 75,
-    color: 'secondaryTurquoise' as SpecColorType,
+    color: 'secondaryViolet' as SpecColorType,
   },
 ];
 

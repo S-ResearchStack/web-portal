@@ -6,7 +6,11 @@ import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHa
 import { Path } from 'src/modules/navigation/store';
 import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { AppThunk, RootState } from 'src/modules/store';
-import { mockStudyIds, selectedStudyIdSelector } from 'src/modules/studies/studies.slice';
+import {
+  mockStudyIds,
+  selectedStudyIdSelector,
+  studiesSlice,
+} from 'src/modules/studies/studies.slice';
 import {
   getRoleForStudy,
   rolesListFromApi,
@@ -15,7 +19,7 @@ import {
   allowedRoleTypes,
 } from './userRole';
 
-const STORAGE_TOKEN_KEY = 'auth_token';
+export const STORAGE_TOKEN_KEY = 'auth_token';
 
 const isValidEmail = (v: string) => v.includes('samsung');
 
@@ -24,7 +28,7 @@ type AuthTokenPayload = {
   roles: string[];
 };
 
-const decodeAuthToken = (jwt: string): AuthTokenPayload => jwtDecode<AuthTokenPayload>(jwt);
+export const decodeAuthToken = (jwt: string): AuthTokenPayload => jwtDecode<AuthTokenPayload>(jwt);
 
 API.mock.provideEndpoints({
   signin({ email }) {
@@ -73,7 +77,7 @@ interface AuthState {
   authToken?: string;
 }
 
-const getStateFromAuthToken = (authToken: string) => {
+export const getStateFromAuthToken = (authToken: string) => {
   const { roles, email } = decodeAuthToken(authToken);
   return {
     authToken,
@@ -82,7 +86,7 @@ const getStateFromAuthToken = (authToken: string) => {
   };
 };
 
-const loadInitialStateFromStorage = (): AuthState => {
+export const loadInitialStateFromStorage = (): AuthState => {
   const authToken = localStorage.getItem(STORAGE_TOKEN_KEY) || undefined;
 
   return { authToken };
@@ -107,7 +111,7 @@ export const authSlice = createSlice({
 
 const { authSuccess, clearAuth } = authSlice.actions;
 
-const authTokenPayloadSelector = createSelector(
+export const authTokenPayloadSelector = createSelector(
   (state: RootState) => state.auth.authToken,
   (authToken) => {
     if (!authToken) {
@@ -136,6 +140,7 @@ const authTokenPayloadSelector = createSelector(
 export const signout = (): AppThunk => (dispatch) => {
   localStorage.removeItem(STORAGE_TOKEN_KEY);
   dispatch(clearAuth());
+  dispatch(studiesSlice.actions.reset());
 };
 
 export const signin =
@@ -198,7 +203,7 @@ export const activateAccount =
 
       await dispatch(signin({ email, password, rememberUser: true }));
     } catch (err) {
-      if (!applyDefaultApiErrorHandlers(err)) {
+      if (!applyDefaultApiErrorHandlers(err, dispatch)) {
         dispatch(showSnackbar({ text: 'Failed to activate account' }));
       }
     }

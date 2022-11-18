@@ -2,8 +2,8 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import styled from 'styled-components';
 
-import Card from './Card';
 import BackdropOverlay from './BackdropOverlay';
+import Card from './Card';
 
 const CentredBackdropOverlay = styled(BackdropOverlay)`
   display: flex;

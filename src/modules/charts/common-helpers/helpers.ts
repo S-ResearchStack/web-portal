@@ -14,6 +14,7 @@ import {
   CONTEXT_X_HEIGHT,
   SLIDER_SIZE,
   CONTEXT_Y_WIDTH,
+  NO_RESPONSES_LABEL,
 } from './constants';
 
 export const getRangeFromSelection = (v: [number, number]): number => v[1] - v[0];
@@ -119,46 +120,6 @@ export const brushYSelection = (svgRef: React.RefObject<SVGSVGElement>) => {
   return brushNode && ((d3.brushSelection(brushNode) as [number, number]) || null);
 };
 
-/* zoom */
-
-export const appendZoom = (
-  svgRef: React.RefObject<SVGSVGElement>,
-  focusWidth: number,
-  focusHeight: number,
-  zoom: d3.ZoomBehavior<SVGGElement, unknown>,
-  mouseDown: (event: MouseEvent) => void
-) => {
-  d3.select(svgRef.current).select('.focus').select('.zoom').remove();
-  d3.select(svgRef.current)
-    .select('.focus')
-    .append('rect')
-    .attr('transform', `translate(${MARGIN_FOCUS.left}, ${MARGIN_FOCUS.top})`)
-    .attr('class', 'zoom')
-    .attr('width', focusWidth)
-    .attr('height', focusHeight)
-    .on('mousedown', mouseDown)
-    .raise();
-  d3.select(svgRef.current).select<SVGGElement>('.focus').call(zoom);
-};
-
-export const getZoomBehavior = (
-  width: number,
-  height: number,
-  zoomed: (event: d3.D3ZoomEvent<SVGGElement, unknown>) => void
-) =>
-  d3
-    .zoom<SVGGElement, unknown>()
-    .filter((e) => e.type !== 'wheel')
-    .translateExtent([
-      [MARGIN_FOCUS.left, MARGIN_FOCUS.top],
-      [width - MARGIN_FOCUS.right, height - MARGIN_FOCUS.top],
-    ])
-    .extent([
-      [MARGIN_FOCUS.left, MARGIN_FOCUS.top],
-      [width - MARGIN_FOCUS.right, height - MARGIN_FOCUS.top],
-    ])
-    .on('zoom', zoomed);
-
 export const initBrushX = (
   focusHeight: number,
   focusWidth: number,
@@ -228,7 +189,11 @@ export const updateContext = (
 ) => {
   d3.select(svgRef.current).select('.context').remove();
 
-  const context = d3.select(svgRef.current).append('g').attr('class', 'context');
+  const context = d3
+    .select(svgRef.current)
+    .append('g')
+    .attr('class', 'context')
+    .attr('display', 'none');
 
   const bX = context.append('g').attr('class', 'brushX').call(brushX);
 
@@ -306,3 +271,11 @@ export type TooltipProps = {
   point: [number, number];
   position: TooltipPosition;
 } | null;
+
+export const getEmptyStateData = (color: string) => ({
+  value: 1,
+  color,
+  total: 1,
+  count: 1,
+  name: NO_RESPONSES_LABEL,
+});

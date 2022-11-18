@@ -1,6 +1,8 @@
-import React, { FC, useCallback, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _omit from 'lodash/omit';
+import { useFloating, useDismiss, useInteractions } from '@floating-ui/react-dom-interactions';
+import { autoUpdate } from '@floating-ui/react-dom';
 
 import { colors, px, typography } from 'src/styles';
 import { TooltipHorizontalPaddings, TooltipPosition, TooltipProps } from './types';
@@ -115,7 +117,7 @@ const TooltipArrow = styled.div.attrs<TooltipArrowProps>(({ $position }) => ({
   height: 0;
   border-left: ${px(ARROW_H)} solid transparent;
   border-right: ${px(ARROW_H)} solid transparent;
-  border-top: ${px(ARROW_H)} solid ${colors.updOnSurface};
+  border-top: ${px(ARROW_H)} solid ${colors.onSurface};
 `;
 
 const getPadding = (padding?: TooltipHorizontalPaddings) => {
@@ -131,14 +133,14 @@ const getPadding = (padding?: TooltipHorizontalPaddings) => {
 
 const TooltipContainer = styled.div<{ $show?: boolean; $padding?: TooltipHorizontalPaddings }>`
   ${typography.bodyXSmallSemibold};
-  position: absolute;
   pointer-events: none;
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   padding: ${px(8)} ${({ $padding }) => px(getPadding($padding))};
-  background-color: ${colors.updOnSurface};
+  background-color: ${colors.onSurface};
   color: ${colors.surface} !important;
   border-radius: ${px(4)};
   z-index: 1002;
+  width: max-content;
 
   * {
     color: ${colors.surface};
@@ -158,28 +160,47 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
   horizontalPaddings,
   ...props
 }) => {
-  const tooltipRef = useRef<HTMLDivElement | null>();
-
   const [isMounted, setMounted] = useState<boolean>(false);
 
   const coords = [0, 0];
 
-  if (isMounted && tooltipRef.current && (point || container)) {
+  const floating = useFloating<HTMLElement>({
+    placement: 'top-start',
+    open: show,
+    strategy: props.static ? 'absolute' : 'fixed',
+    whileElementsMounted:
+      show && !props.static
+        ? (reference, fltng, update) =>
+            autoUpdate(reference, fltng, update, {
+              animationFrame: true,
+            })
+        : undefined,
+  });
+
+  const interactions = useInteractions([useDismiss(floating.context)]);
+
+  if (isMounted && floating.refs.floating.current && (point || container)) {
     const ah = ARROW_H;
     const gs = GRID_SIZE;
 
     let pointsRect: Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+    const { width: tW, height: tH } = floating.refs.floating.current.getBoundingClientRect();
 
     if (point) {
       pointsRect = { left: point[0], top: point[1], width: 0, height: 0 };
     } else if (container) {
-      pointsRect = container.getBoundingClientRect();
+      const contRect = container.getBoundingClientRect();
+      pointsRect = {
+        width: contRect.width,
+        height: contRect.height,
+        left: floating.x ? floating.x : 0,
+        top: floating.y ? floating.y + tH : 0,
+      };
     } else {
       pointsRect = { left: 0, top: 0, width: 0, height: 0 };
     }
 
     const { left: cX, top: cY, width: cW, height: cH } = pointsRect;
-    const { width: tW, height: tH } = tooltipRef.current.getBoundingClientRect();
 
     switch (position || DEFAULT_POSITION) {
       case 'tl':
@@ -270,25 +291,30 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
   const setRefAndSetMounted = useCallback(
     (ref: HTMLDivElement | null) => {
       setMounted(true);
-      tooltipRef.current = ref;
+      floating.floating(ref);
     },
-    [setMounted]
+    [floating]
   );
 
-  const containerStyles: Partial<React.CSSProperties> = {
-    ...(styles || {}),
-    left: px(coords[0]),
-    top: px(coords[1]),
-  };
+  useEffect(() => {
+    floating.reference(container || null);
+  }, [container, floating]);
 
   return (
     <TooltipContainer
       {..._omit(props, ['onShow', 'onHide'])}
-      ref={setRefAndSetMounted}
       id={id}
       $show={show}
-      style={containerStyles}
       $padding={horizontalPaddings}
+      {...interactions.getFloatingProps({
+        ref: setRefAndSetMounted,
+        style: {
+          ...(styles || {}),
+          position: floating.strategy,
+          left: px(coords[0]),
+          top: px(coords[1]),
+        },
+      })}
     >
       {arrow && <TooltipArrow $position={position} />}
       {content}

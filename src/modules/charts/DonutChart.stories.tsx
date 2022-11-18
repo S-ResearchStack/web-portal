@@ -14,14 +14,14 @@ const Template: ComponentStory<typeof DonutChart> = (args) => <DonutChart {...ar
 const data = [
   {
     value: 33,
-    color: 'secondaryTurquoise' as SpecColorType,
+    color: 'secondaryViolet' as SpecColorType,
     name: 'male',
     count: 20,
     total: 120,
   },
   {
     value: 27,
-    color: 'secondaryBlue' as SpecColorType,
+    color: 'secondarySkyBlue' as SpecColorType,
     name: 'female',
     count: 50,
     total: 120,

@@ -11,8 +11,15 @@ export type IndicatorProps = {
 
 const getSize = (size: 's' | 'm' | undefined): number => (size === 'm' ? 12 : 8);
 
+const colorMap = {
+  success: colors.statusSuccess,
+  warning: colors.statusWarning,
+  error: colors.statusError,
+  info: colors.primary,
+};
+
 const StyledIndicator = styled.div<IndicatorProps>`
-  background-color: ${({ color }) => colors[color]};
+  background-color: ${({ color }) => colorMap[color]};
   border: none;
   border-radius: 50%;
   height: ${({ size }) => px(getSize(size))};

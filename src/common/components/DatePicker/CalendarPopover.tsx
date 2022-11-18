@@ -14,12 +14,15 @@ const Container = styled.div`
   width: ${px(312)};
   height: ${px(336)};
   padding: ${px(24)};
-  background: ${colors.updBackgroundSurface};
+  background: ${colors.backgroundSurface};
   border-radius: ${px(4)};
   box-shadow: ${px(0)} ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   z-index: 1;
+  :hover {
+    cursor: default;
+  }
 `;
 
 const NavigationHeader = styled.div`
@@ -28,7 +31,7 @@ const NavigationHeader = styled.div`
   align-items: center;
 
   svg {
-    fill: ${colors.updTextPrimary};
+    fill: ${colors.textPrimary};
   }
 `;
 
@@ -51,6 +54,7 @@ const ControlButtonContainer = styled.button<ControlButtonProps>`
 
   &:enabled:hover {
     background-color: ${colors.black08};
+    cursor: pointer;
   }
 
   svg {
@@ -80,7 +84,7 @@ const ControlButton: FC<ControlButtonProps> = ({ children, disabled, ...props })
     HTMLButtonElement,
     ControlButtonProps
   >({
-    color: 'updPrimary',
+    color: 'primary',
   });
 
   useEffect(() => {
@@ -102,7 +106,7 @@ const NavigationButton = styled(ControlButton)`
 `;
 
 const HeaderText = styled.div`
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   ${typography.bodyMediumSemibold};
 `;
 
@@ -126,7 +130,7 @@ const CalendarItem = styled.div`
 
 const WeekdayItem = styled(CalendarItem)`
   ${typography.bodyXSmallRegular};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
 `;
 
 const DateItem = styled(CalendarItem)<{
@@ -137,14 +141,15 @@ const DateItem = styled(CalendarItem)<{
   ${typography.bodyMediumRegular};
   border-radius: ${px(2)};
   color: ${({ theme, $isSelected, $isDisabled, $isOtherMonth }) =>
-    ($isSelected && theme.colors.updPrimaryWhite) ||
-    ($isDisabled && theme.colors.updDisabled) ||
-    ($isOtherMonth && theme.colors.updTextSecondaryGray) ||
-    theme.colors.updTextPrimary};
-  background-color: ${({ theme, $isSelected }) => $isSelected && theme.colors.updPrimary};
+    ($isSelected && theme.colors.primaryWhite) ||
+    ($isDisabled && theme.colors.disabled) ||
+    ($isOtherMonth && theme.colors.textSecondaryGray) ||
+    theme.colors.textPrimary};
+  background-color: ${({ theme, $isSelected }) => $isSelected && theme.colors.primary};
   &:hover {
     background-color: ${({ theme, $isSelected, $isDisabled }) =>
-      !$isSelected && !$isDisabled && theme.colors.updPrimaryLight};
+      !$isSelected && !$isDisabled && theme.colors.primaryLight};
+    cursor: ${({ $isDisabled }) => !$isDisabled && 'pointer'};
   }
 `;
 

@@ -37,7 +37,7 @@ const Icon = styled.div`
 
 const Child = styled.div<{ disabled?: boolean }>`
   ${typography.bodySmallRegular};
-  color: ${({ disabled }) => (disabled ? colors.updTextDisabled : colors.updTextPrimary)};
+  color: ${({ disabled }) => (disabled ? colors.textDisabled : colors.textPrimary)};
   margin-top: ${px(9.5)};
   transition: color 300ms ${animation.defaultTiming};
 `;
@@ -56,7 +56,6 @@ const CheckboxContainer = styled.div<CheckboxProps>`
       outline: 2px solid ${colors.primary30} !important;
     }
   `}
-
   ${Icon} > svg {
     > :nth-child(1) {
       transition: stroke 300ms ${animation.defaultTiming}, fill 300ms ${animation.defaultTiming};
@@ -65,48 +64,54 @@ const CheckboxContainer = styled.div<CheckboxProps>`
         if (disabled) {
           if (checked)
             return css`
-              fill: ${colors.updDisabled};
+              fill: ${colors.disabled};
             `;
           return css`
-            stroke: ${colors.updDisabled};
-            fill: ${colors.updDisabled20};
+            stroke: ${colors.disabled};
+            fill: ${colors.disabled20};
           `;
         }
 
         if (checked)
           return css`
-            fill: ${colors.updPrimary};
+            fill: ${colors.primary};
           `;
         return css`
-          stroke: ${colors.updPrimaryDisabled};
-          fill: ${colors.updSurface};
+          stroke: ${colors.primaryDisabled};
+          fill: ${colors.surface};
         `;
       }};
     }
   }
 
-  &:hover ${Icon} > svg {
-    > :nth-child(1) {
-      ${({ checked, disabled }) => {
-        if (disabled) {
+  &:hover {
+    > ${Label} {
+      cursor: ${({ disabled }) => !disabled && 'pointer'};
+    }
+
+    ${Icon} > svg {
+      > :nth-child(1) {
+        ${({ checked, disabled }) => {
+          if (disabled) {
+            if (checked)
+              return css`
+                fill: ${colors.disabled};
+              `;
+            return css`
+              stroke: ${colors.disabled};
+            `;
+          }
+
           if (checked)
             return css`
-              fill: ${colors.updDisabled};
+              fill: ${colors.primaryHovered};
             `;
           return css`
-            stroke: ${colors.updDisabled};
+            fill: ${colors.primary10};
+            stroke: ${colors.primaryDisabled};
           `;
-        }
-
-        if (checked)
-          return css`
-            fill: ${colors.updPrimaryHovered};
-          `;
-        return css`
-          fill: ${colors.updPrimary10};
-          stroke: ${colors.updPrimaryDisabled};
-        `;
-      }}
+        }}
+      }
     }
   }
 `;

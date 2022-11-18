@@ -22,6 +22,7 @@ type Props = {
   hoverDisabled?: boolean;
   onClick?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, d: DotDataItem) => void;
   onMouseEnter?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, d: DotDataItem) => void;
+  onMouseLeave?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, d: DotDataItem) => void;
 };
 
 const Dot: React.FC<Props> = ({
@@ -35,14 +36,15 @@ const Dot: React.FC<Props> = ({
   hoverDisabled,
   onClick,
   onMouseEnter,
+  onMouseLeave,
 }) => {
   if (!data || !xScale(data.x) || !yScale(data.y)) {
     return null;
   }
 
   const clickOrMouseEnterEnabled = useMemo(
-    () => (!!onClick || !!onMouseEnter) && !hoverDisabled,
-    [hoverDisabled, onClick, onMouseEnter]
+    () => (!!onClick || !!onMouseEnter) && !hoverDisabled && fillOpacity === 1,
+    [fillOpacity, hoverDisabled, onClick, onMouseEnter]
   );
 
   return (
@@ -55,8 +57,9 @@ const Dot: React.FC<Props> = ({
       fillOpacity={fillOpacity}
       pointerEvents={clickOrMouseEnterEnabled ? 'all' : 'none'}
       cursor={clickOrMouseEnterEnabled ? 'pointer' : 'default'}
-      onClick={(event) => onClick?.(event, data)}
-      onMouseEnter={(event) => onMouseEnter?.(event, { ...data, id })}
+      onClick={(event) => clickOrMouseEnterEnabled && onClick?.(event, data)}
+      onMouseEnter={(event) => clickOrMouseEnterEnabled && onMouseEnter?.(event, { ...data, id })}
+      onMouseLeave={(event) => clickOrMouseEnterEnabled && onMouseLeave?.(event, { ...data, id })}
     />
   );
 };

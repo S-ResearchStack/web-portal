@@ -48,7 +48,7 @@ const ToggleContainer = styled.div`
         width: ${px(36)};
         height: ${px(20)};
         border-radius: ${px(10)};
-        background-color: ${colors.updDisabled};
+        background-color: ${colors.disabled};
         transition: background-color 300ms ${ANIMATION_FN};
       }
 
@@ -56,16 +56,20 @@ const ToggleContainer = styled.div`
         width: ${px(16)};
         height: ${px(16)};
         border-radius: ${px(8)};
-        background-color: ${colors.updBackgroundOnPrimary};
+        background-color: ${colors.backgroundOnPrimary};
         left: ${px(2)};
       }
 
       > span {
         ${typography.bodySmallRegular};
-        color: ${colors.updTextPrimary};
+        color: ${colors.textPrimary};
         margin-left: ${px(50)};
         transition: color 300ms ${ANIMATION_FN};
       }
+    }
+
+    &:enabled + label:hover {
+      cursor: pointer;
     }
 
     &:not(:checked):not(:disabled) + label:hover {
@@ -77,7 +81,7 @@ const ToggleContainer = styled.div`
 
     &:checked + label {
       &:before {
-        background-color: ${colors.updPrimary};
+        background-color: ${colors.primary};
       }
 
       &:after {
@@ -87,7 +91,7 @@ const ToggleContainer = styled.div`
 
       &:hover {
         &:before {
-          background-color: ${colors.updPrimaryHovered};
+          background-color: ${colors.primaryHovered};
         }
       }
     }
@@ -95,25 +99,25 @@ const ToggleContainer = styled.div`
     &:disabled {
       & + label {
         &:before {
-          background-color: ${colors.updDisabled};
+          background-color: ${colors.disabled};
         }
 
         &:after {
-          background-color: ${colors.updOnDisabled};
+          background-color: ${colors.onDisabled};
         }
 
         > span {
-          color: ${colors.updTextDisabled};
+          color: ${colors.textDisabled};
         }
       }
 
       &:checked + label {
         &:before {
-          background-color: ${colors.updPrimaryDisabled};
+          background-color: ${colors.primaryDisabled};
         }
 
         &:after {
-          background-color: ${colors.updBackgroundOnPrimary};
+          background-color: ${colors.backgroundOnPrimary};
         }
       }
     }
@@ -126,7 +130,9 @@ const Toggle: FC<ToggleProps> = ({ className, label, ...props }) => {
   return (
     <ToggleContainer className={className}>
       <input {...props} id={id} type="checkbox" />
-      <label htmlFor={id}>{label && <span>{label}</span>}</label>
+      <label data-testid="label" htmlFor={id}>
+        {label && <span>{label}</span>}
+      </label>
     </ToggleContainer>
   );
 };

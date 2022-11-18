@@ -50,18 +50,18 @@ const LogosWrapper = styled.div`
   align-items: flex-start;
   height: ${px(127)};
   width: 100%;
-  color: ${colors.textSecondary};
-  ${typography.bodySmallRegular};
   margin: ${px(8)} 0 ${px(42)};
 `;
 
 const StyledTextHeading = styled.div`
-  color: ${colors.updTextPrimaryDark};
+  ${typography.bodySmallRegular};
+  color: ${colors.textPrimaryDark};
   height: ${px(42)};
 `;
 
 const StyledText = styled.div`
-  color: ${colors.updTextSecondaryGray};
+  ${typography.bodySmallRegular};
+  color: ${colors.textSecondaryGray};
   line-height: ${px(25)};
 `;
 
@@ -94,7 +94,7 @@ const avatarColors: Array<AvatarInfo> = [
   { color: 'secondarySkyblue' },
   { color: 'secondaryViolet' },
   { color: 'secondaryTangerine' },
-  { color: 'updSecondaryGreen' },
+  { color: 'secondaryGreen' },
   { color: 'secondaryRed' },
 ];
 
@@ -128,7 +128,7 @@ const CreateStudyScreen: React.FC = () => {
 
         history.push(`${Path.StudySettings}?${NEW_STUDY_QUERY_PARAM_NAME}=true`);
       } catch (e) {
-        applyDefaultApiErrorHandlers(e);
+        applyDefaultApiErrorHandlers(e, dispatch);
         setLoading(false);
       }
     }

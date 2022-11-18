@@ -9,10 +9,13 @@
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "sourceMap": true,
     "strict": true,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["dom", "esnext"]
+  },
+  "exclude": ["node_modules"]
 }

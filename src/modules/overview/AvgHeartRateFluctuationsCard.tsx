@@ -12,7 +12,7 @@ import { useAvgHeartRateFluctuationsData } from './overview.slice';
 
 const ResponsiveContainerStyled = styled(ResponsiveContainer)``;
 
-const colors: SpecColorType[] = ['secondaryNavy', 'secondaryPurple'];
+const colors: SpecColorType[] = ['secondaryViolet', 'secondaryGreen'];
 
 const MARGIN = { top: 5, right: 0, bottom: 32, left: 32 };
 

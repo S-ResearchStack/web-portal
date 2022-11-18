@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useTheme } from 'styled-components';
 import * as d3 from 'd3';
 import _isEqual from 'lodash/isEqual';
@@ -54,7 +54,9 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
   const svgRef = useRef<SVGSVGElement>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const allowTooltipUpdateRef = useRef(false);
+  const lastTooltipProps = useRef<TooltipProps>(null);
+  const lastEnteredDotId = useRef<string>('');
   const theme = useTheme();
 
   const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
@@ -82,6 +84,7 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
 
     return [Math.floor(minAge / 10) * 10, Math.ceil(maxAge / 10) * 10];
   }, [dots]);
+
   const yStartDomain = useMemo(() => {
     const minValue = d3.min(dots, (d) => +d.value) || 0;
     const maxValue = d3.max(dots, (d) => +d.value) || 0;
@@ -112,10 +115,63 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
     [selectedYDomain, height]
   );
 
+  const calculateTooltipPoint = (
+    svgRect: DOMRect,
+    dotRect: DOMRect,
+    position: ReturnType<typeof getTooltipPosition>
+  ): [number, number] => {
+    switch (position) {
+      case 'b':
+        return [
+          dotRect.x - svgRect.left + dotRect.width / 2,
+          dotRect.y - svgRect.top + dotRect.height,
+        ];
+
+      case 't':
+        return [dotRect.x - svgRect.left + dotRect.width / 2, dotRect.y - svgRect.top];
+
+      case 'l':
+        return [dotRect.x - svgRect.left, dotRect.y - svgRect.top + dotRect.height / 2];
+
+      case 'r':
+        return [
+          dotRect.x - svgRect.left + dotRect.width,
+          dotRect.y - svgRect.top + dotRect.height / 2,
+        ];
+
+      default:
+        return [0, 0];
+    }
+  };
+
   const updateXDomain = useCallback(
     (newDomain: number[]) => {
       if (!_isEqual(newDomain, selectedXDomain)) {
         setSelectedXDomain(newDomain);
+        if (
+          allowTooltipUpdateRef.current &&
+          lastEnteredDotId.current &&
+          lastTooltipProps.current &&
+          svgRef.current
+        ) {
+          const svgRect = svgRef.current.getBoundingClientRect();
+          const dotNode = d3
+            .select(svgRef.current)
+            .select<Element>(`#${lastEnteredDotId.current}`)
+            .node()
+            ?.getBoundingClientRect();
+
+          if (dotNode) {
+            setTooltipProps({
+              ...lastTooltipProps.current,
+              point: calculateTooltipPoint(
+                svgRect,
+                dotNode,
+                lastTooltipProps.current.position as ReturnType<typeof getTooltipPosition>
+              ),
+            });
+          }
+        }
       }
     },
     [selectedXDomain]
@@ -132,7 +188,13 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
 
   const onDotMouseEnter = useCallback(
     (event: React.MouseEvent<SVGPathElement, MouseEvent>, d: DotDataItem) => {
-      const svgRect = d3.select(svgRef.current).node()?.getBoundingClientRect();
+      if (!svgRef.current) {
+        return;
+      }
+
+      allowTooltipUpdateRef.current = true;
+
+      const svgRect = svgRef.current.getBoundingClientRect();
       const dotNode = d3
         .select(svgRef.current)
         .select<Element>(`#${d.id}`)
@@ -152,16 +214,22 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
         </TooltipContent>
       );
 
-      setTooltipProps({
+      const position = getTooltipPosition(event.pageX, event.pageY, svgRect);
+
+      const tProps = {
         content: tooltipContent,
         point: dotNode
-          ? [dotNode.x + dotNode.width / 2, dotNode.y + dotNode.height / 2]
-          : [event.pageX, event.pageY],
-        position: getTooltipPosition(event.pageX, event.pageY, svgRect),
-      });
+          ? calculateTooltipPoint(svgRect, dotNode, position)
+          : [event.pageX - svgRect.left, event.pageY - svgRect.top],
+        position,
+      } as TooltipProps;
+
+      setTooltipProps(tProps);
+      lastTooltipProps.current = tProps;
 
       if (d.id) {
         setEnteredDotId(d.id);
+        lastEnteredDotId.current = d.id;
       }
     },
     [linesData]
@@ -170,7 +238,14 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
   const resetSelectedDot = useCallback(() => {
     setTooltipProps(null);
     setEnteredDotId('');
+    lastEnteredDotId.current = '';
+    lastTooltipProps.current = null;
   }, []);
+
+  const omDotMouseLeave = useCallback(() => {
+    allowTooltipUpdateRef.current = false;
+    resetSelectedDot();
+  }, [resetSelectedDot]);
 
   const getDotOpacity = useCallback(
     (d: DotItem, dotId: string) => {
@@ -246,19 +321,22 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
   );
 
   const k = useMemo(() => {
-    const kX =
-      (xScale.domain()[1] - xScale.domain()[0]) /
-      (xScaleSelected.domain()[1] - xScaleSelected.domain()[0]);
-    const kY =
-      (yScale.domain()[0] - yScale.domain()[1]) /
-      (yScaleSelected.domain()[0] - yScaleSelected.domain()[1]);
+    const xDomain = xScale.domain();
+    const xSelectedDomain = xScaleSelected.domain();
+    const yDomain = yScale.domain();
+    const ySelectedDomain = yScaleSelected.domain();
+    const xSelectedDomainSize = xSelectedDomain[1] - xSelectedDomain[0];
+    const ySelectedDomainSize = ySelectedDomain[0] - ySelectedDomain[1];
+
+    const kX = xSelectedDomainSize ? (xDomain[1] - xDomain[0]) / xSelectedDomainSize : 1;
+    const kY = ySelectedDomainSize ? (yDomain[0] - yDomain[1]) / ySelectedDomainSize : 1;
 
     return Math.max(kX, kY);
   }, [xScale, xScaleSelected, yScale, yScaleSelected]);
 
   const dotItems = useMemo(
     () => (
-      <g className={DOTS_CONTAINER_CLASS_NAME} key={Math.random()}>
+      <g className={DOTS_CONTAINER_CLASS_NAME} key="dots">
         {dots.map((d, index) => (
           <Dot
             key={getDotId(index)}
@@ -271,6 +349,7 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
             data={{ x: d.age, y: d.value, lastSync: d.lastSync, name: d.name }}
             hoverDisabled={tooltipDisabled}
             onMouseEnter={onDotMouseEnter}
+            onMouseLeave={omDotMouseLeave}
           />
         ))}
       </g>
@@ -279,6 +358,7 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
       dots,
       getDotOpacity,
       k,
+      omDotMouseLeave,
       onDotMouseEnter,
       theme.colors,
       tooltipDisabled,
@@ -286,12 +366,6 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
       yScaleSelected,
     ]
   );
-
-  useEffect(() => {
-    d3.select(svgRef.current)
-      .select<SVGGElement>('.focus')
-      .on('mouseenter', () => tooltipProps && resetSelectedDot());
-  });
 
   if (!width || !height || !dots.length || !lines.length) {
     return null;
@@ -303,7 +377,6 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
         svgRef={svgRef}
         width={width}
         height={height}
-        marginFocus={MARGIN_FOCUS}
         showZoomControls={false}
         x={xScaleSelected}
         y={yScaleSelected}
@@ -316,14 +389,16 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
         updateYDomain={updateYDomain}
         setChartTooltipDisabled={setTooltipDisabled}
       />
-      <Tooltip
-        content={tooltipProps?.content}
-        point={tooltipProps?.point}
-        show={!!tooltipProps && !tooltipDisabled}
-        position={tooltipProps?.position}
-        dynamic
-        arrow
-      />
+      {tooltipProps && !tooltipDisabled && (
+        <Tooltip
+          static
+          show
+          arrow
+          content={tooltipProps?.content}
+          point={tooltipProps?.point}
+          position={tooltipProps?.position}
+        />
+      )}
     </Container>
   );
 };

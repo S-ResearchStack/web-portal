@@ -7,15 +7,16 @@ import { AppThunk, RootState, useAppSelector } from 'src/modules/store';
 import API from 'src/modules/api';
 import * as api from 'src/modules/api/models';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
+import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
 
 const SELECTED_STUDY_KEY = 'selected_study';
 
-const mockStudies: api.Study[] = [
+export const mockStudies: api.Study[] = [
   {
     id: { value: '1' },
     name: 'SleepCare Study',
     info: {
-      color: 'secondaryBlue',
+      color: 'secondarySkyBlue',
     },
     isOpen: true,
   },
@@ -23,7 +24,7 @@ const mockStudies: api.Study[] = [
     id: { value: '2' },
     name: 'Heart Health Study',
     info: {
-      color: 'secondaryPurple',
+      color: 'secondaryViolet',
     },
     isOpen: true,
   },
@@ -54,13 +55,13 @@ export type Study = {
   color: SpecColorType;
 };
 
-type StudiesState = {
+export type StudiesState = {
   studies: Study[];
   isLoading: boolean;
   selectedStudyId?: string;
 };
 
-const initialState: StudiesState = {
+export const initialState: StudiesState = {
   studies: [],
   isLoading: false,
 };
@@ -86,13 +87,26 @@ export const studiesSlice = createSlice({
       if (action.payload) {
         localStorage.setItem(SELECTED_STUDY_KEY, action.payload);
       } else {
-        localStorage.deleteItem(SELECTED_STUDY_KEY);
+        localStorage.removeItem(SELECTED_STUDY_KEY);
       }
+    },
+    reset(state) {
+      state.studies = [];
+      state.isLoading = false;
+      state.selectedStudyId = undefined;
+      localStorage.removeItem(SELECTED_STUDY_KEY);
     },
   },
 });
 
-const { fetchStudiesStarted, fetchStudiesFinished, setSelectedStudyId } = studiesSlice.actions;
+export const { fetchStudiesStarted, fetchStudiesFinished, setSelectedStudyId, reset } =
+  studiesSlice.actions;
+
+export const transformStudyFromApi = (s: api.Study): Study => ({
+  id: String(s.id.value),
+  name: s.name,
+  color: (s.info?.color as SpecColorType) || 'disabled',
+});
 
 export const fetchStudies =
   (opts?: { force?: boolean }): AppThunk<Promise<void>> =>
@@ -110,16 +124,15 @@ export const fetchStudies =
       const { data } = await API.getStudies();
       const studies = data
         // .filter((s) => s.isOpen) // TODO: uncomment once test data is in open project
-        .map((s) => ({
-          id: String(s.id.value),
-          name: s.name,
-          color: (s.info?.color as SpecColorType) || 'disabled',
-        }));
+        .map(transformStudyFromApi);
 
       dispatch(fetchStudiesFinished(studies));
     } catch (e) {
-      applyDefaultApiErrorHandlers(e);
       dispatch(fetchStudiesFinished([]));
+
+      if (!applyDefaultApiErrorHandlers(e, dispatch)) {
+        dispatch(showSnackbar({ text: String(e) }));
+      }
     }
   };
 

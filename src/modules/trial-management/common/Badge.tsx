@@ -4,7 +4,7 @@ import { colors, px, typography } from 'src/styles';
 
 const Badge = styled.div<{ $isLoading?: boolean }>`
   ${typography.bodyXSmallSemibold};
-  color: ${colors.updPrimary};
+  color: ${colors.primary};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +14,7 @@ const Badge = styled.div<{ $isLoading?: boolean }>`
   height: ${px(24)};
   border-radius: ${px(12)};
   background-color: ${({ $isLoading, theme }) =>
-    $isLoading ? theme.colors.updPrimaryLight : theme.colors.updPrimaryLight};
+    $isLoading ? theme.colors.primaryLight : theme.colors.primaryLight};
 
   &:empty {
     display: none;

@@ -76,9 +76,10 @@ export type TaskItem = {
 export type Task = {
   id: string;
   revisionId: number;
-  title: string;
+  title?: string;
   description?: string;
   createdAt: string;
+  publishedAt?: string | null;
   condition?: unknown; // TODO: define proper type if required
   schedule: string;
   startTime: DateString;

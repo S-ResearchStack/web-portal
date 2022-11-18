@@ -11,6 +11,9 @@ import StackedBarChart from 'src/modules/charts/StackedBarChart';
 import OverviewCard from 'src/modules/overview/OverviewCard';
 import OverviewLegendWrapper from 'src/modules/overview/OverviewLegendWrapper';
 import SimpleGrid from 'src/common/components/SimpleGrid';
+import SkeletonLoading, { SkeletonRect } from 'src/common/components/SkeletonLoading';
+import ResponsiveContainer from 'src/common/components/ResponsiveContainer';
+
 import { SurveyResultsResponse } from './surveyPage.slice';
 
 const BarChartWrapper = styled.div`
@@ -29,21 +32,31 @@ const PieChartWrapper = styled.div<{ $hasDescription?: boolean }>`
   margin-bottom: ${({ $hasDescription }) => ($hasDescription ? px(30) : px(39))};
 `;
 
+const ChartCardLoading = () => (
+  <OverviewCard>
+    <SkeletonLoading>
+      <SkeletonRect x="0" y="0" width="240" height="24" />
+      <SkeletonRect x="0" y="456" width="360" height="24" />
+    </SkeletonLoading>
+  </OverviewCard>
+);
+
 const pieChartColors: SpecColorType[] = [
-  'updSecondaryViolet',
-  'updSecondarySkyBlue',
-  'updSecondaryTangerine',
-  'updSecondaryRed',
-  'updSecondaryGreen',
+  'secondaryViolet',
+  'secondarySkyBlue',
+  'secondaryTangerine',
+  'secondaryRed',
+  'secondaryGreen',
 ];
 
 const barChartDefaultColor: SpecColorType = 'secondarySkyblue';
 
 type SurveyResponsesProps = {
-  responses: SurveyResultsResponse[];
+  responses?: SurveyResultsResponse[];
+  loading?: boolean;
 };
 
-const SurveyResponses = ({ responses }: SurveyResponsesProps) => {
+const SurveyResponses = ({ responses, loading }: SurveyResponsesProps) => {
   const getChart = (qResponse: SurveyResultsResponse) => {
     switch (qResponse.questionType) {
       case 'multiple': {
@@ -55,7 +68,9 @@ const SurveyResponses = ({ responses }: SurveyResponsesProps) => {
 
         return (
           <BarChartWrapper>
-            <BarChart width={480} height={378} data={chartData} />
+            <ResponsiveContainer>
+              {({ width }) => <BarChart width={width} height={378} data={chartData} />}
+            </ResponsiveContainer>
           </BarChartWrapper>
         );
       }
@@ -86,13 +101,17 @@ const SurveyResponses = ({ responses }: SurveyResponsesProps) => {
         return (
           <OverviewLegendWrapper lines={legendData} mode="space-between">
             <StackedBarChartWrapper>
-              <StackedBarChart
-                width={480}
-                height={353}
-                data={chartData}
-                minScale={min?.scaleValue}
-                maxScale={max?.scaleValue}
-              />
+              <ResponsiveContainer>
+                {({ width }) => (
+                  <StackedBarChart
+                    width={width}
+                    height={353}
+                    data={chartData}
+                    minScale={min?.scaleValue}
+                    maxScale={max?.scaleValue}
+                  />
+                )}
+              </ResponsiveContainer>
             </StackedBarChartWrapper>
           </OverviewLegendWrapper>
         );
@@ -120,17 +139,22 @@ const SurveyResponses = ({ responses }: SurveyResponsesProps) => {
   };
 
   return (
-    <SimpleGrid columns={{ tablet: 2, laptop: 2, desktop: 2 }} verticalGap>
-      {responses.map((r, index) => (
-        <OverviewCard
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
-          title={`${index + 1}. ${r.questionTitle}`}
-          subtitle={r.questionDescription}
-        >
-          {getChart(r)}
-        </OverviewCard>
-      ))}
+    <SimpleGrid columns={{ tablet: 1, laptop: 1, desktop: 2 }} verticalGap>
+      {loading
+        ? Array.from({ length: 2 }).map((_, idx) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <ChartCardLoading key={idx} />
+          ))
+        : responses?.map((r, index) => (
+            <OverviewCard
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              title={`${index + 1}. ${r.questionTitle}`}
+              subtitle={r.questionDescription}
+            >
+              {getChart(r)}
+            </OverviewCard>
+          ))}
     </SimpleGrid>
   );
 };

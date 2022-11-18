@@ -24,28 +24,32 @@ const HeaderButton = styled.div<{ $disabled?: boolean }>`
 
   pointer-events: ${({ $disabled }) => ($disabled ? 'none' : undefined)};
 
+  &:hover {
+    cursor: pointer;
+  }
+
   ${HeaderIcon} {
     height: ${px(24)};
     width: ${px(24)};
     border-radius: ${px(2)};
 
     svg {
-      fill: ${colors.updTextPrimary};
+      fill: ${colors.textPrimary};
     }
   }
   &:hover:not(:active) ${HeaderIcon} {
-    background-color: ${colors.updDisabled20};
+    background-color: ${colors.disabled20};
   }
 
   ${HeaderTitle} {
     ${typography.labelSemibold};
     color: ${({ $disabled, theme }) =>
-      $disabled ? theme.colors.onDisabled : theme.colors.updTextPrimary};
+      $disabled ? theme.colors.onDisabled : theme.colors.textPrimary};
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
   &:active ${HeaderTitle} {
-    color: ${colors.updOnSurface};
+    color: ${colors.onSurface};
   }
 `;
 
@@ -90,7 +94,7 @@ const CollapseSection: React.FC<Props> = ({
   return (
     <Container {...rest} data-collapsed={isCollapsed || undefined}>
       <Header>
-        <HeaderButton onClick={handleClick} $disabled={disabled}>
+        <HeaderButton onClick={handleClick} $disabled={disabled} data-testid="collapse-button">
           <HeaderTitle>{title}</HeaderTitle>
           <HeaderIcon>{isCollapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}</HeaderIcon>
         </HeaderButton>

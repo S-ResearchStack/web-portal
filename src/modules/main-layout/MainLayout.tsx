@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import { Switch, Route, Redirect, useHistory, matchPath, useLocation } from 'react-router-dom';
+import React, { RefObject, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { matchPath, Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useEvent from 'react-use/lib/useEvent';
 import useMount from 'react-use/lib/useMount';
 import useToggle from 'react-use/lib/useToggle';
@@ -19,22 +19,16 @@ import DataInsights from 'src/modules/data-collection/DataInsights';
 import { SnackbarContainer } from 'src/modules/snackbar';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
 import { fetchStudies, useSelectedStudyId } from 'src/modules/studies/studies.slice';
+import { hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { colors } from 'src/styles';
 import { scrollToTop } from 'src/common/utils/scrollToTop';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 import StudyManagement from 'src/modules/trial-management/StudyManagement';
+import { LayoutContentCtx } from 'src/modules/main-layout/LayoutContentCtx';
 
 import Sidebar from './sidebar/Sidebar';
 import SwitchStudy from './switch-study/SwitchStudy';
 import EmptyTab from './EmptyTab';
-
-interface NavigationScrollRestoreContextSchema {
-  scrollHistoryStack: number[];
-  saveScroll: () => void;
-  restoreScroll: () => void;
-  resetScroll: () => void;
-  prevLocation?: Location;
-}
 
 export const Layout = styled.div<{ isSwitchStudy?: boolean }>`
   width: 100%;
@@ -48,7 +42,7 @@ export const ContentWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  background-color: ${colors.updBackground};
+  background-color: ${colors.background};
 `;
 
 export const Content = styled.div`
@@ -57,15 +51,6 @@ export const Content = styled.div`
   overflow: auto;
   position: relative;
 `;
-
-export const NavigationScrollRestoreContext =
-  React.createContext<NavigationScrollRestoreContextSchema>({
-    scrollHistoryStack: [],
-    saveScroll() {},
-    restoreScroll() {},
-    resetScroll() {},
-    prevLocation: undefined,
-  });
 
 const useSwitchStudy = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
@@ -104,100 +89,6 @@ const useSwitchStudy = () => {
   };
 };
 
-interface UseNavigationScrollRestoreReturnType {
-  scrollRestoreCtx: NavigationScrollRestoreContextSchema;
-}
-
-const useNavigationScrollRestore = <T extends HTMLElement>(
-  contentRef: React.RefObject<T>
-): UseNavigationScrollRestoreReturnType => {
-  const scrollHistoryStackRef = useRef<number[]>([]);
-
-  const location = useLocation();
-  const prevLocation = usePrevious<Location>(location);
-
-  const setScrollHistory = useCallback((scrollHistoryStack: number[]) => {
-    scrollHistoryStackRef.current = scrollHistoryStack;
-  }, []);
-
-  const saveScroll = useCallback(() => {
-    const scrollTop = contentRef.current?.scrollTop;
-
-    if (scrollTop) {
-      const scrollHistoryStack = [...scrollHistoryStackRef.current];
-
-      scrollHistoryStack.push(scrollTop);
-
-      setScrollHistory(scrollHistoryStack);
-    }
-  }, [contentRef, setScrollHistory]);
-
-  const restoreScroll = useCallback(() => {
-    const scrollHistoryStack = [...scrollHistoryStackRef.current];
-
-    if (contentRef.current && scrollHistoryStack.length) {
-      contentRef.current.scrollTop = scrollHistoryStack.pop() as number;
-
-      setScrollHistory(scrollHistoryStack);
-    }
-  }, [contentRef, setScrollHistory]);
-
-  const resetScroll = useCallback(() => {
-    setScrollHistory([]);
-  }, [setScrollHistory]);
-
-  const scrollRestoreCtx: NavigationScrollRestoreContextSchema = useMemo(
-    () => ({
-      scrollHistoryStack: scrollHistoryStackRef.current,
-      prevLocation,
-      saveScroll,
-      restoreScroll,
-      resetScroll,
-    }),
-    [prevLocation, resetScroll, restoreScroll, saveScroll]
-  );
-
-  return {
-    scrollRestoreCtx,
-  };
-};
-
-interface UseNavigationScrollRestoreCheckpointOptions {
-  startPath: Path;
-}
-
-export const useNavigationScrollRestoreCheckpoint = ({
-  startPath,
-}: UseNavigationScrollRestoreCheckpointOptions): void => {
-  const contentCtx = useContext(NavigationScrollRestoreContext);
-  const history = useHistory();
-
-  useEffect(() => {
-    if (contentCtx.prevLocation) {
-      const isMatchReferrer = matchPath(contentCtx.prevLocation.pathname, { path: startPath });
-
-      if (isMatchReferrer) {
-        contentCtx.restoreScroll();
-      } else {
-        contentCtx.resetScroll();
-      }
-    }
-
-    const unregisterHistoryListener = history.listen((location) => {
-      const isMatchPath = matchPath(location.pathname, { path: startPath });
-
-      if (isMatchPath) {
-        contentCtx.saveScroll();
-      } else {
-        contentCtx.resetScroll();
-      }
-    });
-
-    return () => unregisterHistoryListener();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history, startPath]);
-};
-
 interface UseFetchBootDataReturnType {
   userRole?: UserRole;
 }
@@ -213,39 +104,91 @@ const useFetchBootData = (): UseFetchBootDataReturnType => {
   return { userRole };
 };
 
+const useScrollHistory = (paths: Path[], content: RefObject<HTMLElement>) => {
+  const pathMap = useRef<{ [key: string]: number }>({});
+  const location = useLocation();
+  const history = useHistory();
+  const prevLocation = usePrevious<Location>(location);
+  const pathHistory = useRef<string[]>([location.pathname]);
+
+  useLayoutEffect(() => {
+    if (prevLocation?.pathname === location.pathname) {
+      return;
+    }
+
+    if (history.action === 'PUSH') {
+      const prevPath = pathHistory.current[pathHistory.current.length - 1];
+
+      paths.forEach((path) => {
+        const matched = matchPath(prevPath, { path });
+
+        if (matched && matched.isExact) {
+          pathMap.current[path] = content.current?.scrollTop || 0;
+        }
+      });
+
+      if (content.current) {
+        content.current.scrollTop = 0;
+      }
+
+      pathHistory.current.push(location.pathname);
+    } else {
+      if (pathHistory.current.length < 2) {
+        return;
+      }
+      pathHistory.current.pop();
+
+      const currentPath = pathHistory.current[pathHistory.current.length - 1];
+
+      paths.forEach((path) => {
+        const matched = matchPath(currentPath, { path });
+
+        if (matched && matched.isExact && content.current) {
+          content.current.scrollTop = pathMap.current[path];
+          delete pathMap.current[path];
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+};
+
 const MainLayout = () => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const studyId = useSelectedStudyId();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(hideSnackbar());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, studyId]);
 
   useDisableElasticScroll(contentRef);
 
-  const { userRole } = useFetchBootData();
-  const { scrollRestoreCtx } = useNavigationScrollRestore(contentRef);
-  const studyId = useSelectedStudyId();
+  useScrollHistory([Path.Overview, Path.DataCollection, Path.TrialManagement], contentRef);
 
-  useEffect(() => {
-    scrollRestoreCtx.resetScroll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studyId]);
+  const { userRole } = useFetchBootData();
 
   const { layoutRef, isSwitchStudy, toggleIsSwitchStudy, isSwitchStudyInTransition } =
     useSwitchStudy();
 
+  const onStudyClick = () => {
+    if (isSwitchStudy) {
+      toggleIsSwitchStudy();
+    } else {
+      scrollToTop(contentRef.current as HTMLElement, toggleIsSwitchStudy);
+    }
+  };
+
   return (
-    <NavigationScrollRestoreContext.Provider value={scrollRestoreCtx}>
+    <LayoutContentCtx.Provider value={contentRef}>
       <Layout ref={layoutRef} isSwitchStudy={isSwitchStudy}>
         <ContentWrapper>
           <SwitchStudy onStudySelectionFinished={toggleIsSwitchStudy} />
         </ContentWrapper>
         <ContentWrapper>
-          <Sidebar
-            onStudyClick={() => {
-              if (isSwitchStudy) {
-                toggleIsSwitchStudy();
-              } else {
-                scrollToTop(contentRef.current as HTMLElement, toggleIsSwitchStudy);
-              }
-            }}
-          />
+          <Sidebar onStudyClick={onStudyClick} />
           {userRole && (
             <Content ref={contentRef}>
               <Switch>
@@ -254,9 +197,7 @@ const MainLayout = () => {
                 <Route exact path={Path.TrialManagement} component={StudyManagement} />
                 <Route exact path={Path.TrialManagementEditSurvey} component={SurveyEditor} />
                 <Route exact path={Path.TrialManagementSubject} component={OverviewSubject} />
-                <Route exact path={Path.TrialManagementSurveyResults}>
-                  <SurveyPage mainContainerRef={contentRef} />
-                </Route>
+                <Route exact path={Path.TrialManagementSurveyResults} component={SurveyPage} />
                 <Route path={Path.UserAnalytics} component={EmptyTab} />
                 <Route exact path={Path.DataCollection} component={DataInsights} />
                 <Route exact path={Path.DataCollectionSubject} component={OverviewSubject} />
@@ -268,12 +209,12 @@ const MainLayout = () => {
                 </Route>
                 <Redirect to={Path.Overview} />
               </Switch>
-              <SnackbarContainer mainContainerRef={contentRef} useSimpleGrid />
+              <SnackbarContainer useSimpleGrid />
             </Content>
           )}
         </ContentWrapper>
       </Layout>
-    </NavigationScrollRestoreContext.Provider>
+    </LayoutContentCtx.Provider>
   );
 };
 

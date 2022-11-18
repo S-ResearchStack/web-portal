@@ -18,10 +18,11 @@ export type Response<TRes> = {
   checkError: () => void;
 };
 
+export const FAILED_CONNECTION_ERROR_TEXT = 'Server connection failed. Please try again later.';
+
 export class FailedConnectionError extends Error {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(originalError: unknown) {
-    super('Server connection failed. Please try again later.');
+  constructor(public originalError?: unknown) {
+    super(FAILED_CONNECTION_ERROR_TEXT);
   }
 }
 

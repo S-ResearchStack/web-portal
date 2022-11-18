@@ -6,9 +6,15 @@ import SurveyCardsView from './SurveyCardsView';
 
 const SurveyList = () => {
   const studyId = useSelectedStudyId();
-  const { data, isLoading } = useSurveyListData({
-    fetchArgs: !!studyId && { studyId },
-  });
+  const { data, isLoading } = useSurveyListData(
+    {
+      fetchArgs: !!studyId && { studyId },
+    },
+    {
+      text: "Can't get surveys data.",
+      showErrorIcon: true,
+    }
+  );
 
   return (
     <>

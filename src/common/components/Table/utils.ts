@@ -7,7 +7,7 @@ export const getColumnWidthInPercents =
     w / (tw - COLUMN_GAP * (cc - 1));
 
 export const columnSizesToFr = (values: ColumnsSizes): string[] =>
-  values.map((value: number): string => (value >= 1 ? `${value}px` : `${value}fr`));
+  values.map((value: number): string => (value > 1 ? `${value}px` : `${value}fr`));
 
 export const replaceCharacter = (line: string, character: string, position: number) => {
   const arr = Array.from(line);

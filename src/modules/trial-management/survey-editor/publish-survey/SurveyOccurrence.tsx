@@ -55,7 +55,7 @@ const ScheduleHint = styled.div`
 
   > * {
     ${typography.bodySmallRegular};
-    color: ${colors.updTextPrimary};
+    color: ${colors.textPrimary};
   }
 `;
 
@@ -108,6 +108,7 @@ interface SurveyOccurrenceProps {
   onDurationPeriodTypeChange: (period: DurationPeriod) => void;
   lateResponse: boolean;
   onLateResponseChange: (checked: boolean) => void;
+  onPublishTimeClick: () => void;
 }
 
 const SurveyOccurrence: FC<SurveyOccurrenceProps> = ({
@@ -124,6 +125,7 @@ const SurveyOccurrence: FC<SurveyOccurrenceProps> = ({
   onDurationPeriodTypeChange,
   lateResponse,
   onLateResponseChange,
+  onPublishTimeClick,
 }) => {
   const startDateDt = useMemo(() => DateTime.fromMillis(startDate), [startDate]);
   const minAllowedDateDt = useMemo(() => DateTime.fromMillis(minAllowedDate), [minAllowedDate]);
@@ -207,6 +209,7 @@ const SurveyOccurrence: FC<SurveyOccurrenceProps> = ({
               value={new Date(startDate)}
               min={new Date(minAllowedDate)}
               max={!noExpiration ? new Date(endDate) : undefined}
+              onClick={onPublishTimeClick}
               onChange={(date) => onStartDateChange(date.getTime())}
             />
           </DateInputShell>

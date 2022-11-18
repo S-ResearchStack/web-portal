@@ -14,8 +14,8 @@ const StaticTable = <T,>({
   withRipple = true,
   ...props
 }: TableProps<T>): JSX.Element => (
-  <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, ...props }}>
-    {({ sort }) =>
+  <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, rows, ...props }}>
+    {({ sort, styles }) =>
       rows.map((row) => (
         <RowRenderer
           sort={sort}
@@ -25,6 +25,7 @@ const StaticTable = <T,>({
           onSelectRow={onSelectRow}
           disabled={disableActions}
           withRipple={withRipple}
+          style={styles}
         />
       ))
     }

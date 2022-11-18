@@ -24,14 +24,14 @@ const radios = [
 ];
 
 const colored: SpecColorType[] = [
-  'updSecondaryViolet',
-  'updSecondaryTangerine',
-  'updSecondarySkyBlue',
-  'updSecondaryGreen',
-  'updSecondaryRed',
-  'updStatusSuccess',
-  'updStatusWarning',
-  'updStatusError',
+  'secondaryViolet',
+  'secondaryTangerine',
+  'secondarySkyBlue',
+  'secondaryGreen',
+  'secondaryRed',
+  'statusSuccess',
+  'statusWarning',
+  'statusError',
 ];
 
 const Template: ComponentStory<typeof Radio> = (args) => {

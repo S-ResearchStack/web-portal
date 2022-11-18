@@ -28,6 +28,7 @@ export type AvatarProps = {
 const hoveredStyle = css`
   opacity: 1;
   box-shadow: ${boxShadow.studyAvatar};
+  cursor: pointer;
 `;
 
 const pressedStyle = css`
@@ -62,9 +63,17 @@ const StyledAvatar = styled.div<AvatarProps>`
 `;
 
 const AvatarIcon = (color: string, $selected: boolean | undefined) => ({
-  s: <StudyAvatarS fill={color} />,
-  m: $selected ? <SelectedStudyAvatarM fill={color} /> : <StudyAvatarM fill={color} />,
-  xxl: $selected ? <SelectedStudyAvatarXXL fill={color} /> : <StudyAvatarXXL fill={color} />,
+  s: <StudyAvatarS fill={color} data-testid="avatar-icon" />,
+  m: $selected ? (
+    <SelectedStudyAvatarM fill={color} data-testid="avatar-icon" />
+  ) : (
+    <StudyAvatarM fill={color} data-testid="avatar-icon" />
+  ),
+  xxl: $selected ? (
+    <SelectedStudyAvatarXXL fill={color} data-testid="avatar-icon" />
+  ) : (
+    <StudyAvatarXXL fill={color} data-testid="avatar-icon" />
+  ),
 });
 
 const StudyAvatar: React.FC<AvatarProps> = ({ color, size = 's', $selected, ...props }) => {

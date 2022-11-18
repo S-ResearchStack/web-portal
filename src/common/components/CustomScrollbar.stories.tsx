@@ -10,10 +10,10 @@ export default {
   component: CustomScrollbar,
 } as ComponentMeta<typeof CustomScrollbar>;
 
-const MaxHeightContainer = styled(CustomScrollbar)`
+export const MaxHeightContainer = styled(CustomScrollbar)`
   overflow: auto;
   max-height: ${px(500)};
-  border: ${px(1)} solid ${colors.updPrimary};
+  border: ${px(1)} solid ${colors.primary};
 `;
 
 const Row = styled.div`

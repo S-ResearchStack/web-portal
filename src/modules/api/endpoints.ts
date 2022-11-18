@@ -41,7 +41,7 @@ export const signin = (body: API.SigninRequest) =>
 
 export const resetPassword = (body: API.ResetPasswordRequest) =>
   request<API.ResetPasswordRequest, void>({
-    path: '/account-service/user/pasword/reset',
+    path: '/account-service/user/password/reset',
     method: 'POST',
     noAuth: true,
     body,
@@ -69,6 +69,14 @@ export const inviteUser = (body: API.InviteUserRequest) =>
   request<API.InviteUserRequest, void>({
     path: '/account-service/invitations',
     method: 'POST',
+    body,
+  });
+
+// TODO: check path
+export const removeUser = (body: API.RemoveUserRequest) =>
+  request<API.RemoveUserRequest, void>({
+    path: '/account-service/remove',
+    method: 'DELETE',
     body,
   });
 
@@ -106,7 +114,7 @@ export const getAvgHeartRateFluctuations = () =>
     path: '/avg-heart-rate-fluctuations',
   });
 
-const getParticipantsSqlBase = [
+const getParticipantsSqlBase = ({ sleep, bp }: { sleep?: boolean; bp?: boolean }) => [
   `with`,
   `  hr_values as (`,
   `    select hr.user_id as user_id,`,
@@ -123,13 +131,30 @@ const getParticipantsSqlBase = [
   `    join user_profiles up on steps.user_id = up.user_id`,
   `    where date(steps.end_time) = date(up.last_synced_at)`,
   `    group by steps.user_id`,
-  `    ),`,
-  `  sleep_values as (`,
-  `    select user_id,`,
-  `           avg(date_diff('minute', start_time, end_time)) as avg_sleep_mins`,
-  `    from sleepsessions`,
-  `    group by user_id`,
   `    )`,
+  ...(sleep
+    ? [
+        `  ,sleep_values as (`,
+        `    select user_id,`,
+        `           avg(date_diff('minute', start_time, end_time)) as avg_sleep_mins`,
+        `    from sleepsessions`,
+        `    group by user_id`,
+        `    )`,
+      ]
+    : []),
+  ...(bp
+    ? [
+        `  ,bp_values as (`,
+        `    select bp.user_id as user_id,`,
+        `           avg(bp.systolic) as avg_bp_systolic,`,
+        `           avg(bp.diastolic) as avg_bp_diastolic`,
+        `    from blood_pressures as bp`,
+        `    join user_profiles up on bp.user_id = up.user_id`,
+        `    where date(bp.time) = date(up.last_synced_at)`,
+        `    group by bp.user_id`,
+        `    )`,
+      ]
+    : []),
   `select`,
   `  up.user_id as user_id,`,
   `  json_extract_scalar(profile, '$.age') as age,`,
@@ -137,12 +162,15 @@ const getParticipantsSqlBase = [
   `  json_extract_scalar(profile, '$.email') as email,`,
   `  last_synced_at as last_synced,`,
   `  hr_values.avg_hr_bpm as avg_hr_bpm,`,
-  `  step_values.total_steps as steps,`,
-  `  sleep_values.avg_sleep_mins as avg_sleep_mins`,
+  `  step_values.total_steps as steps`,
+  sleep ? `  ,sleep_values.avg_sleep_mins as avg_sleep_mins` : '',
+  bp ? `  ,bp_values.avg_bp_systolic as avg_bp_systolic` : '',
+  bp ? `  ,bp_values.avg_bp_diastolic as avg_bp_diastolic` : '',
   `from user_profiles as up`,
   `left join hr_values on hr_values.user_id = up.user_id`,
   `left join step_values on step_values.user_id = up.user_id`,
-  `left join sleep_values on sleep_values.user_id = up.user_id`,
+  sleep ? `left join sleep_values on sleep_values.user_id = up.user_id` : '',
+  bp ? `left join bp_values on bp_values.user_id = up.user_id` : '',
 ];
 
 export const getParticipants = ({
@@ -154,7 +182,7 @@ export const getParticipants = ({
   sqlRequest<API.ParticipantListItemSqlRow>({
     projectId,
     sql: [
-      ...getParticipantsSqlBase,
+      ...getParticipantsSqlBase({}),
       `order by ${sort.column} ${sort.direction} offset ${offset} limit ${limit}`,
     ],
   });
@@ -168,7 +196,7 @@ export const getParticipantsTotalItems = ({ projectId }: ProjectIdParams) =>
 export const getParticipant = ({ projectId, id }: API.GetParticipantRequest & ProjectIdParams) =>
   sqlRequest<API.ParticipantListItemSqlRow>({
     projectId,
-    sql: [...getParticipantsSqlBase, `where up.user_id = '${id}'`],
+    sql: [...getParticipantsSqlBase({ sleep: true, bp: true }), `where up.user_id = '${id}'`],
   });
 
 export const getParticipantHeartRates = ({

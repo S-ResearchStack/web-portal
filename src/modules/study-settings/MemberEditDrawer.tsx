@@ -10,7 +10,7 @@ import _union from 'lodash/union';
 import _without from 'lodash/without';
 import useKey from 'react-use/lib/useKey';
 
-import DeleteIcon from 'src/assets/icons/delete.svg';
+import DeleteIcon from 'src/assets/icons/trash_can_small.svg';
 import Drawer from 'src/common/components/Drawer';
 import InputField from 'src/common/components/InputField';
 import Checkbox from 'src/common/components/CheckBox';
@@ -44,7 +44,7 @@ interface MemberRole {
 
 const Container = styled.div`
   padding: ${px(32)};
-  color: ${colors.textSecondary};
+  color: ${colors.textPrimary};
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -549,7 +549,7 @@ const MemberEditDrawer: FC = () => {
 
     setRemoveTransaction(true);
     if (inviteOrEditMember.data) {
-      dispatch(removeStudyMember(inviteOrEditMember.data));
+      dispatch(removeStudyMember({ id: inviteOrEditMember.data.id }));
     }
   }, [
     isRemoveTransaction,

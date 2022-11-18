@@ -42,13 +42,16 @@ export interface BaseTableProps<T> {
   sort?: SortOptions<T>;
   onSelectRow?: (row: T) => void;
   getRowKey: RowKeyExtractor<T>;
-  children?: (props: { sort?: SortOptions<T> }) => JSX.Element | JSX.Element[];
+  children?: (props: {
+    sort?: SortOptions<T>;
+    styles: React.CSSProperties;
+  }) => JSX.Element | JSX.Element[];
   bodyHeight?: number;
   disableActions?: boolean;
   isLoading?: boolean;
+  rows: PropsWithProcessing<T>[];
 }
 
 export interface TableProps<T> extends Omit<BaseTableProps<T>, 'children'> {
-  rows: PropsWithProcessing<T>[];
   withRipple?: boolean;
 }

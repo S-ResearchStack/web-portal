@@ -17,7 +17,7 @@ const ResponsiveContainerStyled = styled(ResponsiveContainer)`
   padding-top: ${px(45)};
 `;
 
-const colors: SpecColorType[] = ['secondaryGreen', 'secondaryPurple'];
+const colors: SpecColorType[] = ['secondaryGreen', 'secondaryViolet'];
 
 const VALUES_STEP = 2000;
 const DEFAULT_VALUE = 10000;

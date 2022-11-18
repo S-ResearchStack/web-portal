@@ -15,17 +15,17 @@ const Template: ComponentStory<typeof IconButton> = (args) => <IconButton {...ar
 export const SizeS = Template.bind({});
 SizeS.args = {
   icon: edit,
-  color: 'updTextSecondaryGray',
+  color: 'textSecondaryGray',
 };
 
 export const SizeM = Template.bind({});
 SizeM.args = {
   icon: visibility,
-  color: 'updTextSecondaryGray',
+  color: 'textSecondaryGray',
 };
 
 export const SizeL = Template.bind({});
 SizeL.args = {
   icon: zoomInIcon,
-  color: 'updTextSecondaryGray',
+  color: 'textSecondaryGray',
 };

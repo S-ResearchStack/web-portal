@@ -11,7 +11,7 @@ export const setAuthProvider = (ap: AuthProvider) => {
   authProvider = ap;
 };
 
-const baseUrl = localStorage.getItem('API_URL') || env.API_URL;
+const baseUrl = localStorage.getItem('API_URL') || process.env.API_URL;
 
 export const request = async <TReq, TRes>(
   opts: Omit<RequestOptions<TReq>, 'url'> & {

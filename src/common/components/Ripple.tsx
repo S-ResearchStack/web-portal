@@ -275,6 +275,7 @@ const Ripple = styled.div
     style: getRippleStyles(props),
   }))<RippleProps>`
   position: absolute;
+  will-change: opacity, transform;
   border-radius: 50%;
   animation: ${({ isEntered, opacity, scale, duration, theme }) =>
     isEntered
@@ -285,8 +286,8 @@ const Ripple = styled.div
       : css`
           ${rippleOutAnimation(opacity, scale)} 300ms ${theme.animation.defaultTiming} forwards
         `};
-  z-index: 1;
-  background-color: ${({ color, theme }) => theme.colors[color || 'textSelected']};
+  z-index: 0;
+  background-color: ${({ color, theme }) => theme.colors[color || 'primaryLight']};
   pointer-events: none;
 `;
 

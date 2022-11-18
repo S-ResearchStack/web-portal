@@ -11,7 +11,8 @@ import {
   QuestionType,
   SelectableAnswer,
 } from 'src/modules/trial-management/survey-editor/surveyEditor.slice';
-import { animation, colors, px, theme, typography } from 'src/styles';
+import { animation, colors, px, theme } from 'src/styles';
+import Button from 'src/common/components/Button';
 
 import TextArea from '../common/TextArea';
 import DraggableList, { DraggableItemRenderer } from './DraggableList';
@@ -36,22 +37,12 @@ const OptionActions = styled.div`
   grid-template-columns: repeat(2, ${px(24)});
 `;
 
-// TODO: replace to common component
-const IconButton = styled.button`
-  width: ${px(24)};
-  height: ${px(24)};
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  outline: 0;
+const IconButton = styled(Button)<{ $hidden?: boolean }>`
+  visibility: ${({ $hidden }) => $hidden && 'hidden'};
+`;
 
-  svg {
-    fill: ${colors.updPrimary};
-  }
+const DragIconButton = styled(IconButton)`
+  cursor: move !important;
 `;
 
 interface OptionContainerProps {
@@ -82,13 +73,13 @@ const OptionContainer = styled.div.attrs<OptionContainerProps>((props) => ({
   gap: ${px(4)};
   align-items: flex-start;
   opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
-  background-color: ${colors.updSurface};
+  background-color: ${colors.surface};
   margin: ${px(4)} 0;
 
   ${({ isPreview }) =>
     isPreview &&
     css`
-      background-color: ${colors.updBackground};
+      background-color: ${colors.background};
     `}};
   
   ${OptionActions} {
@@ -97,7 +88,7 @@ const OptionContainer = styled.div.attrs<OptionContainerProps>((props) => ({
   }
   
   &:hover {
-    background-color: ${colors.updBackground};
+    background-color: ${colors.background};
     
     ${OptionActions} {
       opacity: 1;
@@ -105,25 +96,11 @@ const OptionContainer = styled.div.attrs<OptionContainerProps>((props) => ({
   }
 `;
 
-// TODO: replace to common component
-const AddOptionButton = styled(IconButton)`
-  ${typography.bodyMediumSemibold};
-  color: ${colors.updTextPrimaryBlue};
-  display: flex;
-  align-items: center;
+const AddOptionButton = styled(Button)`
   justify-content: flex-start;
-  padding: ${px(16)} ${px(8)};
-  gap: ${px(4)};
-  height: ${px(48)};
-  box-sizing: border-box;
-  border: ${px(1)} dashed ${colors.updPrimaryDisabled};
-  border-radius: ${px(4)};
+  padding: 0 ${px(8)};
   width: 100%;
   margin-top: ${px(4)};
-
-  svg {
-    fill: ${colors.updTextPrimaryBlue};
-  }
 `;
 
 interface QuestionCardSelectableOptionsProps {
@@ -168,6 +145,8 @@ const QuestionCardSelectableOptions: FC<QuestionCardSelectableOptionsProps> = ({
       coords.y = currentOffset.y - 24;
     }
 
+    const isRemoveAllowed = data.length > 2;
+
     return (
       <OptionContainer
         ref={dropRef as React.RefObject<HTMLDivElement>}
@@ -178,7 +157,7 @@ const QuestionCardSelectableOptions: FC<QuestionCardSelectableOptionsProps> = ({
         <Icon>{getSecondaryIconByQuestionType(type)}</Icon>
         <OptionTextField
           autoHeight
-          scrollbarThumbColor={theme.colors.updPrimary30}
+          scrollbarThumbColor={theme.colors.primary30}
           appearance="description"
           placeholder="Enter option"
           value={item.value}
@@ -187,12 +166,19 @@ const QuestionCardSelectableOptions: FC<QuestionCardSelectableOptionsProps> = ({
           }}
         />
         <OptionActions>
-          <IconButton onClick={() => onRemove(item)}>
-            <CloseIcon />
-          </IconButton>
-          <IconButton ref={dragRef as React.RefObject<HTMLButtonElement>}>
-            <DragTriggerIcon />
-          </IconButton>
+          <IconButton
+            fill="text"
+            rate="icon"
+            icon={<CloseIcon />}
+            onClick={() => onRemove(item)}
+            $hidden={!isRemoveAllowed}
+          />
+          <DragIconButton
+            fill="text"
+            rate="icon"
+            icon={<DragTriggerIcon />}
+            ref={dragRef as React.RefObject<HTMLButtonElement>}
+          />
         </OptionActions>
       </OptionContainer>
     );
@@ -207,8 +193,7 @@ const QuestionCardSelectableOptions: FC<QuestionCardSelectableOptionsProps> = ({
         keyExtractor={(item) => item.id}
         onChange={onChange}
       />
-      <AddOptionButton onClick={onAdd}>
-        <PlusIcon />
+      <AddOptionButton onClick={onAdd} dashed fill="bordered" icon={<PlusIcon />}>
         Add option
       </AddOptionButton>
     </>

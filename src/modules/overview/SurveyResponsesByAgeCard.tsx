@@ -15,11 +15,11 @@ const ResponsiveContainerStyled = styled(ResponsiveContainer)`
 `;
 
 const colors: SpecColorType[] = [
-  'updSecondarySkyBlue',
-  'updSecondaryTangerine',
-  'updSecondaryRed',
-  'updSecondaryViolet',
-  'updSecondaryGreen',
+  'secondarySkyBlue',
+  'secondaryTangerine',
+  'secondaryRed',
+  'secondaryViolet',
+  'secondaryGreen',
 ];
 
 const SurveyResponsesByAgeCard: React.FC = () => {

@@ -10,7 +10,7 @@ import { XAxis, YAxis } from './common-components';
 
 const axisCommon = css`
   stroke-opacity: 1;
-  stroke: ${colors.updBackgoundLight};
+  stroke: ${colors.backgoundLight};
 `;
 
 const StyledSvg = styled.svg<{ isHorizontal: boolean }>`
@@ -43,8 +43,8 @@ const StyledSvg = styled.svg<{ isHorizontal: boolean }>`
               }
             `}
       text {
-        ${typography.axisRegular10};
-        color: ${colors.updTextPrimary};
+        ${typography.labelRegular};
+        color: ${colors.textPrimary};
       }
     }
   }
@@ -68,8 +68,8 @@ const StyledSvg = styled.svg<{ isHorizontal: boolean }>`
           }
         `}
       text {
-        ${typography.axisRegular10};
-        color: ${colors.updTextPrimary};
+        ${typography.labelRegular};
+        color: ${colors.textPrimary};
       }
     }
   }

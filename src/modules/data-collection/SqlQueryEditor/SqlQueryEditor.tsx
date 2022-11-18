@@ -8,7 +8,7 @@ import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/addon/hint/show-hint';
 
-import { px, colors, typography } from 'src/styles';
+import { px, colors, typography, animation } from 'src/styles';
 import Button from 'src/common/components/Button';
 
 import { initEditor, hintHighlightClassName } from './helpers';
@@ -20,7 +20,7 @@ const codemirrorHintsStyles = css`
     margin-top: ${px(5)};
     padding: 0;
     list-style-type: none;
-    background-color: ${colors.background};
+    background-color: ${colors.surface};
     border: none;
     border-radius: ${px(2)};
     box-shadow: 0 ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12);
@@ -28,26 +28,28 @@ const codemirrorHintsStyles = css`
     .CodeMirror-hint {
       height: ${px(34)};
       ${typography.query12};
-      color: ${colors.updTextSecondaryGray};
+      color: ${colors.textSecondaryGray};
       padding: ${px(8)};
       white-space: nowrap;
       cursor: pointer;
 
       .${hintHighlightClassName} {
         font-family: inherit;
-        color: ${colors.updPrimary};
+        color: ${colors.primary};
       }
     }
 
     .CodeMirror-hint:hover {
-      background-color: ${colors.updPrimaryLight};
+      background-color: ${colors.primaryLight};
     }
 
     .CodeMirror-hint-active {
-      background-color: ${colors.background};
+      background-color: ${colors.primaryLightFocused};
     }
   }
 `;
+
+const SCROLLBAR_WIDTH = 30;
 
 const Container = styled.div<{ $isError?: boolean }>`
   display: flex;
@@ -60,16 +62,23 @@ const Container = styled.div<{ $isError?: boolean }>`
 
   .CodeMirror {
     height: ${px(48)};
-    background-color: ${colors.background};
+    background-color: ${colors.surface};
     border-radius: ${px(4)};
-    border-width: ${px(0.5)};
+    border-width: ${px(1)};
     border-style: solid;
     border-color: ${({ $isError, theme }) =>
-      $isError ? `${theme.colors.updStatusError} !important` : theme.colors.background};
+      $isError ? `${theme.colors.statusError} !important` : theme.colors.surface};
     box-shadow: 0 0 ${px(2)} rgba(0, 0, 0, 0.15);
     flex: 1;
-    padding: ${px(15)};
     line-height: 1;
+    transition: border 300ms ${animation.defaultTiming};
+    caret-color: ${({ $isError }) => ($isError ? colors.statusErrorText : colors.textPrimaryBlue)};
+    overflow: hidden;
+    ${typography.query14};
+
+    &:hover {
+      border-color: ${({ $isError }) => ($isError ? 'transparent' : colors.primaryHovered)};
+    }
 
     .CodeMirror-hscrollbar,
     .CodeMirror-vscrollbar {
@@ -77,7 +86,11 @@ const Container = styled.div<{ $isError?: boolean }>`
     }
 
     .CodeMirror-scroll {
-      overflow-y: hidden !important;
+      // Related to overflow: hidden in .CodeMirror
+      padding: ${px(15)} ${px(SCROLLBAR_WIDTH)} ${px(SCROLLBAR_WIDTH)} ${px(16)};
+      margin-bottom: ${px(-SCROLLBAR_WIDTH)};
+      margin-right: ${px(-SCROLLBAR_WIDTH)};
+      overflow: hidden !important;
     }
 
     .CodeMirror-lines {
@@ -89,8 +102,7 @@ const Container = styled.div<{ $isError?: boolean }>`
       padding: 0;
 
       span {
-        ${typography.query14};
-        color: ${colors.updTextSecondaryGray};
+        color: ${colors.textSecondaryGray};
       }
     }
 
@@ -100,7 +112,7 @@ const Container = styled.div<{ $isError?: boolean }>`
     }
 
     &.CodeMirror-focused {
-      border-color: ${colors.updPrimary};
+      border-color: ${colors.primary};
     }
 
     .cm-string,

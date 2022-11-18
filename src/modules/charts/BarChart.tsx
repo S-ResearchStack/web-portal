@@ -5,23 +5,33 @@ import * as d3 from 'd3';
 import Tooltip from 'src/common/components/Tooltip';
 import { colors, px, theme, typography } from 'src/styles';
 import { XAxis, YAxis, Bar } from './common-components';
-import { TooltipProps, TooltipContent } from './common-helpers';
+import {
+  TooltipProps,
+  TooltipContent,
+  NO_RESPONSES_LABEL,
+  MARGIN_FOCUS,
+  NoResponsesLabel,
+} from './common-helpers';
 
 interface StyledSvgProps {
   $isHorizontal?: boolean;
 }
 
+const Container = styled.div`
+  position: relative;
+`;
+
 const StyledSvg = styled.svg<StyledSvgProps>`
   .xAxis {
     .tick {
       line {
-        stroke: ${colors.updBackgoundLight};
+        stroke: ${colors.backgoundLight};
         stroke-width: ${px(1)};
         opacity: ${({ $isHorizontal }) => ($isHorizontal ? 1 : 0)};
       }
       text {
-        ${typography.axisRegular10};
-        color: ${colors.updTextPrimary};
+        ${typography.labelRegular};
+        color: ${colors.textPrimary};
       }
     }
   }
@@ -29,13 +39,13 @@ const StyledSvg = styled.svg<StyledSvgProps>`
   .yAxis {
     .tick {
       line {
-        stroke: ${colors.updBackgoundLight};
+        stroke: ${colors.backgoundLight};
         stroke-width: ${px(1)};
         opacity: ${({ $isHorizontal }) => ($isHorizontal ? 0 : 1)};
       }
       text {
-        ${typography.axisRegular10};
-        color: ${colors.textSecondary};
+        ${typography.labelRegular};
+        color: ${colors.textPrimary};
         text-anchor: end;
       }
     }
@@ -123,9 +133,18 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
 
   const getBarKeyByIndex = (index: number) => `bar-${index}`;
 
+  const currentHoveredBar = useRef<number>(-1);
+
   const onBarMouseEnter = useCallback(
-    (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
+    (_: React.MouseEvent<SVGPathElement, MouseEvent> | null, index: number) => {
+      currentHoveredBar.current = index;
+
+      if (!svgRef.current) {
+        return;
+      }
+
       const barId = getBarKeyByIndex(index);
+      const svgRect = svgRef.current.getBoundingClientRect();
       const barRect = (
         d3.select(svgRef.current).select(`#${barId}`).node() as Element
       )?.getBoundingClientRect();
@@ -155,16 +174,16 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
       };
 
       const getPointX = () => {
-        const barCenter = barRect.left + barRect.width / 2;
+        const barCenter = barRect.left - svgRect.left + barRect.width / 2;
         if (isHorizontal) {
           return barCenter;
         }
 
         switch (index) {
           case 0:
-            return barRect.left;
+            return barRect.left - svgRect.left;
           case data.length - 1:
-            return barRect.right;
+            return barRect.left - svgRect.left + barRect.width;
           default:
             return barCenter;
         }
@@ -172,7 +191,7 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
 
       setTooltipProps({
         content: tooltipContent,
-        point: [getPointX(), barRect.top + TOOLTIP_MARGIN_TOP],
+        point: [getPointX(), barRect.top - svgRect.top + TOOLTIP_MARGIN_TOP],
         position: getPosition(),
       });
     },
@@ -183,12 +202,14 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
     setTooltipProps(null);
   }, []);
 
+  const isEmptyState = useMemo(() => data.every((d) => d.totalValue === 0), [data]);
+
   if (!data.length) {
     return null;
   }
 
   return (
-    <div>
+    <Container>
       <StyledSvg ref={svgRef} width={width} height={height} $isHorizontal={isHorizontal}>
         <XAxis
           xScale={isHorizontal ? scaleLinear : scaleBand}
@@ -250,24 +271,38 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
                   (scaleLinear(0) - scaleLinear(getPercantage(d))) +
                   (getPercantage(d) > 10 ? LABEL_MARGIN : -LABEL_MARGIN),
               dy: isHorizontal ? '.35em' : '0', // vertical align middle
-              fill:
-                getPercantage(d) > 10 ? theme.colors.updPrimaryWhite : theme.colors.updTextPrimary,
+              fill: getPercantage(d) > 10 ? theme.colors.primaryWhite : theme.colors.textPrimary,
               text: `${getPercantage(d)}%`,
             }}
             onMouseEnter={(event) => onBarMouseEnter(event, index)}
             onMouseLeave={onBarMouseLeave}
           />
         ))}
+        {isEmptyState && <rect x="0px" y="0px" width={width} height={height} fill="transparent" />}
+        {isEmptyState && (
+          <NoResponsesLabel
+            x="50%"
+            y="50%"
+            dx={MARGIN_FOCUS.left}
+            dy={-MARGIN_FOCUS.top}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            width={width}
+            height={height}
+          >
+            {NO_RESPONSES_LABEL}
+          </NoResponsesLabel>
+        )}
       </StyledSvg>
       <Tooltip
+        static
         content={tooltipProps?.content}
         point={tooltipProps?.point}
         show={!!tooltipProps}
         position={tooltipProps?.position}
         arrow
-        dynamic
       />
-    </div>
+    </Container>
   );
 };
 

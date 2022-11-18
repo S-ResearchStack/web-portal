@@ -6,6 +6,9 @@ const LinkStyled = styled(RouterLink)`
   text-decoration: none;
   cursor: default;
   -webkit-user-drag: none;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Link: RouterLink = forwardRef((props, ref) => (

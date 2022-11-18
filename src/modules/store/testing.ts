@@ -3,6 +3,6 @@ import { rootReducer, RootState } from './store';
 
 export const createTestStore = (state: ConfigureStoreOptions<RootState>['preloadedState']) =>
   configureStore({
-    reducer: rootReducer,
+    reducer: rootReducer(),
     preloadedState: state,
   });

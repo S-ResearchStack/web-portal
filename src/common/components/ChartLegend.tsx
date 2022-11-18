@@ -24,6 +24,14 @@ const RadioLabel = styled.div<{ $canToggle: boolean; $reverse: boolean }>`
   color: ${colors.onSurface};
   display: flex;
   align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  width: 100%;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: pre-line;
 `;
 
 export type ChartLegendItem = {
@@ -38,17 +46,23 @@ export type ChartLegendMode = 'left' | 'space-between';
 
 type ChartLegendProps = {
   items: ChartLegendItem[];
-  canToggle?: boolean;
+  canToggle: boolean;
   mode?: ChartLegendMode;
   onChange?: (index: number) => void;
 };
 
-const ChartLegend: FC<ChartLegendProps> = ({ items, canToggle, mode = 'left', onChange }) => {
+const ChartLegend: FC<ChartLegendProps> = ({
+  items,
+  canToggle,
+  mode = 'left',
+  onChange,
+  ...restProps
+}) => {
   const isOneItemChecked =
     items.filter(({ ignoreAsLast, checked }) => !ignoreAsLast && checked).length === 1;
 
   return (
-    <Container mode={mode}>
+    <Container mode={mode} {...restProps}>
       {items.map((item: ChartLegendItem, index: number) => {
         const reverse = mode === 'space-between' && index !== 0;
 
@@ -60,6 +74,7 @@ const ChartLegend: FC<ChartLegendProps> = ({ items, canToggle, mode = 'left', on
             mode={mode}
           >
             <Radio
+              data-testid={item.name}
               key={item.name}
               kind={canToggle ? 'radio' : 'filled'}
               color={item.color}
@@ -67,9 +82,10 @@ const ChartLegend: FC<ChartLegendProps> = ({ items, canToggle, mode = 'left', on
               onChange={() => canToggle && onChange && onChange(index)}
               disabled={canToggle && isOneItemChecked && item.checked && !item.ignoreAsLast}
               reverse={reverse}
+              readOnly={!canToggle}
               isLegend
             >
-              <RadioLabel $canToggle={!!canToggle} $reverse={reverse}>
+              <RadioLabel $canToggle={canToggle} $reverse={reverse}>
                 {_capitalize(item.name)}
               </RadioLabel>
             </Radio>

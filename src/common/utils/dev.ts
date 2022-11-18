@@ -1,4 +1,4 @@
-const isDev = env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV !== 'production';
 
 export const isDevShowFocus = isDev && localStorage.getItem('dev_show_focus');
 

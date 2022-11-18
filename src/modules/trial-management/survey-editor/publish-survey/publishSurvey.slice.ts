@@ -13,16 +13,18 @@ import createDataSlice from 'src/modules/store/createDataSlice';
 import { surveyListSlice } from '../../surveyList.slice';
 import { editedSurveySelector } from '../surveyEditor.slice';
 
+export const participantsTimeZonesMock = [
+  'Europe/Paris',
+  'America/New_York',
+  'Europe/Malta',
+  'Atlantic/Bermuda',
+  'Asia/Seoul',
+];
+
 API.mock.provideEndpoints({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getParticipantsTimeZones({ projectId }) {
-    return API.mock.response([
-      'Europe/Paris',
-      'America/New_York',
-      'Europe/Malta',
-      'Atlantic/Bermuda',
-      'Asia/Seoul',
-    ]);
+    return API.mock.response(participantsTimeZonesMock);
   },
 });
 
@@ -65,7 +67,9 @@ export type PublishSurveyInfo = {
   lateResponse: boolean;
 };
 
-const frequencyToCron = (s: Pick<PublishSurveyInfo, 'frequency' | 'startDate' | 'publishTime'>) => {
+export const frequencyToCron = (
+  s: Pick<PublishSurveyInfo, 'frequency' | 'startDate' | 'publishTime'>
+) => {
   const startDateDt = DateTime.fromISO(s.startDate);
   const timeDt = DateTime.fromISO(s.publishTime);
 
@@ -100,7 +104,7 @@ const frequencyToCron = (s: Pick<PublishSurveyInfo, 'frequency' | 'startDate' | 
   return `${p.second} ${p.minute} ${p.hour} ${p.dayOfMonth} ${p.month} ${p.dayOfWeek} ${p.year}`;
 };
 
-const publishSurveyInfoToApi = (s: PublishSurveyInfo): Partial<TaskUpdate> => {
+export const publishSurveyInfoToApi = (s: PublishSurveyInfo): Partial<TaskUpdate> => {
   const dateTimeToApi = (date: string, time: string) =>
     `${DateTime.fromISO(date).toFormat('yyyy-LL-dd')}T${DateTime.fromISO(time).toFormat('T')}`;
 
@@ -129,7 +133,7 @@ const publishSurveyInfoToApi = (s: PublishSurveyInfo): Partial<TaskUpdate> => {
 
 type PublishSurveyState = WithSending;
 
-const publishSurveyInitialState: PublishSurveyState = {
+export const publishSurveyInitialState: PublishSurveyState = {
   isSending: false,
   error: undefined,
 };
@@ -180,7 +184,7 @@ export const publishSurvey =
 
       dispatch(publishSurveySlice.actions.sendingSuccess());
     } catch (e) {
-      applyDefaultApiErrorHandlers(e);
+      applyDefaultApiErrorHandlers(e, dispatch);
       dispatch(publishSurveySlice.actions.sendingFailure(String(e)));
     }
   };

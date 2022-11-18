@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 import PlusIcon from 'src/assets/icons/plus.svg';
-import Spinner from 'src/assets/icons/spinner_animated_blue_xl.svg';
+import Spinner from 'src/common/components/Spinner';
 import BackdropOverlay from 'src/common/components/BackdropOverlay';
 import Button from 'src/common/components/Button';
 import CollapseSection from 'src/common/components/CollapseSection';
@@ -15,7 +15,7 @@ import SurveyList from './SurveyList';
 
 const LoadingContent = styled.div`
   ${typography.headingLargeSemibold};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,19 +24,10 @@ const LoadingContent = styled.div`
 `;
 
 const CreateSurveyButton = styled(Button)`
-  background-color: ${colors.updPrimary};
-  border-radius: ${px(4)};
-  width: ${px(164)};
-  height: ${px(48)};
-
   > div:first-child {
-    ${typography.bodyMediumSemibold};
-    color: ${colors.updBackgroundOnPrimary};
-    padding: ${px(12)} ${px(13.5)};
-    height: ${px(48)};
-
+    padding-left: ${px(2)};
     > svg {
-      margin-right: ${px(9)};
+      margin-right: ${px(4)};
     }
   }
 `;
@@ -56,7 +47,7 @@ const SurveyManagement = () => {
       {isCreating && (
         <BackdropOverlay open loaderBackdrop>
           <LoadingContent>
-            <Spinner />
+            <Spinner size="m" />
             Creating survey...
           </LoadingContent>
         </BackdropOverlay>
@@ -64,7 +55,12 @@ const SurveyManagement = () => {
       <CollapseSection
         title="Survey Management"
         headerExtra={
-          <CreateSurveyButton icon={<PlusIcon />} fill="solid" onClick={handleCreateSurveyClick}>
+          <CreateSurveyButton
+            icon={<PlusIcon />}
+            fill="solid"
+            onClick={handleCreateSurveyClick}
+            width={164}
+          >
             Create survey
           </CreateSurveyButton>
         }

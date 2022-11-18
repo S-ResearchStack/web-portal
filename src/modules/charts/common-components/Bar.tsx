@@ -6,14 +6,14 @@ import { colors, typography } from 'src/styles';
 export const BAR_CLASS_NAME = 'bar';
 
 const StyledRect = styled.rect`
-  fill: ${colors.updSecondarySkyBlue};
+  fill: ${colors.secondarySkyBlue};
 `;
 
 const StyledText = styled.text<{ $isHorizontal: boolean }>`
-  ${typography.barChartLabel16};
+  ${typography.headingXSmall};
 
   value {
-    fill: ${colors.onSecondary};
+    fill: ${colors.background};
     ${({ $isHorizontal }) =>
       !$isHorizontal &&
       css`

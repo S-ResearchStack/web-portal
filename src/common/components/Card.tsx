@@ -76,21 +76,21 @@ export const TitleContainer = styled.div`
 `;
 
 const Title = styled.div<{ hasSubtitle: boolean }>`
-  ${typography.headingXSmall} !important;
-  color: ${colors.updTextPrimaryDark} !important;
   display: flex;
   justify-content: space-between;
   height: ${({ hasSubtitle }) => (hasSubtitle ? px(21) : px(43))};
 `;
 
 const TitleText = styled.p`
+  ${typography.headingXSmall};
+  color: ${colors.textPrimaryDark};
   display: inline-block;
   margin: 0;
 `;
 
 const Subtitle = styled.div<{ subtitle?: string | boolean }>`
   ${typography.bodySmallRegular};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   min-height: ${({ subtitle }) => (subtitle === true ? px(20) : px(43))};
   min-width: ${px(50)};
   display: flex;
@@ -127,10 +127,10 @@ const Card = forwardRef(
   ): JSX.Element => {
     const renderContent = () => {
       if (error) {
-        return <ServiceScreen onReload={onReload} type="error" />;
+        return <ServiceScreen onReload={onReload} type="error" data-testid="error-screen" />;
       }
       if (empty) {
-        return <ServiceScreen type="empty" />;
+        return <ServiceScreen type="empty" data-testid="empty-screen" />;
       }
 
       return children;
@@ -141,11 +141,15 @@ const Card = forwardRef(
         {title && (
           <TitleContainer>
             <Title hasSubtitle={!!subtitle}>
-              <TitleText>{title}</TitleText>
-              {loading && <RefreshIconStyled />}
+              <TitleText data-testid="title">{title}</TitleText>
+              {loading && <RefreshIconStyled data-testid="loader" />}
               {action && !error && !empty && <Action loading={loading}>{action}</Action>}
             </Title>
-            {subtitle && <Subtitle subtitle={subtitle}>{subtitle}</Subtitle>}
+            {subtitle && (
+              <Subtitle data-testid="subtitle" subtitle={subtitle}>
+                {subtitle}
+              </Subtitle>
+            )}
           </TitleContainer>
         )}
         <Content loading={loading} contentChanging={contentChanging}>

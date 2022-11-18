@@ -1,6 +1,6 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { autoUpdate, offset } from '@floating-ui/react-dom';
 import { useDismiss, useFloating, useInteractions } from '@floating-ui/react-dom-interactions';
-import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import CalendarIcon from 'src/assets/icons/calendar.svg';
@@ -13,7 +13,7 @@ import CalendarPopover from './CalendarPopover';
 const InputLabel = styled.div<{ $placeholder: boolean }>`
   ${typography.bodyMediumRegular};
   color: ${({ $placeholder, theme }) =>
-    $placeholder ? theme.colors.updTextSecondaryGray : theme.colors.updTextPrimaryDark};
+    $placeholder ? theme.colors.textSecondaryGray : theme.colors.textPrimaryDark};
 `;
 
 const CalendarIconStyled = styled(CalendarIcon)``;
@@ -21,11 +21,10 @@ const CalendarIconStyled = styled(CalendarIcon)``;
 const InputContainer = styled.div<{ $disabled?: boolean; $highlight?: boolean }>`
   max-width: ${px(312)};
   height: ${px(56)};
-  background-color: ${colors.updBackground};
+  background-color: ${colors.background};
   border-radius: ${px(4)};
   border-width: ${px(1)};
-  border-color: ${({ $highlight, theme }) =>
-    $highlight ? theme.colors.updPrimary : 'transparent'};
+  border-color: ${({ $highlight, theme }) => ($highlight ? theme.colors.primary : 'transparent')};
   border-style: solid;
 
   display: flex;
@@ -33,16 +32,20 @@ const InputContainer = styled.div<{ $disabled?: boolean; $highlight?: boolean }>
   justify-content: space-between;
   position: relative;
 
+  :hover {
+    cursor: pointer;
+  }
+
   ${InputLabel} {
     margin-left: ${px(15)};
     color: ${({ $disabled, theme }) =>
-      $disabled ? theme.colors.updDisabled : theme.colors.updTextPrimaryDark};
+      $disabled ? theme.colors.disabled : theme.colors.textPrimaryDark};
   }
 
   ${CalendarIconStyled} {
     margin-right: ${px(7)};
     fill: ${({ $disabled, theme }) =>
-      $disabled ? theme.colors.updPrimaryDisabled : theme.colors.updPrimary};
+      $disabled ? theme.colors.primaryDisabled : theme.colors.primary};
   }
 `;
 
@@ -108,6 +111,7 @@ const DatePicker: React.FC<Props> = ({
       onSelectedDateChange={handleSelectedDateChange}
       minAllowedDate={min}
       maxAllowedDate={max}
+      data-testid="calendar-popover"
     />
   );
 
@@ -125,7 +129,7 @@ const DatePicker: React.FC<Props> = ({
       $disabled={disabled}
       $highlight={value && isOpen}
     >
-      <InputLabel $placeholder={!value}>
+      <InputLabel $placeholder={!value} data-testid="input-label">
         {value ? format(value, 'EEE, MMM dd, yyyy') : 'Select'}
       </InputLabel>
       <CalendarIconStyled />

@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
 
   svg {
-    fill: ${colors.updTextPrimary};
+    fill: ${colors.textPrimary};
     margin-right: ${px(8)};
   }
 `;
@@ -26,7 +26,7 @@ const ClickableOpacity = styled.button`
 
 const Title = styled.h4`
   ${typography.labelRegular};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   padding: 0;
   margin: 0;
   letter-spacing: 0.03em;

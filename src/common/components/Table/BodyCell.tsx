@@ -1,32 +1,27 @@
 import React, { useRef } from 'react';
-
 import styled from 'styled-components';
 
 import Tooltip, { TooltipControls } from 'src/common/components/Tooltip';
 import { animation, colors, px, typography } from 'src/styles';
+
 import { ROW_HEIGHT } from './constants';
 import { useCellTooltip } from './hooks';
-import { ColumnOptions, SortOptions } from './types';
+import { ColumnOptions } from './types';
 
 export interface TableCellProps<T> {
   column: ColumnOptions<T>;
   children: React.ReactNode;
-  sort?: SortOptions<T>;
 }
 
 export type BodyCellContainerProps = Pick<ColumnOptions<object>, 'align' | '$width'>;
 
-export const BodyCellContainer = styled.div<
-  BodyCellContainerProps & { isSortedColumnCell?: boolean }
->`
+export const BodyCellContainer = styled.div<BodyCellContainerProps>`
   position: relative;
   box-sizing: border-box;
   height: ${px(ROW_HEIGHT)};
   display: flex;
   align-items: center;
   padding: ${px(7)} ${px(8)};
-  background-color: ${({ isSortedColumnCell, theme }) =>
-    isSortedColumnCell ? theme.colors.updTableCellActive : 'transparent'};
   color: ${colors.onSurface};
   overflow: hidden;
   transition: background-color 0.3s ${animation.defaultTiming};
@@ -46,7 +41,7 @@ export const BodyCellContainer = styled.div<
   }
 `;
 
-const BodyCell = <T,>({ column, sort, children }: TableCellProps<T>): JSX.Element => {
+const BodyCell = <T,>({ column, children }: TableCellProps<T>): JSX.Element => {
   const tooltipRef = useRef<TooltipControls>(null);
   const { isShowTooltip, handleMouseEnter, handleMouseLeave, currentPos, tooltipStyles } =
     useCellTooltip(tooltipRef);
@@ -59,9 +54,6 @@ const BodyCell = <T,>({ column, sort, children }: TableCellProps<T>): JSX.Elemen
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-id={column.dataKey}
-      isSortedColumnCell={
-        !!sort?.sortings.find((s) => s?.column === column.dataKey) && sort?.isProcessing
-      }
     >
       <Tooltip
         ref={tooltipRef}

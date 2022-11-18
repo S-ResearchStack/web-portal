@@ -13,7 +13,7 @@ const ProgressBarContainer = styled.div`
 const ProgressBarBackground = styled.div`
   width: 100%;
   border-radius: ${px(12)};
-  background-color: ${colors.updPrimaryLight};
+  background-color: ${colors.primaryLight};
   height: ${px(12)};
   position: relative;
 `;
@@ -23,14 +23,14 @@ const ProgressBar = styled.div<{ $fillPercent: number }>`
   position: relative;
   height: ${px(12)};
   border-radius: ${px(12)};
-  background-color: ${colors.updPrimary};
+  background-color: ${colors.primary};
   transition: width 300ms ${animation.defaultTiming};
 `;
 
 const ProgressBarText = styled.div`
   ${typography.bodySmallRegular};
   line-height: ${px(18)};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   margin-top: ${px(8)};
 `;
 

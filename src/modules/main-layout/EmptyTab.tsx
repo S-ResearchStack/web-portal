@@ -17,7 +17,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   margin-top: ${px(36)};
-  ${typography.titleBold18};
+  ${typography.headingXMedium};
 `;
 
 const EmptyTab = () => (

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import useEvent from 'react-use/lib/useEvent';
 import styled from 'styled-components';
 
@@ -107,7 +107,8 @@ export const SimpleGridContainer = styled.div<SimpleGridContainerProps>`
 
   /* padding is used instead margin to keep margin: auto behaviour */
   /* it is required on small screens to keep space between content and edge of screen */
-  width: ${({ $width, $minMargin }) => px($width + $minMargin * 2)};
+  width: 100%;
+  max-width: ${({ $width, $minMargin }) => px($width + $minMargin * 2)};
   margin: 0 auto;
   padding: 0 ${({ $minMargin }) => px($minMargin) || 0};
 
@@ -130,7 +131,7 @@ export const useSimpleGrid = (): SimpleGridSchema => {
   const deviceMatches = useMatchDeviceScreen();
   const [schema, setSchema] = useState(() => calculateSimpleGrid(deviceMatches));
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setSchema(calculateSimpleGrid(deviceMatches));
   }, [deviceMatches]);
 

@@ -39,9 +39,11 @@ const Label = styled.label<{ withDescription: boolean; isLegend: boolean; revers
 
 const Child = styled.div<{ disabled?: boolean }>`
   ${typography.bodySmallRegular};
-  color: ${({ disabled }) => (disabled ? colors.updTextDisabled : colors.updTextPrimary)};
-  margin-top: ${px(9.5)};
+  color: ${({ disabled }) => (disabled ? colors.textDisabled : colors.textPrimary)};
   transition: color 300ms ${animation.defaultTiming};
+  display: flex;
+  align-items: center;
+  height: 100%;
 `;
 
 const Icon = styled.div<{ isLegend: boolean }>`
@@ -68,26 +70,26 @@ const RadioContainer = styled.div<RadioProps>`
         if (disabled) {
           if (checked) {
             return css`
-              fill: ${colors.updDisabled};
+              fill: ${colors.disabled};
             `;
           }
 
           return css`
-            stroke: ${colors.updDisabled};
-            fill: ${colors.updSurface};
+            stroke: ${colors.disabled};
+            fill: ${colors.surface};
           `;
         }
 
         const error = kind === 'error';
         if (checked) {
           return css`
-            fill: ${error ? colors.updStatusError : (color && colors[color]) || colors.updPrimary};
+            fill: ${error ? colors.statusError : (color && colors[color]) || colors.primary};
           `;
         }
 
         const selectedColor = error
-          ? colors.updStatusError
-          : (color && colors[color]) || colors.updPrimaryDisabled;
+          ? colors.statusError
+          : (color && colors[color]) || colors.primaryDisabled;
 
         return css`
           stroke: ${selectedColor};
@@ -104,8 +106,8 @@ const RadioContainer = styled.div<RadioProps>`
         const error = kind === 'error';
         if (disabled && checked && kind !== 'success') {
           return css`
-            stroke: ${colors.updSurface};
-            fill: ${!error && colors.updDisabled};
+            stroke: ${colors.surface};
+            fill: ${!error && colors.disabled};
             stroke-width: ${px(8)};
             paint-order: stroke;
           `;
@@ -115,8 +117,13 @@ const RadioContainer = styled.div<RadioProps>`
       }}
     }
   }
-
+  
   &:hover {
+
+    > ${Label} {
+      cursor: ${({ disabled }) => !disabled && 'pointer'};
+    }
+    
     ${Icon} svg {
       > :first-child {
         ${({ color, kind, checked, theme, disabled, readOnly }) => {
@@ -127,7 +134,7 @@ const RadioContainer = styled.div<RadioProps>`
           const isError = kind === 'error';
           if (checked) {
             const bgColor = isError
-              ? theme.colors.updStatusError
+              ? theme.colors.statusError
               : (color &&
                   (theme.colors[`${color}Hovered` as SpecColorType] ||
                     theme.colors[`${color}Text` as SpecColorType])) ||
@@ -139,15 +146,15 @@ const RadioContainer = styled.div<RadioProps>`
           }
 
           const strokeColor = isError
-            ? theme.colors.updStatusError
+            ? theme.colors.statusError
             : (color &&
                 (theme.colors[`${color}Hovered` as SpecColorType] ||
                   theme.colors[`${color}Text` as SpecColorType])) ||
               color;
 
           const bgColor = isError
-            ? theme.colors.updStatusError
-            : (color && theme.colors[`${color}10` as SpecColorType]) || theme.colors.updPrimary10;
+            ? theme.colors.statusError
+            : (color && theme.colors[`${color}10` as SpecColorType]) || theme.colors.primary10;
 
           return css`
             fill: ${bgColor};

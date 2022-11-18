@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { matchPath } from 'react-router-dom';
-import { createBrowserHistory, Location } from 'history';
+import { createBrowserHistory, createMemoryHistory, Location } from 'history';
 
 import { RootState } from 'src/modules/store/store';
 
@@ -27,7 +27,12 @@ export type LocationState = {
   from: Location;
 };
 
-export const history = createBrowserHistory({ basename: env.PUBLIC_PATH });
+export const makeHistory = () =>
+  process.env.NODE_ENV !== 'test'
+    ? createBrowserHistory({ basename: process.env.PUBLIC_PATH })
+    : createMemoryHistory();
+
+export const history = makeHistory();
 
 const sectionPaths = [
   Path.Overview,

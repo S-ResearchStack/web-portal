@@ -8,7 +8,7 @@ import { ExtendProps } from 'src/common/utils/types';
 
 const Title = styled.div`
   ${typography.labelRegular};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   padding: 0;
   margin: 0;
   letter-spacing: 0.03em;
@@ -21,7 +21,7 @@ const TitleContainer = styled.div`
   cursor: pointer;
 
   svg {
-    fill: ${colors.updTextPrimary};
+    fill: ${colors.textPrimary};
     margin-right: ${px(6)};
   }
 `;

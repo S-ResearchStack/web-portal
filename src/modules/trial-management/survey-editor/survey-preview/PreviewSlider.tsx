@@ -1,8 +1,11 @@
-import styled from 'styled-components';
 import React, { FC, useMemo } from 'react';
+
 import _range from 'lodash/range';
+import styled from 'styled-components';
 
 import { colors, px, typography } from 'src/styles';
+
+const POINTER_SIZE = 12;
 
 const SliderContainer = styled.div`
   display: flex;
@@ -13,26 +16,51 @@ const SliderContainer = styled.div`
 
 const SliderBar = styled.div`
   width: 100%;
-  background-color: ${colors.updPrimaryLight};
+  background-color: ${colors.primaryLight};
   height: ${px(2)};
+`;
+
+const ScaleWrapper = styled.div`
+  width: 100%;
+  height: fit-content;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 ${px(POINTER_SIZE / 2)};
 `;
 
 const SliderScalePointWrapper = styled.div<{ index: number; areasNumber: number }>`
   cursor: pointer;
-  width: ${({ areasNumber }) => `calc(100% / ${areasNumber})`};
-  height: ${px(6)};
-  position: absolute;
-  left: ${({ index, areasNumber }) => `calc(100% / ${areasNumber} * ${index})`};
-  top: ${px(14)};
+  height: ${px(36)};
+  position: relative;
+  top: ${px(-5)};
   display: flex;
-  justify-content: center;
+  justify-content: ${({ index, areasNumber }) => {
+    switch (index) {
+      case 0:
+        return 'flex-start';
+      case areasNumber - 1:
+        return 'flex-end';
+      default:
+        return 'center';
+    }
+  }};
+  width: ${({ areasNumber, index }) => {
+    if (index === 0 || index === areasNumber - 1) {
+      return `calc((100% / ${areasNumber - 1}) / 2)`;
+    }
+    return `calc(100% / ${areasNumber - 1})`;
+  }};
 `;
 
 const SliderScalePoint = styled.div`
   cursor: pointer;
   width: ${px(2)};
+  position: relative;
+  top: ${px(20)};
   height: ${px(6)};
-  background-color: ${colors.updPrimary};
+  background-color: ${colors.primary};
 `;
 
 const ValuesContainer = styled.div`
@@ -41,29 +69,36 @@ const ValuesContainer = styled.div`
   justify-content: space-between;
   ${typography.labelRegular};
   line-height: ${px(13)};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   position: absolute;
   top: ${px(28)};
   left: 0;
 `;
 
 const LabelsContainer = styled(ValuesContainer)`
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   text-transform: uppercase;
   letter-spacing: ${px(1)};
   top: ${px(45)};
 `;
 
-const SelectedPoint = styled.div<{ index?: number; areasNumber: number }>`
+const Pointer = styled.div<{ index?: number; areasNumber: number }>`
   position: absolute;
   width: ${px(16)};
   height: ${px(16)};
-  background-color: ${colors.updPrimary};
-  border-radius: ${px(25)};
+  background-color: ${colors.primary};
+  border-radius: 50%;
   box-shadow: 0 0 ${px(8)} rgba(32, 87, 213, 0.25);
   top: ${px(-8)};
-  left: ${({ index, areasNumber }) =>
-    `calc((100% / ${areasNumber} * ${index || 0}) + (100% / ${areasNumber} / 2) - ${px(8)})`};
+  left: ${({ index, areasNumber }) => {
+    if (index === 0) {
+      return '0';
+    }
+    if (index === areasNumber - 1) {
+      return `calc(100% - ${px(POINTER_SIZE)} - ${px(4)})`;
+    }
+    return `calc(((100% - ${px(POINTER_SIZE)} - ${px(4)}) / (${areasNumber} - 1) * ${index || 0}))`;
+  }};
   opacity: ${({ index }) => (index !== undefined ? 1 : 0)};
 `;
 
@@ -100,16 +135,20 @@ const PreviewSlider: FC<PreviewSliderProps> = ({
 
   return (
     <SliderContainer>
+      <ScaleWrapper>
+        {_range(0, areasNumber).map((i) => (
+          <SliderScalePointWrapper
+            index={i}
+            areasNumber={areasNumber}
+            onClick={() => onChange(i + minIndex)}
+            key={i}
+          >
+            <SliderScalePoint />
+          </SliderScalePointWrapper>
+        ))}
+      </ScaleWrapper>
       <SliderBar />
-      {_range(0, areasNumber).map((i) => (
-        <SliderScalePointWrapper
-          index={i}
-          areasNumber={areasNumber}
-          onClick={() => onChange(i + minIndex)}
-        >
-          <SliderScalePoint />
-        </SliderScalePointWrapper>
-      ))}
+      <Pointer index={selectedPoint} areasNumber={areasNumber} />
       <ValuesContainer>
         <div>{minIndex}</div>
         <div>{maxIndex}</div>
@@ -118,7 +157,6 @@ const PreviewSlider: FC<PreviewSliderProps> = ({
         <div>{minLabel}</div>
         <div>{maxLabel}</div>
       </LabelsContainer>
-      <SelectedPoint index={selectedPoint} areasNumber={areasNumber} />
     </SliderContainer>
   );
 };

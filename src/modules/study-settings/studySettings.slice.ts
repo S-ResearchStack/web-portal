@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import _isEqual from 'lodash/isEqual';
-import _orderBy from 'lodash/orderBy';
 
 import Random from 'src/common/Random';
 import API, { GetUsersUserInfo } from 'src/modules/api';
@@ -69,6 +67,9 @@ API.mock.provideEndpoints({
 
     return API.mock.response(undefined);
   },
+  removeUser() {
+    return API.mock.response(undefined);
+  },
   updateUserRole(req) {
     const m = membersListMock.find((mm) => mm.id === req.accountId);
     if (!m) {
@@ -95,25 +96,17 @@ export type StudyMember = {
   role: RoleType;
 };
 
-type MembersListSortDirection = 'asc' | 'desc';
-
-export type StudyMembersListSort = {
-  column: keyof StudyMember;
-  direction: MembersListSortDirection;
-};
-
 type GetMembersListParams = {
   studyId: string;
-  sort: StudyMembersListSort;
 };
 
 const membersListSlice = createDataSlice({
   name: 'studySettings/membersList',
   fetchData: async (params: GetMembersListParams) => {
     const { data } = await API.getUsers({ projectId: params.studyId });
-    const users = _orderBy(data, [params.sort.column], [params.sort.direction]);
+
     return {
-      users: users
+      users: data
         .map((u) => ({
           ...u,
           name: u.profile?.name,
@@ -126,13 +119,7 @@ const membersListSlice = createDataSlice({
   },
 });
 
-export const useStudySettingsMembersList = (args: Parameters<typeof membersListSlice.hook>[0]) => {
-  const { prevFetchArgs, fetchArgs } = useAppSelector(membersListSlice.stateSelector);
-  return {
-    isSortLoading: !_isEqual(prevFetchArgs?.sort, fetchArgs?.sort),
-    ...membersListSlice.hook(args),
-  };
-};
+export const useStudySettingsMembersList = membersListSlice.hook;
 
 type MembersEditData = {
   id?: string;
@@ -240,17 +227,25 @@ export const inviteStudyMember =
       dispatch(showSnackbar({ text: 'Member has been successfully invited.' }));
       dispatch(membersListSlice.actions.refetch());
     } catch (err) {
-      applyDefaultApiErrorHandlers(err);
+      applyDefaultApiErrorHandlers(err, dispatch);
       dispatch(membersEdit.actions.createOrUpdateMemberFailure({ error: String(err) }));
     }
   };
 
 export const removeStudyMember =
-  (m: MembersEditData): AppThunk<void> =>
-  (dispatch) => {
-    console.info(`Remove study member ${JSON.stringify(m)}`);
-    dispatch(showSnackbar({ text: 'Member has been removed from the study.' }));
-    // TODO: refetch list
+  (m: Required<Pick<MembersEditData, 'id'>>): AppThunk<void> =>
+  async (dispatch) => {
+    try {
+      dispatch(membersEdit.actions.deleteMemberInit());
+      await API.removeUser({ accountId: m.id });
+      dispatch(membersEdit.actions.deleteMemberSuccess());
+      dispatch(closeInviteEditMember());
+      dispatch(showSnackbar({ text: 'Member has been removed from the study.' }));
+      dispatch(membersListSlice.actions.refetch()); // no waiting required
+    } catch (e) {
+      applyDefaultApiErrorHandlers(e, dispatch);
+      dispatch(membersEdit.actions.deleteMemberFailure({ error: String(e) }));
+    }
   };
 
 export default {

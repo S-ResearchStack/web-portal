@@ -28,7 +28,7 @@ export type TooltipHorizontalPaddings = 's' | 'm' | 'l';
 export interface TooltipProps {
   id: TooltipID;
   show?: boolean;
-  dynamic?: boolean;
+  static?: boolean;
   styles?: Partial<React.CSSProperties>;
   content: React.ReactNode;
   container?: HTMLElement;
@@ -55,10 +55,17 @@ export interface TooltipControls {
   destroy(): void;
 }
 
-export interface ITooltipContext {
-  tooltipsMap: Record<string, TooltipProps>;
+export interface ITooltipListContext {
+  tooltipsMap: Record<TooltipID, TooltipProps>;
+}
+
+export type TooltipSubscribeListener = (tooltip: TooltipProps) => void;
+export type TooltipDescribeListener = () => void;
+
+export interface ITooltipItemContext {
   create(tooltipProps: Omit<TooltipProps, 'id'>): TooltipID;
   destroy(tooltipId: TooltipID): void;
   setProps(tooltipId: TooltipID, tooltipProps: Partial<Omit<TooltipProps, 'id'>>): void;
   getProps(tooltipId: TooltipID): TooltipProps | undefined;
+  subscribe(tooltipId: TooltipID, cb: TooltipSubscribeListener): TooltipDescribeListener;
 }

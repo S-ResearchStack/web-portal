@@ -1,5 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { connectRouter } from 'connected-react-router';
+import type { Reducer } from 'redux';
 
 import authReducer from 'src/modules/auth/auth.slice';
 import studySettingsReducer from 'src/modules/study-settings/studySettings.slice';
@@ -10,17 +11,20 @@ import trialManagementReducer from 'src/modules/trial-management/trialManagement
 import dataCollectionReducer from 'src/modules/data-collection/dataCollection.slice';
 import sidebarReducer from 'src/modules/main-layout/sidebar/sidebar.slice';
 import { history } from 'src/modules/navigation/store';
+import { DataSliceState } from 'src/modules/store/createDataSlice';
 
-const rootReducer = combineReducers({
-  auth: authReducer,
-  router: connectRouter(history),
-  ...studySettingsReducer,
-  snackbar: snackbarReducer,
-  ...overviewReducers,
-  studies: studiesReducer,
-  ...trialManagementReducer,
-  dataCollection: dataCollectionReducer,
-  sidebar: sidebarReducer,
-});
+const createReducer = <T, V>(asyncReducers?: { [key: string]: Reducer<DataSliceState<T, V>> }) =>
+  combineReducers({
+    auth: authReducer,
+    router: connectRouter(history),
+    snackbar: snackbarReducer,
+    studies: studiesReducer,
+    dataCollection: dataCollectionReducer,
+    sidebar: sidebarReducer,
+    ...studySettingsReducer,
+    ...overviewReducers,
+    ...trialManagementReducer,
+    ...asyncReducers,
+  });
 
-export default rootReducer;
+export default createReducer;

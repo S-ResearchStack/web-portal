@@ -2,18 +2,18 @@ import React, { FC } from 'react';
 
 import Portal from 'src/common/components/Portal';
 
-import { useTooltipCtx } from './TooltipContext';
+import { useTooltipListCtx } from './TooltipContext';
 import TooltipItem from './TooltipItem';
 
 const TooltipsList: FC = () => {
-  const tooltipCtx = useTooltipCtx();
+  const tooltipCtx = useTooltipListCtx();
   const tooltips: React.ReactNode[] = [];
 
   for (const tooltipId in tooltipCtx.tooltipsMap) {
     if ({}.hasOwnProperty.call(tooltipCtx.tooltipsMap, tooltipId)) {
       const item = tooltipCtx.tooltipsMap[tooltipId];
 
-      if (item.show) {
+      if (item.show && !item.static) {
         tooltips.push(<TooltipItem {...item} key={item.id} />);
       }
     }

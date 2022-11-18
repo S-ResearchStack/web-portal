@@ -15,9 +15,9 @@ export const PAGINATION_LIMITS = [10, 25, 50, 75];
 export interface PaginationProps {
   totalCount: number;
   pageSize: number;
-  currentPage: number;
-  onPageChange: (page: number, size: number) => void;
+  onPageChange: (offset: number, size: number) => void;
   disabled?: boolean;
+  offset: number;
 }
 
 const Container = styled.div`
@@ -30,7 +30,7 @@ const Container = styled.div`
 
 const Info = styled.div`
   ${typography.bodySmallRegular};
-  color: ${colors.updPrimary};
+  color: ${colors.primary};
   line-height: ${px(28)};
 `;
 
@@ -50,7 +50,7 @@ const ArrowButton = styled(Button).attrs({
   &:disabled {
     > div {
       svg {
-        fill: ${colors.updDisabled};
+        fill: ${colors.disabled};
       }
     }
   }
@@ -63,25 +63,31 @@ const DropDownContainer = styled.div`
 `;
 
 const DropDownLabel = styled.span`
-  color: ${colors.updPrimary};
+  ${typography.bodySmallRegular};
+  color: ${colors.primary};
   margin-right: ${px(8)};
 `;
 
 const DropDownControl = styled(Dropdown)`
   width: ${px(40)};
   height: ${px(25)};
-  border: ${px(1)} solid ${colors.updDisabled};
+  border: none;
   border-radius: ${px(4)};
+  z-index: 10;
+  color: ${colors.textSecondaryGray};
 
   & > ${ValueItem} {
-    width: 100%;
-    height: 100%;
+    position: relative;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     padding-left: ${px(6)};
     padding-right: ${px(6)};
-
+    border-color: ${colors.disabled};
+    &:hover {
+      cursor: pointer;
+    }
     > svg {
       display: none;
     }
@@ -89,8 +95,7 @@ const DropDownControl = styled(Dropdown)`
 ` as FC<DropdownProps<number>>;
 
 const SmallMenuItem = styled(MenuItem)`
-  background-color: ${({ selected }) =>
-    selected ? colors.updPrimary10 : colors.updBackgroundSurface};
+  background-color: ${({ selected }) => (selected ? colors.primary10 : colors.backgroundSurface)};
   width: ${px(38)};
   padding: 0;
   overflow-x: hidden;
@@ -107,57 +112,51 @@ const SmallMenuItem = styled(MenuItem)`
 const Pagination: FC<PaginationProps> = ({
   totalCount,
   pageSize,
-  currentPage = 1,
   onPageChange,
   disabled,
+  offset,
   ...props
 }) => {
-  const firstPage = 1;
-  const totalPages = Math.ceil(totalCount / pageSize);
-  const endRecord = currentPage * pageSize;
-  const startRecord = endRecord - pageSize + 1;
-
-  const isPrevDisabled = currentPage <= firstPage;
-  const isNextDisabled = currentPage >= totalPages;
+  const isPrevDisabled = offset === 0;
+  const isNextDisabled = offset + pageSize >= totalCount;
 
   const handlePageClick = useCallback(
-    (newPage: number) => !disabled && onPageChange(newPage, pageSize),
+    (newOffset: number) => !disabled && onPageChange(newOffset, pageSize),
     [pageSize, onPageChange, disabled]
   );
 
   const handleSizeChanged = useCallback(
     (size: number) => {
       if (!disabled) {
-        const newTotalPages = Math.ceil(totalCount / size);
-        if (currentPage > newTotalPages) {
-          onPageChange(newTotalPages, size);
-        } else {
-          onPageChange(currentPage, size);
-        }
+        onPageChange(offset, size);
       }
     },
-    [currentPage, onPageChange, disabled, totalCount]
+    [onPageChange, disabled, offset]
   );
 
   const sizes = useMemo(() => PAGINATION_LIMITS.map((i) => ({ label: i.toString(), key: i })), []);
 
-  const goToFirst = useCallback(() => handlePageClick(firstPage), [handlePageClick, firstPage]);
-  const goToLast = useCallback(() => handlePageClick(totalPages), [handlePageClick, totalPages]);
+  const goToFirst = useCallback(() => handlePageClick(0), [handlePageClick]);
+  const goToLast = useCallback(
+    () => handlePageClick(totalCount - pageSize),
+    [handlePageClick, totalCount, pageSize]
+  );
 
   const goToPrev = useCallback(
-    () => handlePageClick(currentPage - 1),
-    [handlePageClick, currentPage]
+    () => handlePageClick(Math.max(offset - pageSize, 0)),
+    [handlePageClick, offset, pageSize]
   );
   const goToNext = useCallback(
-    () => handlePageClick(currentPage + 1),
-    [handlePageClick, currentPage]
+    () => handlePageClick(Math.min(offset + pageSize, totalCount)),
+    [handlePageClick, offset, pageSize, totalCount]
   );
 
   return (
-    <Container {...props}>
-      <Info {...props}>
-        {`${startRecord}-${totalCount < endRecord ? totalCount : endRecord} of ${totalCount}`}
-      </Info>
+    <Container {...props} data-testid="pagination">
+      <Info data-testid="info" {...props}>{`${offset + 1}-${Math.min(
+        offset + pageSize + 1,
+        totalCount
+      )} of ${totalCount}`}</Info>
       <Controls {...props}>
         <DropDownContainer>
           <DropDownLabel>Rows per page</DropDownLabel>
@@ -171,16 +170,16 @@ const Pagination: FC<PaginationProps> = ({
             maxVisibleMenuItems={5}
           />
         </DropDownContainer>
-        <ArrowButton disabled={isPrevDisabled} onClick={goToFirst}>
+        <ArrowButton disabled={isPrevDisabled} onClick={goToFirst} data-testid="go-to-first">
           <PageFirstIcon />
         </ArrowButton>
-        <ArrowButton disabled={isPrevDisabled} onClick={goToPrev}>
+        <ArrowButton disabled={isPrevDisabled} onClick={goToPrev} data-testid="go-to-previous">
           <ChevronLeftIcon />
         </ArrowButton>
-        <ArrowButton disabled={isNextDisabled} onClick={goToNext}>
+        <ArrowButton disabled={isNextDisabled} onClick={goToNext} data-testid="go-to-next">
           <ChevronRightIcon />
         </ArrowButton>
-        <ArrowButton disabled={isNextDisabled} onClick={goToLast}>
+        <ArrowButton disabled={isNextDisabled} onClick={goToLast} data-testid="go-to-last">
           <PageLastIcon />
         </ArrowButton>
       </Controls>

@@ -1,0 +1,25 @@
+name: bump-version
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_ACTIONS_PAT }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: |
+          npm version patch --no-git-tag-version
+          echo VERSION=$(echo "console.log(require('./package.json').version)" | node) >> $GITHUB_ENV
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add package.json
+          git commit -m "version ${VERSION} [no ci]"
+          git push

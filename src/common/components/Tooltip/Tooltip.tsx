@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import styled from 'styled-components';
 import _debounce from 'lodash/debounce';
@@ -12,55 +13,59 @@ import _isEqual from 'lodash/isEqual';
 import usePrevious from 'react-use/lib/usePrevious';
 
 import {
-  ITooltipContext,
+  ITooltipItemContext,
   Point,
   TooltipControls,
   TooltipID,
   TooltipPosition,
   TooltipProps,
 } from './types';
-import { useTooltipCtx } from './TooltipContext';
+import { useTooltipItemCtx } from './TooltipContext';
+import TooltipItem from './TooltipItem';
 
 const DEFAULT_SET_TOOLTIP_PROPS_DELAY = 50;
 
-const TooltipTrigger = styled.span`
+const TooltipTrigger = styled.span<{ relative: boolean }>`
   display: inline-block;
+  position: ${({ relative }) => (relative ? 'relative' : 'static')};
 `;
 
 type TooltipComponentProps = React.PropsWithChildren<Omit<TooltipProps, 'id'>>;
 
 const Tooltip = forwardRef(
   ({ children, ...props }: TooltipComponentProps, ref: React.ForwardedRef<TooltipControls>) => {
-    const tooltipIdRef = useRef<TooltipID>();
     const containerRef = useRef<HTMLSpanElement>(null);
-    const tooltipCtx: ITooltipContext = useTooltipCtx();
-
+    const tooltipCtx: ITooltipItemContext = useTooltipItemCtx();
     const prevProps = usePrevious(props);
+    const [tooltipIdx, setTooltipIdx] = useState<TooltipID>();
+    const [currentTooltip, setCurrenTooltip] = useState<TooltipProps>();
 
     useEffect(() => {
+      let ttIdx: TooltipID;
+
       if (containerRef.current) {
-        tooltipIdRef.current = tooltipCtx.create({
+        ttIdx = tooltipCtx.create({
           container: containerRef.current,
           ...props,
         });
+
+        setTooltipIdx(ttIdx);
       }
 
       return () => {
-        if (tooltipIdRef.current) {
-          tooltipCtx.destroy(tooltipIdRef.current);
-        }
+        tooltipCtx.destroy(ttIdx);
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-      if (containerRef.current && tooltipIdRef.current && !_isEqual(prevProps, props)) {
-        tooltipCtx.setProps(tooltipIdRef.current, {
+      if (containerRef.current && tooltipIdx && !_isEqual(prevProps, props)) {
+        tooltipCtx.setProps(tooltipIdx, {
           container: containerRef.current,
           ...props,
         });
       }
-    }, [tooltipCtx, prevProps, props, tooltipIdRef]);
+    }, [tooltipCtx, prevProps, props, tooltipIdx]);
 
     useEffect(() => {
       if (prevProps?.show !== props.show) {
@@ -76,66 +81,66 @@ const Tooltip = forwardRef(
     const initRef = useCallback(
       (): TooltipControls => ({
         setPoint(point: Point) {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { point });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { point });
           }
           return this;
         },
         setContent(content: React.ReactNode) {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { content });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { content });
           }
           return this;
         },
         setContainer(container?: HTMLElement) {
-          if (tooltipIdRef.current && container) {
-            tooltipCtx.setProps(tooltipIdRef.current, { container });
+          if (tooltipIdx && container) {
+            tooltipCtx.setProps(tooltipIdx, { container });
           }
           return this;
         },
         getContainer(): HTMLElement | undefined {
-          if (tooltipIdRef.current) {
-            return tooltipCtx.getProps(tooltipIdRef.current)?.container;
+          if (tooltipIdx) {
+            return tooltipCtx.getProps(tooltipIdx)?.container;
           }
           return undefined;
         },
         getTooltip(): HTMLElement | undefined {
-          if (tooltipIdRef.current) {
-            return document.getElementById(tooltipIdRef.current) || undefined;
+          if (tooltipIdx) {
+            return document.getElementById(tooltipIdx) || undefined;
           }
           return undefined;
         },
         setArrow(arrow: boolean) {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { arrow });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { arrow });
           }
           return this;
         },
         setPosition(position: TooltipPosition) {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { position });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { position });
           }
           return this;
         },
         show() {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { show: true });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { show: true });
           }
           return this;
         },
         hide() {
-          if (tooltipIdRef.current) {
-            tooltipCtx.setProps(tooltipIdRef.current, { show: false });
+          if (tooltipIdx) {
+            tooltipCtx.setProps(tooltipIdx, { show: false });
           }
           return this;
         },
         destroy() {
-          if (tooltipIdRef.current) {
-            tooltipCtx.destroy(tooltipIdRef.current);
+          if (tooltipIdx) {
+            tooltipCtx.destroy(tooltipIdx);
           }
         },
       }),
-      [tooltipCtx]
+      [tooltipIdx, tooltipCtx]
     );
 
     useImperativeHandle(ref, initRef);
@@ -158,21 +163,21 @@ const Tooltip = forwardRef(
           switch (evtType) {
             case 'click':
               triggersProps.onClick = () => {
-                if (tooltipIdRef.current) {
-                  setTooltipPropsDelayed(tooltipIdRef.current, { show: !props.show });
+                if (tooltipIdx) {
+                  setTooltipPropsDelayed(tooltipIdx, { show: !props.show });
                 }
               };
               break;
 
             case 'hover':
               triggersProps.onMouseEnter = () => {
-                if (tooltipIdRef.current) {
-                  setTooltipPropsDelayed(tooltipIdRef.current, { show: true });
+                if (tooltipIdx) {
+                  setTooltipPropsDelayed(tooltipIdx, { show: true });
                 }
               };
               triggersProps.onMouseLeave = () => {
-                if (tooltipIdRef.current) {
-                  setTooltipPropsDelayed(tooltipIdRef.current, { show: false });
+                if (tooltipIdx) {
+                  setTooltipPropsDelayed(tooltipIdx, { show: false });
                 }
               };
               break;
@@ -184,11 +189,35 @@ const Tooltip = forwardRef(
       }
 
       return triggersProps;
-    }, [props.trigger, setTooltipPropsDelayed, props.show]);
+    }, [props.trigger, props.show, tooltipIdx, setTooltipPropsDelayed]);
+
+    useEffect(() => {
+      let describe: () => void;
+      if (tooltipIdx) {
+        describe = tooltipCtx.subscribe(tooltipIdx, setCurrenTooltip);
+      }
+      return () => describe?.();
+    }, [tooltipCtx, tooltipIdx]);
 
     return (
-      <TooltipTrigger ref={containerRef} {...evtProps}>
+      <TooltipTrigger
+        ref={containerRef}
+        {...evtProps}
+        relative={!props.point}
+        data-testid="tooltip-container"
+      >
         {children}
+        {props.static && tooltipIdx ? (
+          <TooltipItem
+            data-testid="tooltip-item"
+            key={tooltipIdx}
+            id={tooltipIdx}
+            {...(currentTooltip || props)}
+            {...(props.point
+              ? { point: props.point }
+              : { container: containerRef.current as HTMLElement })}
+          />
+        ) : null}
       </TooltipTrigger>
     );
   }

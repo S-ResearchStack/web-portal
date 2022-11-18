@@ -37,7 +37,7 @@ const StyledCard = styled(Card)`
 `;
 
 const Body = styled.div`
-  color: ${colors.textSecondary};
+  color: ${colors.textPrimary};
   display: flex;
   flex-direction: column;
 `;
@@ -118,6 +118,7 @@ const Modal: FC<ModalProps> = ({
             aria-hidden={ariaHidden}
             className={className || ''}
             role="alertdialog"
+            data-testid="modal"
           >
             <Body>
               <Title>{title}</Title>
@@ -131,6 +132,7 @@ const Modal: FC<ModalProps> = ({
                   onClick={handleOnClickDecline}
                   color="primary"
                   tabIndex={tabIndex}
+                  data-testid="decline-button"
                 >
                   {declineLabel}
                 </DeclineComponent>
@@ -140,6 +142,7 @@ const Modal: FC<ModalProps> = ({
                   $loading={acceptProcessing}
                   onClick={handleOnClickAccept}
                   tabIndex={tabIndex}
+                  data-testid="accept-button"
                 >
                   {acceptLabel}
                 </AcceptComponent>

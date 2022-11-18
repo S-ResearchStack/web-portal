@@ -4,7 +4,7 @@ import {
   participantListItemMock,
   participantListMock,
   transformParticipantListItemFromApi,
-} from 'src/modules/overview/overview.slice';
+} from 'src/modules/overview/participantsList.slice';
 
 API.mock.provideEndpoints({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -54,7 +54,12 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
     return (
       <BackdropOverlay open={open}>
         <Slide {...slideProps} in={open} direction={direction}>
-          <DrawerBox ref={combineRefs([boxRef, ref])} aria-modal={open} aria-hidden={!open}>
+          <DrawerBox
+            ref={combineRefs([boxRef, ref])}
+            aria-modal={open}
+            aria-hidden={!open}
+            data-testid="drawer-box"
+          >
             {children}
           </DrawerBox>
         </Slide>

@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-
 import styled from 'styled-components';
+import _orderBy from 'lodash/orderBy';
 
 import Button from 'src/common/components/Button';
 import IconButton from 'src/common/components/IconButton';
@@ -19,10 +19,11 @@ import {
 import { BASE_TABLE_BODY_HEIGHT } from 'src/common/components/Table/BaseTable';
 import PlusIcon from 'src/assets/icons/plus_small.svg';
 import CloseIcon from 'src/assets/icons/cross.svg';
+import { useMatchDeviceScreen } from 'src/common/components/SimpleGrid';
+
 import {
   openInviteEditMember,
   StudyMember,
-  StudyMembersListSort,
   useStudySettingsMembersList,
 } from './studySettings.slice';
 import { useSelectedStudyId } from '../studies/studies.slice';
@@ -42,8 +43,11 @@ const CardContainer = styled(Card)`
 `;
 
 const InviteMemberButton = styled(Button)`
-  svg {
-    margin-right: ${px(4)};
+  :first-child {
+    padding-left: ${px(2)};
+    svg {
+      margin-right: ${px(2)};
+    }
   }
 `;
 
@@ -83,6 +87,7 @@ const TooltipContentContainer = styled.div`
     line-height: 150%;
   }
   display: flex;
+  align-items: center;
 `;
 
 const TooltipCloseButton = styled(IconButton)`
@@ -94,14 +99,21 @@ const TooltipCloseButton = styled(IconButton)`
 const TooltipContent: FC<{ onClose: () => void }> = ({ onClose }) => (
   <TooltipContentContainer>
     <span>Start by adding your team members.</span>
-    <TooltipCloseButton onClick={onClose} icon={CloseIcon} $size="m" color="updOnPrimary" />
+    <TooltipCloseButton onClick={onClose} icon={CloseIcon} $size="m" color="onPrimary" />
   </TooltipContentContainer>
 );
 
-const defaultSorting = {
+type MembersListSortDirection = 'asc' | 'desc';
+
+export type StudyMembersListSort = {
+  column: keyof StudyMember;
+  direction: MembersListSortDirection;
+};
+
+const defaultSorting: StudyMembersListSort = {
   column: 'email',
   direction: 'asc',
-} as StudyMembersListSort;
+};
 
 const MembersList: FC<StudySettingsMembersListProps> = ({
   shouldShowInviteTooltip,
@@ -115,6 +127,14 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     dispatch(openInviteEditMember({ id }));
     setShowingInviteTooltip(false);
   };
+
+  const device = useMatchDeviceScreen();
+
+  const editBtnExtraWidth = useMemo(() => {
+    if (device.desktop) return 0;
+    if (device.laptop) return 20;
+    return 40;
+  }, [device]);
 
   const columns: ColumnOptions<StudyMember>[] = [
     {
@@ -138,7 +158,7 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     {
       dataKey: 'status',
       label: 'Status',
-      $width: getColumnWidthInPercents(187.02),
+      $width: getColumnWidthInPercents(187.02 - editBtnExtraWidth),
       render: (status) => (
         <StatusContainer>
           <StatusIndicator color={getStatusTypeByStatusId(status as StudyMember['status'])} />
@@ -148,7 +168,7 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     },
     {
       dataKey: 'id',
-      $width: getColumnWidthInPercents(46),
+      $width: getColumnWidthInPercents(46 + editBtnExtraWidth),
       render: (id) => (
         <EditButton
           fill="text"
@@ -168,16 +188,15 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
   const membersList = useStudySettingsMembersList({
     fetchArgs: !!studyId && {
       studyId,
-      sort,
     },
   });
 
   const getRowKey = useCallback((row: StudyMember) => row.id, []);
 
-  const rowsWithProcessing = useMemo(
-    () => (membersList.data?.users || []).map((u) => ({ ...u, isProcessing: false })),
-    [membersList.data]
-  );
+  const usersList = useMemo(() => {
+    const users = (membersList.data?.users || []).map((u) => ({ ...u, isProcessing: false }));
+    return _orderBy(users, [sort.column], [sort.direction]);
+  }, [membersList.data, sort.column, sort.direction]);
 
   const renderTable = () => {
     if (membersList.error) {
@@ -188,12 +207,11 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
       <MembersTable
         stickyHeader
         columns={columns}
-        rows={rowsWithProcessing}
+        rows={usersList}
         getRowKey={getRowKey}
         bodyHeight={BASE_TABLE_BODY_HEIGHT}
         sort={{
           sortings: [sort],
-          isProcessing: membersList.isSortLoading,
           onSortChange(sortings) {
             setSort(sortings[0]);
           },
@@ -217,7 +235,7 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
         show={canShowInviteTooltip && isShowingInviteTooltip}
         position="bl"
         arrow
-        dynamic
+        static
         content={<TooltipContent onClose={handleTooltipClose} />}
         styles={{
           maxWidth: px(248),
@@ -238,18 +256,16 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     </div>
   );
 
-  const isEmpty = !membersList.data?.users.length;
+  const isEmpty = !usersList.length;
+  const { isLoading } = membersList;
 
   return (
     <CardContainer
       title="Members and access"
       subtitle
-      action={renderActions()}
-      loading={
-        (membersList.isLoading && !membersList.isSortLoading) ||
-        (membersList.isSortLoading && isEmpty)
-      }
-      empty={isEmpty && !membersList.isLoading && !!studyId}
+      action={!isLoading && renderActions()}
+      loading={isLoading}
+      empty={isEmpty && !isLoading && !!studyId}
       onReload={membersList.refetch}
       error={!!membersList.error}
     >

@@ -8,12 +8,12 @@ export const DEFAULT_PAGINATION_OFFSET = 0;
 
 export type TablesColumnsMap = Map<string, string[]>;
 
-type SorterResult = {
+export type SorterResult = {
   dataIndex: string;
   order: 'asc' | 'desc';
 };
 
-type PaginationResult = {
+export type PaginationResult = {
   offset?: number;
   limit?: number;
 };
@@ -37,12 +37,12 @@ export const getTableNameFromQuery = (qs = ''): string | undefined => {
 }; */
 
 const orderByRegexp = / order\s+by\s+(\w+(\s+asc|\s+desc)?([\s]*,[\s]*\w+(\s+asc|\s+desc)?)*)/i;
-const getOrderValuesString = (query: string): string | undefined => {
+export const getOrderValuesString = (query: string): string | undefined => {
   const orderMatch = query.match(orderByRegexp);
   return orderMatch ? orderMatch[1] : undefined;
 };
 
-const getOrderFromQuery = (query: string): SorterResult[] => {
+export const getOrderFromQuery = (query: string): SorterResult[] => {
   const orderStr = getOrderValuesString(query);
 
   if (!orderStr) {
@@ -85,12 +85,12 @@ export const updateQsBySorter = (qs: string, sorter: SorterResult[]): string => 
 };
 
 const paginationRegexp = /\s+((limit|offset)\s+[0-9]+)/gi;
-const getPaginationValueStrings = (query: string): string[] => {
+export const getPaginationValueStrings = (query: string): string[] => {
   const paginationMatch = query.matchAll(paginationRegexp);
   return [...paginationMatch].map((m) => m[1].replace(/\s+/, ' '));
 };
 
-const getPaginationFromQuery = (query: string): PaginationResult => {
+export const getPaginationFromQuery = (query: string): PaginationResult => {
   const paginationStrs = getPaginationValueStrings(query);
 
   return paginationStrs.length
@@ -151,4 +151,4 @@ export const getCsvBlobFromQueryResult = (data: SqlResponse<unknown>) => {
 };
 
 export const updateQsByColumns = (qs: string, columns: string[]): string =>
-  qs.replace(/select.+from/, `select ${columns.join(' ,')} from`);
+  columns.length ? qs.replace(/select.+from/i, `select ${columns.join(', ')} from`) : qs;

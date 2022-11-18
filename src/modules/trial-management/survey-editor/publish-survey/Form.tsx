@@ -25,7 +25,7 @@ const FormContainer = styled.div`
 
 const FormLabel = styled.div`
   ${typography.headingXSmall};
-  color: ${colors.updTextPrimary};
+  color: ${colors.textPrimary};
   flex: 0 0 ${px(193)};
 `;
 

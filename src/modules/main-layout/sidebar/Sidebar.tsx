@@ -107,7 +107,7 @@ const getBasePadding = (desktopType: DesktopType) =>
 const getMenuItemColorsStyles = (theme: DefaultTheme, selected = false, disabled = false) => {
   const color =
     (disabled && theme.colors.disabled) ||
-    (selected ? theme.colors.updPrimary : theme.colors.updTextSecondaryGray);
+    (selected ? theme.colors.primary : theme.colors.textSecondaryGray);
   return css`
     color: ${color} !important;
     svg {
@@ -141,8 +141,10 @@ const Container = styled.div.attrs<ContainerProps>(({ $barWidth, desktopType }) 
   flex-direction: column;
   justify-content: flex-start;
   ${typography.bodySmallRegular};
-  color: ${colors.updTextSecondaryGray};
+  color: ${colors.textSecondaryGray};
   position: relative;
+  border-right: ${px(1)} solid ${colors.background};
+  transition: border 150ms ${animation.defaultTiming};
   padding-bottom: ${({ desktopType, minimized }) =>
     (desktopType === 'desktop' && (minimized ? px(30) : px(16))) ||
     (desktopType === 'smallDesktop' && px(14)) ||
@@ -151,7 +153,7 @@ const Container = styled.div.attrs<ContainerProps>(({ $barWidth, desktopType }) 
     isResizeVisible &&
     desktopType !== 'laptop' &&
     css`
-      border-right: ${px(1)} solid ${theme.colors.updPrimary};
+      border-color: ${theme.colors.primary};
     `};
 `;
 
@@ -171,7 +173,7 @@ const StyledAvatar = styled(StudyAvatar)<Minimizable>`
 const ResizeButton = styled(Button)`
   position: absolute !important;
   z-index: 1100;
-  background-color: ${colors.updTableCellActive};
+  background-color: ${colors.primary05};
   top: ${px(-1000)};
   left: ${px(-1000)};
 `;
@@ -188,6 +190,7 @@ const StudyPanel = styled(FadeOutContainer)<Minimizable>`
     (desktopType === 'smallDesktop' && px(40)) ||
     (desktopType === 'laptop' && px(20))};
   &:hover {
+    cursor: pointer;
     ${StyledAvatar} {
       box-shadow: ${boxShadow.avatar};
     }
@@ -200,7 +203,7 @@ const StudyName = styled.div<Minimizable & { $barWidth: number }>`
   margin-top: ${({ minimized }) => !minimized && px(2)};
   word-break: break-word;
   ${({ minimized }) => hideDisplayIfMinimized(minimized)};
-  color: ${colors.updTextPrimaryDark};
+  color: ${colors.textPrimaryDark};
 `;
 
 const UserPanel = styled(FadeOutContainer)<Minimizable & { disabled?: boolean }>`
@@ -218,9 +221,9 @@ const UserPanel = styled(FadeOutContainer)<Minimizable & { disabled?: boolean }>
   margin-top: ${({ desktopType }) => (desktopType === 'desktop' ? px(8) : px(4))};
   ${({ $barWidth }) =>
     $barWidth === SIDEBAR_WIDTH ? typography.bodyMediumRegular : typography.bodyXSmallRegular};
-  color: ${({ disabled }) => (disabled ? colors.updTextDisabled : colors.updOnSurface)} !important;
+  color: ${({ disabled }) => (disabled ? colors.textDisabled : colors.onSurface)} !important;
   svg {
-    fill: ${({ disabled }) => (disabled ? colors.updDisabled : colors.updTextSecondaryGray)};
+    fill: ${({ disabled }) => (disabled ? colors.disabled : colors.textSecondaryGray)};
   }
 `;
 
@@ -288,7 +291,7 @@ const BaseItem: FC<BaseItemProps> = ({
   const { rippleProps, rippleTriggerProps, handleRippleOut, handleRippleIn } =
     useRipple<HTMLDivElement>({
       opacity: 1,
-      color: 'updPrimaryLightPressed',
+      color: 'primaryLightPressed',
     });
 
   const handleMouseDown = useCallback(
@@ -335,7 +338,8 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
   `};
   ${({ selected, disabled, theme }) => getMenuItemColorsStyles(theme, selected, disabled)};
   &:hover {
-    background-color: ${colors.updPrimaryLight};
+    cursor: pointer;
+    background-color: ${colors.primaryLight};
     ${({ theme }) => getMenuItemColorsStyles(theme, true)};
   }
   pointer-events: ${({ disabled }) => disabled && 'none'};
@@ -352,8 +356,8 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
           : `${px(2)} ${px(0)} ${px(0)} ${px(2)}`};
         position: absolute;
         left: ${px(leftByBarWidth)};
-        background-color: ${colors.updPrimary};
-        color: ${colors.updPrimary};
+        background-color: ${colors.primary};
+        color: ${colors.primary};
         z-index: 100;
         display: ${(disabled && 'none') || (selected ? 'block' : 'none')};
       }
@@ -460,6 +464,15 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     hideResizeBtn();
   };
 
+  const handleStudyClick = () => {
+    if (!selectedStudy) {
+      return;
+    }
+
+    onStudyClick();
+    setTooltipTitle('');
+  };
+
   const menuItems = useMemo(() => {
     const mr = menuItemsRegistry;
     switch (userRole?.role && getRoleFunction(userRole.role)) {
@@ -486,7 +499,8 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     >
       <Tooltip
         position="r"
-        show={minimized && !!selectedStudy}
+        static
+        show={minimized && !!selectedStudy && !!tooltipTitle}
         arrow
         content={tooltipTitle}
         key={tooltipTitle}
@@ -505,7 +519,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
         $visible={!!selectedStudy}
         $barWidth={barWidth}
         minimized={minimized}
-        onClick={onStudyClick}
+        onClick={handleStudyClick}
         onMouseLeave={clearTooltipParams}
         desktopType={desktopType}
       >

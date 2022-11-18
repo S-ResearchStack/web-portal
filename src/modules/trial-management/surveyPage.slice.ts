@@ -2,6 +2,7 @@ import _groupBy from 'lodash/groupBy';
 import _values from 'lodash/values';
 import _entries from 'lodash/entries';
 import _range from 'lodash/range';
+import _uniq from 'lodash/uniq';
 import { DateTime, Duration } from 'luxon';
 import createDataSlice from 'src/modules/store/createDataSlice';
 import API from 'src/modules/api';
@@ -13,7 +14,7 @@ import {
   surveyQuestionListFromApi,
 } from './survey-editor/surveyEditor.slice';
 
-type SurveyResultsSurveyInfo = {
+export type SurveyResultsSurveyInfo = {
   id: string;
   revisionId: number;
   title: string;
@@ -44,15 +45,67 @@ export type SurveyResultsResponse = {
   answers: SurveyResultsDataGroup[];
 };
 
-type SurveyResults = {
+export type SurveyResults = {
   surveyInfo: SurveyResultsSurveyInfo;
-  analytics: SurveyResultsAnalytics;
-  responses: SurveyResultsResponse[];
+  analytics?: SurveyResultsAnalytics;
+  responses?: SurveyResultsResponse[];
 };
+
+const getRandomNumberBetween = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+
+const mockRadioAnswers = _range(300).map((idx) => ({
+  age: `${getRandomNumberBetween(20, 100)}`,
+  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  id: '1',
+  item_name: 'Question0',
+  result: ['Yes', 'No', 'I dont remember'][getRandomNumberBetween(0, 2)],
+  revision_id: '7',
+  task_id: '1',
+  user_id: `user_id_${idx}`,
+  started_at: '0',
+  submitted_at: '0',
+}));
+
+const getCheckboxAnswer = () => {
+  const a1 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
+  const a2 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
+  const a3 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
+
+  return _uniq([a1, a2, a3]).join(',');
+};
+
+const mockCheckboxAnswers = _range(300).map((idx) => ({
+  age: `${getRandomNumberBetween(20, 100)}`,
+  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  id: '1',
+  item_name: 'Question1',
+  result: getCheckboxAnswer(),
+  revision_id: '7',
+  task_id: '1',
+  user_id: `user_id_${idx}`,
+  started_at: '0',
+  submitted_at: '0',
+}));
+
+const mockSliderAnswers = _range(300).map((idx) => ({
+  age: `${getRandomNumberBetween(20, 100)}`,
+  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  id: '1',
+  item_name: 'Question2',
+  result: `${getRandomNumberBetween(1, 10)}`,
+  revision_id: '7',
+  task_id: '1',
+  user_id: `user_id_${idx}`,
+  started_at: '0',
+  submitted_at: '0',
+}));
+
+const mockTaskItemResults = [...mockRadioAnswers, ...mockCheckboxAnswers, ...mockSliderAnswers];
 
 API.mock.provideEndpoints({
   getTaskItemResults() {
-    return API.mock.response([]);
+    return API.mock.response(mockTaskItemResults);
   },
   getTaskCompletionTime() {
     return API.mock.response([

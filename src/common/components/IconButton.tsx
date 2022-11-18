@@ -29,7 +29,8 @@ const StyledIconButton = styled.button<Omit<IconButtonProps, 'icon'>>`
     fill: ${({ color, theme }) => theme.colors[color]};
   }
   &:active,
-  &:hover {
+  &:enabled:hover {
+    cursor: pointer;
     svg {
       fill: ${({ color, theme }) => theme.colors[color]};
     }
@@ -55,7 +56,7 @@ const IconButton = (props: IconButtonProps) => {
 
   return (
     <StyledIconButton {...rest}>
-      <Icon />
+      <Icon data-testid="icon" />
     </StyledIconButton>
   );
 };

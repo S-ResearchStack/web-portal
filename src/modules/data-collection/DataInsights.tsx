@@ -22,10 +22,10 @@ const SectionContainer = styled.div`
 `;
 
 const QuestionIconStyled = styled(QuestionIcon)`
-  fill: ${colors.updTextSecondaryGray};
+  fill: ${colors.textSecondaryGray};
 `;
 
-const SQL_DOCUMENTATION_URL = 'https://en.wikipedia.org/wiki/SQL';
+const SQL_DOCUMENTATION_URL = 'https://s-healthstack.io/running-a-query.html';
 
 const DataInsights = () => {
   const userRole = useAppSelector(userRoleSelector);
@@ -47,13 +47,7 @@ const DataInsights = () => {
       <CollapseSection
         title="Data Query"
         headerExtra={
-          <Tooltip
-            arrow
-            trigger="hover"
-            position="l"
-            dynamic
-            content="Documentation for Data Query"
-          >
+          <Tooltip arrow static trigger="hover" position="l" content="Documentation for Data Query">
             <a href={SQL_DOCUMENTATION_URL} target="_blank" rel="noreferrer">
               <QuestionIconStyled />
             </a>
