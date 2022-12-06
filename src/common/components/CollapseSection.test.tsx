@@ -30,4 +30,24 @@ describe('CollapseSection', () => {
 
     expect(getByText(baseElement, 'Content')).not.toBeVisible();
   });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <CollapseSection data-testid="collapse-section" title={false as unknown as string}>
+          {false as unknown as string}
+        </CollapseSection>
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const collapseContent = getByTestId('collapse-body');
+    const collapseTitle = getByTestId('collapse-title');
+
+    expect(collapseContent).toBeInTheDocument();
+    expect(collapseContent).toHaveTextContent('');
+    expect(collapseTitle).toBeInTheDocument();
+    expect(collapseTitle).toHaveTextContent('');
+  });
 });

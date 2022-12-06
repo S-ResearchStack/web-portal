@@ -124,7 +124,7 @@ const DataCollection = () => {
   }, [studyId, query, dispatch]);
 
   const handleSetQuery = useCallback(
-    (qs: string, autoFetch?: boolean) => {
+    (qs: string, autoFetch = false) => {
       studyId && dispatch(setQuery(studyId, qs, autoFetch));
     },
     [studyId, dispatch]

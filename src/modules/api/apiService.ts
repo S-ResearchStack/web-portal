@@ -7,11 +7,11 @@ type AuthProvider = {
 
 let authProvider: AuthProvider | undefined;
 
+export const ERROR_BASE_URL = 'Base API url is not set';
+
 export const setAuthProvider = (ap: AuthProvider) => {
   authProvider = ap;
 };
-
-const baseUrl = localStorage.getItem('API_URL') || process.env.API_URL;
 
 export const request = async <TReq, TRes>(
   opts: Omit<RequestOptions<TReq>, 'url'> & {
@@ -19,8 +19,10 @@ export const request = async <TReq, TRes>(
     path: string;
   }
 ): Promise<Response<TRes>> => {
+  const baseUrl = localStorage.getItem('API_URL') || process.env.API_URL;
+
   if (!baseUrl) {
-    const err = new Error('Base API url is not set');
+    const err = new Error(ERROR_BASE_URL);
     console.error(err);
     return {
       status: -1,

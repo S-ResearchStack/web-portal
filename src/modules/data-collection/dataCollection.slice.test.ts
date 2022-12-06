@@ -23,7 +23,8 @@ import { waitFor } from '@testing-library/react';
 import { maskEndpointAsFailure } from 'src/modules/api/mock';
 import { DEFAULT_PAGINATION_LIMIT } from 'src/modules/data-collection/helpers';
 
-const dispatch = store.dispatch as AppDispatch;
+// eslint-disable-next-line prefer-destructuring
+const dispatch: AppDispatch = store.dispatch;
 const projectId = 'project-id';
 const tableMap = { table: [] };
 const query = 'select * from table_0';
@@ -350,7 +351,7 @@ describe('actions', () => {
 
       const newQuery = `select * from table_0 limit ${DEFAULT_PAGINATION_LIMIT}`;
 
-      await dispatch(setQuery(projectId, newQuery));
+      dispatch(setQuery(projectId, newQuery));
 
       expect(querySelector(store.getState())).toEqual(newQuery);
     });
@@ -361,7 +362,7 @@ describe('actions', () => {
 
       const newQuery = `select * from table_0 limit ${DEFAULT_PAGINATION_LIMIT}`;
 
-      await dispatch(setQuery(projectId, newQuery, true));
+      dispatch(setQuery(projectId, newQuery, true));
 
       const { data } = await executeDataQueryMock('', newQuery);
 
@@ -386,7 +387,7 @@ describe('actions', () => {
       expect(querySelector(store.getState())).toEqual(initialState.query);
       expect(queryResultSelector(store.getState())).toBeUndefined();
 
-      await dispatch(setTable(projectId, 'table_0'));
+      dispatch(setTable(projectId, 'table_0'));
 
       await waitFor(() => !dataLoadingSelector(store.getState()));
 

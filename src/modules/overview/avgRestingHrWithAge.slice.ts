@@ -10,33 +10,38 @@ import Random from 'src/common/Random';
 import createDataSlice from 'src/modules/store/createDataSlice';
 import { getGenderColor } from './gender';
 
+export const getAverageParticipantHeartRateMock: typeof API.getAverageParticipantHeartRate = ({
+  startTime,
+  endTime,
+}) => {
+  const r = new Random(2);
+
+  const startTs = DateTime.fromSQL(startTime).valueOf();
+  const endTs = DateTime.fromSQL(endTime).valueOf();
+
+  return API.mock.response(
+    _range(200).map((idx) => {
+      const gender = r.num() < 0.5 ? 'male' : 'female';
+      return {
+        user_id: `user_${idx}`,
+        gender,
+        age: String(r.gaussInt({ min: 21, max: 99, mean: 45, standardDeviation: 20 })),
+        avg_bpm: String(
+          r.gaussNum({
+            min: 51,
+            max: 89,
+            mean: gender === 'male' ? 73 : 75,
+            standardDeviation: 6,
+          })
+        ),
+        last_synced: DateTime.fromMillis(r.int(startTs, endTs)).toISO(),
+      };
+    })
+  );
+};
+
 API.mock.provideEndpoints({
-  getAverageParticipantHeartRate({ startTime, endTime }) {
-    const r = new Random(2);
-
-    const startTs = DateTime.fromSQL(startTime).valueOf();
-    const endTs = DateTime.fromSQL(endTime).valueOf();
-
-    return API.mock.response(
-      _range(200).map((idx) => {
-        const gender = r.num() < 0.5 ? 'male' : 'female';
-        return {
-          user_id: `user_${idx}`,
-          gender,
-          age: String(r.gaussInt({ min: 21, max: 99, mean: 45, standardDeviation: 20 })),
-          avg_bpm: String(
-            r.gaussNum({
-              min: 51,
-              max: 89,
-              mean: gender === 'male' ? 73 : 75,
-              standardDeviation: 6,
-            })
-          ),
-          last_synced: DateTime.fromMillis(r.int(startTs, endTs)).toISO(),
-        };
-      })
-    );
-  },
+  getAverageParticipantHeartRate: getAverageParticipantHeartRateMock,
 });
 
 function calculateTrendLine<T extends { x: number; y: number }>(values: T[]) {

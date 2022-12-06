@@ -196,27 +196,23 @@ const GroupedBarChart = ({
     const xCoord = (i: number) =>
       isHorizontal
         ? (xScale as d3.ScaleLinear<number, number, never>)(0)
-        : (xScale(x[i] as d3.NumberValue & (string | number)) as number) +
-          (crossScale(z[i] as string) as number);
+        : (xScale(x[i] as number) || 0) + (crossScale(z[i]) || 0);
 
     const yCoord = (i: number) =>
       isHorizontal
-        ? (yScale(y[i] as d3.NumberValue & (string | number)) as number) +
-          (crossScale(z[i] as string) as number)
+        ? (yScale(y[i] as number) || 0) + (crossScale(z[i]) || 0)
         : (yScale as d3.ScaleLinear<number, number, never>)(y[i] < 0 ? 0 : (y[i] as number));
 
     const barWidth = (i: number) =>
       isHorizontal
-        ? (xScale(x[i] as d3.NumberValue & (string | number)) as number) -
-          (xScale as d3.ScaleLinear<number, number, never>)(0)
+        ? (xScale(x[i] as number) || 0) - (xScale as d3.ScaleLinear<number, number, never>)(0)
         : crossScale.bandwidth();
 
     const barHeight = (i: number) =>
       isHorizontal
         ? crossScale.bandwidth()
         : Math.abs(
-            (yScale as d3.ScaleLinear<number, number, never>)(0) -
-              (yScale(y[i] as d3.NumberValue & (string | number)) as number)
+            (yScale as d3.ScaleLinear<number, number, never>)(0) - (yScale(y[i] as number) || 0)
           );
 
     d3.select(svgRef.current)
@@ -249,7 +245,7 @@ const GroupedBarChart = ({
         ticks={4}
         tickSize={height - chartMargin.top - chartMargin.bottom}
         tickFormatFn={(d) => (formatXAxisTick ? formatXAxisTick(d) : `${d}`)}
-        customCall={(el: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) => {
+        customCall={(el) => {
           el.selectAll('.tick text')
             .attr(
               'transform',
@@ -273,7 +269,7 @@ const GroupedBarChart = ({
         tickSize={width - chartMargin.left - chartMargin.right}
         tickFormatFn={(d) => _upperFirst(`${d}`)}
         tickValues={yTickValues}
-        customCall={(el: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) => {
+        customCall={(el) => {
           const textItems = el.selectAll('.tick text');
           const textWidth = textItems
             .nodes()

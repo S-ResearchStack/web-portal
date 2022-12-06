@@ -31,4 +31,18 @@ describe('Spinner', () => {
     expect(spinner).toBeInTheDocument();
     expect(spinner).toHaveStyle(`fill: ${theme.colors.surface}`);
   });
+
+  it('[NEGATIVE] should render wih wrong props', () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Spinner size={'unknown' as 'xs'} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const spinner = queryByTestId('spinner') as Element;
+
+    expect(spinner).toBeInTheDocument();
+  });
 });

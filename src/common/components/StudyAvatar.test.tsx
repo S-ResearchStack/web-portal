@@ -55,4 +55,15 @@ describe('StudyAvatar', () => {
     expect(avatar).toHaveStyle(`box-shadow: ${theme.boxShadow.studyAvatar}`);
     expect(avatar).toHaveStyle(`filter: drop-shadow(0 ${px(15)} ${px(20)} rgba(180,180,180,0.3))`);
   });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <StudyAvatar color={'unknown' as 'primary'} data-testid="styled-avatar" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('styled-avatar')).toBeInTheDocument();
+  });
 });

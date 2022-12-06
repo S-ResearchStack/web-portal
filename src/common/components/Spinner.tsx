@@ -23,7 +23,7 @@ type Props = {
   $light?: boolean;
 };
 
-const spinnerStyles = ($light?: boolean) => css`
+const spinnerStyles = ($light = false) => css`
   fill: ${$light ? colors.surface : colors.primary};
   animation: 1.1s infinite ${spinnerAnimation} ${animation.defaultTiming};
 `;
@@ -40,7 +40,7 @@ const SpinnerIconLStyled = styled(SpinnerIconL)<{ $light?: boolean }>`
   ${({ $light }) => spinnerStyles($light)}
 `;
 
-const getSpinnerWithSize = (s: Size, $light?: boolean) => {
+const getSpinnerWithSize = (s: Size, $light = false) => {
   let icon = <SpinnerIconXSStyled $light={$light} data-testid="spinner" />;
   switch (s) {
     case 'm':

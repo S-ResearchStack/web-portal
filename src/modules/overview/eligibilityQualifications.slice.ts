@@ -1,36 +1,39 @@
 import API from 'src/modules/api';
 import createDataSlice from 'src/modules/store/createDataSlice';
 
-API.mock.provideEndpoints({
-  getEligibilityQualifications() {
-    return API.mock.sqlResponse([
-      {
-        group: 'Dizzy',
-        value: '170',
-        totalValue: '1000',
-      },
-      {
-        group: 'Sore throat',
-        value: '380',
-        totalValue: '1000',
-      },
-      {
-        group: 'Nausea',
-        value: '160',
-        totalValue: '1000',
-      },
-      {
-        group: 'Headache',
-        value: '480',
-        totalValue: '1000',
-      },
-      {
-        group: 'Cough',
-        value: '1000',
-        totalValue: '1000',
-      },
-    ]);
+export const getEligibilityQualificationsMockData = [
+  {
+    group: 'Dizzy',
+    value: '170',
+    totalValue: '1000',
   },
+  {
+    group: 'Sore throat',
+    value: '380',
+    totalValue: '1000',
+  },
+  {
+    group: 'Nausea',
+    value: '160',
+    totalValue: '1000',
+  },
+  {
+    group: 'Headache',
+    value: '480',
+    totalValue: '1000',
+  },
+  {
+    group: 'Cough',
+    value: '1000',
+    totalValue: '1000',
+  },
+];
+
+export const getEligibilityQualificationsMock = () =>
+  API.mock.sqlResponse(getEligibilityQualificationsMockData);
+
+API.mock.provideEndpoints({
+  getEligibilityQualifications: getEligibilityQualificationsMock,
 });
 
 const eligibilityQualificationsSlice = createDataSlice({

@@ -119,15 +119,18 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
   const domainName = useMemo(() => data.map((d) => d.name), [data]);
 
   // y for horizontal view, x for vertical view (name scale)
-  const scaleBand = useMemo(
-    () =>
-      d3
-        .scaleBand()
-        .domain(isHorizontal ? domainName.reverse() : domainName)
-        .range(isHorizontal ? yRange : xRange)
-        .paddingInner(isHorizontal ? 0.34 : 0.37),
-    [domainName, isHorizontal, xRange, yRange]
-  );
+  const scaleBand = useMemo(() => {
+    const domain = [...domainName];
+    if (isHorizontal) {
+      domain.reverse();
+    }
+
+    return d3
+      .scaleBand()
+      .domain(domain)
+      .range(isHorizontal ? yRange : xRange)
+      .paddingInner(isHorizontal ? 0.34 : 0.37);
+  }, [domainName, isHorizontal, xRange, yRange]);
 
   const getPercantage = (d: DataItem) => (d.value / d.totalValue) * 100;
 

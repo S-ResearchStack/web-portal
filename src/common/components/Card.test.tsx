@@ -93,4 +93,33 @@ describe('Card', () => {
     expect(content).not.toBeInTheDocument();
     expect(loader).toBeInTheDocument();
   });
+
+  it('[NEGATIVE] should render wrong properties', () => {
+    const { baseElement, getByTestId, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Card
+          data-testid="card"
+          title={true as unknown as string}
+          subtitle={true as unknown as string}
+        >
+          <div>{true}</div>
+        </Card>
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const card = getByTestId('card');
+    const content = queryByTestId('card-content');
+    const title = queryByTestId('title');
+    const subtitle = queryByTestId('subtitle');
+
+    expect(card).toBeInTheDocument();
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveTextContent('');
+    expect(subtitle).toBeInTheDocument();
+    expect(subtitle).toHaveTextContent('');
+    expect(content).toBeInTheDocument();
+    expect(subtitle).toHaveTextContent('');
+  });
 });

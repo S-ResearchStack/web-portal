@@ -1,5 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Ripple [NEGATIVE] should render with wrong props 1`] = `
+.c1 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw -1ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw -1ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.c0 {
+  width: 16rem;
+  height: 16rem;
+  border: 1px solid lightblue;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="trigger"
+      style="overflow: hidden; position: relative;"
+    >
+      <div
+        class="c1"
+        color="unknown"
+        data-testid="ripple"
+        opacity="1,1"
+        scale="0"
+        style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+      />
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Ripple test ripple render 1`] = `
 .c1 {
   position: absolute;

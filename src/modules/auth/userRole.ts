@@ -24,7 +24,7 @@ export const roleFromApi = (roleStr: string) => {
     console.warn(`Invalid role ${roleStr}`);
     return undefined;
   }
-  if (!isGlobalRoleType(role as RoleType) && !projectId) {
+  if (!isGlobalRoleType(role) && !projectId) {
     console.warn(`Project required for role ${roleStr}`);
     return undefined;
   }

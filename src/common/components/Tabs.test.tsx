@@ -31,4 +31,21 @@ describe('Tabs', () => {
 
     expect(tabItems.length).toBe(2);
   });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, getByTestId, getAllByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Tabs
+          data-testid="tabs"
+          items={[true, false] as unknown as string[]}
+          activeItemIdx={-1}
+          onTabChange={() => {}}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('tabs')).toBeInTheDocument();
+    expect(getAllByTestId('tab')).toHaveLength(2);
+  });
 });

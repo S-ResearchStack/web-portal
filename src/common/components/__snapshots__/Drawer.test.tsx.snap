@@ -50,6 +50,7 @@ exports[`Drawer test drawer section direction 1`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-2"
   >
     <div
@@ -142,6 +143,7 @@ exports[`Drawer test drawer section direction 2`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-2"
   >
     <div
@@ -235,6 +237,7 @@ exports[`Drawer test drawer section render 1`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-1"
   >
     <div
@@ -327,6 +330,7 @@ exports[`Drawer test drawer section render 2`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-1"
   >
     <div

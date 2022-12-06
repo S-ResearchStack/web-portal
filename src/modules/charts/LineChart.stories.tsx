@@ -5,11 +5,9 @@ import { DateTime } from 'luxon';
 
 import { SpecColorType } from 'src/styles/theme';
 import { TooltipProvider, TooltipsList } from 'src/common/components/Tooltip';
+import Random from 'src/common/Random';
 import ResponsiveContainer from '../../common/components/ResponsiveContainer';
 import LineChart from './LineChart';
-
-const randomDate = (start: Date, end: Date) =>
-  new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
 const startTime = DateTime.utc()
   .minus({ days: 1 })
@@ -17,19 +15,17 @@ const startTime = DateTime.utc()
 const endTime = startTime.plus({ days: 1 });
 
 const mockData = _range(200).map(() => {
-  const value = Math.floor(Math.random() * 10) + 70;
-  const name = Math.random() < 0.5 ? 'male' : 'female';
+  const value = Random.shared.int(10, 70);
+  const name = Random.shared.arrayElement(['male', 'female']);
 
   return {
     name,
-    ts: Math.floor(
-      Math.random() * (endTime.valueOf() - startTime.valueOf() + 1) + startTime.valueOf()
-    ),
-    value: Math.floor(Math.random() * 10) + 70,
-    min: value - Math.floor(Math.random() * 10 + 1),
-    max: value + Math.floor(Math.random() * 10 + 1),
-    highlighted: Math.random() < 0.1,
-    lastSync: randomDate(new Date(2022, 6, 1), new Date()).valueOf(),
+    ts: Random.shared.int(startTime.valueOf(), endTime.valueOf()),
+    value,
+    min: Random.shared.int(value - 10, value),
+    max: Random.shared.int(value, value + 10),
+    highlighted: Random.shared.num() < 0.1,
+    lastSync: Random.shared.date(new Date(2022, 6, 1), Date.now()).valueOf(),
     color: name === 'female' ? 'secondaryViolet' : ('secondarySkyBlue' as SpecColorType),
   };
 });

@@ -50,7 +50,7 @@ const CardContainer = styled.div.withConfig({
     min-height: 0;
     overflow: visible;
   }
-` as React.FC<CardContainerProps>;
+`;
 
 type ContentProps = React.PropsWithChildren<Pick<CardProps, 'loading' | 'contentChanging'>>;
 
@@ -152,7 +152,7 @@ const Card = forwardRef(
             )}
           </TitleContainer>
         )}
-        <Content loading={loading} contentChanging={contentChanging}>
+        <Content data-testid="card-content" loading={loading} contentChanging={contentChanging}>
           {renderContent()}
         </Content>
       </CardContainer>

@@ -134,7 +134,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
             ? (isMobile && <CheckedMobile />) || <Checked />
             : (isMobile && <BlankMobile />) || <Blank />}
         </Icon>
-        {children && <Child disabled={disabled}>{children}</Child>}
+        {children && (
+          <Child data-testid="checkbox-label" disabled={disabled}>
+            {children}
+          </Child>
+        )}
       </Label>
       <input type="checkbox" disabled={disabled} id={id} checked={checked} {...rest} />
     </CheckboxContainer>

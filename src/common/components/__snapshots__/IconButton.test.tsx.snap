@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`IconButton [NEGATIVE] should render with wrong props 1`] = `
+.c0 {
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.c0:active,
+.c0:enabled:hover {
+  cursor: pointer;
+}
+
+.c0:disabled svg {
+  fill: #DBDBDB;
+}
+
+<body>
+  <div>
+    <button
+      class="c0"
+      color=""
+      data-testid="iconButton"
+    >
+      <div
+        data-testid="icon"
+      />
+    </button>
+  </div>
+</body>
+`;
+
 exports[`IconButton test iconButton disabled state 1`] = `
 .c0 {
   background: none;

@@ -185,7 +185,7 @@ export const updateContext = (
   brushY: d3.BrushBehavior<unknown>,
   moveBrushX: (newS: number[], updateSelection?: boolean) => void,
   moveBrushY: (newS: number[], updateSelection?: boolean) => void,
-  moveLastSelection?: boolean
+  moveLastSelection = false
 ) => {
   d3.select(svgRef.current).select('.context').remove();
 

@@ -1,5 +1,121 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Card [NEGATIVE] should render wrong properties 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  padding: 1.5rem 1.5rem 1rem;
+  overflow: visible;
+  position: relative;
+}
+
+.c0 > * {
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
+.c5 {
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  opacity: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  position: relative;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  height: 1.3125rem;
+}
+
+.c3 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  color: #474747;
+  display: inline-block;
+  margin: 0;
+}
+
+.c4 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #808080;
+  min-height: 1.25rem;
+  min-width: 3.125rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="card"
+    >
+      <div
+        class="c1"
+      >
+        <div
+          class="c2"
+        >
+          <p
+            class="c3"
+            data-testid="title"
+          />
+        </div>
+        <div
+          class="c4"
+          data-testid="subtitle"
+        />
+      </div>
+      <div
+        class="c5"
+        data-testid="card-content"
+      >
+        <div />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Card test card empty state 1`] = `
 .c6 {
   box-sizing: border-box;
@@ -149,6 +265,7 @@ exports[`Card test card empty state 1`] = `
       </div>
       <div
         class="c5"
+        data-testid="card-content"
       >
         <div
           class="c6"
@@ -318,6 +435,7 @@ exports[`Card test card error state 1`] = `
       </div>
       <div
         class="c5"
+        data-testid="card-content"
       >
         <div
           class="c6"
@@ -462,6 +580,7 @@ exports[`Card test card loading state 1`] = `
       </div>
       <div
         class="c6"
+        data-testid="card-content"
       >
         <div>
           Samsung
@@ -583,6 +702,7 @@ exports[`Card test card render 1`] = `
       </div>
       <div
         class="c5"
+        data-testid="card-content"
       >
         <div>
           Samsung

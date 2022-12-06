@@ -1,5 +1,434 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
+.c4 {
+  display: none;
+  opacity: 0;
+  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c0 {
+  position: relative;
+  z-index: 1000;
+}
+
+.c1 {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.c17 {
+  background-color: rgba(0,0,0,0.4);
+}
+
+.c2 {
+  z-index: 1001;
+}
+
+.c14 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  background-color: #E3EAFB;
+  pointer-events: none;
+}
+
+.c16 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.c12 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+  width: 10.25rem;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 0;
+  transition-duration: 0;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: transparent;
+}
+
+.c12:hover {
+  cursor: pointer;
+}
+
+.c12 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c12 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c12 > div {
+  color: #4475E3;
+}
+
+.c12 > div svg {
+  fill: #4475E3;
+}
+
+.c12:hover:enabled > div {
+  color: #2F65E0;
+}
+
+.c12:hover:enabled > div svg {
+  fill: #2F65E0;
+}
+
+.c12:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c12:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c12:disabled > div {
+  color: #B3C6F1;
+}
+
+.c12:disabled > div svg {
+  fill: #B3C6F1;
+}
+
+.c12:focus-visible {
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c12:focus-visible > div {
+  color: #4475E3;
+}
+
+.c12:focus-visible > div svg {
+  fill: #4475E3;
+}
+
+.c15 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 10.25rem;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 400ms;
+  transition-duration: 400ms;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: #4475E3;
+}
+
+.c15:hover {
+  cursor: pointer;
+}
+
+.c15 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c15 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c15 > div {
+  color: #FFFFFF;
+}
+
+.c15 > div svg {
+  fill: #FFFFFF;
+}
+
+.c15:hover:enabled {
+  background-color: #2F65E0;
+}
+
+.c15:disabled {
+  background-color: #B3C6F1;
+}
+
+.c15:focus-visible:enabled {
+  border: 0.125rem solid #FFFFFF;
+  background-color: #4475E3;
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c13 {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transform: translate3d(0,0,0.0625rem);
+  -ms-transform: translate3d(0,0,0.0625rem);
+  transform: translate3d(0,0,0.0625rem);
+}
+
+.c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  padding: 1.5rem 1.5rem 1rem;
+  overflow: visible;
+  position: relative;
+}
+
+.c5 > * {
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
+.c7 {
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  opacity: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  position: relative;
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.c6 {
+  padding: 2rem;
+  width: 35.5rem;
+}
+
+.c8 {
+  color: #474747;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c9 {
+  font-family: Inter,sans-serif;
+  font-size: 1.5rem;
+  line-height: 2.0125rem;
+  font-weight: 600;
+  font-style: normal;
+  margin-bottom: 1.5rem;
+}
+
+.c10 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  margin-bottom: 2.5rem;
+}
+
+.c11 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+}
+
+<body>
+  <div />
+  <div
+    data-testid="tooltip-portal"
+    id="backdrop-portal-modal-1"
+  >
+    <div
+      class="c0"
+      data-testid="backdrop-container"
+    >
+      <div
+        class="c1 c2"
+        data-testid="backdrop-content"
+      >
+        <div
+          class="c3"
+        >
+          <div
+            class="c4"
+            style="opacity: 1; display: block;"
+          >
+            <div
+              aria-hidden="false"
+              aria-modal="true"
+              class="c5 c6"
+              data-testid="modal"
+              role="alertdialog"
+              tabindex="0"
+            >
+              <div
+                class="c7"
+                data-testid="card-content"
+              >
+                <div
+                  class="c8"
+                >
+                  <div
+                    class="c9"
+                    data-testid="modal-title"
+                  />
+                  <div
+                    class="c10"
+                    data-testid="modal-description"
+                  />
+                  <div
+                    class="c11"
+                  >
+                    <button
+                      class="c12"
+                      color="primary"
+                      data-testid="decline-button"
+                      fill="text"
+                      style="overflow: hidden; position: relative;"
+                      tabindex="0"
+                      width="164"
+                    >
+                      <div
+                        class="c13"
+                        data-testid="content"
+                      />
+                      <div
+                        class="c14"
+                        color="primaryLightPressed"
+                        opacity="1,1"
+                        scale="0"
+                        style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+                      />
+                    </button>
+                    <button
+                      class="c15"
+                      data-testid="accept-button"
+                      fill="solid"
+                      style="overflow: hidden; position: relative;"
+                      tabindex="0"
+                      width="164"
+                    >
+                      <div
+                        class="c13"
+                        data-testid="content"
+                      />
+                      <div
+                        class="c16"
+                        color="primaryPressed"
+                        opacity="1,1"
+                        scale="0"
+                        style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="c4"
+        style="opacity: 1; display: block;"
+      >
+        <div
+          class="c1 c17"
+          data-testid="backdrop"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Modal test modal render 1`] = `
 .c4 {
   display: none;
@@ -323,6 +752,7 @@ exports[`Modal test modal render 1`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-modal-1"
   >
     <div
@@ -350,17 +780,20 @@ exports[`Modal test modal render 1`] = `
             >
               <div
                 class="c7"
+                data-testid="card-content"
               >
                 <div
                   class="c8"
                 >
                   <div
                     class="c9"
+                    data-testid="modal-title"
                   >
                     Title
                   </div>
                   <div
                     class="c10"
+                    data-testid="modal-description"
                   >
                     Description
                   </div>
@@ -756,6 +1189,7 @@ exports[`Modal test modal render 2`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-modal-1"
   >
     <div
@@ -783,17 +1217,20 @@ exports[`Modal test modal render 2`] = `
             >
               <div
                 class="c7"
+                data-testid="card-content"
               >
                 <div
                   class="c8"
                 >
                   <div
                     class="c9"
+                    data-testid="modal-title"
                   >
                     Title
                   </div>
                   <div
                     class="c10"
+                    data-testid="modal-description"
                   >
                     Description
                   </div>

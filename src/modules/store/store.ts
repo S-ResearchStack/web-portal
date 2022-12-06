@@ -1,11 +1,5 @@
 /* eslint-disable import/no-import-module-exports */
-import {
-  Action,
-  ThunkAction,
-  configureStore,
-  getDefaultMiddleware,
-  ThunkDispatch,
-} from '@reduxjs/toolkit';
+import { Action, ThunkAction, configureStore, ThunkDispatch } from '@reduxjs/toolkit';
 import { routerMiddleware } from 'connected-react-router';
 
 import { history } from 'src/modules/navigation/store';
@@ -17,7 +11,10 @@ export { rootReducer };
 export const makeStore = (h?: History) =>
   configureStore({
     reducer: rootReducer(),
-    middleware: [...getDefaultMiddleware(), routerMiddleware(h ?? history)],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    middleware: ((getDefaultMiddleware: any) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getDefaultMiddleware().concat(routerMiddleware(h ?? history))) as any,
     devTools: process.env.NODE_ENV !== 'production',
   });
 

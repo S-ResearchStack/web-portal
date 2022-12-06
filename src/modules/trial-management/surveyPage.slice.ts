@@ -7,6 +7,7 @@ import { DateTime, Duration } from 'luxon';
 import createDataSlice from 'src/modules/store/createDataSlice';
 import API from 'src/modules/api';
 import { Timestamp } from 'src/common/utils/datetime';
+import Random from 'src/common/Random';
 import {
   QuestionType,
   ScalableAnswer,
@@ -51,15 +52,12 @@ export type SurveyResults = {
   responses?: SurveyResultsResponse[];
 };
 
-const getRandomNumberBetween = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
-
 const mockRadioAnswers = _range(300).map((idx) => ({
-  age: `${getRandomNumberBetween(20, 100)}`,
-  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  age: Random.shared.int(20, 100).toString(),
+  gender: Random.shared.arrayElement(['female', 'male']),
   id: '1',
   item_name: 'Question0',
-  result: ['Yes', 'No', 'I dont remember'][getRandomNumberBetween(0, 2)],
+  result: Random.shared.arrayElement(['Yes', 'No', 'I dont remember']),
   revision_id: '7',
   task_id: '1',
   user_id: `user_id_${idx}`,
@@ -67,17 +65,16 @@ const mockRadioAnswers = _range(300).map((idx) => ({
   submitted_at: '0',
 }));
 
-const getCheckboxAnswer = () => {
-  const a1 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
-  const a2 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
-  const a3 = ['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'][getRandomNumberBetween(0, 4)];
-
-  return _uniq([a1, a2, a3]).join(',');
-};
+const getCheckboxAnswer = () =>
+  _uniq(
+    _range(3).map(() =>
+      Random.shared.arrayElement(['Dizzy', 'Sore throat', 'Nausea', 'Headache', 'Cough'])
+    )
+  ).join(',');
 
 const mockCheckboxAnswers = _range(300).map((idx) => ({
-  age: `${getRandomNumberBetween(20, 100)}`,
-  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  age: Random.shared.int(20, 100).toString(),
+  gender: Random.shared.arrayElement(['female', 'male']),
   id: '1',
   item_name: 'Question1',
   result: getCheckboxAnswer(),
@@ -89,11 +86,11 @@ const mockCheckboxAnswers = _range(300).map((idx) => ({
 }));
 
 const mockSliderAnswers = _range(300).map((idx) => ({
-  age: `${getRandomNumberBetween(20, 100)}`,
-  gender: ['female', 'male'][getRandomNumberBetween(0, 1)],
+  age: Random.shared.int(20, 100).toString(),
+  gender: Random.shared.arrayElement(['female', 'male']),
   id: '1',
   item_name: 'Question2',
-  result: `${getRandomNumberBetween(1, 10)}`,
+  result: Random.shared.int(1, 10).toString(),
   revision_id: '7',
   task_id: '1',
   user_id: `user_id_${idx}`,
@@ -123,9 +120,11 @@ API.mock.provideEndpoints({
 const calcPercentage = (v?: number, total?: number) =>
   v === undefined || total === undefined || total === 0 ? 0 : Math.round((v * 100) / total);
 
+export type GetSurveyDetailsDataParams = { id: string; studyId: string };
+
 const surveyDetailsSlice = createDataSlice({
   name: 'trialManagement/survey',
-  fetchData: async ({ id, studyId }: { id: string; studyId: string }) => {
+  fetchData: async ({ id, studyId }: GetSurveyDetailsDataParams) => {
     const [task] = (await API.getTask({ id, projectId: studyId })).data;
     const [{ data: responses }, { data: totalParticipantsResponse }, { data: completionTimeData }] =
       await Promise.all([

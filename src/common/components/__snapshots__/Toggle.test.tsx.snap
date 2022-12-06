@@ -1,5 +1,137 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Toggle [NEGATIVE] should render with wrong props 1`] = `
+.c0 {
+  padding-left: 0.125rem;
+}
+
+.c0 input {
+  display: none;
+}
+
+.c0 input + label {
+  height: 2.5rem;
+  min-width: 2.5rem;
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.c0 input + label:after,
+.c0 input + label:before {
+  content: '';
+  display: block;
+  position: absolute;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+.c0 input + label:before {
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 0.625rem;
+  background-color: #DBDBDB;
+  -webkit-transition: background-color 300ms cubic-bezier(0,0,0.58,1);
+  transition: background-color 300ms cubic-bezier(0,0,0.58,1);
+}
+
+.c0 input + label:after {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+  background-color: #FFFFFF;
+  left: 0.125rem;
+}
+
+.c0 input + label > span {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  margin-left: 3.125rem;
+  -webkit-transition: color 300ms cubic-bezier(0,0,0.58,1);
+  transition: color 300ms cubic-bezier(0,0,0.58,1);
+}
+
+.c0 input:enabled + label:hover {
+  cursor: pointer;
+}
+
+.c0 input:not(:checked):not(:disabled) + label:hover:after {
+  -webkit-animation-name: XQEqq;
+  animation-name: XQEqq;
+  -webkit-animation-duration: 500ms;
+  animation-duration: 500ms;
+}
+
+.c0 input:checked + label:before {
+  background-color: #4475E3;
+}
+
+.c0 input:checked + label:after {
+  -webkit-animation-name: gzQhmP;
+  animation-name: gzQhmP;
+  -webkit-animation-duration: 500ms;
+  animation-duration: 500ms;
+}
+
+.c0 input:checked + label:hover:before {
+  background-color: #2F65E0;
+}
+
+.c0 input:disabled + label:before {
+  background-color: #DBDBDB;
+}
+
+.c0 input:disabled + label:after {
+  background-color: #A1A1A1;
+}
+
+.c0 input:disabled + label > span {
+  color: #838383;
+}
+
+.c0 input:disabled:checked + label:before {
+  background-color: #B3C6F1;
+}
+
+.c0 input:disabled:checked + label:after {
+  background-color: #FFFFFF;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <input
+        checked=""
+        data-testid="toggle"
+        id="toggle_1"
+        type="checkbox"
+      />
+      <label
+        data-testid="label"
+        for="toggle_1"
+      >
+        <span>
+          toggle-test
+        </span>
+      </label>
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Toggle test toggle click 1`] = `
 .c0 {
   padding-left: 0.125rem;
@@ -247,12 +379,12 @@ exports[`Toggle test toggle disabled state 1`] = `
       <input
         data-testid="toggle"
         disabled=""
-        id="toggle_3"
+        id="toggle_1"
         type="checkbox"
       />
       <label
         data-testid="label"
-        for="toggle_3"
+        for="toggle_1"
       >
         <span>
           toggle
@@ -378,12 +510,12 @@ exports[`Toggle test toggle's label click 1`] = `
     >
       <input
         data-testid="toggle"
-        id="toggle_2"
+        id="toggle_1"
         type="checkbox"
       />
       <label
         data-testid="label"
-        for="toggle_2"
+        for="toggle_1"
       >
         <span>
           toggle

@@ -12,7 +12,7 @@ import { animation, boxShadow, px } from 'src/styles';
 
 export type AvatarSize = 's' | 'm' | 'xxl';
 
-const adjustSizes = ($selected: boolean | undefined) => ({
+const adjustSizes = ($selected = false) => ({
   s: 36,
   m: $selected ? 69 : 62,
   xxl: $selected ? 147 : 142,
@@ -62,7 +62,7 @@ const StyledAvatar = styled.div<AvatarProps>`
   }
 `;
 
-const AvatarIcon = (color: string, $selected: boolean | undefined) => ({
+const AvatarIcon = (color: string, $selected = false) => ({
   s: <StudyAvatarS fill={color} data-testid="avatar-icon" />,
   m: $selected ? (
     <SelectedStudyAvatarM fill={color} data-testid="avatar-icon" />

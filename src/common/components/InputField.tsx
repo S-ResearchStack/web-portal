@@ -93,7 +93,7 @@ export const StyledTextField = styled.input<InputFieldProps>`
       transition: background-color 5000s ease-in-out 0s;
       background-color: ${getDefaultBackgroundColor} !important;
       background-image: unset !important;
-      -webkit-text-fill-color: ${disabled ? theme.colors.textDisabled : theme.colors.textDisabled};
+      -webkit-text-fill-color: ${colors.textDisabled};
     `};
   }
 
@@ -148,15 +148,15 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
 }) => (
   <InputContainer className={className}>
     {helperText && (
-      <Label error={!!error} disabled={disabled}>
+      <Label data-testid="input-label" error={!!error} disabled={disabled}>
         {label}
       </Label>
     )}
-    <InputDescription error={!!error} disabled={disabled}>
+    <InputDescription data-testid="input-description" error={!!error} disabled={disabled}>
       {helperText || label || <>&nbsp;</>}
     </InputDescription>
     <InputWrapper error={error}>{children}</InputWrapper>
-    <InputErrorText withOffset={!helperText}>
+    <InputErrorText data-testid="input-error" withOffset={!helperText}>
       {typeof error === 'string' ? error : <>&nbsp;</>}
     </InputErrorText>
   </InputContainer>

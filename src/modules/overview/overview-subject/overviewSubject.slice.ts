@@ -6,13 +6,14 @@ import {
   transformParticipantListItemFromApi,
 } from 'src/modules/overview/participantsList.slice';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getParticipantMock: typeof API.getParticipant = ({ projectId, id }) =>
+  API.mock.response([
+    participantListMock.find((item) => item.user_id === id) || participantListItemMock(),
+  ]);
+
 API.mock.provideEndpoints({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getParticipant({ projectId, id }) {
-    return API.mock.response([
-      participantListMock.find((item) => item.user_id === id) || participantListItemMock(),
-    ]);
-  },
+  getParticipant: getParticipantMock,
 });
 
 export type GetOverviewSubjectParams = GetParticipantRequest & { studyId: string };

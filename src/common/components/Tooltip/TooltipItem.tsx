@@ -111,6 +111,7 @@ interface TooltipArrowProps {
 
 const TooltipArrow = styled.div.attrs<TooltipArrowProps>(({ $position }) => ({
   style: getTooltipArrowPositionStyles($position),
+  'data-testid': 'tooltip-arrow',
 }))<TooltipArrowProps>`
   position: absolute;
   width: 0;
@@ -302,6 +303,7 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
 
   return (
     <TooltipContainer
+      data-testid="tooltip-item"
       {..._omit(props, ['onShow', 'onHide'])}
       id={id}
       $show={show}

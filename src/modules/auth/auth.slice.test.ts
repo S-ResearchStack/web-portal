@@ -20,15 +20,19 @@ import { AppDispatch, store } from 'src/modules/store/store';
 import { Path } from 'src/modules/navigation/store';
 import { currentSnackbarSelector, hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
 
-const dispatch = store.dispatch as AppDispatch;
+// eslint-disable-next-line prefer-destructuring
+const dispatch: AppDispatch = store.dispatch;
 const authToken =
   'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdfQ==';
-const userInfo = { email: 'username@samsung.com', roles: ['team-admin'] };
+const userInfo = { email: 'username@samsung.com', password: 'any', roles: ['team-admin'] };
 const projectId = 'project-id';
 
 describe('decodeAuthToken', () => {
   it('should return truth value', () => {
-    expect(decodeAuthToken(authToken)).toEqual(userInfo);
+    expect(decodeAuthToken(authToken)).toEqual({
+      email: userInfo.email,
+      roles: userInfo.roles,
+    });
   });
 });
 
@@ -124,7 +128,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: 'any',
+        password: userInfo.password,
       })
     );
 
@@ -142,7 +146,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: 'any',
+        password: userInfo.password,
         rememberUser: true,
       })
     );
@@ -155,7 +159,7 @@ describe('store', () => {
     const pendedSignInAction = dispatch(
       signin({
         email: 'invalid@email.com',
-        password: 'any',
+        password: userInfo.password,
         rememberUser: true,
       })
     );
@@ -168,7 +172,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: 'any',
+        password: userInfo.password,
         rememberUser: true,
       })
     );
@@ -187,7 +191,7 @@ describe('store', () => {
       activateAccount({
         email: userInfo.email,
         name: userInfo.email.split('@')[0],
-        password: 'any',
+        password: userInfo.password,
         resetToken: 'reset-token',
       })
     );
@@ -200,7 +204,7 @@ describe('store', () => {
       activateAccount({
         email: userInfo.email,
         name: userInfo.email.split('@')[0],
-        password: 'any',
+        password: userInfo.password,
         resetToken: '',
       })
     );
@@ -214,7 +218,7 @@ describe('store', () => {
       activateAccount({
         email: 'invalid@email.com',
         name: userInfo.email.split('@')[0],
-        password: 'any',
+        password: userInfo.password,
         resetToken: 'reset-token',
       })
     );
@@ -229,7 +233,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: 'any',
+        password: userInfo.password,
       })
     );
 
@@ -243,7 +247,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: 'any',
+        password: userInfo.password,
       })
     );
 

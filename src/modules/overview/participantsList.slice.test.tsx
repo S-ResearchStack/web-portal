@@ -137,7 +137,7 @@ describe('Tests for participant list state slice', () => {
       });
     });
 
-    it('should create initial state', async () => {
+    it('should fetch data from API', async () => {
       hook = setUpHook(args);
 
       expect(hook.result.current).toMatchObject({

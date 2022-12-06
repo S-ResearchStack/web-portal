@@ -20,6 +20,7 @@ const Portal: FC<React.PropsWithChildren<PortalProps>> = ({
 
   useEffect(() => {
     root.id = createUniqueId(id);
+    root.setAttribute('data-testid', 'tooltip-portal');
   }, [id, root]);
 
   const addRoot = useCallback(() => {

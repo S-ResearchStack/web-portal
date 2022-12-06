@@ -3,43 +3,48 @@ import _sumBy from 'lodash/sumBy';
 import API from 'src/modules/api';
 import createDataSlice from 'src/modules/store/createDataSlice';
 
+export const surveyResponsesByAgeMockData = [
+  {
+    group: '20-39',
+    count: '140',
+  },
+  {
+    group: '40-59',
+    count: '270',
+  },
+  {
+    group: '60-79',
+    count: '250',
+  },
+  {
+    group: '80-100',
+    count: '340',
+  },
+];
+
+export const getSurveyResponsesByAgeMock = () => API.mock.sqlResponse(surveyResponsesByAgeMockData);
+
+export const surveyResponsesByGenderMockData = [
+  {
+    group: 'male',
+    count: '780',
+  },
+  {
+    group: 'female',
+    count: '690',
+  },
+  {
+    group: 'other',
+    count: '550',
+  },
+];
+
+export const getSurveyResponsesByGenderMock = () =>
+  API.mock.sqlResponse(surveyResponsesByGenderMockData);
+
 API.mock.provideEndpoints({
-  getSurveyResponsesByAge() {
-    return API.mock.sqlResponse([
-      {
-        group: '20-39',
-        count: '140',
-      },
-      {
-        group: '40-59',
-        count: '270',
-      },
-      {
-        group: '60-79',
-        count: '250',
-      },
-      {
-        group: '80-100',
-        count: '340',
-      },
-    ]);
-  },
-  getSurveyResponsesByGender() {
-    return API.mock.sqlResponse([
-      {
-        group: 'male',
-        count: '780',
-      },
-      {
-        group: 'female',
-        count: '690',
-      },
-      {
-        group: 'other',
-        count: '550',
-      },
-    ]);
-  },
+  getSurveyResponsesByAge: getSurveyResponsesByAgeMock,
+  getSurveyResponsesByGender: getSurveyResponsesByGenderMock,
 });
 
 const surveyResponsesByAgeSlice = createDataSlice({

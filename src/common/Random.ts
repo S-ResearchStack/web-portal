@@ -34,6 +34,13 @@ class Random {
     return n;
   }
 
+  date(start: Date | number, end: Date | number): Date {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    return new Date(this.int(startDate.valueOf(), endDate.valueOf()));
+  }
+
   gaussInt(params: GaussParams) {
     return Math.round(this.gaussNum(params));
   }

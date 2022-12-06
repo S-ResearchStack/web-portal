@@ -13,8 +13,7 @@ const Badge = styled.div<{ $isLoading?: boolean }>`
   min-width: ${px(24)};
   height: ${px(24)};
   border-radius: ${px(12)};
-  background-color: ${({ $isLoading, theme }) =>
-    $isLoading ? theme.colors.primaryLight : theme.colors.primaryLight};
+  background-color: ${colors.primaryLight};
 
   &:empty {
     display: none;

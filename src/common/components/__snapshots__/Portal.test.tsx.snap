@@ -1,9 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Portal [NEGATIVE] should render with wrong props 1`] = `
+<body>
+  <div />
+  <div
+    data-testid="tooltip-portal"
+    id="id-1"
+  />
+</body>
+`;
+
 exports[`Portal test portal render 1`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="portal-1"
   />
 </body>

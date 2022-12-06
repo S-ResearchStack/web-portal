@@ -95,12 +95,14 @@ const CollapseSection: React.FC<Props> = ({
     <Container {...rest} data-collapsed={isCollapsed || undefined}>
       <Header>
         <HeaderButton onClick={handleClick} $disabled={disabled} data-testid="collapse-button">
-          <HeaderTitle>{title}</HeaderTitle>
+          <HeaderTitle data-testid="collapse-title">{title}</HeaderTitle>
           <HeaderIcon>{isCollapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}</HeaderIcon>
         </HeaderButton>
         {headerExtra}
       </Header>
-      <Body $isCollapsed={isCollapsed}>{children}</Body>
+      <Body data-testid="collapse-body" $isCollapsed={isCollapsed}>
+        {children}
+      </Body>
     </Container>
   );
 };

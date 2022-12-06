@@ -227,10 +227,25 @@ exports[`DatePicker test date picker render 2`] = `
   font-weight: 400;
   font-style: normal;
   border-radius: 0.125rem;
-  color: #474747;
+  color: #FFFFFF;
+  background-color: #4475E3;
 }
 
 .c14:hover {
+  cursor: pointer;
+}
+
+.c15 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  border-radius: 0.125rem;
+  color: #474747;
+}
+
+.c15:hover {
   background-color: #ECF1FC;
   cursor: pointer;
 }
@@ -244,7 +259,7 @@ exports[`DatePicker test date picker render 2`] = `
   color: #474747;
 }
 
-.c15 .c1 {
+.c16 .c1 {
   margin-left: 0.9375rem;
   color: #474747;
 }
@@ -325,7 +340,7 @@ exports[`DatePicker test date picker render 2`] = `
           <div
             class="c9"
           >
-            November 2022
+            January 2022
           </div>
           <button
             class="c5 c6"
@@ -386,6 +401,26 @@ exports[`DatePicker test date picker render 2`] = `
           <div
             class="c11 c13"
           >
+            27
+          </div>
+          <div
+            class="c11 c13"
+          >
+            28
+          </div>
+          <div
+            class="c11 c13"
+          >
+            29
+          </div>
+          <div
+            class="c11 c13"
+          >
+            30
+          </div>
+          <div
+            class="c11 c13"
+          >
             31
           </div>
           <div
@@ -394,149 +429,154 @@ exports[`DatePicker test date picker render 2`] = `
             1
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             2
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             3
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             4
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             5
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             6
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             7
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             8
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             9
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             10
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             11
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             12
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             13
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             14
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             15
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             16
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             17
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             18
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             19
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             20
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             21
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             22
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             23
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             24
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             25
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             26
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             27
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             28
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             29
           </div>
           <div
-            class="c11 c14"
+            class="c11 c15"
           >
             30
+          </div>
+          <div
+            class="c11 c15"
+          >
+            31
           </div>
           <div
             class="c11 c13"
@@ -568,30 +608,558 @@ exports[`DatePicker test date picker render 2`] = `
           >
             6
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DatePicker test date picker render 3`] = `
+.c8 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  background-color: #4475E3;
+  pointer-events: none;
+}
+
+.c3 {
+  width: 19.5rem;
+  height: 21rem;
+  padding: 1.5rem;
+  background: #FFFFFF;
+  border-radius: 0.25rem;
+  box-shadow: 0rem 0.3125rem 0.75rem rgba(0,0,0,0.12);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.c3:hover {
+  cursor: default;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c4 svg {
+  fill: #474747;
+}
+
+.c5 {
+  border: none;
+  background-color: transparent;
+  height: 1.5rem;
+  width: 1.5rem;
+  -webkit-flex: 1.5rem 0 auto;
+  -ms-flex: 1.5rem 0 auto;
+  flex: 1.5rem 0 auto;
+  padding: 0;
+  margin: 0 0.5rem;
+  border-radius: 50%;
+  position: relative;
+  z-index: 0;
+  -webkit-transition: background-color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: background-color 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c5:last-child {
+  margin-right: 0;
+}
+
+.c5:enabled:hover {
+  background-color: rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.c5 svg {
+  fill: #474747;
+  -webkit-transition: fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c5:disabled svg {
+  fill: #DBDBDB;
+}
+
+.c7 {
+  position: relative;
+  z-index: 2;
+  display: block;
+}
+
+.c6 {
+  margin: 0;
+}
+
+.c9 {
+  color: #474747;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c10 {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(7,2.25rem);
+  grid-template-rows: 2rem repeat(6,2.25rem);
+  -webkit-column-gap: 0.125rem;
+  column-gap: 0.125rem;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
+.c11 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c12 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #808080;
+}
+
+.c13 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  border-radius: 0.125rem;
+  color: #808080;
+}
+
+.c13:hover {
+  background-color: #ECF1FC;
+  cursor: pointer;
+}
+
+.c14 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  border-radius: 0.125rem;
+  color: #FFFFFF;
+  background-color: #4475E3;
+}
+
+.c14:hover {
+  cursor: pointer;
+}
+
+.c15 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  border-radius: 0.125rem;
+  color: #474747;
+}
+
+.c15:hover {
+  background-color: #ECF1FC;
+  cursor: pointer;
+}
+
+.c2 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+}
+
+.c16 .c1 {
+  margin-left: 0.9375rem;
+  color: #474747;
+}
+
+.c0 {
+  max-width: 19.5rem;
+  height: 3.5rem;
+  background-color: #F7F8FA;
+  border-radius: 0.25rem;
+  border-width: 0.0625rem;
+  border-color: #4475E3;
+  border-style: solid;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  position: relative;
+}
+
+.c0:hover {
+  cursor: pointer;
+}
+
+.c0 .c1 {
+  margin-left: 0.9375rem;
+  color: #474747;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="date-picker"
+    >
+      <div
+        class="c1 c2"
+        data-testid="input-label"
+      >
+        Sat, Jan 01, 2022
+      </div>
+      <svg
+        class=""
+      />
+      <div
+        class="c3"
+        data-testid="calendar-popover"
+        style="position: absolute; top: 8px; left: 0px;"
+        tabindex="-1"
+      >
+        <div
+          class="c4"
+        >
+          <button
+            class="c5 c6"
+            style="overflow: hidden; position: relative;"
+          >
+            <span
+              class="c7"
+            >
+              <svg />
+            </span>
+            <div
+              class="c8"
+              color="primary"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </button>
+          <div
+            class="c9"
+          >
+            January 2022
+          </div>
+          <button
+            class="c5 c6"
+            style="overflow: hidden; position: relative;"
+          >
+            <span
+              class="c7"
+            >
+              <svg />
+            </span>
+            <div
+              class="c8"
+              color="primary"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </button>
+        </div>
+        <div
+          class="c10"
+        >
+          <div
+            class="c11 c12"
+          >
+            Mon
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Tue
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Wed
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Thu
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Fri
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Sat
+          </div>
+          <div
+            class="c11 c12"
+          >
+            Sun
+          </div>
           <div
             class="c11 c13"
+          >
+            27
+          </div>
+          <div
+            class="c11 c13"
+          >
+            28
+          </div>
+          <div
+            class="c11 c13"
+          >
+            29
+          </div>
+          <div
+            class="c11 c13"
+          >
+            30
+          </div>
+          <div
+            class="c11 c13"
+          >
+            31
+          </div>
+          <div
+            class="c11 c14"
+          >
+            1
+          </div>
+          <div
+            class="c11 c15"
+          >
+            2
+          </div>
+          <div
+            class="c11 c15"
+          >
+            3
+          </div>
+          <div
+            class="c11 c15"
+          >
+            4
+          </div>
+          <div
+            class="c11 c15"
+          >
+            5
+          </div>
+          <div
+            class="c11 c15"
+          >
+            6
+          </div>
+          <div
+            class="c11 c15"
           >
             7
           </div>
           <div
-            class="c11 c13"
+            class="c11 c15"
           >
             8
           </div>
           <div
-            class="c11 c13"
+            class="c11 c15"
           >
             9
           </div>
           <div
-            class="c11 c13"
+            class="c11 c15"
           >
             10
           </div>
           <div
-            class="c11 c13"
+            class="c11 c15"
           >
             11
+          </div>
+          <div
+            class="c11 c15"
+          >
+            12
+          </div>
+          <div
+            class="c11 c15"
+          >
+            13
+          </div>
+          <div
+            class="c11 c15"
+          >
+            14
+          </div>
+          <div
+            class="c11 c15"
+          >
+            15
+          </div>
+          <div
+            class="c11 c15"
+          >
+            16
+          </div>
+          <div
+            class="c11 c15"
+          >
+            17
+          </div>
+          <div
+            class="c11 c15"
+          >
+            18
+          </div>
+          <div
+            class="c11 c15"
+          >
+            19
+          </div>
+          <div
+            class="c11 c15"
+          >
+            20
+          </div>
+          <div
+            class="c11 c15"
+          >
+            21
+          </div>
+          <div
+            class="c11 c15"
+          >
+            22
+          </div>
+          <div
+            class="c11 c15"
+          >
+            23
+          </div>
+          <div
+            class="c11 c15"
+          >
+            24
+          </div>
+          <div
+            class="c11 c15"
+          >
+            25
+          </div>
+          <div
+            class="c11 c15"
+          >
+            26
+          </div>
+          <div
+            class="c11 c15"
+          >
+            27
+          </div>
+          <div
+            class="c11 c15"
+          >
+            28
+          </div>
+          <div
+            class="c11 c15"
+          >
+            29
+          </div>
+          <div
+            class="c11 c15"
+          >
+            30
+          </div>
+          <div
+            class="c11 c15"
+          >
+            31
+          </div>
+          <div
+            class="c11 c13"
+          >
+            1
+          </div>
+          <div
+            class="c11 c13"
+          >
+            2
+          </div>
+          <div
+            class="c11 c13"
+          >
+            3
+          </div>
+          <div
+            class="c11 c13"
+          >
+            4
+          </div>
+          <div
+            class="c11 c13"
+          >
+            5
+          </div>
+          <div
+            class="c11 c13"
+          >
+            6
           </div>
         </div>
       </div>

@@ -56,4 +56,24 @@ describe('Dropdown', () => {
     await userEvent.click(getByTestId('dropdown'));
     expect(queryByTestId('menu-container')).not.toBeInTheDocument();
   });
+
+  it('[NEGATIVE] should render with wrong props', async () => {
+    const { getByTestId, queryByTestId, queryAllByTestId, baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Dropdown
+          data-testid="dropdown"
+          activeKey="2"
+          items={[] as typeof items}
+          onChange={() => {}}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    await userEvent.click(getByTestId('dropdown'));
+
+    expect(queryByTestId('menu-container')).toBeInTheDocument();
+    expect(queryAllByTestId('menu-item')).toHaveLength(0);
+  });
 });

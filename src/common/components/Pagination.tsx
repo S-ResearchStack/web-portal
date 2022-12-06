@@ -3,7 +3,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import Button from 'src/common/components/Button';
-import Dropdown, { DropdownProps, MenuItem, ValueItem } from 'src/common/components/Dropdown';
+import Dropdown, { MenuItem, ValueItem } from 'src/common/components/Dropdown';
 import PageFirstIcon from 'src/assets/icons/page_first.svg';
 import PageLastIcon from 'src/assets/icons/page_last.svg';
 import ChevronLeftIcon from 'src/assets/icons/chevron_left_pagination.svg';
@@ -92,7 +92,7 @@ const DropDownControl = styled(Dropdown)`
       display: none;
     }
   }
-` as FC<DropdownProps<number>>;
+` as typeof Dropdown;
 
 const SmallMenuItem = styled(MenuItem)`
   background-color: ${({ selected }) => (selected ? colors.primary10 : colors.backgroundSurface)};

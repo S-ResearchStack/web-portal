@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Banner [NEGATIVE] should render banner without children 1`] = `
+.c0 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #4475E3;
+  background-color: #ECF1FC;
+  border-radius: 0.25rem;
+  padding: 1rem 1.5rem;
+  max-width: 100%;
+}
+
+.c0 > div:not(:first-child) {
+  margin-top: 0.25rem;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="banner"
+    />
+  </div>
+</body>
+`;
+
 exports[`Banner test banner render 1`] = `
 .c0 {
   font-family: Inter,sans-serif;

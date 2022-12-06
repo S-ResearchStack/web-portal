@@ -31,7 +31,7 @@ let dispatch: AppDispatch;
 beforeEach(() => {
   history = makeHistory();
   store = makeStore(history);
-  dispatch = store.dispatch as AppDispatch;
+  dispatch = store.dispatch;
 
   jest.restoreAllMocks();
 });
@@ -142,7 +142,7 @@ describe('frequencyToCron', () => {
       })
     ).toEqual('0 20 10 * * ? *');
 
-    expect(consoleError).toBeCalled();
+    expect(consoleError).toHaveBeenCalled();
   });
 });
 

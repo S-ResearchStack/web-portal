@@ -1,4 +1,12 @@
-import React, { forwardRef, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import _isNumber from 'lodash/isNumber';
 import _throttle from 'lodash/throttle';
 import useEvent from 'react-use/lib/useEvent';
@@ -193,6 +201,22 @@ const BaseTable = forwardRef(
       () => _throttle(calculateColumnSizes, 50),
       [calculateColumnSizes]
     );
+
+    useEffect(() => {
+      if (!containerRef.current) {
+        return () => {};
+      }
+
+      const resizeObserver = new ResizeObserver(
+        (entries) => entries[0]?.contentBoxSize && calculateColumnSizes()
+      );
+
+      resizeObserver.observe(containerRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }, [calculateColumnSizes]);
 
     useLayoutEffect(() => {
       calculateColumnSizes();

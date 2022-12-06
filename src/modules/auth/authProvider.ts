@@ -9,6 +9,8 @@ API.setAuthProvider({
     return store.getState().auth.authToken;
   },
   onUnauthorizedError() {
-    (store.dispatch as AppDispatch)(signout());
+    // eslint-disable-next-line prefer-destructuring
+    const dispatch: AppDispatch = store.dispatch;
+    dispatch(signout());
   },
 });

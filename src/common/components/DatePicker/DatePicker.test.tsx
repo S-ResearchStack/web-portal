@@ -25,18 +25,20 @@ describe('DatePicker', () => {
 
     expect(getByText(baseElement, 'Select')).toBeInTheDocument();
 
-    await userEvent.click(datePicker);
-
-    await waitFor(() => expect(queryByTestId('calendar-popover')).toBeVisible(), { timeout: 100 });
-
     rerender(
       <ThemeProvider theme={theme}>
         <DatePicker onChange={onChange} value={testDate} data-testid="date-picker" />
       </ThemeProvider>
     );
 
+    await userEvent.click(datePicker);
+
+    await waitFor(() => expect(queryByTestId('calendar-popover')).toBeVisible(), { timeout: 100 });
+
     expect(baseElement).toMatchSnapshot();
 
     expect(getByText(baseElement, 'Sat, Jan 01, 2022')).toBeInTheDocument();
+
+    expect(baseElement).toMatchSnapshot();
   });
 });

@@ -66,7 +66,7 @@ const SurveyEditor = () => {
   } = useSurveyEditor();
   const [isPreviewOpened, setPreviewOpened] = useState(false);
   const prevDataLength = usePrevious(survey.questions.length);
-  const pathParams = useParams() as { surveyId: string };
+  const pathParams = useParams<{ surveyId: string }>();
   const studyId = useSelectedStudyId();
   const networkState = useNetworkState();
   const history = useHistory();

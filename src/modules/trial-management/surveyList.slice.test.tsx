@@ -66,7 +66,9 @@ describe('parseDateFromSurveyListApi', () => {
   it('should parse date', () => {
     expect(parseDateFromSurveyListApi(undefined)).toBeUndefined();
     expect(parseDateFromSurveyListApi('')).toBeUndefined();
-    expect(parseDateFromSurveyListApi('2022-10-31T12:00:00')).toBe(1667206800000);
+    expect(parseDateFromSurveyListApi('2022-10-31T12:00:00')).toBe(
+      new Date(2022, 9, 31, 12, 0, 0, 0).valueOf()
+    );
   });
 });
 
@@ -115,7 +117,7 @@ describe('transformSurveyListFromApi', () => {
         {
           description: undefined,
           id: '1',
-          modifiedAt: 1667206800000,
+          modifiedAt: new Date(2022, 9, 31, 12, 0, 0, 0).valueOf(),
           publishedAt: undefined,
           respondedParticipants: 1,
           revisionId: 0,
@@ -128,7 +130,7 @@ describe('transformSurveyListFromApi', () => {
         {
           description: undefined,
           id: '2',
-          modifiedAt: 1667206800000,
+          modifiedAt: new Date(2022, 9, 31, 12, 0, 0, 0).valueOf(),
           publishedAt: undefined,
           respondedParticipants: 1,
           revisionId: 0,

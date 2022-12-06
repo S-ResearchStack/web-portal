@@ -6,14 +6,15 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "react-hooks"],
+  "plugins": ["@typescript-eslint", "react-hooks", "jest"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "airbnb",
     "airbnb-typescript",
     "prettier",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "plugin:jest/recommended"
   ],
   "rules": {
     "no-console": "off",
@@ -35,7 +36,9 @@
     "import/prefer-default-export": "off",
     "no-param-reassign": ["error", { "props": false }],
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-expressions": "off"
+    "@typescript-eslint/no-unused-expressions": "off",
+    "jest/no-mocks-import": "off",
+    "jest/no-conditional-expect": "off"
   },
   "overrides": [
     {

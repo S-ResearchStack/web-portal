@@ -22,4 +22,20 @@ describe('Ripple', () => {
     expect(ripple).not.toBeVisible();
     expect(trigger).toBeVisible();
   });
+
+  it('[NEGATIVE] should render with wrong props', async () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <RippleTest duration={-1} color={'unknown' as 'background'} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const ripple = queryByTestId('ripple') as Element;
+    const trigger = queryByTestId('trigger') as Element;
+
+    expect(ripple).not.toBeVisible();
+    expect(trigger).toBeVisible();
+  });
 });

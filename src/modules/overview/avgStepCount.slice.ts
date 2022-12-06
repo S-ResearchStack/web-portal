@@ -1,81 +1,84 @@
 import API from 'src/modules/api';
 import createDataSlice from 'src/modules/store/createDataSlice';
 
-API.mock.provideEndpoints({
-  getAverageStepCount() {
-    return API.mock.response([
-      {
-        gender: 'male',
-        day_of_week: '1',
-        steps: '7300',
-      },
-      {
-        gender: 'male',
-        day_of_week: '2',
-        steps: '5700',
-      },
-      {
-        gender: 'male',
-        day_of_week: '3',
-        steps: '5000',
-      },
-      {
-        gender: 'male',
-        day_of_week: '4',
-        steps: '4200',
-      },
-      {
-        gender: 'male',
-        day_of_week: '5',
-        steps: '2900',
-      },
-      {
-        gender: 'male',
-        day_of_week: '6',
-        steps: '2800',
-      },
-      {
-        gender: 'male',
-        day_of_week: '7',
-        steps: '3500',
-      },
-      {
-        gender: 'female',
-        day_of_week: '1',
-        steps: '4300',
-      },
-      {
-        gender: 'female',
-        day_of_week: '2',
-        steps: '5700',
-      },
-      {
-        gender: 'female',
-        day_of_week: '3',
-        steps: '4000',
-      },
-      {
-        gender: 'female',
-        day_of_week: '4',
-        steps: '5200',
-      },
-      {
-        gender: 'female',
-        day_of_week: '5',
-        steps: '5900',
-      },
-      {
-        gender: 'female',
-        day_of_week: '6',
-        steps: '2800',
-      },
-      {
-        gender: 'female',
-        day_of_week: '7',
-        steps: '2500',
-      },
-    ]);
+export const getAverageStepCountMockData = [
+  {
+    gender: 'male',
+    day_of_week: '1',
+    steps: '7300',
   },
+  {
+    gender: 'male',
+    day_of_week: '2',
+    steps: '5700',
+  },
+  {
+    gender: 'male',
+    day_of_week: '3',
+    steps: '5000',
+  },
+  {
+    gender: 'male',
+    day_of_week: '4',
+    steps: '4200',
+  },
+  {
+    gender: 'male',
+    day_of_week: '5',
+    steps: '2900',
+  },
+  {
+    gender: 'male',
+    day_of_week: '6',
+    steps: '2800',
+  },
+  {
+    gender: 'male',
+    day_of_week: '7',
+    steps: '3500',
+  },
+  {
+    gender: 'female',
+    day_of_week: '1',
+    steps: '4300',
+  },
+  {
+    gender: 'female',
+    day_of_week: '2',
+    steps: '5700',
+  },
+  {
+    gender: 'female',
+    day_of_week: '3',
+    steps: '4000',
+  },
+  {
+    gender: 'female',
+    day_of_week: '4',
+    steps: '5200',
+  },
+  {
+    gender: 'female',
+    day_of_week: '5',
+    steps: '5900',
+  },
+  {
+    gender: 'female',
+    day_of_week: '6',
+    steps: '2800',
+  },
+  {
+    gender: 'female',
+    day_of_week: '7',
+    steps: '2500',
+  },
+];
+
+export const getAverageStepCountMock: typeof API.getAverageStepCount = () =>
+  API.mock.response(getAverageStepCountMockData);
+
+API.mock.provideEndpoints({
+  getAverageStepCount: getAverageStepCountMock,
 });
 
 const daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];

@@ -1,10 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import userEvent from '@testing-library/user-event';
-import { getByRole, render, waitFor } from '@testing-library/react';
-import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
+import userEvent from '@testing-library/user-event';
+import { getByRole, render, screen, waitFor } from '@testing-library/react';
+
+import theme from 'src/styles/theme';
+
 import PasswordInputField from './PasswordInputField';
 
 describe('PasswordInputField', () => {
@@ -79,5 +81,35 @@ describe('PasswordInputField', () => {
     expect(endExtra.getAttribute('color')).toBe('disabled');
     expect(passwordInput).toHaveStyle(`color: ${theme.colors.disabled}`);
     expect(passwordInput).toHaveValue('');
+  });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <PasswordInputField
+          readOnly={1 as unknown as boolean}
+          value={[] as unknown as string}
+          label={null as unknown as string}
+          error={null as unknown as string}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const input = screen.getByTestId('input');
+    const label = queryByTestId('input-label');
+    const error = screen.getByTestId('input-error');
+    const description = screen.getByTestId('input-description');
+
+    expect(input).toBeInTheDocument();
+
+    expect(label).toBeNull();
+
+    expect(description).toBeInTheDocument();
+    expect(description).toHaveTextContent('');
+
+    expect(error).toBeInTheDocument();
+    expect(error).toHaveTextContent('');
   });
 });

@@ -12,42 +12,47 @@ import createDataSlice from 'src/modules/store/createDataSlice';
 import Random from 'src/common/Random';
 import { getGenderColor } from './gender';
 
+export const getParticipantHeartRatesMock: typeof API.getParticipantHeartRates = ({
+  startTime,
+  endTime,
+}) => {
+  const startTs = DateTime.fromSQL(startTime).valueOf();
+  const endTs = DateTime.fromSQL(endTime).valueOf();
+
+  const r = new Random(1);
+
+  return API.mock.response(
+    _range(1000).map((idx) => {
+      const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
+
+      const hourOfDay = time.hour + time.minute / 60;
+      const wakeHour = r.num(6.5, 8);
+      const sleepHour = r.num(20, 24);
+      const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
+
+      const gender = r.num() < 0.5 ? 'male' : 'female';
+      const bpmExtra = gender === 'female' ? 1 : 0;
+
+      return {
+        user_id: `user_${idx % 50}`,
+        time: time.toISO(),
+        gender,
+        age: String(r.int(20, 100)),
+        bpm: String(
+          r.gaussNum({
+            min: bpmRange[0] + bpmExtra,
+            max: bpmRange[1] + bpmExtra,
+            standardDeviation: 4,
+          })
+        ),
+        anomaly: r.num() < 0.005,
+      };
+    })
+  );
+};
+
 API.mock.provideEndpoints({
-  getParticipantHeartRates({ startTime, endTime }) {
-    const startTs = DateTime.fromSQL(startTime).valueOf();
-    const endTs = DateTime.fromSQL(endTime).valueOf();
-
-    const r = new Random(1);
-
-    return API.mock.response(
-      _range(1000).map((idx) => {
-        const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
-
-        const hourOfDay = time.hour + time.minute / 60;
-        const wakeHour = r.num(6.5, 8);
-        const sleepHour = r.num(20, 24);
-        const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
-
-        const gender = r.num() < 0.5 ? 'male' : 'female';
-        const bpmExtra = gender === 'female' ? 1 : 0;
-
-        return {
-          user_id: `user_${idx % 50}`,
-          time: time.toISO(),
-          gender,
-          age: String(r.int(20, 100)),
-          bpm: String(
-            r.gaussNum({
-              min: bpmRange[0] + bpmExtra,
-              max: bpmRange[1] + bpmExtra,
-              standardDeviation: 4,
-            })
-          ),
-          anomaly: r.num() < 0.005,
-        };
-      })
-    );
-  },
+  getParticipantHeartRates: getParticipantHeartRatesMock,
 });
 
 const avgRestingHrOverDaySlice = createDataSlice({

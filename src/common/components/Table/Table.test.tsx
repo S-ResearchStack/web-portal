@@ -48,6 +48,14 @@ describe('Table', () => {
 
   const getRowKey: RowKeyExtractor<Row> = (row) => row.id;
 
+  beforeAll(() => {
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+    }));
+  });
+
   it('test table render', () => {
     const { baseElement, getByTestId, queryAllByTestId, rerender } = render(
       <ThemeProvider theme={theme}>
@@ -133,5 +141,19 @@ describe('Table', () => {
     const loader = queryByTestId('line-loader');
 
     expect(loader).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Table data-testid="table" rows={[]} columns={[]} getRowKey={getRowKey} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const table = getByTestId('table');
+
+    expect(table).toBeInTheDocument();
   });
 });

@@ -4,19 +4,17 @@ import _range from 'lodash/range';
 
 import { SpecColorType } from 'src/styles/theme';
 import { TooltipProvider, TooltipsList } from 'src/common/components/Tooltip';
+import Random from 'src/common/Random';
 import ResponsiveContainer from '../../common/components/ResponsiveContainer';
 import ScatterChart from './ScatterChart';
 
-const randomDate = (start: Date, end: Date) =>
-  new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-
 const mockDotsData = _range(300).map(() => {
-  const name = Math.random() < 0.5 ? 'male' : 'female';
+  const name = Random.shared.arrayElement(['male', 'female']);
   return {
     name,
-    age: Math.floor(Math.random() * 80) + 20,
-    value: Math.floor(Math.random() * 40) + 50,
-    lastSync: randomDate(new Date(2022, 6, 1), new Date()).valueOf(),
+    age: Random.shared.int(20, 100),
+    value: Random.shared.int(50, 90),
+    lastSync: Random.shared.date(new Date(2022, 6, 1), Date.now()).valueOf(),
     color: name === 'female' ? 'secondaryViolet' : ('secondarySkyBlue' as SpecColorType),
   };
 });

@@ -94,7 +94,7 @@ const menuItemsRegistry = {
   },
 };
 
-const hideDisplayIfMinimized = (minimized?: boolean) =>
+const hideDisplayIfMinimized = (minimized = false) =>
   css`
     display: ${minimized ? 'none' : 'block'};
   `;
@@ -275,7 +275,7 @@ const BaseItemContainer = styled.div<Omit<MenuItemProps, 'desktopType' | '$barWi
 `;
 
 interface BaseItemProps extends Minimizable, React.HTMLAttributes<HTMLDivElement> {
-  children?: ReactNode | undefined;
+  children?: ReactNode;
   selected?: boolean;
 }
 

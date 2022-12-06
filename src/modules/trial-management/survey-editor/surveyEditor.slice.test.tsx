@@ -47,6 +47,7 @@ import {
 import { makeHistory, Path } from 'src/modules/navigation/store';
 import { currentSnackbarSelector } from 'src/modules/snackbar/snackbar.slice';
 import Api, { TaskItem } from 'src/modules/api';
+import { expectToBeDefined } from 'src/common/utils/testing';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -190,7 +191,7 @@ let dispatch: AppDispatch;
 beforeEach(() => {
   history = makeHistory();
   store = makeStore(history);
-  dispatch = store.dispatch as AppDispatch;
+  dispatch = store.dispatch;
 });
 
 describe('actions', () => {
@@ -299,7 +300,7 @@ describe('actions', () => {
       await waitFor(() => surveyEditorIsCreatingSelector(store.getState()));
       await waitFor(() => !surveyEditorIsCreatingSelector(store.getState()));
 
-      expect(onError).not.toBeCalled();
+      expect(onError).not.toHaveBeenCalled();
       expect(editedSurveySelector(store.getState())).toEqual(
         expect.objectContaining({
           description: expect.any(String),
@@ -344,7 +345,7 @@ describe('actions', () => {
 
       await waitFor(() => !surveyEditorIsCreatingSelector(store.getState()));
 
-      expect(onError).toBeCalled();
+      expect(onError).toHaveBeenCalled();
     });
   });
 
@@ -365,8 +366,8 @@ describe('actions', () => {
       });
 
       const surveyId = '2'; // published
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const task = hook.result.current.data!.published.find((t) => t.id === surveyId)!;
+      const task = hook.result.current.data?.published.find((t) => t.id === surveyId);
+      expectToBeDefined(task);
 
       dispatch(openSurveyResults({ surveyId }));
 
@@ -409,8 +410,8 @@ describe('actions', () => {
       });
 
       const surveyId = '1'; // draft
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const task = hook.result.current.data!.drafts.find((t) => t.id === surveyId)!;
+      const task = hook.result.current.data?.drafts.find((t) => t.id === surveyId);
+      expectToBeDefined(task);
 
       dispatch(editSurvey({ studyId, surveyId }));
 
@@ -441,8 +442,8 @@ describe('actions', () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
       dispatch(surveyEditorSlice.actions.updateLastTouched());
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const lastTouched = surveyEditorLastTouchedSelector(store.getState())!;
+      const lastTouched = surveyEditorLastTouchedSelector(store.getState());
+      expectToBeDefined(lastTouched);
       const dateSpy = jest.spyOn(Date, 'now').mockImplementation();
       dateSpy.mockReturnValue(lastTouched + AUTOSAVE_DEBOUNCE_INTERVAL + 1);
 
@@ -461,8 +462,8 @@ describe('actions', () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
 
       dispatch(surveyEditorSlice.actions.updateLastTouched());
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const lastTouched = surveyEditorLastTouchedSelector(store.getState())!;
+      const lastTouched = surveyEditorLastTouchedSelector(store.getState());
+      expectToBeDefined(lastTouched);
       jest
         .spyOn(Date, 'now')
         .mockImplementation()
@@ -483,15 +484,15 @@ describe('actions', () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
       dispatch(surveyEditorSlice.actions.updateLastTouched());
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const lastTouched = surveyEditorLastTouchedSelector(store.getState())!;
+      const lastTouched = surveyEditorLastTouchedSelector(store.getState());
+      expectToBeDefined(lastTouched);
       const dateSpy = jest.spyOn(Date, 'now').mockImplementation();
       dateSpy.mockReturnValue(lastTouched + AUTOSAVE_DEBOUNCE_INTERVAL + 1);
 
       await dispatch(saveSurveyIfRequired({}));
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const firstTs = surveySavedOnSelector(store.getState())!;
+      const firstTs = surveySavedOnSelector(store.getState());
+      expectToBeDefined(firstTs);
       expect(firstTs).toEqual(expect.any(Number));
 
       // update survey
@@ -515,15 +516,15 @@ describe('actions', () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
       dispatch(surveyEditorSlice.actions.updateLastTouched());
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const lastTouched = surveyEditorLastTouchedSelector(store.getState())!;
+      const lastTouched = surveyEditorLastTouchedSelector(store.getState());
+      expectToBeDefined(lastTouched);
       const dateSpy = jest.spyOn(Date, 'now').mockImplementation();
       dateSpy.mockReturnValue(lastTouched + AUTOSAVE_DEBOUNCE_INTERVAL + 1);
 
       await dispatch(saveSurveyIfRequired({}));
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const firstTs = surveySavedOnSelector(store.getState())!;
+      const firstTs = surveySavedOnSelector(store.getState());
+      expectToBeDefined(firstTs);
       expect(firstTs).toEqual(expect.any(Number));
 
       dateSpy.mockReturnValue(firstTs);
@@ -791,8 +792,9 @@ describe('surveyQuestionListFromApi', () => {
 
 describe('surveyFromApi', () => {
   it('should convert survey', () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    expect(surveyFromApi(studyId, findMockTaskById('1')!)).toEqual({
+    const task = findMockTaskById('1');
+    expectToBeDefined(task);
+    expect(surveyFromApi(studyId, task)).toEqual({
       description: '',
       id: '1',
       questions: [
@@ -975,7 +977,7 @@ describe('surveyUpdateToApi', () => {
       items: [],
     });
 
-    expect(consoleWarnSpy).toBeCalled();
+    expect(consoleWarnSpy).toHaveBeenCalled();
   });
 });
 
@@ -1162,7 +1164,7 @@ describe('useSurveyEditor', () => {
 
       expect(hook.result.current.isLoading).toBeFalsy();
 
-      expect(onError).not.toBeCalled();
+      expect(onError).not.toHaveBeenCalled();
       expect(hook.result.current.survey).toEqual(
         expect.objectContaining({
           studyId: expect.any(String),

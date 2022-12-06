@@ -66,9 +66,11 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
   const linesData = useMemo(() => {
     const groupedData = d3.group(lines, (d) => d.name);
     const groupNames = d3.map(groupedData, (d) => d[0]);
-    const sortedLinesData = d3.map(groupedData, (d) =>
-      d[1].sort((item1, item2) => item1.age - item2.age)
-    );
+    const sortedLinesData = d3.map(groupedData, (d) => {
+      const ds = [...d[1]];
+      ds.sort((item1, item2) => item1.age - item2.age);
+      return ds;
+    });
 
     const colorScale = d3.scaleOrdinal(
       groupNames,

@@ -1,5 +1,83 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Radio [NEGATIVE] should render with wrong props 1`] = `
+.c2 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+}
+
+.c4 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c0 {
+  display: inline-block;
+}
+
+.c0 input {
+  display: none;
+}
+
+.c0 .c3 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #4475E3;
+}
+
+.c0 .c3 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c0:hover > .c1 {
+  cursor: pointer;
+}
+
+<body>
+  <div>
+    <div
+      class="c0 "
+      kind="radio"
+    >
+      <label
+        class="c1 c2"
+        for="1"
+      >
+        <div
+          class="c3 c4"
+        >
+          <svg />
+        </div>
+      </label>
+      <input
+        checked=""
+        data-testid="radio"
+        id="1"
+        type="checkbox"
+      />
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Radio test radio click 1`] = `
 .c2 {
   display: inline-grid;
@@ -138,7 +216,7 @@ exports[`Radio test radio disabled state 1`] = `
     >
       <label
         class="c1"
-        for="2"
+        for="1"
       >
         <div
           class="c2 c3"
@@ -149,7 +227,7 @@ exports[`Radio test radio disabled state 1`] = `
       <input
         data-testid="radio"
         disabled=""
-        id="2"
+        id="1"
         type="checkbox"
       />
     </div>

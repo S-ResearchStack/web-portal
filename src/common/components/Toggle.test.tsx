@@ -1,6 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
+import 'src/__mocks__/setupUniqueIdMock';
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
 import theme from 'src/styles/theme';
@@ -55,5 +56,22 @@ describe('Toggle', () => {
     expect(toggle).not.toBeChecked();
     await userEvent.click(toggle);
     expect(toggle).not.toBeChecked();
+  });
+
+  it('[NEGATIVE] should render with wrong props', async () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Toggle
+          data-testid="toggle"
+          label={['toggle-test'] as unknown as string}
+          checked={'unknown' as unknown as boolean}
+          onChange={() => {}}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('toggle')).toBeChecked();
+    expect(getByTestId('label')).toHaveTextContent('toggle-test');
   });
 });

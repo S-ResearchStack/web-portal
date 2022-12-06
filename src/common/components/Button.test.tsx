@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import { render } from '@testing-library/react';
+import { findByTestId, render } from '@testing-library/react';
 import { px } from 'src/styles';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
@@ -150,5 +150,44 @@ describe('Button', () => {
     expect(borderedButton).toBeDisabled();
     expect(borderedButton).toHaveStyle('background-color: transparent');
     expect(queryByTestId('spinner')).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render without children', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Button fill="text" data-testid="text-button" />
+      </ThemeProvider>
+    );
+
+    const buttonContent = await findByTestId(baseElement, 'content');
+
+    expect(baseElement).toMatchSnapshot();
+    expect(buttonContent).not.toHaveTextContent('BUTTON');
+  });
+
+  it('[NEGATIVE] should render with wrong `fill` property', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Button fill={'unavaliable' as 'text'} data-testid="text-button" />
+      </ThemeProvider>
+    );
+
+    const buttonContent = await findByTestId(baseElement, 'content');
+
+    expect(baseElement).toMatchSnapshot();
+    expect(buttonContent).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render with wrong `loading` property', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Button fill="text" $loading={1 as unknown as boolean} data-testid="text-button" />
+      </ThemeProvider>
+    );
+
+    const buttonLoader = await findByTestId(baseElement, 'spinner');
+
+    expect(baseElement).toMatchSnapshot();
+    expect(buttonLoader).toBeInTheDocument();
   });
 });

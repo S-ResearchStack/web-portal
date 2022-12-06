@@ -141,7 +141,7 @@ const Zoom: React.FC<Props> = ({
     [lastXRelativeSelection, x]
   );
 
-  const moveBrushX = (newS: number[], previousSelection?: boolean) => {
+  const moveBrushX = (newS: number[], previousSelection = false) => {
     d3.select(svgRef.current)
       .select('.context')
       .select<SVGGElement>('.brushX')
@@ -180,8 +180,7 @@ const Zoom: React.FC<Props> = ({
     }
 
     /* moving slider */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const newDomain = s.map(xContext.invert as any, xContext) as number[];
+    const newDomain = s.map(xContext.invert, xContext);
     updateXDomain?.(newDomain);
     updateXRelativeSelection(s);
   };
@@ -206,7 +205,8 @@ const Zoom: React.FC<Props> = ({
     const yRange = yContext.range();
 
     if (!event.selection) {
-      const newS = yRange.reverse();
+      const newS = [...yRange];
+      newS.reverse();
 
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       moveBrushY(newS);
@@ -231,14 +231,15 @@ const Zoom: React.FC<Props> = ({
 
     /* moving slider */
     updateYDomain?.(s.map(yContext.invert, yContext));
-    updateYRelativeSelection(s.reverse());
+    s.reverse();
+    updateYRelativeSelection(s);
   };
 
   const brushX = initBrushX(getFocusHeight(height), getFocusWidth(width), brushedX);
   const brushY = initBrushY(getFocusWidth(width), height, brushedY);
 
   const moveBrushY = useCallback(
-    (newS: number[], previousSelection?: boolean) => {
+    (newS: number[], previousSelection = false) => {
       d3.select(svgRef.current)
         .select('.context')
         .select<SVGGElement>('.brushY')
@@ -468,7 +469,7 @@ const Zoom: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [x, y]);
 
-  const updateZoom = (moveLastSelection?: boolean) => {
+  const updateZoom = (moveLastSelection = false) => {
     updateContext(
       svgRef,
       x.range(),

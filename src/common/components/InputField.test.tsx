@@ -57,4 +57,34 @@ describe('InputField', () => {
     expect(input).toHaveStyle(`color: ${theme.colors.disabled}`);
     expect(input).toHaveStyle(`background-color: ${theme.colors.disabled20}`);
   });
+
+  it('[NEGATIVE] should render with wrong props', () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <InputField
+          readOnly={1 as unknown as boolean}
+          value={[] as unknown as string}
+          label={null as unknown as string}
+          error={null as unknown as string}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const input = screen.getByTestId('input');
+    const label = queryByTestId('input-label');
+    const error = screen.getByTestId('input-error');
+    const description = screen.getByTestId('input-description');
+
+    expect(input).toBeInTheDocument();
+
+    expect(label).toBeNull();
+
+    expect(description).toBeInTheDocument();
+    expect(description).toHaveTextContent('');
+
+    expect(error).toBeInTheDocument();
+    expect(error).toHaveTextContent('');
+  });
 });

@@ -52,4 +52,28 @@ describe('Pagination', () => {
 
     expect(onPageChange).toHaveBeenCalledTimes(1);
   });
+
+  it('[NEGATIVE] should render with wrong props', async () => {
+    const onPageChange = jest.fn();
+
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Pagination totalCount={-1} pageSize={-1} offset={-1} onPageChange={onPageChange} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const pagination = queryByTestId('pagination') as Element;
+    const prevButton = queryByTestId('go-to-previous') as Element;
+    const nextButton = queryByTestId('go-to-next') as Element;
+    const firstButton = queryByTestId('go-to-first') as Element;
+    const lastButton = queryByTestId('go-to-last') as Element;
+
+    expect(pagination).toBeInTheDocument();
+    expect(prevButton).toBeInTheDocument();
+    expect(nextButton).toBeInTheDocument();
+    expect(firstButton).toBeInTheDocument();
+    expect(lastButton).toBeInTheDocument();
+  });
 });

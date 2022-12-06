@@ -121,8 +121,8 @@ const Modal: FC<ModalProps> = ({
             data-testid="modal"
           >
             <Body>
-              <Title>{title}</Title>
-              <Description>{description}</Description>
+              <Title data-testid="modal-title">{title}</Title>
+              <Description data-testid="modal-description">{description}</Description>
               <Actions>
                 {children}
                 <DeclineComponent

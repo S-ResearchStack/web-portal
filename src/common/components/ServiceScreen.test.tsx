@@ -61,4 +61,27 @@ describe('ServiceScreen', () => {
     expect(errorScreen).toBeInTheDocument();
     expect(spinner).toBeInTheDocument();
   });
+
+  it('[NEGATIVE] should render with wrong `title` property', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <ServiceScreen type="error" title={false as unknown as string} data-testid="error-screen" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('error-screen')).toBeInTheDocument();
+    expect(getByText(baseElement, 'Server Error')).not.toBeNull();
+  });
+
+  it('[NEGATIVE] should render with wrong `type` property', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <ServiceScreen type={'unknown' as 'error'} data-testid="error-screen" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('error-screen')).toBeInTheDocument();
+  });
 });

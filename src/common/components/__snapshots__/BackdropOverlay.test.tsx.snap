@@ -33,6 +33,7 @@ exports[`BackdropOverlay test backdrop open 1`] = `
 <body>
   <div />
   <div
+    data-testid="tooltip-portal"
     id="backdrop-portal-1"
   >
     <div

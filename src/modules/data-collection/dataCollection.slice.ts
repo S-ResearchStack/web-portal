@@ -200,7 +200,7 @@ export const dataFetchData =
   };
 
 export const setQuery =
-  (projectId: string, query: string, autoFetch?: boolean): AppThunk =>
+  (projectId: string, query: string, autoFetch = false): AppThunk =>
   (dispatch) => {
     dispatch(setQuerySuccess(query));
     autoFetch && dispatch(dataFetchData(projectId, query));

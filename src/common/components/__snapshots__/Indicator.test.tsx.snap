@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Indicator [NEGATIVE] should render with wrong props 1`] = `
+.c0 {
+  border: none;
+  border-radius: 50%;
+  height: 0.5rem;
+  width: 0.5rem;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      color="unknown"
+      data-testid="indicator"
+    />
+  </div>
+</body>
+`;
+
 exports[`Indicator test indicator render 1`] = `
 .c0 {
   background-color: #2DC008;

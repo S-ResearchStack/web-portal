@@ -22,7 +22,6 @@ enum ServiceScreenType {
 interface ServiceScreenPreparedProps {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   title?: React.ReactNode;
-  // description?: React.ReactNode;
 }
 
 export interface ServiceScreenProps
@@ -31,7 +30,6 @@ export interface ServiceScreenProps
   > {
   type: keyof typeof ServiceScreenType;
   title?: React.ReactNode;
-  // description?: React.ReactNode;
   onReload?: () => void;
 }
 
@@ -66,7 +64,6 @@ const ButtonContainer = styled.div`
 const ServiceScreen: FC<ServiceScreenProps> = ({
   type,
   title,
-  // description,
   children,
   onReload,
   ...props

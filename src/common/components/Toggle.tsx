@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
-import spring, { toString } from 'css-spring';
+import spring, { toString as springToString } from 'css-spring';
 import _uniqueId from 'lodash/uniqueId';
 
 import { colors, px, typography } from 'src/styles';
@@ -9,11 +9,11 @@ const UNCHECKED_HOVERED_SPRING_CONFIG = { stiffness: 256, damping: 24 };
 const CHECKED_SPRING_CONFIG = { stiffness: 711.1, damping: 40 };
 
 const uncheckedHoverAnimation = keyframes`
-  ${toString(spring({ left: px(2) }, { left: px(4) }, UNCHECKED_HOVERED_SPRING_CONFIG))}
+  ${springToString(spring({ left: px(2) }, { left: px(4) }, UNCHECKED_HOVERED_SPRING_CONFIG))}
 `;
 
 const checkedAnimation = keyframes`
-  ${toString(spring({ left: px(4) }, { left: px(18) }, CHECKED_SPRING_CONFIG))}
+  ${springToString(spring({ left: px(4) }, { left: px(18) }, CHECKED_SPRING_CONFIG))}
 `;
 
 interface ToggleProps extends React.InputHTMLAttributes<HTMLInputElement> {

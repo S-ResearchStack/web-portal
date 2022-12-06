@@ -29,8 +29,9 @@ import reducer, {
 
 const TEST_ERR_TEXT_MESSAGE = 'test-error';
 
+// eslint-disable-next-line prefer-destructuring
+const dispatch: AppDispatch = store.dispatch;
 const studiesMock = mockStudies.map(transformStudyFromApi);
-const dispatch = store.dispatch as AppDispatch;
 
 describe('Studies redux state slice tests', () => {
   it('should have initial state', async () => {
