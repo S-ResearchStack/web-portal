@@ -2,7 +2,7 @@
   "name": "open-source-portal-frontend",
   "license": "UNLICENSED",
   "private": true,
-  "version": "0.9.34",
+  "version": "0.9.35",
   "scripts": {
     "dev:base": "webpack serve --mode development",
     "dev": "cross-env MOCK_API=always yarn dev:base",
@@ -56,6 +56,14 @@
     "react-virtual": "^2.10.4",
     "smoothscroll-polyfill": "^0.4.4",
     "styled-components": "^5.3.5"
+  },
+  "resolutions": {
+    "loader-utils": "^2.0.4",
+    "terser": "^5.14.2",
+    "trim-newlines": "^3.0.1",
+    "glob-parent": "^5.1.2",
+    "trim": "^0.0.3",
+    "decode-uri-component": "^0.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.0",
