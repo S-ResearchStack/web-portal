@@ -8,6 +8,7 @@ import {
   useSurveyDetailsData,
 } from 'src/modules/trial-management/surveyPage.slice';
 import { overviewSubjectSlice } from 'src/modules/overview/overview-subject/overviewSubject.slice';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 const setUpHook = (args: GetSurveyDetailsDataParams | false) =>
   renderHook(
@@ -112,6 +113,42 @@ describe('useSurveyDetailsData', () => {
           }),
         ]),
       }),
+    });
+  });
+
+  it('[NEGATIVE] should fetch data with failure', async () => {
+    const error = 'test-error';
+
+    await maskEndpointAsFailure(
+      'getTaskCompletionTime',
+      async () => {
+        act(() => {
+          hook = setUpHook(args);
+        });
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      error,
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data', async () => {
+    await maskEndpointAsSuccess(
+      'getTaskCompletionTime',
+      async () => {
+        act(() => {
+          hook = setUpHook(args);
+        });
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { response: null }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      error: expect.any(String),
     });
   });
 });

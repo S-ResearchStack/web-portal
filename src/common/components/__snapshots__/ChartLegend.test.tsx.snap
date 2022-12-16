@@ -1,5 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ChartLegend [NEGATIVE] should render chart legend with empty props 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -webkit-justify-content: start;
+  -ms-flex-pack: start;
+  justify-content: start;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="chart-legend"
+      mode="left"
+    />
+  </div>
+</body>
+`;
+
+exports[`ChartLegend [NEGATIVE] should render chart legend without props 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -webkit-justify-content: start;
+  -ms-flex-pack: start;
+  justify-content: start;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="chart-legend"
+      mode="left"
+    />
+  </div>
+</body>
+`;
+
 exports[`ChartLegend test chart legend if canToggle=false 1`] = `
 .c4 {
   display: inline-grid;

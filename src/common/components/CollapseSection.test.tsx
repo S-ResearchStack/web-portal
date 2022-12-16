@@ -50,4 +50,22 @@ describe('CollapseSection', () => {
     expect(collapseTitle).toBeInTheDocument();
     expect(collapseTitle).toHaveTextContent('');
   });
+
+  it('[NEGATIVE] should render without props', () => {
+    const fakeProps = {} as { title: string };
+
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <CollapseSection {...fakeProps} data-testid="collapse-section" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const collapseContent = getByTestId('collapse-body');
+    const collapseTitle = getByTestId('collapse-title');
+
+    expect(collapseContent).toBeInTheDocument();
+    expect(collapseTitle).toBeInTheDocument();
+  });
 });

@@ -1,6 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Spinner [NEGATIVE] should render wih wrong props 1`] = `
+exports[`Spinner [NEGATIVE] should render with wrong props 1`] = `
+.c0 {
+  fill: #4475E3;
+  -webkit-animation: 1.1s infinite cilQsd cubic-bezier(0.45,0.05,0,1);
+  animation: 1.1s infinite cilQsd cubic-bezier(0.45,0.05,0,1);
+}
+
+<body>
+  <div>
+    <svg
+      class="c0"
+      data-testid="spinner"
+    />
+  </div>
+</body>
+`;
+
+exports[`Spinner [NEGATIVE] should render without props 1`] = `
 .c0 {
   fill: #4475E3;
   -webkit-animation: 1.1s infinite cilQsd cubic-bezier(0.45,0.05,0,1);

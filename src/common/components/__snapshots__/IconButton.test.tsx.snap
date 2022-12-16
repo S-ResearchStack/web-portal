@@ -9,9 +9,18 @@ exports[`IconButton [NEGATIVE] should render with wrong props 1`] = `
   width: 1.5rem;
 }
 
+.c0 svg {
+  fill: #000000;
+}
+
 .c0:active,
 .c0:enabled:hover {
   cursor: pointer;
+}
+
+.c0:active svg,
+.c0:enabled:hover svg {
+  fill: #000000;
 }
 
 .c0:disabled svg {
@@ -29,6 +38,43 @@ exports[`IconButton [NEGATIVE] should render with wrong props 1`] = `
         data-testid="icon"
       />
     </button>
+  </div>
+</body>
+`;
+
+exports[`IconButton [NEGATIVE] should render without props 1`] = `
+.c0 {
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.c0 svg {
+  fill: #000000;
+}
+
+.c0:active,
+.c0:enabled:hover {
+  cursor: pointer;
+}
+
+.c0:active svg,
+.c0:enabled:hover svg {
+  fill: #000000;
+}
+
+.c0:disabled svg {
+  fill: #DBDBDB;
+}
+
+<body>
+  <div>
+    <button
+      class="c0"
+      data-testid="iconButton"
+    />
   </div>
 </body>
 `;

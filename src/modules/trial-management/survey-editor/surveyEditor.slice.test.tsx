@@ -48,6 +48,7 @@ import { makeHistory, Path } from 'src/modules/navigation/store';
 import { currentSnackbarSelector } from 'src/modules/snackbar/snackbar.slice';
 import Api, { TaskItem } from 'src/modules/api';
 import { expectToBeDefined } from 'src/common/utils/testing';
+import { maskEndpointAsFailure } from 'src/modules/api/mock';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -58,43 +59,41 @@ describe('surveyEditorSlice', () => {
     expect(surveyEditorSlice.reducer(undefined, { type: '' })).toEqual(surveyEditorInitialState);
   });
 
-  it('should start loading', () => {
+  it('should support survey loading successful lifecycle', () => {
+    const loadingState = surveyEditorSlice.reducer(
+      undefined,
+      surveyEditorSlice.actions.loadingStarted()
+    );
+    expect(loadingState).toMatchObject({ isLoading: true });
     expect(
-      surveyEditorSlice.reducer(undefined, surveyEditorSlice.actions.loadingStarted())
-    ).toMatchObject({ isLoading: true });
-  });
-
-  it('should finish loading', () => {
-    expect(
-      surveyEditorSlice.reducer(undefined, surveyEditorSlice.actions.loadingFinished())
+      surveyEditorSlice.reducer(loadingState, surveyEditorSlice.actions.loadingFinished())
     ).toMatchObject({ isLoading: false });
   });
 
-  it('should start creating', () => {
+  it('should support survey creating successful lifecycle', () => {
+    const creatingState = surveyEditorSlice.reducer(
+      undefined,
+      surveyEditorSlice.actions.creatingStarted()
+    );
+    expect(creatingState).toMatchObject({ isCreating: true });
     expect(
-      surveyEditorSlice.reducer(undefined, surveyEditorSlice.actions.creatingStarted())
-    ).toMatchObject({ isCreating: true });
-  });
-
-  it('should finish creating', () => {
-    expect(
-      surveyEditorSlice.reducer(undefined, surveyEditorSlice.actions.creatingFinished())
+      surveyEditorSlice.reducer(creatingState, surveyEditorSlice.actions.creatingFinished())
     ).toMatchObject({ isCreating: false });
   });
 
-  it('should start saving', () => {
-    expect(
-      surveyEditorSlice.reducer(undefined, surveyEditorSlice.actions.savingStarted())
-    ).toMatchObject({ isSaving: true });
-  });
+  it('should support survey saving successful lifecycle', () => {
+    const savingState = surveyEditorSlice.reducer(
+      undefined,
+      surveyEditorSlice.actions.savingStarted()
+    );
+    expect(savingState).toMatchObject({ isSaving: true });
 
-  it('should finish saving', () => {
     const dateSpy = jest.spyOn(Date, 'now').mockImplementation();
     dateSpy.mockReturnValue(1);
 
     expect(
       surveyEditorSlice.reducer(
-        undefined,
+        savingState,
         surveyEditorSlice.actions.savingFinished({
           error: false,
           isFailedConnection: true,
@@ -105,6 +104,8 @@ describe('surveyEditorSlice', () => {
       isSaving: false,
       isFailedConnection: true,
     });
+
+    dateSpy.mockRestore();
   });
 
   it('should set survey', () => {
@@ -266,12 +267,29 @@ describe('actions', () => {
       ).not.toBeNull();
     });
 
-    it('should catch error while task creating', async () => {
+    it('[NEGATIVE] should catch error while task creating', async () => {
       const errSpy = jest.spyOn(console, 'error').mockImplementation();
 
       await Api.mock.maskEndpointAsFailure('createTask', async () => {
         await dispatch(createSurvey({ studyId }));
       });
+
+      await waitFor(() => expect(surveyEditorIsCreatingSelector(store.getState())).toBeFalsy());
+
+      expect(errSpy).toHaveBeenCalled();
+      expect(currentSnackbarSelector(store.getState()).text).toMatch(CREATE_SURVEY_FAILED_MESSAGE);
+    });
+
+    it('[NEGATIVE] should create task with broken data', async () => {
+      const errSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      await Api.mock.maskEndpointAsSuccess(
+        'createTask',
+        async () => {
+          await dispatch(createSurvey({ studyId }));
+        },
+        { response: null }
+      );
 
       await waitFor(() => expect(surveyEditorIsCreatingSelector(store.getState())).toBeFalsy());
 
@@ -327,7 +345,7 @@ describe('actions', () => {
       );
     });
 
-    it('should catch error while data loading', async () => {
+    it('[NEGATIVE] should catch error while data loading', async () => {
       expect(surveyEditorIsLoadingSelector(store.getState())).toBeFalsy();
       expect(editedSurveySelector(store.getState())).toEqual({
         studyId: '',
@@ -536,7 +554,7 @@ describe('actions', () => {
       expect(surveySavedOnSelector(store.getState())).not.toEqual(firstTs);
     });
 
-    it('should catch invalid survey while saving', async () => {
+    it('[NEGATIVE] should catch invalid survey while saving', async () => {
       const invalidSurvey: SurveyItem = {
         ...survey,
         title: '', // invalid
@@ -556,7 +574,7 @@ describe('actions', () => {
       expect(surveySavedOnSelector(store.getState())).toBeUndefined();
     });
 
-    it('should catch error while request', async () => {
+    it('[NEGATIVE] should catch error while request', async () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
       dispatch(surveyEditorSlice.actions.updateLastTouched());
 
@@ -726,11 +744,11 @@ describe('surveyQuestionFromApi', () => {
     });
   });
 
-  it('should convert survey with unknown question type', () => {
+  it('[NEGATIVE] should convert survey with unknown question type', () => {
     expect(surveyQuestionFromApi({ type: 'ROW' } as TaskItem)).toBeUndefined();
   });
 
-  it('should convert survey question with unknown content type', () => {
+  it('[NEGATIVE] should convert survey question with unknown content type', () => {
     expect(
       surveyQuestionFromApi({
         name: 'test-name',
@@ -1181,6 +1199,32 @@ describe('useSurveyEditor', () => {
       );
     });
 
+    it('[NEGATIVE] should load survey with failed response', async () => {
+      hook = setUpSurveyEditorHook();
+
+      const surveyId = '1';
+      const error = 'test-error';
+      const onError = jest.fn();
+
+      await maskEndpointAsFailure(
+        'getTask',
+        async () => {
+          act(() => {
+            hook.result.current.loadSurvey({
+              studyId,
+              surveyId,
+              onError,
+            });
+          });
+
+          await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+        },
+        { message: error }
+      );
+
+      expect(onError).toHaveBeenCalled();
+    });
+
     it('should reload survey', async () => {
       hook = setUpSurveyEditorHook();
 
@@ -1224,6 +1268,69 @@ describe('useSurveyEditor', () => {
       await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
 
       expect(hook.result.current.isLoading).toBeFalsy();
+    });
+
+    it('[NEGATIVE] should reload survey with error', async () => {
+      hook = setUpSurveyEditorHook();
+
+      const surveyId = '1';
+      const onError = jest.fn();
+
+      act(() => {
+        hook.result.current.loadSurvey({
+          studyId,
+          surveyId,
+          onError,
+        });
+      });
+
+      await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+      expect(hook.result.current.survey).toEqual(
+        expect.objectContaining({
+          studyId: expect.any(String),
+          id: expect.any(String),
+          revisionId: expect.any(Number),
+          title: expect.any(String),
+          description: expect.any(String),
+          questions: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+            }),
+          ]),
+        })
+      );
+
+      await maskEndpointAsFailure(
+        'getTask',
+        async () => {
+          act(() => {
+            hook.result.current.loadSurvey({
+              studyId,
+              surveyId,
+              onError,
+            });
+          });
+
+          await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+        },
+        { message: 'error' }
+      );
+
+      expect(hook.result.current.survey).toEqual(
+        expect.objectContaining({
+          studyId: expect.any(String),
+          id: expect.any(String),
+          revisionId: expect.any(Number),
+          title: expect.any(String),
+          description: expect.any(String),
+          questions: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+            }),
+          ]),
+        })
+      );
     });
   });
 
@@ -1420,7 +1527,7 @@ describe('useSurveyEditor', () => {
       expect(hook.result.current.isFailedConnection).toBeFalsy();
     });
 
-    it('should catch error while survey saving', async () => {
+    it('[NEGATIVE] should catch error while survey saving', async () => {
       hook = setUpSurveyEditorHook();
 
       act(() => {

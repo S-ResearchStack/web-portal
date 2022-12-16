@@ -106,7 +106,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
       loadingFailed(state, action: PayloadAction<ErrorType>) {
         return Object.assign(state, {
           isLoading: false,
-          error: action.payload,
+          error: String(action.payload),
           data: undefined,
           prevFetchArgs: { ...state.fetchArgs },
         });

@@ -60,6 +60,7 @@ export const getOrderFromQuery = (query: string): SorterResult[] => {
 
 export const updateQsBySorter = (qs: string, sorter: SorterResult[]): string => {
   const orderString = sorter
+    .filter((s) => typeof s.dataIndex !== 'undefined')
     .map((s) => `${s.dataIndex}${s.order === 'asc' ? '' : ' desc'}`)
     .join(', ');
 
@@ -151,4 +152,9 @@ export const getCsvBlobFromQueryResult = (data: SqlResponse<unknown>) => {
 };
 
 export const updateQsByColumns = (qs: string, columns: string[]): string =>
-  columns.length ? qs.replace(/select.+from/i, `select ${columns.join(', ')} from`) : qs;
+  columns.length
+    ? qs.replace(
+        /select.+from/i,
+        `select ${columns.filter((c) => typeof c === 'string').join(', ')} from`
+      )
+    : qs;

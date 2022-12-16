@@ -10,7 +10,9 @@ describe('BackdropOverlay', () => {
   it('test backdrop open', () => {
     const { baseElement, queryByTestId, rerender } = render(
       <ThemeProvider theme={theme}>
-        <BackdropOverlay data-testid="backdrop-overlay" open={false} />
+        <BackdropOverlay data-testid="backdrop-overlay" open={false}>
+          <div />
+        </BackdropOverlay>
       </ThemeProvider>
     );
 
@@ -23,7 +25,9 @@ describe('BackdropOverlay', () => {
 
     rerender(
       <ThemeProvider theme={theme}>
-        <BackdropOverlay data-testid="backdrop-overlay" open />
+        <BackdropOverlay data-testid="backdrop-overlay" open>
+          <div />
+        </BackdropOverlay>
       </ThemeProvider>
     );
 
@@ -33,7 +37,9 @@ describe('BackdropOverlay', () => {
   it('test backdrop overlay loading state', () => {
     const { queryByTestId, rerender } = render(
       <ThemeProvider theme={theme}>
-        <BackdropOverlay data-testid="backdrop-overlay" open />
+        <BackdropOverlay data-testid="backdrop-overlay" open>
+          <div />
+        </BackdropOverlay>
       </ThemeProvider>
     );
     const backdrop = queryByTestId('backdrop');
@@ -44,11 +50,33 @@ describe('BackdropOverlay', () => {
 
     rerender(
       <ThemeProvider theme={theme}>
-        <BackdropOverlay data-testid="backdrop-overlay" open loaderBackdrop />
+        <BackdropOverlay data-testid="backdrop-overlay" open loaderBackdrop>
+          <div />
+        </BackdropOverlay>
       </ThemeProvider>
     );
 
     expect(backdrop).toHaveStyle(`background-color: ${theme.colors.background}`);
     expect(backdrop).toHaveStyle('opacity: 0.7');
+  });
+
+  it('[NEGATIVE] should render without children', () => {
+    const { queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <BackdropOverlay open />
+      </ThemeProvider>
+    );
+
+    expect(queryByTestId('backdrop')).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render without props', () => {
+    const { queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <BackdropOverlay />
+      </ThemeProvider>
+    );
+
+    expect(queryByTestId('backdrop')).toBeInTheDocument();
   });
 });

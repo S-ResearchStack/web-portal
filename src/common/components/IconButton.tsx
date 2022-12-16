@@ -13,26 +13,26 @@ export const sizeSpec = {
 };
 
 export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color: SpecColorType;
-  $size: 's' | 'm' | 'l';
+  color?: SpecColorType;
+  $size?: 's' | 'm' | 'l';
   selected?: boolean;
-  icon: FunctionComponent<SVGProps<SVGSVGElement>>;
+  icon?: FunctionComponent<SVGProps<SVGSVGElement>>;
 }
 
 const StyledIconButton = styled.button<Omit<IconButtonProps, 'icon'>>`
   background: none;
   border: none;
   padding: 0;
-  height: ${({ $size }) => px(sizeSpec[$size])};
-  width: ${({ $size }) => px(sizeSpec[$size])};
+  height: ${({ $size }) => px(sizeSpec[$size ?? 'm'])};
+  width: ${({ $size }) => px(sizeSpec[$size ?? 'm'])};
   svg {
-    fill: ${({ color, theme }) => theme.colors[color]};
+    fill: ${({ color, theme }) => theme.colors[color || 'black']};
   }
   &:active,
   &:enabled:hover {
     cursor: pointer;
     svg {
-      fill: ${({ color, theme }) => theme.colors[color]};
+      fill: ${({ color, theme }) => theme.colors[color || 'black']};
     }
   }
   &:disabled {
@@ -54,11 +54,7 @@ const IconButton = (props: IconButtonProps) => {
   const { icon, ...rest } = props;
   const Icon = icon;
 
-  return (
-    <StyledIconButton {...rest}>
-      <Icon data-testid="icon" />
-    </StyledIconButton>
-  );
+  return <StyledIconButton {...rest}>{Icon && <Icon data-testid="icon" />}</StyledIconButton>;
 };
 
 export default IconButton;

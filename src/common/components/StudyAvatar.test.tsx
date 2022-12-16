@@ -66,4 +66,15 @@ describe('StudyAvatar', () => {
     expect(baseElement).toMatchSnapshot();
     expect(getByTestId('styled-avatar')).toBeInTheDocument();
   });
+
+  it('[NEGATIVE] should render without props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <StudyAvatar data-testid="styled-avatar" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('styled-avatar')).toBeInTheDocument();
+  });
 });

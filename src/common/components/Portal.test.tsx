@@ -1,7 +1,7 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import 'src/__mocks__/setupUniqueIdMock';
 import { render } from '@testing-library/react';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
@@ -17,7 +17,7 @@ describe('Portal', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    const portal = baseElement.querySelector('#portal-1');
+    const portal = baseElement.querySelector('[id^="portal-"]');
     expect(portal).toBeInTheDocument();
 
     rerender(
@@ -40,7 +40,7 @@ describe('Portal', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    const portal = baseElement.querySelector(`#${id}-1`);
+    const portal = baseElement.querySelector(`[id^="${id}-"]`);
 
     expect(portal).toBeInTheDocument();
   });

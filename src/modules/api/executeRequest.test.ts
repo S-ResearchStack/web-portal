@@ -17,8 +17,8 @@ beforeAll(() => {
             status: 200,
           }),
       headers: {},
-      blob: () => Promise.resolve(responseData),
-      json: () => Promise.resolve(responseData),
+      blob: () => Promise.resolve(url.includes('bad-data') ? null : responseData),
+      json: () => Promise.resolve(url.includes('bad-data') ? null : responseData),
     })
   ) as unknown as typeof fetch;
 });
@@ -59,5 +59,14 @@ describe('executeRequest', () => {
     } catch (e) {
       expect(String(e)).toMatch('500');
     }
+  });
+
+  it('[NEGATIVE] Should execute successfully request with broken response data', async () => {
+    const { data } = await executeRequest({
+      url: 'https://samsung.com/bad-data',
+      query: responseData,
+    });
+
+    expect(data).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import 'src/__mocks__/setupUniqueIdMock';
 import { getByText, render } from '@testing-library/react';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';

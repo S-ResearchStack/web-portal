@@ -134,26 +134,41 @@ describe('Table', () => {
       </ThemeProvider>
     );
 
-    expect(baseElement).toMatchSnapshot();
-
-    expect(table).toBeInTheDocument();
-
     const loader = queryByTestId('line-loader');
 
+    expect(baseElement).toMatchSnapshot();
+    expect(table).toBeInTheDocument();
     expect(loader).toBeInTheDocument();
   });
 
-  it('[NEGATIVE] should render with wrong props', () => {
+  it('[NEGATIVE] should render with empty required props', () => {
     const { baseElement, getByTestId } = render(
       <ThemeProvider theme={theme}>
         <Table data-testid="table" rows={[]} columns={[]} getRowKey={getRowKey} />
       </ThemeProvider>
     );
 
+    const table = getByTestId('table');
+
     expect(baseElement).toMatchSnapshot();
+    expect(table).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render with wrong required props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Table
+          data-testid="table"
+          rows={null as unknown as []}
+          columns={null as unknown as []}
+          getRowKey={getRowKey}
+        />
+      </ThemeProvider>
+    );
 
     const table = getByTestId('table');
 
+    expect(baseElement).toMatchSnapshot();
     expect(table).toBeInTheDocument();
   });
 });

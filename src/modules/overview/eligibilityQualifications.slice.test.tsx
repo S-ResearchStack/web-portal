@@ -7,6 +7,7 @@ import {
   getEligibilityQualificationsMockData,
   useEligibilityQualificationsData,
 } from 'src/modules/overview/eligibilityQualifications.slice';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('getEligibilityQualificationsMock', () => {
   it('should get mocked data', async () => {
@@ -27,6 +28,8 @@ const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
   hook.result.current.reset();
   hook.unmount();
 };
+
+const error = 'test-error';
 
 describe('useEligibilityQualificationsData', () => {
   let hook: ReturnType<typeof setUpHook>;
@@ -53,6 +56,41 @@ describe('useEligibilityQualificationsData', () => {
           value: expect.any(Number),
         }),
       ]),
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getEligibilityQualifications',
+      async () => {
+        hook = setUpHook();
+      },
+      { response: null }
+    );
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getEligibilityQualifications',
+      async () => {
+        hook = setUpHook();
+      },
+      { message: error }
+    );
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
     });
   });
 });

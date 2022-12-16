@@ -1,5 +1,381 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Tooltip [NEGATIVE] Should tooltip render with wrong props 1`] = `
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 1`] = `
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div />
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 2`] = `
+.c1 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  font-style: normal;
+  pointer-events: none;
+  display: block;
+  padding: 0.5rem 0.5rem;
+  background-color: #2D2D2D;
+  color: #FFFFFF !important;
+  border-radius: 0.25rem;
+  z-index: 1002;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
+.c1 * {
+  color: #FFFFFF;
+}
+
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div />
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+  <div
+    data-testid="tooltip-portal"
+    id="tooltip-portal-2"
+  >
+    <div
+      class="c1"
+      data-testid="tooltip-item"
+      id="tooltip-1"
+      style="position: fixed; left: 0rem; top: -0.875rem;"
+      tabindex="-1"
+    >
+      Test
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 3`] = `
+.c2 {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 0.375rem solid transparent;
+  border-right: 0.375rem solid transparent;
+  border-top: 0.375rem solid #2D2D2D;
+}
+
+.c1 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  font-style: normal;
+  pointer-events: none;
+  display: block;
+  padding: 0.5rem 0.5rem;
+  background-color: #2D2D2D;
+  color: #FFFFFF !important;
+  border-radius: 0.25rem;
+  z-index: 1002;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
+.c1 * {
+  color: #FFFFFF;
+}
+
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div />
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+  <div
+    data-testid="tooltip-portal"
+    id="tooltip-portal-2"
+  >
+    <div
+      class="c1"
+      data-testid="tooltip-item"
+      id="tooltip-1"
+      style="position: fixed; left: 0rem; top: -0.875rem;"
+      tabindex="-1"
+    >
+      <div
+        class="c2"
+        data-testid="tooltip-arrow"
+        style="left: calc(50% - 0.375rem); top: 100%;"
+      />
+      Test
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 4`] = `
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div />
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should render with wrong ref property 1`] = `
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div />
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should tooltip change props with wrong values 1`] = `
+.c0 {
+  display: inline-block;
+  position: static;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should tooltip change props with wrong values 2`] = `
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should tooltip change props with wrong values 3`] = `
+.c1 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  font-style: normal;
+  pointer-events: none;
+  display: block;
+  padding: 0.5rem 0.5rem;
+  background-color: #2D2D2D;
+  color: #FFFFFF !important;
+  border-radius: 0.25rem;
+  z-index: 1002;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
+.c1 * {
+  color: #FFFFFF;
+}
+
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+    </span>
+  </div>
+  <div
+    data-testid="tooltip-portal"
+    id="tooltip-portal-2"
+  >
+    <div
+      class="c1"
+      data-testid="tooltip-item"
+      id="tooltip-1"
+      style="position: fixed; left: 0rem; top: 0rem;"
+      tabindex="-1"
+    >
+      1
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Tooltip [NEGATIVE] should tooltip static render with wrong props 1`] = `
+.c1 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  font-style: normal;
+  pointer-events: none;
+  display: none;
+  padding: 0.5rem 0.5rem;
+  background-color: #2D2D2D;
+  color: #FFFFFF !important;
+  border-radius: 0.25rem;
+  z-index: 1002;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
+.c1 * {
+  color: #FFFFFF;
+}
+
+.c0 {
+  display: inline-block;
+  position: relative;
+}
+
+<body>
+  <div>
+    <span
+      class="c0"
+      data-testid="tooltip-container"
+    >
+      <button
+        type="button"
+      >
+        Right
+      </button>
+      <div
+        class="c1"
+        data-testid="tooltip-item"
+        id="tooltip-1"
+        style="position: absolute; left: 0rem; top: -0.875rem;"
+        tabindex="-1"
+      />
+    </span>
+  </div>
+</body>
+`;
+
 exports[`Tooltip Should tooltip render 1`] = `
 .c0 {
   display: inline-block;
@@ -167,12 +543,12 @@ exports[`Tooltip should controlled open 2`] = `
   </div>
   <div
     data-testid="tooltip-portal"
-    id="tooltip-portal-8"
+    id="tooltip-portal-2"
   >
     <div
       class="c1"
       data-testid="tooltip-item"
-      id="tooltip-7"
+      id="tooltip-1"
       style="position: fixed; left: 7.125rem; top: 6.25rem;"
       tabindex="-1"
     >
@@ -249,12 +625,12 @@ exports[`Tooltip should imperative handle 2`] = `
   </div>
   <div
     data-testid="tooltip-portal"
-    id="tooltip-portal-10"
+    id="tooltip-portal-2"
   >
     <div
       class="c1"
       data-testid="tooltip-item"
-      id="tooltip-9"
+      id="tooltip-1"
       style="position: fixed; left: 0rem; top: -0.875rem;"
       tabindex="-1"
     >
@@ -317,12 +693,12 @@ exports[`Tooltip should imperative handle 3`] = `
   </div>
   <div
     data-testid="tooltip-portal"
-    id="tooltip-portal-10"
+    id="tooltip-portal-2"
   >
     <div
       class="c1"
       data-testid="tooltip-item"
-      id="tooltip-9"
+      id="tooltip-1"
       style="position: fixed; left: 0rem; top: -0.875rem;"
       tabindex="-1"
     >
@@ -447,12 +823,12 @@ exports[`Tooltip should tooltip change props 3`] = `
   </div>
   <div
     data-testid="tooltip-portal"
-    id="tooltip-portal-6"
+    id="tooltip-portal-2"
   >
     <div
       class="c1"
       data-testid="tooltip-item"
-      id="tooltip-5"
+      id="tooltip-1"
       style="position: fixed; left: 7.125rem; top: 6.25rem;"
       tabindex="-1"
     >
@@ -504,7 +880,7 @@ exports[`Tooltip should tooltip static render 1`] = `
       <div
         class="c1"
         data-testid="tooltip-item"
-        id="tooltip-3"
+        id="tooltip-1"
         style="position: absolute; left: 7.125rem; top: 6.25rem;"
         tabindex="-1"
       >
@@ -557,7 +933,7 @@ exports[`Tooltip should tooltip static render 2`] = `
       <div
         class="c1"
         data-testid="tooltip-item"
-        id="tooltip-3"
+        id="tooltip-1"
         style="position: absolute; left: 7.125rem; top: 6.25rem;"
         tabindex="-1"
       >
@@ -610,7 +986,7 @@ exports[`Tooltip should tooltip static render 3`] = `
       <div
         class="c1"
         data-testid="tooltip-item"
-        id="tooltip-3"
+        id="tooltip-1"
         style="position: absolute; left: 7.125rem; top: 6.25rem;"
         tabindex="-1"
       >

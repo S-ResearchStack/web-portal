@@ -9,6 +9,7 @@ import {
   overviewSubjectSlice,
   useOverviewSubject,
 } from 'src/modules/overview/overview-subject/overviewSubject.slice';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 const setUpHook = (args: GetOverviewSubjectParams | false) =>
   renderHook(
@@ -39,6 +40,8 @@ const args = {
   id: '002-20220512-a',
 };
 
+const error = 'test-error';
+
 describe('useOverviewSubject', () => {
   let hook: ReturnType<typeof setUpHook>;
 
@@ -48,6 +51,18 @@ describe('useOverviewSubject', () => {
 
   it('should create initial state', () => {
     hook = setUpHook(false);
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+    });
+  });
+
+  it('[NEGATIVE] should create initial state without fetchArgs', async () => {
+    act(() => {
+      hook = setUpHook(undefined as unknown as false);
+    });
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeTruthy());
 
     expect(hook.result.current).toMatchObject({
       isLoading: false,
@@ -75,6 +90,46 @@ describe('useOverviewSubject', () => {
         lastSync: expect.any(Number),
         localTime: expect.any(Number),
       }),
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getParticipant',
+      async () => {
+        act(() => {
+          hook = setUpHook(args);
+        });
+
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { sqlResponse: null }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error: expect.any(String),
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getParticipant',
+      async () => {
+        act(() => {
+          hook = setUpHook(args);
+        });
+
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
     });
   });
 });

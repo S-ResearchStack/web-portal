@@ -65,4 +65,15 @@ describe('IconButton', () => {
     expect(iconButton).toBeInTheDocument();
     expect(icon).toBeInTheDocument();
   });
+
+  it('[NEGATIVE] should render without props', async () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <IconButton data-testid="iconButton" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('iconButton')).toBeInTheDocument();
+  });
 });

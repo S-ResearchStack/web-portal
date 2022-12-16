@@ -15,7 +15,7 @@ import { SpecColorType } from 'src/styles/theme';
 import { colors, px, typography } from 'src/styles';
 import ScreenCenteredCard from './ScreenCenteredCard';
 
-const PLACEHOLDER = 'Enter your study name';
+const PLACEHOLDER = 'Name your study';
 
 const MainWrapper = styled.div`
   display: flex;
@@ -259,7 +259,7 @@ const CreateStudyScreen: React.FC = () => {
           <LogosWrapper>
             <StyledTextHeading>
               Study Logo
-              <StyledText>Please select one to represent your study</StyledText>
+              <StyledText>Select a logo to represent your study</StyledText>
             </StyledTextHeading>
             <StyledLogos
               ref={studyAvatarsRef}

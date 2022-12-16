@@ -5,7 +5,7 @@ import { getByText, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
-import ChartLegend, { ChartLegendItem } from './ChartLegend';
+import ChartLegend, { ChartLegendItem, ChartLegendProps } from './ChartLegend';
 
 describe('ChartLegend', () => {
   const items: Array<ChartLegendItem> = [
@@ -73,5 +73,37 @@ describe('ChartLegend', () => {
       expect(radioMale).toBeChecked();
       expect(radioFemale).toBeChecked();
     });
+  });
+
+  it('[NEGATIVE] should render chart legend with empty props', async () => {
+    const onChange = jest.fn();
+
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <ChartLegend items={[]} data-testid="chart-legend" canToggle onChange={onChange} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const chartLegend = getByTestId('chart-legend');
+
+    expect(chartLegend).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render chart legend without props', async () => {
+    const fakeProps = {} as ChartLegendProps;
+
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <ChartLegend data-testid="chart-legend" {...fakeProps} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const chartLegend = getByTestId('chart-legend');
+
+    expect(chartLegend).toBeInTheDocument();
   });
 });

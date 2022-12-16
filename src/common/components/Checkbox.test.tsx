@@ -1,7 +1,7 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import 'src/__mocks__/setupUniqueIdMock';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import theme from 'src/styles/theme';
@@ -32,10 +32,9 @@ describe('Checkbox', () => {
       </ThemeProvider>
     );
 
-    expect(baseElement).toMatchSnapshot();
-
     const checkbox = screen.getByTestId('checkbox');
 
+    expect(baseElement).toMatchSnapshot();
     expect(checkbox).not.toBeChecked();
 
     await userEvent.click(checkbox);
@@ -52,15 +51,25 @@ describe('Checkbox', () => {
       </ThemeProvider>
     );
 
+    const checkbox = screen.getByTestId('checkbox');
+    const label = screen.getByTestId('checkbox-label');
+
     expect(baseElement).toMatchSnapshot();
+    expect(checkbox).not.toBeChecked();
+    expect(label).toBeInTheDocument();
+    expect(label).toHaveTextContent('');
+  });
+
+  it('[NEGATIVE] should render without props', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Checkbox data-testid="checkbox" />
+      </ThemeProvider>
+    );
 
     const checkbox = screen.getByTestId('checkbox');
 
+    expect(baseElement).toMatchSnapshot();
     expect(checkbox).not.toBeChecked();
-
-    const label = screen.getByTestId('checkbox-label');
-
-    expect(label).toBeInTheDocument();
-    expect(label).toHaveTextContent('');
   });
 });

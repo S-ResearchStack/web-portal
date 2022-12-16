@@ -48,14 +48,28 @@ describe('InputField', () => {
       </ThemeProvider>
     );
 
+    const input = screen.getByTestId('input');
+
     expect(baseElement).toMatchSnapshot();
+    expect(input).toHaveValue('disabled');
+    expect(input).toHaveStyle(`color: ${theme.colors.disabled}`);
+    expect(input).toHaveStyle(`background-color: ${theme.colors.disabled20}`);
+  });
+
+  it('[NEGATIVE] should prevent user input while field is disabled', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <InputField disabled value="disabled" />
+      </ThemeProvider>
+    );
 
     const input = screen.getByTestId('input');
 
     await userEvent.type(input, 'Samsung');
+
+    expect(baseElement).toMatchSnapshot();
+    expect(input).not.toHaveValue('Samsung');
     expect(input).toHaveValue('disabled');
-    expect(input).toHaveStyle(`color: ${theme.colors.disabled}`);
-    expect(input).toHaveStyle(`background-color: ${theme.colors.disabled20}`);
   });
 
   it('[NEGATIVE] should render with wrong props', () => {
@@ -78,13 +92,21 @@ describe('InputField', () => {
     const description = screen.getByTestId('input-description');
 
     expect(input).toBeInTheDocument();
-
     expect(label).toBeNull();
-
     expect(description).toBeInTheDocument();
     expect(description).toHaveTextContent('');
-
     expect(error).toBeInTheDocument();
     expect(error).toHaveTextContent('');
+  });
+
+  it('[NEGATIVE] should render without props', () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <InputField />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(screen.getByTestId('input')).toBeInTheDocument();
   });
 });

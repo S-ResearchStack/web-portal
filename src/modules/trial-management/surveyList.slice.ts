@@ -140,9 +140,9 @@ export const transformSurveyListFromApi = ({
   totalParticipantsData: ParticipantListTotalItemsSqlRow[];
   taskResponsesCountData: TaskRespondedUsersCountSqlRow[];
 }): SurveyListCategories => {
-  const totalParticipants = Number(totalParticipantsData[0]?.total) || 0;
+  const totalParticipants = Number(totalParticipantsData?.[0]?.total) || 0;
 
-  const tasks: SurveyListItem[] = tasksData.map((t) => ({
+  const tasks: SurveyListItem[] = (Array.isArray(tasksData) ? tasksData : []).map((t) => ({
     id: t.id,
     title: t.title || '',
     status: t.status,
@@ -151,8 +151,9 @@ export const transformSurveyListFromApi = ({
     revisionId: t.revisionId,
     description: t.description,
     totalParticipants,
-    respondedParticipants:
-      Number(taskResponsesCountData.find((trc) => trc.task_id === t.id)?.num_users_responded) || 0,
+    respondedParticipants: Array.isArray(taskResponsesCountData)
+      ? Number(taskResponsesCountData.find((trc) => trc.task_id === t.id)?.num_users_responded) || 0
+      : 0,
   }));
 
   return {
@@ -180,7 +181,7 @@ export const surveyListSlice = createDataSlice({
 });
 
 export const surveyListDataSelector = (state: RootState): SurveyListCategories | undefined =>
-  state[surveyListSlice.name].data;
+  state[surveyListSlice.name]?.data;
 
 export const useSurveyListData = surveyListSlice.hook;
 

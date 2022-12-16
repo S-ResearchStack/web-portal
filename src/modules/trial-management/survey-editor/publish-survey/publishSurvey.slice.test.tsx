@@ -23,6 +23,7 @@ import {
   SurveyItem,
 } from 'src/modules/trial-management/survey-editor/surveyEditor.slice';
 import { matchPath } from 'react-router-dom';
+import { maskEndpointAsFailure } from 'src/modules/api/mock';
 
 let history: ReturnType<typeof makeHistory>;
 let store: ReturnType<typeof makeStore>;
@@ -73,7 +74,7 @@ describe('useParticipantsTimeZones', () => {
     expect(hook.result.current.data).toEqual(participantsTimeZonesMock);
   });
 
-  it('should catch error while loading', async () => {
+  it('[NEGATIVE] should catch error while loading', async () => {
     await Api.mock.maskEndpointAsFailure('getParticipantsTimeZones', async () => {
       hook = setUpParticipantsTimeZonesHook({ studyId });
 
@@ -85,6 +86,23 @@ describe('useParticipantsTimeZones', () => {
       expect(hook.result.current.error).not.toBeUndefined();
     });
   });
+
+  it('[NEGATIVE] should fetch broken data', async () => {
+    await Api.mock.maskEndpointAsSuccess(
+      'getParticipantsTimeZones',
+      async () => {
+        hook = setUpParticipantsTimeZonesHook({ studyId });
+
+        expect(hook.result.current.isLoading).toBeTruthy();
+
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+        expect(hook.result.current.data).toBeNull();
+        expect(hook.result.current.error).toBeUndefined();
+      },
+      { response: null }
+    );
+  });
 });
 
 describe('frequencyToCron', () => {
@@ -93,25 +111,21 @@ describe('frequencyToCron', () => {
     startDate: '2022-11-04T10:40:00',
   };
 
-  it('should make cron one time schedule', () => {
+  it('should make cron schedule', () => {
     expect(
       frequencyToCron({
         ...frequency,
         frequency: ScheduleFrequency.ONE_TIME,
       })
     ).toEqual('0 20 10 4 11 ? 2022');
-  });
 
-  it('should make cron daily schedule', () => {
     expect(
       frequencyToCron({
         ...frequency,
         frequency: ScheduleFrequency.DAILY,
       })
     ).toEqual('0 20 10 * * ? *');
-  });
 
-  it('should make cron weekly schedule', () => {
     expect(
       frequencyToCron({
         publishTime: '2022-11-03T10:20:00',
@@ -119,9 +133,7 @@ describe('frequencyToCron', () => {
         frequency: ScheduleFrequency.WEEKLY,
       })
     ).toEqual('0 20 10 ? * FRI *');
-  });
 
-  it('should make cron monthly schedule', () => {
     expect(
       frequencyToCron({
         publishTime: '2022-11-03T10:20:00',
@@ -131,7 +143,7 @@ describe('frequencyToCron', () => {
     ).toEqual('0 20 10 4 * ? *');
   });
 
-  it('should catch unexpected frequency', () => {
+  it('[NEGATIVE] should catch unexpected frequency', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation();
 
     expect(
@@ -174,34 +186,37 @@ describe('publishSurveySlice', () => {
     expect(publishSurveySlice.reducer(undefined, { type: '' })).toEqual(publishSurveyInitialState);
   });
 
-  it('should start sending', () => {
-    expect(
-      publishSurveySlice.reducer(undefined, publishSurveySlice.actions.sendingStarted())
-    ).toMatchObject({
+  it('should support success lifecycle', () => {
+    const currentState = publishSurveySlice.reducer(
+      undefined,
+      publishSurveySlice.actions.sendingStarted()
+    );
+
+    expect(currentState).toMatchObject({
       isSending: true,
     });
-  });
 
-  it('should complete successfully', () => {
     expect(
-      publishSurveySlice.reducer(
-        { error: 'test-error' },
-        publishSurveySlice.actions.sendingSuccess()
-      )
+      publishSurveySlice.reducer(currentState, publishSurveySlice.actions.sendingSuccess())
     ).toMatchObject({
       isSending: false,
       error: undefined,
     });
   });
 
-  it('should complete failure', () => {
+  it('[NEGATIVE] should support failure lifecycle', () => {
     const error = 'test-error';
+    const currentState = publishSurveySlice.reducer(
+      undefined,
+      publishSurveySlice.actions.sendingStarted()
+    );
+
+    expect(currentState).toMatchObject({
+      isSending: true,
+    });
 
     expect(
-      publishSurveySlice.reducer(
-        { error: 'test-error' },
-        publishSurveySlice.actions.sendingFailure(error)
-      )
+      publishSurveySlice.reducer(currentState, publishSurveySlice.actions.sendingFailure(error))
     ).toMatchObject({
       isSending: false,
       error,
@@ -260,7 +275,7 @@ describe('publishSurvey', () => {
     ).not.toBeNull();
   });
 
-  it('should catch error while survey sending', async () => {
+  it('[NEGATIVE] should catch error while survey sending', async () => {
     await Api.mock.maskEndpointAsFailure('updateTask', async () => {
       dispatch(surveyEditorSlice.actions.setSurvey(survey));
       dispatch(publishSurvey(data));
@@ -315,6 +330,34 @@ describe('usePublishSurveySlice', () => {
     expect(hook.result.current).toMatchObject({
       isSending: false,
       error: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should send data with failed response', async () => {
+    const error = 'test-error';
+
+    hook = setUpPublishSurveySliceHook();
+    dispatch(surveyEditorSlice.actions.setSurvey(survey));
+
+    expect(hook.result.current).toMatchObject({
+      isSending: false,
+    });
+
+    await maskEndpointAsFailure(
+      'updateTask',
+      async () => {
+        act(() => {
+          hook.result.current.publish(data);
+        });
+
+        await waitFor(() => expect(hook.result.current.isSending).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isSending: false,
+      error: `Error: ${error}`,
     });
   });
 });

@@ -24,7 +24,7 @@ describe('getTableNameFromQuery', () => {
     expect(getTableNameFromQuery('select * from table')).toEqual('table');
   });
 
-  it('should not find table name', () => {
+  it('[NEGATIVE] should do not find table name', () => {
     expect(getTableNameFromQuery('select * from')).toBeUndefined();
   });
 });
@@ -40,7 +40,7 @@ describe('getOrderValuesString', () => {
     expect(getOrderValuesString(`${bq} column asc, column desc`)).toBe('column asc, column desc');
   });
 
-  it('should not find order', () => {
+  it('[NEGATIVE] should not find order', () => {
     expect(getOrderValuesString('select * from table')).toBeUndefined();
   });
 });
@@ -62,7 +62,7 @@ describe('getOrderFromQuery', () => {
     ]);
   });
 
-  it('should not find order', () => {
+  it('[NEGATIVE] should not find order', () => {
     expect(getOrderFromQuery('select * from table')).toHaveLength(0);
   });
 });
@@ -85,17 +85,37 @@ describe('updateQsBySorter', () => {
       updateQsBySorter(`select * from table order by column1 desc, column2 asc`, sorter)
     ).toEqual(resultQuery);
   });
+
+  it('[NEGATIVE] should update sort with wrong values', () => {
+    const sorter = [{ order: 'asc' }, { dataIndex: 'column2' }] as unknown as SorterResult[];
+
+    expect(updateQsBySorter(`select * from table`, sorter)).toEqual(
+      'select * from table order by column2 desc'
+    );
+    expect(updateQsBySorter(`select * from table order by column1 desc`, sorter)).toEqual(
+      'select * from table order by column2 desc'
+    );
+    expect(
+      updateQsBySorter(`select * from table order by column1 desc, column2 asc`, sorter)
+    ).toEqual('select * from table order by column2 desc');
+  });
 });
 
 describe('getPaginationValueStrings', () => {
   it('should get pagination string values', () => {
-    expect(getPaginationValueStrings(`select * from table`)).toEqual([]);
     expect(getPaginationValueStrings(`select * from table limit 1`)).toEqual(['limit 1']);
     expect(getPaginationValueStrings(`select * from table limit 1 offset 2`)).toEqual([
       'limit 1',
       'offset 2',
     ]);
-    // expect(getPaginationValueStrings(`select * from table limit all offset null`)).toEqual(['limit all', 'offset null'])
+  });
+
+  it('[NEGATIVE] should try to get pagination string values while values does not exists', () => {
+    expect(getPaginationValueStrings(`select * from table`)).toEqual([]);
+  });
+
+  it('[NEGATIVE] should skip pagination unsupported values', () => {
+    expect(getPaginationValueStrings(`select * from table limit all offset null`)).toEqual([]);
   });
 });
 
@@ -107,6 +127,14 @@ describe('getPaginationFromQuery', () => {
       limit: 1,
       offset: 2,
     });
+  });
+
+  it('[NEGATIVE] should try to get pagination string values while values does not exists', () => {
+    expect(getPaginationFromQuery(`select * from table`)).toEqual({});
+  });
+
+  it('[NEGATIVE] should skip pagination unsupported values', () => {
+    expect(getPaginationFromQuery(`select * from table limit all offset null`)).toEqual({});
   });
 });
 
@@ -129,6 +157,17 @@ describe('updateQsByPagination', () => {
       `select * from table offset 2`
     );
   });
+
+  it('[NEGATIVE] should update pagination with wrong parameters', () => {
+    const pagination = {
+      limit: null,
+      offset: null,
+    } as unknown as PaginationResult;
+
+    const resultQuery = `select * from table`;
+
+    expect(updateQsByPagination(`select * from table`, pagination)).toEqual(resultQuery);
+  });
 });
 
 describe('getQueryParamsFromSql', () => {
@@ -137,6 +176,15 @@ describe('getQueryParamsFromSql', () => {
       sortings: [{ dataIndex: 'id', order: 'desc' }],
       limit: 1,
       offset: 2,
+      tableName: 'table',
+    });
+  });
+
+  it('[NEGATIVE] should get sql params', () => {
+    expect(
+      getQueryParamsFromSql(`select * from table order by id unknown offset null limit null`)
+    ).toEqual({
+      sortings: [{ dataIndex: 'id', order: 'asc' }],
       tableName: 'table',
     });
   });
@@ -161,6 +209,13 @@ describe('updateQsByColumns', () => {
     expect(updateQsByColumns(`select * from table`, [])).toEqual(`select * from table`);
     expect(updateQsByColumns(`select * from table`, ['column1', 'column2'])).toEqual(
       `select column1, column2 from table`
+    );
+  });
+
+  it('[NEGATIVE] should replace selecting columns with wrong data', () => {
+    expect(updateQsByColumns(`select * from table`, [])).toEqual(`select * from table`);
+    expect(updateQsByColumns(`select * from table`, ['column1', null] as string[])).toEqual(
+      `select column1 from table`
     );
   });
 });

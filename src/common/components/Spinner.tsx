@@ -19,7 +19,7 @@ const spinnerAnimation = keyframes`
 type Size = 'xs' | 'm' | 'l';
 
 type Props = {
-  size: Size;
+  size?: Size;
   $light?: boolean;
 };
 
@@ -40,7 +40,7 @@ const SpinnerIconLStyled = styled(SpinnerIconL)<{ $light?: boolean }>`
   ${({ $light }) => spinnerStyles($light)}
 `;
 
-const getSpinnerWithSize = (s: Size, $light = false) => {
+const getSpinnerWithSize = (s?: Size, $light = false) => {
   let icon = <SpinnerIconXSStyled $light={$light} data-testid="spinner" />;
   switch (s) {
     case 'm':

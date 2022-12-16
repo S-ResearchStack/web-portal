@@ -210,9 +210,9 @@ export interface DropdownItem<T> {
 export type DropdownProps<T> = ExtendProps<
   React.HTMLAttributes<HTMLDivElement>,
   {
-    items: DropdownItem<T>[];
-    activeKey: T;
-    onChange: (key: T) => void;
+    items?: DropdownItem<T>[];
+    activeKey?: T;
+    onChange?: (key: T) => void;
     className?: string;
     direction?: MenuContainerPosition;
     menuItemComponent?: React.ComponentType<ClickableProps>;
@@ -265,7 +265,7 @@ const Dropdown = <T extends string | number>({
     if (containerRef.current) {
       const containerRect: DOMRect = containerRef.current.getBoundingClientRect();
       const menuHeight = Math.min(
-        items.length * menuItemHeight,
+        (items?.length ?? 0) * menuItemHeight,
         getMenuMaxHeight(menuItemHeight, maxVisibleMenuItems)
       );
 
@@ -278,12 +278,12 @@ const Dropdown = <T extends string | number>({
         setPosition(direction);
       }
     }
-  }, [direction, items.length, menuItemHeight, maxVisibleMenuItems]);
+  }, [direction, items, menuItemHeight, maxVisibleMenuItems]);
 
   const maybeUpdateMenuScrollTopByActiveItem = useCallback(() => {
     if (menuRef.current && canSetScrollRef.current) {
       canSetScrollRef.current = false;
-      const selectedItemIdx = items.findIndex(searchItemPredicate) || 0;
+      const selectedItemIdx = items?.findIndex(searchItemPredicate) || 0;
       menuRef.current.scrollTop = selectedItemIdx * menuItemHeight - menuItemHeight;
     }
   }, [items, searchItemPredicate, menuItemHeight]);
@@ -338,7 +338,7 @@ const Dropdown = <T extends string | number>({
 
   const ItemComponent = menuItemComponent || MenuItem;
 
-  const selectedItem = items.find(searchItemPredicate);
+  const selectedItem = items?.find(searchItemPredicate);
 
   return (
     <Container
@@ -383,11 +383,11 @@ const Dropdown = <T extends string | number>({
           $backgroundType={backgroundType}
           data-testid="menu-container"
         >
-          {items.map(({ icon, label, key }) => (
+          {items?.map(({ icon, label, key }) => (
             <ItemComponent
               key={key}
               withIcon={!!icon}
-              onClick={() => onChange(key)}
+              onClick={() => onChange?.(key)}
               $backgroundType={backgroundType}
               selected={key === activeKey}
               itemHeight={menuItemHeight}

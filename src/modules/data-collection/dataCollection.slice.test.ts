@@ -1,6 +1,7 @@
 import {
   clearData,
   dataCollectionSlice,
+  DataCollectionState,
   dataFetchData,
   dataLoadingSelector,
   DEFAULT_QUERY_STATE,
@@ -15,6 +16,7 @@ import {
   setQuery,
   setTable,
   tablesLoadingSelector,
+  TablesMap,
   tablesProjectIdSelector,
   tablesSelector,
 } from 'src/modules/data-collection/dataCollection.slice';
@@ -94,13 +96,26 @@ describe('dataCollectionSlice', () => {
     expect(dataCollectionSlice.reducer(undefined, { type: '' })).toEqual(initialState);
   });
 
+  it('[NEGATIVE] should still after creation broken initial state', () => {
+    const brokenInitialState = { unexpected: 'unexpected' } as unknown as DataCollectionState;
+    expect(dataCollectionSlice.reducer(brokenInitialState, { type: '' })).toEqual(
+      brokenInitialState
+    );
+  });
+
   it('should set query', () => {
     expect(
       dataCollectionSlice.reducer(undefined, dataCollectionSlice.actions.setQuerySuccess(query))
     ).toMatchObject({ query });
   });
 
-  it('should table lifecycle', () => {
+  it('[NEGATIVE] should set empty query', () => {
+    expect(
+      dataCollectionSlice.reducer(undefined, dataCollectionSlice.actions.setQuerySuccess(''))
+    ).toMatchObject({ query: '' });
+  });
+
+  it('should support table lifecycle', () => {
     const initialTableState = dataCollectionSlice.reducer(
       undefined,
       dataCollectionSlice.actions.tablesStart()
@@ -131,6 +146,31 @@ describe('dataCollectionSlice', () => {
     });
   });
 
+  it('[NEGATIVE] should support table lifecycle with broken data', () => {
+    const initialTableState = dataCollectionSlice.reducer(
+      undefined,
+      dataCollectionSlice.actions.tablesStart()
+    );
+
+    expect(initialTableState).toMatchObject({
+      isTablesLoading: true,
+    });
+
+    expect(
+      dataCollectionSlice.reducer(
+        initialTableState,
+        dataCollectionSlice.actions.tablesSuccess({
+          projectId,
+          tableMap: null as unknown as TablesMap,
+        })
+      )
+    ).toMatchObject({
+      isTablesLoading: false,
+      tables: null,
+      projectId,
+    });
+  });
+
   it('should set columns', () => {
     const initialTableState = dataCollectionSlice.reducer(undefined, { type: '' });
 
@@ -142,6 +182,26 @@ describe('dataCollectionSlice', () => {
       dataCollectionSlice.reducer(
         initialTableState,
         dataCollectionSlice.actions.columnsSuccess(tables)
+      )
+    ).toMatchObject({
+      tables,
+    });
+  });
+
+  it('[NEGATIVE] should set columns with broken data', () => {
+    const initialTableState = dataCollectionSlice.reducer(
+      { tables } as unknown as DataCollectionState,
+      { type: '' }
+    );
+
+    expect(initialTableState).toMatchObject({
+      tables: {},
+    });
+
+    expect(
+      dataCollectionSlice.reducer(
+        initialTableState,
+        dataCollectionSlice.actions.columnsSuccess(null as unknown as TablesMap)
       )
     ).toMatchObject({
       tables,
@@ -183,10 +243,46 @@ describe('dataCollectionSlice', () => {
     });
   });
 
+  it('[NEGATIVE] should query result lifecycle with broken data', () => {
+    const initial = dataCollectionSlice.reducer(undefined, { type: '' });
+
+    expect(initial.queryResult).toBeUndefined();
+    expect(initial.error).toBeUndefined();
+    expect(initial.isDataLoading).toBeUndefined();
+
+    const loading = dataCollectionSlice.reducer(
+      initial,
+      dataCollectionSlice.actions.queryResultStart()
+    );
+
+    expect(loading).toMatchObject({
+      isDataLoading: true,
+    });
+
+    expect(
+      dataCollectionSlice.reducer(
+        loading,
+        dataCollectionSlice.actions.queryResultSuccess(null as unknown as QueryResult)
+      )
+    ).toMatchObject({
+      isDataLoading: false,
+      queryResult: null,
+    });
+  });
+
   it('should reset state', () => {
     const filledState = dataCollectionSlice.reducer(state, { type: '' });
 
     expect(filledState).toEqual(state);
+    expect(
+      dataCollectionSlice.reducer(filledState, dataCollectionSlice.actions.clearData())
+    ).toEqual(initialState);
+  });
+
+  it('[NEGATIVE] should reset empty state', () => {
+    const filledState = dataCollectionSlice.reducer(undefined, { type: '' });
+
+    expect(filledState).toEqual(initialState);
     expect(
       dataCollectionSlice.reducer(filledState, dataCollectionSlice.actions.clearData())
     ).toEqual(initialState);
@@ -206,6 +302,18 @@ describe('dataCollectionSlice', () => {
 
     dispatch(dataCollectionSlice.actions.queryResultFailure(error));
     expect(errorSelector(store.getState())).toMatch(error);
+  });
+
+  it('[NEGATIVE] should all selectors return a value while state is empty', () => {
+    dispatch(dataCollectionSlice.actions.clearData());
+
+    expect(querySelector(store.getState())).toEqual(DEFAULT_QUERY_STATE);
+    expect(tablesSelector(store.getState())).toEqual({});
+    expect(tablesLoadingSelector(store.getState())).toBeFalsy();
+    expect(tablesProjectIdSelector(store.getState())).toBeUndefined();
+    expect(queryResultSelector(store.getState())).toBeUndefined();
+    expect(dataLoadingSelector(store.getState())).toBeFalsy();
+    expect(errorSelector(store.getState())).toBeUndefined();
   });
 });
 
@@ -236,7 +344,7 @@ describe('actions', () => {
       });
     });
 
-    it('should fetch tables with failure state', async () => {
+    it('[NEGATIVE] should fetch tables with failure state', async () => {
       const initialTables = tablesSelector(store.getState());
 
       await maskEndpointAsFailure('getTablesList', async () => {
@@ -274,7 +382,7 @@ describe('actions', () => {
       });
     });
 
-    it('should fetch columns with failure state', async () => {
+    it('[NEGATIVE] should fetch columns with failure state', async () => {
       expect(tablesSelector(store.getState())).toEqual({});
 
       await maskEndpointAsFailure('getTableColumns', async () => {
@@ -315,7 +423,7 @@ describe('actions', () => {
       });
     });
 
-    it('should fetch data with failure state', async () => {
+    it('[NEGATIVE] should fetch data with failure state', async () => {
       let s = store.getState();
 
       expect(errorSelector(s)).toBeUndefined();
@@ -356,6 +464,16 @@ describe('actions', () => {
       expect(querySelector(store.getState())).toEqual(newQuery);
     });
 
+    it('[NEGATIVE] should set broken query', async () => {
+      expect(querySelector(store.getState())).toEqual(initialState.query);
+
+      const newQuery = null as unknown as string;
+
+      dispatch(setQuery(projectId, newQuery));
+
+      expect(querySelector(store.getState())).toEqual(newQuery);
+    });
+
     it('should set query with auto fetch data', async () => {
       expect(querySelector(store.getState())).toEqual(initialState.query);
       expect(queryResultSelector(store.getState())).toBeUndefined();
@@ -379,6 +497,26 @@ describe('actions', () => {
         },
         totalCount: 15,
       });
+    });
+
+    it('[NEGATIVE] should set query with auto fetch data with failure response', async () => {
+      expect(querySelector(store.getState())).toEqual(initialState.query);
+      expect(queryResultSelector(store.getState())).toBeUndefined();
+
+      const newQuery = `select * from table_0 limit ${DEFAULT_PAGINATION_LIMIT}`;
+
+      await maskEndpointAsFailure(
+        'executeDataQuery',
+        async () => dispatch(setQuery(projectId, newQuery, true)),
+        { message: 'test-error' }
+      );
+
+      expect(querySelector(store.getState())).toEqual(newQuery);
+
+      await waitFor(() => queryResultSelector(store.getState()));
+
+      expect(queryResultSelector(store.getState())).toBeUndefined();
+      expect(errorSelector(store.getState())).toMatch('test-error'.split('-')[1]);
     });
   });
 
@@ -405,6 +543,22 @@ describe('actions', () => {
         totalCount: 15,
       });
     });
+
+    it('[NEGATIVE] should set table', async () => {
+      expect(querySelector(store.getState())).toEqual(initialState.query);
+      expect(queryResultSelector(store.getState())).toBeUndefined();
+
+      await maskEndpointAsFailure(
+        'executeDataQuery',
+        async () => dispatch(setTable(projectId, 'table_0')),
+        { message: 'test-error' }
+      );
+
+      await waitFor(() => !dataLoadingSelector(store.getState()));
+
+      expect(querySelector(store.getState())).toEqual(`select * from table_0`);
+      expect(queryResultSelector(store.getState())).toBeUndefined();
+    });
   });
 
   describe('clear', () => {
@@ -415,6 +569,12 @@ describe('actions', () => {
       dispatch(dataCollectionSlice.actions.setQuerySuccess(fakeQuery));
       expect(querySelector(store.getState())).toEqual(fakeQuery);
 
+      dispatch(clearData());
+      expect(querySelector(store.getState())).toEqual(initialState.query);
+    });
+
+    it('[NEGATIVE] should clear state empty state', async () => {
+      expect(querySelector(store.getState())).toEqual(initialState.query);
       dispatch(clearData());
       expect(querySelector(store.getState())).toEqual(initialState.query);
     });

@@ -8,6 +8,7 @@ import {
   useAvgHeartRateFluctuationsData,
 } from 'src/modules/overview/avgHeartRateFluctuations.slice';
 import { store } from 'src/modules/store/store';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('getAvgHeartRateFluctuationsMock', () => {
   it('should get mocked data', async () => {
@@ -34,6 +35,9 @@ const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
   hook.result.current.reset();
   hook.unmount();
 };
+
+const error = 'test-error';
+
 describe('useAvgHeartRateFluctuationsData', () => {
   let hook: ReturnType<typeof setUpHook>;
 
@@ -55,6 +59,45 @@ describe('useAvgHeartRateFluctuationsData', () => {
       data: expect.arrayContaining(
         avgHeartRateFluctuationsMockData.map((item) => ({ ...item, value: +item.value }))
       ),
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getAvgHeartRateFluctuations',
+      async () => {
+        hook = setUpHook();
+      },
+      { response: null }
+    );
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getAvgHeartRateFluctuations',
+      async () => {
+        hook = setUpHook();
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: true,
+    });
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
     });
   });
 });

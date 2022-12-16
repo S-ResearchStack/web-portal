@@ -8,35 +8,10 @@ import API from 'src/modules/api';
 import * as api from 'src/modules/api/models';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
 import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
+import { updateTokens } from 'src/modules/auth/auth.slice';
+import { mockStudies } from 'src/modules/studies/studies.slice.mock';
 
 const SELECTED_STUDY_KEY = 'selected_study';
-
-export const mockStudies: api.Study[] = [
-  {
-    id: { value: '1' },
-    name: 'SleepCare Study',
-    info: {
-      color: 'secondarySkyBlue',
-    },
-    isOpen: true,
-  },
-  {
-    id: { value: '2' },
-    name: 'Heart Health Study',
-    info: {
-      color: 'secondaryViolet',
-    },
-    isOpen: true,
-  },
-  {
-    id: { value: '3' },
-    name: 'Some deleted study',
-    info: {},
-    isOpen: false,
-  },
-];
-
-export const mockStudyIds = mockStudies.map((s) => s.id.value);
 
 API.mock.provideEndpoints({
   getStudies() {
@@ -76,9 +51,9 @@ export const studiesSlice = createSlice({
     fetchStudiesFinished(state, { payload: newStudies }: PayloadAction<Study[]>) {
       state.isLoading = false;
       state.studies = newStudies;
-      if (!newStudies.find((s) => s.id === state.selectedStudyId)) {
+      if (!newStudies?.find((s) => s.id === state.selectedStudyId)) {
         const savedStudyId = localStorage.getItem(SELECTED_STUDY_KEY);
-        const savedStudy = newStudies.find((study) => savedStudyId === study.id);
+        const savedStudy = newStudies?.find((study) => savedStudyId === study.id);
         state.selectedStudyId = savedStudy ? savedStudy.id : _first(newStudies)?.id;
       }
     },
@@ -103,7 +78,7 @@ export const { fetchStudiesStarted, fetchStudiesFinished, setSelectedStudyId, re
   studiesSlice.actions;
 
 export const transformStudyFromApi = (s: api.Study): Study => ({
-  id: String(s.id.value),
+  id: String(s.id?.value || ''),
   name: s.name,
   color: (s.info?.color as SpecColorType) || 'disabled',
 });
@@ -145,6 +120,7 @@ export const createStudy =
         color: s.color,
       },
     });
+    await dispatch(updateTokens());
     await dispatch(fetchStudies({ force: true }));
     const newStudyId = getState().studies.studies.find((ss) => ss.name === s.name)?.id;
     dispatch(setSelectedStudyId(newStudyId));

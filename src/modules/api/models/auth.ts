@@ -10,6 +10,7 @@ export type SigninResponse = {
   email: string;
   jwt: string;
   roles: string[];
+  refreshToken: string;
 };
 
 export type ResetPasswordRequest = {
@@ -17,4 +18,9 @@ export type ResetPasswordRequest = {
   password: string;
   resetToken: string;
   profile?: UserProfile;
+};
+
+export type RefreshTokenBody = {
+  jwt: string;
+  refreshToken: string;
 };

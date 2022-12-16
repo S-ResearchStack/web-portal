@@ -26,7 +26,7 @@ const sqlRequest = async <R>(params: SqlRequestParams): Promise<Response<R[]>> =
   return {
     ...res,
     get data() {
-      return res.data.data;
+      return res.data?.data || null;
     },
   };
 };
@@ -90,6 +90,13 @@ export const updateUserRole = (body: API.UpdateUserRoleRequest) =>
 export const removeUserRole = (body: API.RemoveUserRoleRequest) =>
   request<API.RemoveUserRoleRequest, void>({
     path: '/account-service/user/roles/remove',
+    method: 'POST',
+    body,
+  });
+
+export const refreshToken = (body: API.RefreshTokenBody) =>
+  request<API.RefreshTokenBody, API.RefreshTokenBody>({
+    path: '/account-service/token/refresh',
     method: 'POST',
     body,
   });

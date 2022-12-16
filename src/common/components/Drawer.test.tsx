@@ -1,9 +1,10 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
+import { ThemeProvider } from 'styled-components/';
 import { getByText, render } from '@testing-library/react';
 import theme from 'src/styles/theme';
-import { ThemeProvider } from 'styled-components/';
 import Drawer from './Drawer';
 
 describe('Drawer', () => {
@@ -68,5 +69,35 @@ describe('Drawer', () => {
 
     expect(slide).toBeInTheDocument();
     expect(slide).toHaveStyle('left: 0');
+  });
+
+  it('[NEGATIVE] test drawer with wrong props', () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Drawer open={1 as unknown as boolean}>{true}</Drawer>
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const slide = queryByTestId('slide') as Element;
+
+    expect(slide).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] test drawer without props', () => {
+    const fakeProps = {} as { open: boolean };
+
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Drawer {...fakeProps} />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const slide = queryByTestId('slide') as Element;
+
+    expect(slide).toBeInTheDocument();
   });
 });

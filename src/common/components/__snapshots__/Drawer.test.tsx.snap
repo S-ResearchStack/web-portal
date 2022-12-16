@@ -1,5 +1,182 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
+.c5 {
+  display: none;
+  opacity: 0;
+  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c0 {
+  position: relative;
+  z-index: 1000;
+}
+
+.c1 {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.c6 {
+  background-color: rgba(0,0,0,0.4);
+}
+
+.c2 {
+  z-index: 1001;
+}
+
+.c3 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  -webkit-transition: -webkit-transform 300ms cubic-bezier(0.45,0.05,0,1);
+  -webkit-transition: transform 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: transform 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c4 {
+  height: 100%;
+  z-index: 1001;
+  width: 52.5rem;
+  background-color: #FFFFFF;
+  overflow: auto;
+}
+
+<body>
+  <div />
+  <div
+    data-testid="tooltip-portal"
+    id="backdrop-portal-1"
+  >
+    <div
+      class="c0"
+      data-testid="backdrop-container"
+    >
+      <div
+        class="c1 c2"
+        data-testid="backdrop-content"
+      >
+        <div
+          class="c3"
+          data-testid="slide"
+          direction="right"
+          style="right: 0px; transform: translateX(0%);"
+        >
+          <div
+            aria-hidden="false"
+            aria-modal="1"
+            class="c4"
+            data-testid="drawer-box"
+          />
+        </div>
+      </div>
+      <div
+        class="c5"
+        style="opacity: 1; display: block;"
+      >
+        <div
+          class="c1 c6"
+          data-testid="backdrop"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
+.c5 {
+  display: none;
+  opacity: 0;
+  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c0 {
+  position: relative;
+  z-index: -1;
+}
+
+.c1 {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.c6 {
+  background-color: rgba(0,0,0,0.4);
+}
+
+.c2 {
+  z-index: 1001;
+}
+
+.c3 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  -webkit-transition: -webkit-transform 300ms cubic-bezier(0.45,0.05,0,1);
+  -webkit-transition: transform 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: transform 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c4 {
+  height: 100%;
+  z-index: 1001;
+  width: 52.5rem;
+  background-color: #FFFFFF;
+  overflow: auto;
+}
+
+<body>
+  <div />
+  <div
+    data-testid="tooltip-portal"
+    id="backdrop-portal-1"
+  >
+    <div
+      class="c0"
+      data-testid="backdrop-container"
+    >
+      <div
+        class="c1 c2"
+        data-testid="backdrop-content"
+      >
+        <div
+          class="c3"
+          data-testid="slide"
+          direction="right"
+          style="right: 0px; transform: translateX(100%);"
+        >
+          <div
+            aria-hidden="true"
+            class="c4"
+            data-testid="drawer-box"
+          />
+        </div>
+      </div>
+      <div
+        class="c5"
+        style="opacity: 0; display: block;"
+      >
+        <div
+          class="c1 c6"
+          data-testid="backdrop"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
 exports[`Drawer test drawer section direction 1`] = `
 .c5 {
   display: none;
@@ -51,7 +228,7 @@ exports[`Drawer test drawer section direction 1`] = `
   <div />
   <div
     data-testid="tooltip-portal"
-    id="backdrop-portal-2"
+    id="backdrop-portal-1"
   >
     <div
       class="c0"
@@ -144,7 +321,7 @@ exports[`Drawer test drawer section direction 2`] = `
   <div />
   <div
     data-testid="tooltip-portal"
-    id="backdrop-portal-2"
+    id="backdrop-portal-1"
   >
     <div
       class="c0"

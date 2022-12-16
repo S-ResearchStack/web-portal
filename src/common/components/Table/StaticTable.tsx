@@ -16,7 +16,7 @@ const StaticTable = <T,>({
 }: TableProps<T>): JSX.Element => (
   <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, rows, ...props }}>
     {({ sort, styles }) =>
-      rows.map((row) => (
+      (rows ?? []).map((row) => (
         <RowRenderer
           sort={sort}
           key={getRowKey(row)}

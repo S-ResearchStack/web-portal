@@ -7,10 +7,11 @@ import * as api from 'src/modules/api';
 import { SpecColorType } from 'src/styles/theme';
 
 import { currentSnackbarSelector } from 'src/modules/snackbar/snackbar.slice';
-import { maskEndpointAsFailure } from 'src/modules/api/mock';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
+
+import { mockStudies } from './studies.slice.mock';
 
 import reducer, {
-  mockStudies,
   fetchStudies,
   initialState,
   StudiesState,
@@ -25,6 +26,7 @@ import reducer, {
   fetchStudiesStarted,
   fetchStudiesFinished,
   studiesSlice,
+  reset,
 } from './studies.slice';
 
 const TEST_ERR_TEXT_MESSAGE = 'test-error';
@@ -33,30 +35,8 @@ const TEST_ERR_TEXT_MESSAGE = 'test-error';
 const dispatch: AppDispatch = store.dispatch;
 const studiesMock = mockStudies.map(transformStudyFromApi);
 
-describe('Studies redux state slice tests', () => {
-  it('should have initial state', async () => {
-    expect(reducer(initialState, { type: '' })).toEqual({
-      studies: [],
-      isLoading: false,
-    } as StudiesState);
-  });
-
-  it('should have loading state', async () => {
-    expect(reducer(initialState, fetchStudiesStarted())).toEqual({
-      studies: [],
-      isLoading: true,
-    } as StudiesState);
-  });
-
-  it('should insert data to state', async () => {
-    expect(reducer(initialState, fetchStudiesFinished(studiesMock))).toEqual({
-      studies: studiesMock,
-      selectedStudyId: studiesMock[0].id,
-      isLoading: false,
-    } as StudiesState);
-  });
-
-  it('should transform data from API to state type', () => {
+describe('transformStudyFromApi', () => {
+  it('should transform data', () => {
     const fromWithColor: api.Study = {
       id: { value: '1' },
       name: 'SleepCare Study',
@@ -89,13 +69,106 @@ describe('Studies redux state slice tests', () => {
     expect(transformStudyFromApi(fromWithoutColor)).toEqual(toWithoutColor);
   });
 
+  it('[NEGATIVE] should transform wrong data', () => {
+    const toWithoutColor = {
+      id: '',
+      name: undefined,
+      color: 'disabled',
+    };
+
+    expect(transformStudyFromApi({} as unknown as api.Study)).toEqual(toWithoutColor);
+  });
+});
+
+describe('store', () => {
+  afterEach(() => {
+    dispatch(reset());
+  });
+
+  it('should support success lifecycle', async () => {
+    let currentState = reducer(initialState, { type: '' });
+
+    expect(currentState).toEqual({
+      studies: [],
+      isLoading: false,
+    } as StudiesState);
+
+    currentState = reducer(initialState, fetchStudiesStarted());
+
+    expect(currentState).toEqual({
+      studies: [],
+      isLoading: true,
+    } as StudiesState);
+
+    currentState = reducer(initialState, fetchStudiesFinished(studiesMock));
+
+    expect(currentState).toEqual({
+      studies: studiesMock,
+      selectedStudyId: studiesMock[0].id,
+      isLoading: false,
+    } as StudiesState);
+  });
+
+  it('[NEGATIVE] should support failure lifecycle', async () => {
+    let currentState = reducer(initialState, { type: '' });
+
+    expect(currentState).toEqual({
+      studies: [],
+      isLoading: false,
+    } as StudiesState);
+
+    currentState = reducer(initialState, fetchStudiesStarted());
+
+    expect(currentState).toEqual({
+      studies: [],
+      isLoading: true,
+    } as StudiesState);
+
+    currentState = reducer(
+      initialState,
+      fetchStudiesFinished(null as unknown as typeof studiesMock)
+    );
+
+    expect(currentState).toEqual({
+      studies: null,
+      selectedStudyId: undefined,
+      isLoading: false,
+    });
+  });
+
   it('should fetch state from API', async () => {
     await dispatch(fetchStudies());
 
     expect(studiesSelector(store.getState())).toEqual(studiesMock);
   });
 
-  it('should prevent update state from API', async () => {
+  it('[NEGATIVE] should fetch wrong data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getStudies',
+      async () => {
+        await dispatch(fetchStudies());
+      },
+      { response: null }
+    );
+
+    expect(studiesSelector(store.getState())).toEqual([]);
+  });
+
+  it('[NEGATIVE] should fetch data while failure request', async () => {
+    await maskEndpointAsFailure(
+      'getStudies',
+      async () => {
+        await dispatch(fetchStudies());
+      },
+      { message: 'error' }
+    );
+
+    expect(studiesSelector(store.getState())).toEqual([]);
+  });
+
+  it('should support cache mechanism', async () => {
+    await dispatch(fetchStudies());
+
     const beforeStudies = studiesSelector(store.getState());
 
     await dispatch(fetchStudies());
@@ -103,16 +176,32 @@ describe('Studies redux state slice tests', () => {
     const afterStudies = studiesSelector(store.getState());
 
     expect(beforeStudies).toBe(afterStudies);
+
+    await maskEndpointAsFailure(
+      'getStudies',
+      async () => {
+        await dispatch(fetchStudies({ force: true }));
+      },
+      { message: 'error' }
+    );
+
+    expect(afterStudies).not.toBe(studiesSelector(store.getState()));
   });
 
-  it('should force update state from API', async () => {
+  it('[NEGATIVE] should support cache mechanism while request failure', async () => {
+    await dispatch(fetchStudies());
+
     const beforeStudies = studiesSelector(store.getState());
 
-    await dispatch(fetchStudies({ force: true }));
+    await dispatch(fetchStudies());
 
     const afterStudies = studiesSelector(store.getState());
 
-    expect(beforeStudies).not.toBe(afterStudies);
+    expect(beforeStudies).toBe(afterStudies);
+
+    await dispatch(fetchStudies({ force: true }));
+
+    expect(afterStudies).not.toBe(studiesSelector(store.getState()));
   });
 
   it('should reset state', async () => {
@@ -125,7 +214,15 @@ describe('Studies redux state slice tests', () => {
     expect(studiesSelector(store.getState())).toHaveLength(0);
   });
 
-  it('should catch an error when trying to force update state from API', async () => {
+  it('[NEGATIVE] should reset empty state', async () => {
+    expect(studiesSelector(store.getState())).toEqual(initialState.studies);
+
+    dispatch(studiesSlice.actions.reset());
+
+    expect(studiesSelector(store.getState())).toHaveLength(0);
+  });
+
+  it('[NEGATIVE] should catch an error when trying to force update state from API', async () => {
     await maskEndpointAsFailure(
       'getStudies',
       async () => {
@@ -158,6 +255,14 @@ describe('Studies redux state slice tests', () => {
     expect(selectedStudySelector(store.getState())).toEqual(studies[selectedStudyIdx]);
   });
 
+  it('[NEGATIVE] should switch current study with wrong study id', async () => {
+    await dispatch(fetchStudies({ force: true }));
+
+    dispatch(setSelectedStudyId('unknown'));
+
+    expect(selectedStudySelector(store.getState())).toEqual(undefined);
+  });
+
   it('should create study', async () => {
     const study: Omit<Study, 'id'> = {
       name: 'test-study-name',
@@ -169,17 +274,22 @@ describe('Studies redux state slice tests', () => {
     expect(selectedStudySelector(store.getState())).toMatchObject(study);
   });
 
-  it('should catch an error when trying to create a study', async () => {
+  it('[NEGATIVE] should catch an error when trying to create a study', async () => {
     const study: Omit<Study, 'id'> = {
       name: 'test-study-name',
       color: 'primary',
     };
 
-    await maskEndpointAsFailure('createStudy', async () => {
-      await dispatch(createStudy(study));
-    });
+    await maskEndpointAsFailure(
+      'getStudies',
+      async () => {
+        await dispatch(createStudy(study));
+      },
+      { message: 'error' }
+    );
 
-    expect(selectedStudySelector(store.getState())).toMatchObject(study);
+    expect(selectedStudyIdSelector(store.getState())).toBeUndefined();
+    expect(selectedStudySelector(store.getState())).toBeUndefined();
   });
 
   it('should use `useSelectedStudyId` hook', async () => {

@@ -122,4 +122,24 @@ describe('Card', () => {
     expect(content).toBeInTheDocument();
     expect(subtitle).toHaveTextContent('');
   });
+
+  it('[NEGATIVE] should render without props', () => {
+    const { baseElement, getByTestId, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Card data-testid="card" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    const card = getByTestId('card');
+    const content = queryByTestId('card-content');
+    const title = queryByTestId('title');
+    const subtitle = queryByTestId('subtitle');
+
+    expect(card).toBeInTheDocument();
+    expect(title).toBeNull();
+    expect(subtitle).toBeNull();
+    expect(content).toBeInTheDocument();
+  });
 });

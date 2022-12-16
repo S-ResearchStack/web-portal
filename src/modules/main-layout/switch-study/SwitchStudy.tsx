@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { push } from 'connected-react-router';
+import { useIntersection } from 'react-use';
 
 import styled, { css } from 'styled-components';
 import { useHistory } from 'react-router-dom';
@@ -131,12 +132,30 @@ type Props = {
 };
 
 const SwitchStudy: React.FC<Props> = ({ onStudySelectionFinished }) => {
-  const studies = _chunk(useAppSelector(studiesSelector), MAX_STUDIES_PER_SCREEN);
+  const rowStudies = useAppSelector(studiesSelector);
   const selectedStudy = useAppSelector(selectedStudySelector);
   const dispatch = useAppDispatch();
   const [hoveredItemIdx, setHoveredItemIdx] = useState<number | null>(null);
   const [slideIndex, setSlideIndex] = useState<number>(0);
+  const [selectedId, setSelectedId] = useState<string>('');
   const history = useHistory();
+  const ref = useRef<HTMLDivElement>(null);
+  const isVisible = !!useIntersection(ref, {})?.isIntersecting;
+
+  useEffect(() => {
+    if (!isVisible) {
+      setSelectedId('');
+    }
+  }, [isVisible]);
+
+  const studies = useMemo(
+    () =>
+      _chunk(
+        rowStudies.map((s) => ({ ...s, selected: selectedId ? s.id === selectedId : undefined })),
+        MAX_STUDIES_PER_SCREEN
+      ),
+    [selectedId, rowStudies]
+  );
 
   const handleStudySelected = (id: string) => {
     if (id !== selectedStudy?.id) {
@@ -185,32 +204,32 @@ const SwitchStudy: React.FC<Props> = ({ onStudySelectionFinished }) => {
             Create new study
           </Button>
         </Header>
-        <CarouselWrapper>
+        <CarouselWrapper ref={ref}>
           <StyledCarousel>
             <Inner index={slideIndex} total={studies.length}>
               {studies.map((studiesChunk, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <Studies key={index}>
-                  {studiesChunk.map(({ id, name, color }, idx) => {
-                    const isSelected = selectedStudy?.id === id || undefined;
+                  {studiesChunk.map(({ id, name, color, selected }, idx) => {
                     const isItemHovered = hoveredItemIdx === idx;
                     return (
                       <StudyContainer
-                        $selected={isSelected}
-                        onClick={() => handleStudySelected(id)}
+                        $selected={selected}
+                        onMouseUp={() => handleStudySelected(id)}
+                        onMouseDown={() => setSelectedId(id)}
                         key={id}
                       >
                         <StudyAvatar
                           color={color}
                           size="xxl"
-                          $selected={isSelected}
+                          $selected={selected}
                           onMouseEnter={() => setHoveredItemIdx(idx)}
                           onMouseLeave={() => setHoveredItemIdx(null)}
                         />
                         <StudyName
-                          selected={isSelected}
+                          selected={selected}
                           hovered={isItemHovered}
-                          dimmed={isSelected && isHovered && !isItemHovered}
+                          dimmed={selected && isHovered && !isItemHovered}
                         >
                           {name}
                         </StudyName>

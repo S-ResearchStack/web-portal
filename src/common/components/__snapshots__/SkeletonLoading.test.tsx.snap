@@ -86,6 +86,75 @@ exports[`SkeletonLoading [NEGATIVE] should render with wrong props 1`] = `
 </body>
 `;
 
+exports[`SkeletonLoading [NEGATIVE] should render without children 1`] = `
+<body>
+  <div>
+    <svg
+      data-testid="skeleton-loading"
+      height="0rem"
+      preserveAspectRatio="none"
+      version="1.1"
+      viewBox="0 0 0 0"
+      width="0rem"
+    >
+      <defs>
+        <radialgradient
+          cx="50%"
+          cy="50%"
+          fx="50%"
+          fy="50%"
+          gradientTransform="translate(0, -0.5),skewX(-7),scale(0.5, 2),translate(0, 0)"
+          id="grad-1"
+          r="50%"
+        >
+          <stop
+            offset="0%"
+            stop-color="#F3F3F3"
+          />
+           
+          <stop
+            offset="70%"
+            stop-color="#ECECEC"
+          />
+           
+          <stop
+            offset="100%"
+            stop-color="#E5E5E5"
+            stop-opacity="0"
+          />
+           
+          <animatetransform
+            additive="sum"
+            attributeName="gradientTransform"
+            dur="1300ms"
+            from="-1 0"
+            repeatCount="indefinite"
+            to="8.5 0"
+            type="translate"
+          />
+        </radialgradient>
+        <rect
+          fill="url(#grad-1)"
+          height="100%"
+          id="overlay-1"
+          stroke="none"
+          width="100%"
+          x="0"
+          y="0"
+        />
+        <clippath
+          id="elements-clip-1"
+        />
+      </defs>
+      <use
+        clip-path="url(#elements-clip-1)"
+        href="#overlay-1"
+      />
+    </svg>
+  </div>
+</body>
+`;
+
 exports[`SkeletonLoading test skeleton loading render 1`] = `
 <body>
   <div>

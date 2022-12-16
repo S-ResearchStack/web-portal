@@ -61,8 +61,9 @@ API.mock.provideEndpoints({
 });
 
 export type QueryResult = SqlResponse<unknown> & { totalCount: number; queryParams: QueryParams };
-type TablesMap = Record<string, string[]>;
-interface DataCollectionState {
+export type TablesMap = Record<string, string[]>;
+
+export interface DataCollectionState {
   projectId?: string;
   query: string;
   tables: TablesMap;

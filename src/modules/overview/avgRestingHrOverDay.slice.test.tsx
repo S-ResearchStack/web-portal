@@ -7,6 +7,7 @@ import {
   useAvgRestingHrOverDaySlice,
 } from 'src/modules/overview/avgRestingHrOverDay.slice';
 import { store } from 'src/modules/store/store';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('getParticipantHeartRatesMock', () => {
   it('should get mocked data', async () => {
@@ -21,6 +22,26 @@ describe('getParticipantHeartRatesMock', () => {
         expect.objectContaining({
           user_id: expect.any(String),
           time: expect.any(String),
+          gender: expect.any(String),
+          age: expect.any(String),
+          bpm: expect.any(String),
+        }),
+      ]),
+    });
+  });
+
+  it('[NEGATIVE] should get mocked data with wrong parameters', async () => {
+    const { data } = await getParticipantHeartRatesMock({
+      startTime: undefined as unknown as string,
+      endTime: undefined as unknown as string,
+      projectId: 'project-id',
+    });
+
+    expect({ data }).toMatchObject({
+      data: expect.arrayContaining([
+        expect.objectContaining({
+          user_id: expect.any(String),
+          time: null,
           gender: expect.any(String),
           age: expect.any(String),
           bpm: expect.any(String),
@@ -47,6 +68,8 @@ const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
   hook.result.current.reset();
   hook.unmount();
 };
+
+const error = 'test-error';
 
 describe('useAvgRestingHrOverDaySlice', () => {
   let hook: ReturnType<typeof setUpHook>;
@@ -82,6 +105,45 @@ describe('useAvgRestingHrOverDaySlice', () => {
           }),
         ]),
       },
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getParticipantHeartRates',
+      async () => {
+        hook = setUpHook({
+          studyId: 'test-study-id',
+        });
+      },
+      { sqlResponse: null }
+    );
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getParticipantHeartRates',
+      async () => {
+        hook = setUpHook({
+          studyId: 'test-study-id',
+        });
+      },
+      { message: error }
+    );
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
     });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import 'src/__mocks__/setupUniqueIdMock';
 import { render } from '@testing-library/react';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
@@ -42,5 +42,16 @@ describe('SkeletonLoading', () => {
 
     expect(loading).toBeInTheDocument();
     expect(rect).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render without children', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <SkeletonLoading data-testid="skeleton-loading" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('skeleton-loading')).toBeInTheDocument();
   });
 });

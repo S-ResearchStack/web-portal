@@ -7,7 +7,7 @@ import { colors, px } from 'src/styles';
 import Fade, { FadeProps } from './animations/Fade';
 import Portal from './Portal';
 
-const BackdropContainer = styled.div<{ show: boolean }>`
+const BackdropContainer = styled.div<{ show?: boolean }>`
   position: relative;
   z-index: ${({ show }) => (show ? 1000 : -1)};
 `;
@@ -46,7 +46,7 @@ const BackdropContent = styled(BackdropBase)<{ loaderBackdrop?: boolean }>`
 export interface BackdropOverlayProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>,
     Pick<FadeProps, 'onEnter' | 'onEntering' | 'onEntered' | 'onExit' | 'onExiting' | 'onExited'> {
-  open: boolean;
+  open?: boolean;
   loaderBackdrop?: boolean;
 }
 

@@ -29,18 +29,20 @@ const fetchFn = jest.fn((url: string) =>
   Promise.resolve({
     ...getPartOfResponseByUrl(url),
     headers: {},
-    blob: () => Promise.resolve(responseData),
-    json: () => Promise.resolve(responseData),
+    blob: () => Promise.resolve(),
+    json: () => Promise.resolve(url.includes('broken-data') ? null : responseData),
   })
 );
 
 beforeAll(() => {
-  localStorage.setItem('API_URL', 'https://samsung.com/');
-
   global.fetch = fetchFn as unknown as typeof fetch;
 });
 
 describe('request', () => {
+  beforeEach(() => {
+    localStorage.setItem('API_URL', 'https://samsung.com/');
+  });
+
   it('should execute request', async () => {
     const { data } = await request({
       body: responseData,
@@ -159,5 +161,17 @@ describe('request', () => {
     }
 
     spy.mockRestore();
+  });
+
+  it('[NEGATIVE] should execute request with broken response data', async () => {
+    const response = await request({
+      body: responseData,
+      headers: {},
+      method: 'GET',
+      path: '/broken-data',
+      query: responseData,
+    });
+
+    expect(response.data).toBeNull();
   });
 });

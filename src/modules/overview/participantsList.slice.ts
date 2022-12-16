@@ -129,8 +129,8 @@ export const transformParticipantListItemFromApi = (
   email: item.email,
   avgBpm: parseNumber(item.avg_hr_bpm, { round: true }),
   avgSteps: parseNumber(item.steps, { round: true }),
-  lastSync: new Date(item.last_synced).valueOf(),
-  localTime: new Date(item.last_synced).valueOf(),
+  lastSync: new Date(item.last_synced || 0).valueOf(),
+  localTime: new Date(item.last_synced || 0).valueOf(),
   avgSleepMins: parseNumber(item.avg_sleep_mins, { round: true }),
   avgBloodPressure: (() => {
     if (!item.avg_bp_systolic || !item.avg_bp_diastolic) {

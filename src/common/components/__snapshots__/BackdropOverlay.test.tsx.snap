@@ -43,7 +43,9 @@ exports[`BackdropOverlay test backdrop open 1`] = `
       <div
         class="c1 c2"
         data-testid="backdrop-content"
-      />
+      >
+        <div />
+      </div>
       <div
         class="c3"
         style="opacity: 0; display: block;"

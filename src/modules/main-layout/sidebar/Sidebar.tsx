@@ -6,7 +6,8 @@ import styled, { css, DefaultTheme } from 'styled-components';
 
 import { Path, sectionPathSelector } from 'src/modules/navigation/store';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
-import { signout, userNameSelector, userRoleSelector } from 'src/modules/auth/auth.slice';
+import { userNameSelector } from 'src/modules/auth/auth.slice';
+import { signout } from 'src/modules/auth/auth.slice.signout';
 import { selectedStudySelector } from 'src/modules/studies/studies.slice';
 import {
   DESKTOP_WIDTH_BREAKPOINT,
@@ -26,6 +27,7 @@ import UserAvatarIcon from 'src/assets/icons/user_avatar.svg';
 import ResizeIcon from 'src/assets/icons/resize.svg';
 import { px, typography, colors, animation, boxShadow } from 'src/styles';
 import { getRoleFunction, getRoleLabel } from 'src/modules/auth/userRole';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 
 import {
   getSidebarWidth,
@@ -386,6 +388,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
   const sectionPath = useSelector(sectionPathSelector);
   const username = useAppSelector(userNameSelector);
   const userRole = useAppSelector(userRoleSelector);
+  const selectedStudy = useAppSelector(selectedStudySelector);
   const { width: screenWidth } = useWindowSize();
   const [tooltipPos, setTooltipPos] = useState<Position>(INITIAL_POS);
   const [resizeBtnVisible, setResizeBtnVisible] = useState<boolean>(false);
@@ -428,7 +431,6 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     }
   };
 
-  const selectedStudy = useAppSelector(selectedStudySelector);
   const barWidth = useMemo(
     () => getSidebarWidth(screenWidth, isUserResize),
     [screenWidth, isUserResize]
@@ -516,7 +518,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
         />
       )}
       <StudyPanel
-        $visible={!!selectedStudy}
+        $visible
         $barWidth={barWidth}
         minimized={minimized}
         onClick={handleStudyClick}

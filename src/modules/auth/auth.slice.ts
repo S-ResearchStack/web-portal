@@ -1,34 +1,18 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { push } from 'connected-react-router';
-import jwtDecode from 'jwt-decode';
+
 import API, { SigninResponse } from 'src/modules/api';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
 import { Path } from 'src/modules/navigation/store';
 import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { AppThunk, RootState } from 'src/modules/store';
-import {
-  mockStudyIds,
-  selectedStudyIdSelector,
-  studiesSlice,
-} from 'src/modules/studies/studies.slice';
-import {
-  getRoleForStudy,
-  rolesListFromApi,
-  roleToApi,
-  isGlobalRoleType,
-  allowedRoleTypes,
-} from './userRole';
+import { mockStudyIds } from 'src/modules/studies/studies.slice.mock';
 
-export const STORAGE_TOKEN_KEY = 'auth_token';
+import { authTokenPayloadSelector } from './auth.slice.authTokenPayloadSelector';
+import { rolesListFromApi, roleToApi, isGlobalRoleType, allowedRoleTypes } from './userRole';
+import { decodeAuthToken, STORAGE_TOKEN_KEY, STORAGE_REFRESH_TOKEN_KEY } from './utils';
 
 const isValidEmail = (v: string) => v.includes('samsung');
-
-type AuthTokenPayload = {
-  email: string;
-  roles: string[];
-};
-
-export const decodeAuthToken = (jwt: string): AuthTokenPayload => jwtDecode<AuthTokenPayload>(jwt);
 
 API.mock.provideEndpoints({
   signin({ email }) {
@@ -55,6 +39,7 @@ API.mock.provideEndpoints({
         jwt,
         email,
         roles,
+        refreshToken: `refresh.${jwt}`,
       });
     }
 
@@ -71,25 +56,39 @@ API.mock.provideEndpoints({
       status: 401,
     });
   },
+  refreshToken(req) {
+    const appendUpdated = (token: string) => [token, 'updated'].join('_');
+
+    return API.mock.response({
+      jwt: req.jwt,
+      refreshToken: appendUpdated(req.refreshToken),
+    });
+  },
 });
 
 interface AuthState {
   authToken?: string;
+  refreshToken?: string;
 }
 
 export const getStateFromAuthToken = (authToken: string) => {
-  const { roles, email } = decodeAuthToken(authToken);
-  return {
-    authToken,
-    userRoles: rolesListFromApi(roles),
-    username: email,
-  };
+  try {
+    const { roles, email } = decodeAuthToken(authToken);
+    return {
+      authToken,
+      userRoles: rolesListFromApi(roles),
+      username: email,
+    };
+  } catch {
+    return undefined;
+  }
 };
 
 export const loadInitialStateFromStorage = (): AuthState => {
   const authToken = localStorage.getItem(STORAGE_TOKEN_KEY) || undefined;
+  const refreshToken = localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY) || undefined;
 
-  return { authToken };
+  return { authToken, refreshToken };
 };
 
 const initialState: AuthState = {
@@ -100,48 +99,31 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authSuccess(_, { payload }: PayloadAction<{ authToken: string }>) {
-      return getStateFromAuthToken(payload.authToken);
+    authSuccess(_, { payload }: PayloadAction<{ authToken: string; refreshToken: string }>) {
+      return { ...getStateFromAuthToken(payload.authToken), refreshToken: payload.refreshToken };
     },
     clearAuth(state) {
       state.authToken = undefined;
+      state.refreshToken = undefined;
     },
   },
 });
 
-const { authSuccess, clearAuth } = authSlice.actions;
+export const { authSuccess, clearAuth } = authSlice.actions;
 
-export const authTokenPayloadSelector = createSelector(
-  (state: RootState) => state.auth.authToken,
-  (authToken) => {
-    if (!authToken) {
-      return {};
-    }
-
-    try {
-      const { email, roles } = decodeAuthToken(authToken);
-      return {
-        email,
-        roles: rolesListFromApi(roles),
-      };
-    } catch (err) {
-      console.error(`Failed to decode jwt ${err}`);
-
-      // TODO: better way to sign out?
-      // we can use dispatch from store directly, but for now it's fine as is
+const handleTokensReceived =
+  (authToken: string, refreshToken: string, rememberUser?: boolean): AppThunk<Promise<void>> =>
+  async (dispatch) => {
+    if (rememberUser) {
+      localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
+      localStorage.setItem(STORAGE_REFRESH_TOKEN_KEY, refreshToken);
+    } else {
       localStorage.removeItem(STORAGE_TOKEN_KEY);
-      window.location.reload();
-
-      return {};
+      localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
     }
-  }
-);
 
-export const signout = (): AppThunk => (dispatch) => {
-  localStorage.removeItem(STORAGE_TOKEN_KEY);
-  dispatch(clearAuth());
-  dispatch(studiesSlice.actions.reset());
-};
+    dispatch(authSuccess({ authToken, refreshToken }));
+  };
 
 export const signin =
   ({
@@ -155,21 +137,14 @@ export const signin =
   }): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
     const res = await API.signin({ email, password });
-    const { jwt: authToken } = res.data;
+    const { jwt, refreshToken } = res.data;
 
-    const isFirstTime = false; // TODO: need to have API or make it defined somehow
-
-    if (rememberUser) {
-      localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
-    } else {
-      localStorage.removeItem(STORAGE_TOKEN_KEY);
-    }
-
-    dispatch(authSuccess({ authToken }));
+    dispatch(handleTokensReceived(jwt, refreshToken, rememberUser));
 
     const tokenPayload = authTokenPayloadSelector(getState());
+    const isFirstTime = false; // TODO: need to have API or make it defined somehow
 
-    if (tokenPayload.roles?.some((r) => r.role === 'team-admin') && isFirstTime) {
+    if (tokenPayload.roles?.some((r: { role: string }) => r.role === 'team-admin') && isFirstTime) {
       dispatch(push(Path.CreateStudy));
     } else {
       dispatch(push(Path.Root));
@@ -209,16 +184,25 @@ export const activateAccount =
     }
   };
 
+export const updateTokens = (): AppThunk<Promise<void>> => async (dispatch, getState) => {
+  const { authToken: actualAuthToken, refreshToken: actualRefreshToken } = getState().auth;
+
+  if (!actualAuthToken || !actualRefreshToken) {
+    return;
+  }
+
+  const { jwt, refreshToken } = (
+    await API.refreshToken({ jwt: actualAuthToken, refreshToken: actualRefreshToken })
+  ).data;
+
+  dispatch(handleTokensReceived(jwt, refreshToken, !!localStorage.getItem(STORAGE_TOKEN_KEY)));
+};
+
 export const isAuthorizedSelector = (state: RootState) => !!state.auth.authToken;
 
 export const userNameSelector = createSelector(
   authTokenPayloadSelector,
   (pl) => pl?.email?.split('@')[0] || pl?.email
-);
-
-export const userRoleSelector = createSelector(
-  [authTokenPayloadSelector, selectedStudyIdSelector],
-  (pl, selectedStudyId) => getRoleForStudy(pl.roles || [], selectedStudyId)
 );
 
 export default authSlice.reducer;

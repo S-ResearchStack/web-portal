@@ -52,8 +52,8 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
     useDisableElasticScroll(boxRef);
 
     return (
-      <BackdropOverlay open={open}>
-        <Slide {...slideProps} in={open} direction={direction}>
+      <BackdropOverlay open={Boolean(open)}>
+        <Slide {...slideProps} in={Boolean(open)} direction={direction}>
           <DrawerBox
             ref={combineRefs([boxRef, ref])}
             aria-modal={open}

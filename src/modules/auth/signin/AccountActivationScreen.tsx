@@ -27,7 +27,7 @@ const getRequirements = (userName: string) => [
     validator: new PasswordValidator().is().min(12),
   },
   {
-    rule: 'Contains 1 upper case, 1 lower case, 1 number, and 1 special character',
+    rule: 'Contain 1 upper case, 1 lower case, 1 number, and 1 special character',
     validator: new PasswordValidator()
       .has()
       .uppercase()

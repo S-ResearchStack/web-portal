@@ -20,7 +20,7 @@ const adjustSizes = ($selected = false) => ({
 
 export type AvatarProps = {
   size?: AvatarSize;
-  color: SpecColorType;
+  color?: SpecColorType;
   faded?: boolean;
   $selected?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
@@ -81,7 +81,7 @@ const StudyAvatar: React.FC<AvatarProps> = ({ color, size = 's', $selected, ...p
 
   return (
     <StyledAvatar {...props} size={size} color={color} $selected={$selected}>
-      {AvatarIcon(theme.colors[color], $selected)[size]}
+      {AvatarIcon(theme.colors[color ?? 'black'], $selected)[size]}
     </StyledAvatar>
   );
 };

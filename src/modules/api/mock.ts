@@ -35,6 +35,7 @@ const implementedEndpoints: (keyof ApiEndpoints)[] = [
   'inviteUser',
   'updateUserRole',
   'removeUserRole',
+  'refreshToken',
   'getStudies',
   'createStudy',
   'getParticipantsTotalItems',
@@ -59,32 +60,6 @@ export const mockedEndpoints: Partial<ApiEndpoints> = {};
 
 export const provideEndpoints = (mock: Partial<ApiEndpoints>) => {
   Object.assign(mockedEndpoints, mock);
-};
-
-export const maskEndpointAsFailure = async <T>(
-  endpoint: keyof ApiEndpoints,
-  cb: () => Promise<T>,
-  error?: Partial<typeof failedResponse extends (arg: infer U) => unknown ? U : never>
-) => {
-  const prevMock = mockedEndpoints[endpoint];
-
-  provideEndpoints({
-    [endpoint]() {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      return failedResponse({
-        status: 500,
-        ...error,
-      });
-    },
-  });
-
-  const result = await cb();
-
-  provideEndpoints({
-    [endpoint]: prevMock,
-  });
-
-  return result;
 };
 
 export const createMockEndpointsProxy = <T extends ApiEndpoints>(target: T) =>
@@ -160,4 +135,60 @@ export const failedResponse = async ({
       throw new Error(errorMessage);
     },
   };
+};
+
+export const maskEndpointAsFailure = async <T>(
+  endpoint: keyof ApiEndpoints,
+  cb: () => Promise<T>,
+  error?: Partial<typeof failedResponse extends (arg: infer U) => unknown ? U : never>
+) => {
+  const prevMock = mockedEndpoints[endpoint];
+
+  provideEndpoints({
+    [endpoint]() {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      return failedResponse({
+        status: 500,
+        ...error,
+      });
+    },
+  });
+
+  const result = await cb();
+
+  provideEndpoints({
+    [endpoint]: prevMock,
+  });
+
+  return result;
+};
+
+export const maskEndpointAsSuccess = async <T>(
+  endpoint: keyof ApiEndpoints,
+  cb: () => Promise<T>,
+  res: { response?: T; sqlResponse?: T }
+) => {
+  const prevMock = mockedEndpoints[endpoint];
+
+  provideEndpoints({
+    [endpoint]: () => {
+      if (res.response) {
+        return response(res.response);
+      }
+
+      if (res.sqlResponse) {
+        return sqlResponse(res.sqlResponse as unknown as Record<string, string>[]);
+      }
+
+      return response(null);
+    },
+  });
+
+  const result = await cb();
+
+  provideEndpoints({
+    [endpoint]: prevMock,
+  });
+
+  return result;
 };

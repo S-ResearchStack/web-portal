@@ -2,7 +2,7 @@ import { AppDispatch } from 'src/modules/store';
 import { store } from 'src/modules/store/store';
 import API from 'src/modules/api';
 
-import { signout } from './auth.slice';
+import { signout } from './auth.slice.signout';
 
 API.setAuthProvider({
   getBearerToken() {

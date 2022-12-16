@@ -23,6 +23,7 @@ import {
   getTasks,
   getUsers,
   inviteUser,
+  refreshToken,
   removeUser,
   removeUserRole,
   resetPassword,
@@ -41,6 +42,7 @@ const endpoints = [
   removeUser,
   updateUserRole,
   removeUserRole,
+  refreshToken,
   getSurveyResponsesByAge,
   getSurveyResponsesByGender,
   getEligibilityQualifications,
@@ -77,7 +79,7 @@ const responseData = {
   test: 'test',
 };
 
-function mockFetch(isErrorRequest = false) {
+function mockFetch(isErrorRequest = false, isBrokenData = false) {
   global.fetch = jest.fn(() =>
     Promise.resolve({
       ...(isErrorRequest
@@ -90,8 +92,8 @@ function mockFetch(isErrorRequest = false) {
             status: 200,
           }),
       headers: {},
-      blob: () => Promise.resolve(responseData),
-      json: () => Promise.resolve(responseData),
+      blob: () => Promise.resolve(isBrokenData ? null : responseData),
+      json: () => Promise.resolve(isBrokenData ? null : responseData),
     })
   ) as unknown as typeof fetch;
 }
@@ -110,6 +112,7 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [removeUser, [{ accountId: '1', roles: ['team-admin'] }]],
   [updateUserRole, [{ accountId: '1', roles: ['team-admin'] }]],
   [removeUserRole, [{ accountId: '1', roles: ['team-admin'] }]],
+  [refreshToken, [{ jwt: 'jwt-token', refreshToken: 'refresh-token' }]],
   [getSurveyResponsesByAge, []],
   [getSurveyResponsesByGender, []],
   [getEligibilityQualifications, []],
@@ -174,6 +177,27 @@ for (const endpoint of endpointsList) {
         response.data;
       } catch (err) {
         expect(String(err)).toMatch(/status code 500/);
+      }
+    });
+  });
+}
+
+for (const endpoint of endpointsList) {
+  // eslint-disable-next-line @typescript-eslint/no-loop-func
+  describe(`[NEGATIVE] ${endpoint[0].name} error`, () => {
+    beforeAll(() => {
+      mockFetch(false, true);
+    });
+
+    it('[NEGATIVE] should execute request with broken response data', async () => {
+      expect.assertions(1);
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const response = await endpoint[0].apply(null, endpoint[1]);
+        expect(response.data).toBeNull();
+      } catch (e) {
+        // do nothing
       }
     });
   });

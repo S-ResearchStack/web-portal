@@ -1,5 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DatePicker [NEGATIVE] test date picker render with broken parameters 1`] = `
+.c2 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #808080;
+}
+
+.c0 {
+  max-width: 19.5rem;
+  height: 3.5rem;
+  background-color: #F7F8FA;
+  border-radius: 0.25rem;
+  border-width: 0.0625rem;
+  border-color: transparent;
+  border-style: solid;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  position: relative;
+}
+
+.c0:hover {
+  cursor: pointer;
+}
+
+.c0 .c1 {
+  margin-left: 0.9375rem;
+  color: #474747;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      data-testid="date-picker"
+    >
+      <div
+        class="c1 c2"
+        data-testid="input-label"
+      >
+        Select
+      </div>
+      <svg
+        class=""
+      />
+    </div>
+  </div>
+</body>
+`;
+
 exports[`DatePicker test date picker render 1`] = `
 .c2 {
   font-family: Inter,sans-serif;

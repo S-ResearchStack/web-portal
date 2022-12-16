@@ -7,8 +7,8 @@ import usePrevious from 'react-use/lib/usePrevious';
 import styled from 'styled-components';
 import { Location } from 'history';
 
-import { userRoleSelector } from 'src/modules/auth/auth.slice';
 import { UserRole } from 'src/modules/auth/userRole';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import { Path } from 'src/modules/navigation/store';
 import StudySettings from 'src/modules/study-settings/StudySettings';
 import Overview from 'src/modules/overview/Overview';

@@ -1,4 +1,5 @@
 import React from 'react';
+import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import { act, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
@@ -48,6 +49,10 @@ describe('Tooltip', () => {
       );
     });
 
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
     const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
 
     expect(container.parentNode).toMatchSnapshot();
@@ -77,6 +82,32 @@ describe('Tooltip', () => {
     expect(container.parentNode).toMatchSnapshot();
   });
 
+  it('[NEGATIVE] Should tooltip render with wrong props', async () => {
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip trigger={'unknown' as 'hover'} content={null as unknown as string}>
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>,
+        { container }
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
+    const ttTrigger = await screen.findByTestId('tooltip-container');
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+    expect(ttTrigger).toHaveTextContent('Right');
+  });
+
   it('should tooltip static render', async () => {
     act(() => {
       render(
@@ -91,6 +122,10 @@ describe('Tooltip', () => {
         { container }
       );
     });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
 
     const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
 
@@ -120,6 +155,32 @@ describe('Tooltip', () => {
     expect(await screen.findByTestId('tooltip-item')).toHaveTextContent('Test');
   });
 
+  it('[NEGATIVE] should tooltip static render with wrong props', async () => {
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip static trigger={'unknown' as 'hover'} content={null as unknown as string}>
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>,
+        { container }
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
+    const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+    expect(ttTrigger).toHaveTextContent('Right');
+  });
+
   it('should tooltip change props', async () => {
     act(() => {
       render(
@@ -134,6 +195,10 @@ describe('Tooltip', () => {
         { container }
       );
     });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
 
     const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
 
@@ -172,6 +237,64 @@ describe('Tooltip', () => {
 
     expect(ttItem).toBeInTheDocument();
     expect(ttItem).toHaveTextContent('Test');
+  });
+
+  it('[NEGATIVE] should tooltip change props with wrong values', async () => {
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip trigger="hover" content="Test" position="r" point={[100, 100]}>
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>,
+        { container }
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
+    const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+    expect(ttTrigger).toHaveTextContent('Right');
+
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip trigger="click" content={1 as unknown as string} position={'unknown' as 'r'}>
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>,
+        { container }
+      );
+    });
+
+    expect(container.parentNode).toMatchSnapshot();
+
+    act(() => {
+      userEvent.click(ttTrigger);
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-item')).toBeInTheDocument()
+    );
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+
+    const ttItem = await screen.findByTestId('tooltip-item');
+
+    expect(ttItem).toBeInTheDocument();
+    expect(ttItem).toHaveTextContent('1');
   });
 
   it('should controlled open', async () => {
@@ -275,6 +398,106 @@ describe('Tooltip', () => {
     });
 
     expect(ttItem).toHaveTextContent('Test-1');
+
+    act(() => {
+      ref.current?.hide();
+    });
+
+    await waitFor(() => expect(screen.queryByTestId('tooltip-item')).toBeNull());
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(await screen.queryByTestId('tooltip-item')).toBeNull();
+  });
+
+  it('[NEGATIVE] should render with wrong ref property', async () => {
+    const ref = null as unknown as React.RefObject<TooltipControls>;
+
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip ref={ref} content="Test">
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
+    const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+    expect(ttTrigger).toHaveTextContent('Right');
+  });
+
+  it('[NEGATIVE] should imperative handle with wrong props', async () => {
+    const ref = React.createRef<TooltipControls>();
+
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip ref={ref} content="Test">
+              <button type="button">Right</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-container')).toBeInTheDocument()
+    );
+
+    const ttTrigger = (await screen.findByTestId('tooltip-container')) as Element;
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttTrigger).toBeInTheDocument();
+    expect(ttTrigger).toHaveTextContent('Right');
+
+    act(() => {
+      ref.current?.show();
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-item')).toBeInTheDocument()
+    );
+
+    const ttItem = await screen.findByTestId('tooltip-item');
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(ttItem).toBeInTheDocument();
+    expect(ttItem).toHaveTextContent('Test');
+
+    expect(screen.queryByTestId('tooltip-arrow')).toBeNull();
+
+    act(() => {
+      ref.current?.setArrow('string' as unknown as boolean);
+    });
+
+    await waitFor(() => expect(screen.queryByTestId('tooltip-arrow')).toBeInTheDocument());
+
+    expect(container.parentNode).toMatchSnapshot();
+    expect(await screen.queryByTestId('tooltip-arrow')).toBeInTheDocument();
+
+    act(() => {
+      ref.current?.setContent(null);
+    });
+
+    expect(ttItem).not.toHaveTextContent('Test-1');
+
+    act(() => {
+      ref.current?.setPosition(null as unknown as 'b');
+    });
+
+    expect(ttItem).not.toHaveTextContent('Test-1');
 
     act(() => {
       ref.current?.hide();

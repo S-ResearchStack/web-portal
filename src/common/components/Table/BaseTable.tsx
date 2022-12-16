@@ -103,7 +103,7 @@ const ColumnSelectionColumn = styled.div<{ highlight: boolean }>`
 const BaseTable = forwardRef(
   <T,>(
     {
-      columns,
+      columns = [],
       getRowKey,
       children,
       bodyHeight,
@@ -171,8 +171,9 @@ const BaseTable = forwardRef(
       const scale = offsetWidth / (prevContainerWidthRef.current || offsetWidth);
       prevContainerWidthRef.current = offsetWidth;
 
-      const sizes: ColumnsSizes = columns.map((column) => {
-        if (_isFunction(column.$width)) return column.$width(columns.length);
+      const computedColumns = columns ?? [];
+      const sizes: ColumnsSizes = computedColumns.map((column) => {
+        if (_isFunction(column.$width)) return column.$width(computedColumns.length);
         if (_isNumber(column.$width)) return column.$width;
         return -1;
       });
@@ -263,11 +264,13 @@ const BaseTable = forwardRef(
 
     useDisableElasticScroll(scrollableRef);
 
+    const computedColumns = columns ?? [];
+
     return (
       <TableContainer ref={containerRef} {...props}>
         <TableScrollable ref={combineRefs([scrollableRef, ref])}>
           <TableHead ref={headRef} sticky={stickyHeader}>
-            {columns.map((column, columnIdx) => {
+            {computedColumns.map((column, columnIdx) => {
               const sorting = sort?.sortings?.find((s) => s?.column === column.dataKey);
               const isActive = !!sorting;
               return (
@@ -285,9 +288,9 @@ const BaseTable = forwardRef(
             })}
             {isLoading && <Loader />}
           </TableHead>
-          <ColumnSelectionContainer style={{ height: px(rows.length * ROW_HEIGHT) }}>
+          <ColumnSelectionContainer style={{ height: px((rows ?? []).length * ROW_HEIGHT) }}>
             <ColumnSelectionRow style={rowStyles}>
-              {columns.map((c) => (
+              {computedColumns.map((c) => (
                 <ColumnSelectionColumn
                   key={String(c.dataKey)}
                   highlight={

@@ -1,13 +1,13 @@
 import React, { useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
-import { userRoleSelector } from 'src/modules/auth/auth.slice';
 import { Path } from 'src/modules/navigation/store';
 import { useAppSelector } from 'src/modules/store';
 import CollapseSection from 'src/common/components/CollapseSection';
 import { px } from 'src/styles';
 import SimpleGrid from 'src/common/components/SimpleGrid';
 import { getRoleFunction } from 'src/modules/auth/userRole';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import AvgRestingHrOverDayCard from './AvgRestingHrOverDayCard';
 import AvgRestingHrWithAgeCard from './AvgRestingHrWithAgeCard';
 import ParticipantListCard from './ParticipantListCard';

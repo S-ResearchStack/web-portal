@@ -44,7 +44,7 @@ export type ChartLegendItem = {
 
 export type ChartLegendMode = 'left' | 'space-between';
 
-type ChartLegendProps = {
+export type ChartLegendProps = {
   items: ChartLegendItem[];
   canToggle: boolean;
   mode?: ChartLegendMode;
@@ -58,12 +58,13 @@ const ChartLegend: FC<ChartLegendProps> = ({
   onChange,
   ...restProps
 }) => {
-  const isOneItemChecked =
-    items.filter(({ ignoreAsLast, checked }) => !ignoreAsLast && checked).length === 1;
+  const isOneItemChecked = items
+    ? items.filter(({ ignoreAsLast, checked }) => !ignoreAsLast && checked).length === 1
+    : false;
 
   return (
     <Container mode={mode} {...restProps}>
-      {items.map((item: ChartLegendItem, index: number) => {
+      {items?.map((item: ChartLegendItem, index: number) => {
         const reverse = mode === 'space-between' && index !== 0;
 
         return (

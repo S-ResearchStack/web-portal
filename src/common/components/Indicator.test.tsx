@@ -32,9 +32,17 @@ describe('Indicator', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('indicator')).toBeInTheDocument();
+  });
 
-    const indicator = getByTestId('indicator');
+  it('[NEGATIVE] should render without props', () => {
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Indicator data-testid="indicator" />
+      </ThemeProvider>
+    );
 
-    expect(indicator).toBeInTheDocument();
+    expect(baseElement).toMatchSnapshot();
+    expect(getByTestId('indicator')).toBeInTheDocument();
   });
 });

@@ -32,7 +32,7 @@ describe('Spinner', () => {
     expect(spinner).toHaveStyle(`fill: ${theme.colors.surface}`);
   });
 
-  it('[NEGATIVE] should render wih wrong props', () => {
+  it('[NEGATIVE] should render with wrong props', () => {
     const { baseElement, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <Spinner size={'unknown' as 'xs'} />
@@ -44,5 +44,16 @@ describe('Spinner', () => {
     const spinner = queryByTestId('spinner') as Element;
 
     expect(spinner).toBeInTheDocument();
+  });
+
+  it('[NEGATIVE] should render without props', () => {
+    const { baseElement, queryByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <Spinner />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+    expect(queryByTestId('spinner')).toBeInTheDocument();
   });
 });

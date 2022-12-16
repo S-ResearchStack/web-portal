@@ -2,7 +2,7 @@
   "name": "open-source-portal-frontend",
   "license": "UNLICENSED",
   "private": true,
-  "version": "0.9.35",
+  "version": "0.9.38",
   "scripts": {
     "dev:base": "webpack serve --mode development",
     "dev": "cross-env MOCK_API=always yarn dev:base",
@@ -19,7 +19,8 @@
     "test": "jest",
     "test:update": "jest -u",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:negative": "jest -t='\\[NEGATIVE\\]'"
   },
   "packageManager": "yarn@3.2.1",
   "engines": {

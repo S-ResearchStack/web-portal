@@ -41,4 +41,24 @@ describe('DatePicker', () => {
 
     expect(baseElement).toMatchSnapshot();
   });
+
+  it('[NEGATIVE] test date picker render with broken parameters', async () => {
+    const onChange = jest.fn();
+    const testDate = null;
+
+    const { baseElement, getByTestId } = render(
+      <ThemeProvider theme={theme}>
+        <DatePicker
+          onChange={onChange}
+          value={testDate as unknown as Date}
+          data-testid="date-picker"
+        />
+      </ThemeProvider>
+    );
+
+    const datePicker = getByTestId('date-picker') as Element;
+
+    expect(baseElement).toMatchSnapshot();
+    expect(datePicker).toBeInTheDocument();
+  });
 });

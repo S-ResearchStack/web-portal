@@ -16,7 +16,7 @@ import { SpecColorType } from 'src/styles/theme';
 type RadioKind = 'radio' | 'success' | 'filled' | 'error' | 'mobile';
 
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'color'> {
-  kind: RadioKind;
+  kind?: RadioKind;
   color?: SpecColorType;
   checked?: boolean;
   reverse?: boolean;
@@ -201,7 +201,7 @@ const Radio = ({
         <Icon isLegend={!!isLegend}>
           {(kind === 'error' && radioIcon.error) ||
             (checked
-              ? radioIcon[kind]
+              ? radioIcon[kind ?? 'radio']
               : (kind === 'mobile' && <RadioUncheckedMobile />) || <RadioUnchecked />)}
         </Icon>
         {children && !reverse && <Child disabled={disabled}>{children}</Child>}

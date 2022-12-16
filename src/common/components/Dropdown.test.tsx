@@ -64,7 +64,7 @@ describe('Dropdown', () => {
           data-testid="dropdown"
           activeKey="2"
           items={[] as typeof items}
-          onChange={() => {}}
+          onChange={null as unknown as () => void}
         />
       </ThemeProvider>
     );
@@ -75,5 +75,35 @@ describe('Dropdown', () => {
 
     expect(queryByTestId('menu-container')).toBeInTheDocument();
     expect(queryAllByTestId('menu-item')).toHaveLength(0);
+  });
+
+  it('[NEGATIVE] should render with wrong `items` prop', async () => {
+    const { getByTestId, queryByTestId, queryAllByTestId, baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Dropdown
+          data-testid="dropdown"
+          activeKey="1"
+          items={[{ key: 1, label: 1 }] as unknown as typeof items}
+          onChange={null as unknown as () => void}
+        />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
+
+    await userEvent.click(getByTestId('dropdown'));
+
+    expect(queryByTestId('menu-container')).toBeInTheDocument();
+    expect(queryAllByTestId('menu-item')).toHaveLength(1);
+  });
+
+  it('[NEGATIVE] should render without props', async () => {
+    const { baseElement } = render(
+      <ThemeProvider theme={theme}>
+        <Dropdown data-testid="dropdown" />
+      </ThemeProvider>
+    );
+
+    expect(baseElement).toMatchSnapshot();
   });
 });

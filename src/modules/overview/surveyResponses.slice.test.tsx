@@ -10,6 +10,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from 'src/modules/store/store';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('getSurveyResponsesByAgeMock', () => {
   it('should get mocked data', async () => {
@@ -40,6 +41,8 @@ const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
   hook.unmount();
 };
 
+const error = 'test-error';
+
 describe('useSurveyResponsesByAgeData', () => {
   let hook: ReturnType<typeof setUpHook>;
 
@@ -68,7 +71,41 @@ describe('useSurveyResponsesByAgeData', () => {
       ]),
     });
   });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getSurveyResponsesByAge',
+      async () => {
+        hook = setUpHook(useSurveyResponsesByAgeData);
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { response: null }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getSurveyResponsesByAge',
+      async () => {
+        hook = setUpHook(useSurveyResponsesByAgeData);
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
+    });
+  });
 });
+
 describe('useSurveyResponsesByGenderData', () => {
   let hook: ReturnType<typeof setUpHook>;
 
@@ -98,6 +135,39 @@ describe('useSurveyResponsesByGenderData', () => {
           }),
         ]),
       },
+    });
+  });
+
+  it('[NEGATIVE] should fetch broken data from API', async () => {
+    await maskEndpointAsSuccess(
+      'getSurveyResponsesByGender',
+      async () => {
+        hook = setUpHook(useSurveyResponsesByGenderData);
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { response: null }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+    });
+  });
+
+  it('[NEGATIVE] should execute failure request to API', async () => {
+    await maskEndpointAsFailure(
+      'getSurveyResponsesByGender',
+      async () => {
+        hook = setUpHook(useSurveyResponsesByGenderData);
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: false,
+      data: undefined,
+      error,
     });
   });
 });

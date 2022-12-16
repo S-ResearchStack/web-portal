@@ -18,6 +18,7 @@ import {
   TaskListResponse,
   TaskRespondedUsersCountSqlRow,
 } from 'src/modules/api';
+import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('surveyListSlice', () => {
   it('should make empty state', () => {
@@ -45,6 +46,8 @@ const unsetHook = (hook: ReturnType<typeof setUpHook>) => {
 
 const studyId = 'test-study';
 
+const error = 'test-error';
+
 describe('useSurveyListData', () => {
   let hook: ReturnType<typeof setUpHook>;
 
@@ -60,15 +63,52 @@ describe('useSurveyListData', () => {
     expect(hook.result.current.error).toBeUndefined();
     expect(hook.result.current.data).not.toBeUndefined();
   });
+
+  it('[NEGATIVE] should fetch broken data', async () => {
+    await maskEndpointAsSuccess(
+      'getTasks',
+      async () => {
+        act(() => {
+          hook = setUpHook({ studyId });
+        });
+
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { response: null }
+    );
+
+    expect(hook.result.current.error).toBeUndefined();
+    expect(hook.result.current.data).not.toBeUndefined();
+  });
+
+  it('[NEGATIVE] should fetch data while request is failure', async () => {
+    await maskEndpointAsFailure(
+      'getTasks',
+      async () => {
+        act(() => {
+          hook = setUpHook({ studyId });
+        });
+
+        await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+      },
+      { message: error }
+    );
+
+    expect(hook.result.current.error).toMatch(error);
+    expect(hook.result.current.data).toBeUndefined();
+  });
 });
 
 describe('parseDateFromSurveyListApi', () => {
   it('should parse date', () => {
-    expect(parseDateFromSurveyListApi(undefined)).toBeUndefined();
-    expect(parseDateFromSurveyListApi('')).toBeUndefined();
     expect(parseDateFromSurveyListApi('2022-10-31T12:00:00')).toBe(
       new Date(2022, 9, 31, 12, 0, 0, 0).valueOf()
     );
+  });
+
+  it('[NEGATIVE] should parse wrong date', () => {
+    expect(parseDateFromSurveyListApi(undefined)).toBeUndefined();
+    expect(parseDateFromSurveyListApi('')).toBeUndefined();
   });
 });
 
@@ -141,6 +181,19 @@ describe('transformSurveyListFromApi', () => {
       ],
     });
   });
+
+  it('[NEGATIVE] should convert broken data from API', () => {
+    expect(
+      transformSurveyListFromApi({
+        tasksData: null as unknown as TaskListResponse,
+        totalParticipantsData: null as unknown as ParticipantListTotalItemsSqlRow[],
+        taskResponsesCountData: null as unknown as TaskRespondedUsersCountSqlRow[],
+      })
+    ).toEqual({
+      drafts: [],
+      published: [],
+    });
+  });
 });
 
 describe('surveyListDataSelector', () => {
@@ -152,5 +205,9 @@ describe('surveyListDataSelector', () => {
     expect(surveyListDataSelector(store.getState())).not.toBeUndefined();
 
     act(() => unsetHook(hook));
+  });
+
+  it('[NEGATIVE] should select from empty slice', async () => {
+    expect(surveyListDataSelector({} as ReturnType<typeof store.getState>)).toBeUndefined();
   });
 });

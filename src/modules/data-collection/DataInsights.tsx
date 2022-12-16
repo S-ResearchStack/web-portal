@@ -5,13 +5,13 @@ import QuestionIcon from 'src/assets/icons/question.svg';
 import CollapseSection from 'src/common/components/CollapseSection';
 import SimpleGrid from 'src/common/components/SimpleGrid';
 import Tooltip from 'src/common/components/Tooltip';
-import { userRoleSelector } from 'src/modules/auth/auth.slice';
 import { useAppSelector } from 'src/modules/store';
 import { Path } from 'src/modules/navigation/store';
 import AvgRestingHrOverDayCard from 'src/modules/overview/AvgRestingHrOverDayCard';
 import AvgRestingHrWithAgeCard from 'src/modules/overview/AvgRestingHrWithAgeCard';
 import { px, colors } from 'src/styles';
 import { getRoleFunction } from '../auth/userRole';
+import { userRoleSelector } from '../auth/auth.slice.userRoleSelector';
 import ParticipantListCard from '../overview/ParticipantListCard';
 import DataCollection from './DataCollection';
 
