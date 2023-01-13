@@ -164,11 +164,13 @@ const SurveyCardsView: FC<SurveyCardsViewProps> = ({ title, list, isLoading }) =
       <SurveyCardsHead>
         <SurveyCardsTitleContainer>
           <SurveyCardsTitle>{title}</SurveyCardsTitle>
-          <Badge $isLoading={isLoading}>{list.length || ' '}</Badge>
+          {list.length > cellsPerRow && <Badge $isLoading={isLoading}>{list.length || ' '}</Badge>}
         </SurveyCardsTitleContainer>
-        <SurveyCardsSwitchViewButton onClick={toggleShowAll}>
-          {showAll ? 'Show less' : 'Show all'}
-        </SurveyCardsSwitchViewButton>
+        {list.length > cellsPerRow && (
+          <SurveyCardsSwitchViewButton onClick={toggleShowAll}>
+            {showAll ? 'Show less' : 'Show all'}
+          </SurveyCardsSwitchViewButton>
+        )}
       </SurveyCardsHead>
       <SurveyCardsGrid>
         <CollapseAnimation open={showAll} maxRowsCount={maxRowsCount}>

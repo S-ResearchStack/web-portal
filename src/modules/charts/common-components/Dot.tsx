@@ -51,6 +51,7 @@ const Dot: React.FC<Props> = ({
     <circle
       className={DOT_CLASS_NAME}
       id={id}
+      data-testid={id}
       transform={`translate(${xScale(data.x)},${yScale(data.y)})`}
       r={size / 2}
       fill={color}

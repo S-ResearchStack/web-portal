@@ -1,4 +1,12 @@
-import React, { RefObject, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import React, {
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { matchPath, Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useEvent from 'react-use/lib/useEvent';
 import useMount from 'react-use/lib/useMount';
@@ -6,6 +14,7 @@ import useToggle from 'react-use/lib/useToggle';
 import usePrevious from 'react-use/lib/usePrevious';
 import styled from 'styled-components';
 import { Location } from 'history';
+import _isNull from 'lodash/isNull';
 
 import { UserRole } from 'src/modules/auth/userRole';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
@@ -24,11 +33,12 @@ import { colors } from 'src/styles';
 import { scrollToTop } from 'src/common/utils/scrollToTop';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 import StudyManagement from 'src/modules/trial-management/StudyManagement';
-import { LayoutContentCtx } from 'src/modules/main-layout/LayoutContentCtx';
+import Studies from 'src/modules/studies/Studies';
 
+import { LayoutContentCtx } from './LayoutContentCtx';
 import Sidebar from './sidebar/Sidebar';
-import SwitchStudy from './switch-study/SwitchStudy';
 import EmptyTab from './EmptyTab';
+import { SWITCH_STUDY_SEARCH_PARAM } from './constants';
 
 export const Layout = styled.div<{ isSwitchStudy?: boolean }>`
   width: 100%;
@@ -45,6 +55,15 @@ export const ContentWrapper = styled.div`
   background-color: ${colors.background};
 `;
 
+const StudiesContentWrapper = styled(ContentWrapper)`
+  overflow: auto;
+`;
+
+const MainContentWrapper = styled(ContentWrapper)`
+  position: relative;
+  z-index: 1;
+`;
+
 export const Content = styled.div`
   min-height: unset;
   flex: 1;
@@ -52,9 +71,9 @@ export const Content = styled.div`
   position: relative;
 `;
 
-const useSwitchStudy = () => {
+const useSwitchStudy = (initialState: boolean) => {
   const layoutRef = useRef<HTMLDivElement>(null);
-  const [isSwitchStudy, toggleIsSwitchStudy] = useToggle(false);
+  const [isSwitchStudy, toggleIsSwitchStudy] = useToggle(initialState);
   const [isSwitchStudyInTransition, toggleIsSwitchStudyInTransition] = useToggle(false);
 
   const isSelfElement = useCallback((evt: Event) => evt.currentTarget === evt.target, []);
@@ -170,8 +189,14 @@ const MainLayout = () => {
 
   const { userRole } = useFetchBootData();
 
+  const history = useHistory();
+  const isForceStudySwitched = useMemo(
+    () => !_isNull(new URLSearchParams(history.location.search).get(SWITCH_STUDY_SEARCH_PARAM)),
+    [history.location.search]
+  );
+
   const { layoutRef, isSwitchStudy, toggleIsSwitchStudy, isSwitchStudyInTransition } =
-    useSwitchStudy();
+    useSwitchStudy(isForceStudySwitched);
 
   const onStudyClick = () => {
     if (isSwitchStudy) {
@@ -181,13 +206,22 @@ const MainLayout = () => {
     }
   };
 
+  const [showUserInStudy, setShowUserInStudy] = useState(isForceStudySwitched);
+
+  useEffect(() => {
+    if (showUserInStudy && !isSwitchStudy && !isSwitchStudyInTransition) {
+      setShowUserInStudy(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSwitchStudyInTransition, showUserInStudy]);
+
   return (
     <LayoutContentCtx.Provider value={contentRef}>
-      <Layout ref={layoutRef} isSwitchStudy={isSwitchStudy}>
-        <ContentWrapper>
-          <SwitchStudy onStudySelectionFinished={toggleIsSwitchStudy} />
-        </ContentWrapper>
-        <ContentWrapper>
+      <Layout data-testid="main-layout" ref={layoutRef} isSwitchStudy={isSwitchStudy}>
+        <StudiesContentWrapper>
+          <Studies hideUser={!showUserInStudy} onStudySelectionFinished={toggleIsSwitchStudy} />
+        </StudiesContentWrapper>
+        <MainContentWrapper>
           <Sidebar onStudyClick={onStudyClick} />
           {userRole && (
             <Content ref={contentRef}>
@@ -212,7 +246,7 @@ const MainLayout = () => {
               <SnackbarContainer useSimpleGrid />
             </Content>
           )}
-        </ContentWrapper>
+        </MainContentWrapper>
       </Layout>
     </LayoutContentCtx.Provider>
   );

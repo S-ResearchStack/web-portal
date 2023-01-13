@@ -13,11 +13,7 @@ import {
 } from 'src/modules/trial-management/surveyList.slice';
 import { store } from 'src/modules/store/store';
 import Random from 'src/common/Random';
-import {
-  ParticipantListTotalItemsSqlRow,
-  TaskListResponse,
-  TaskRespondedUsersCountSqlRow,
-} from 'src/modules/api';
+import { CountTableRowsResponse, TaskListResponse, TaskResultsResponse } from 'src/modules/api';
 import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 describe('surveyListSlice', () => {
@@ -139,12 +135,16 @@ describe('transformSurveyListFromApi', () => {
       },
     ];
 
-    const totalParticipantsData: ParticipantListTotalItemsSqlRow[] = [{ total: '10' }];
+    const totalParticipantsData: CountTableRowsResponse = { count: 10 };
 
-    const taskResponsesCountData: TaskRespondedUsersCountSqlRow[] = tasksData.map((t) => ({
-      task_id: t.id,
-      num_users_responded: String(Math.round(new Random(1).num(0, tasksData.length))),
-    }));
+    const taskResponsesCountData: TaskResultsResponse = {
+      taskResults: tasksData.map((t) => ({
+        taskId: t.id,
+        numberOfRespondedUser: {
+          count: Math.round(new Random(1).num(0, tasksData.length)),
+        },
+      })),
+    };
 
     expect(
       transformSurveyListFromApi({
@@ -186,8 +186,8 @@ describe('transformSurveyListFromApi', () => {
     expect(
       transformSurveyListFromApi({
         tasksData: null as unknown as TaskListResponse,
-        totalParticipantsData: null as unknown as ParticipantListTotalItemsSqlRow[],
-        taskResponsesCountData: null as unknown as TaskRespondedUsersCountSqlRow[],
+        totalParticipantsData: null as unknown as CountTableRowsResponse,
+        taskResponsesCountData: null as unknown as TaskResultsResponse,
       })
     ).toEqual({
       drafts: [],

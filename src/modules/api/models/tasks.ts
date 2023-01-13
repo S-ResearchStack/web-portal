@@ -1,3 +1,5 @@
+import { ProfileAttribute } from './overview';
+
 export type CreateTaskResponse = {
   id: string;
   revisionId: number;
@@ -97,24 +99,31 @@ export type TaskUpdate = Omit<Partial<Task>, 'id' | 'revisionId' | 'createdAt' |
   items: TaskUpdateItem[];
 };
 
-export type TaskItemResultsSqlRow = {
-  id: string;
-  revision_id: string;
-  task_id: string;
-  user_id: string;
-  item_name: string;
-  result: string;
-  age: string;
-  gender: string;
-  started_at: string;
-  submitted_at: string;
+type TaskResponseCount = {
+  count?: number;
 };
 
-export type TaskCompletionTimeSqlRow = {
-  avg_completion_time_ms: string;
+type CompletionTime = {
+  averageInMS?: number;
 };
 
-export type TaskRespondedUsersCountSqlRow = {
-  task_id: string;
-  num_users_responded: string;
+export type TaskResult = {
+  taskId?: string;
+  numberOfRespondedUser?: TaskResponseCount;
+  completionTime?: CompletionTime;
+};
+
+export type TaskItemResponse = {
+  itemName?: string;
+  userId?: string;
+  result?: string;
+  profiles?: ProfileAttribute[];
+};
+
+export type TaskResultsResponse = {
+  taskResults: TaskResult[];
+};
+
+export type SurveyResponseResponse = {
+  surveyResponse: TaskItemResponse[];
 };

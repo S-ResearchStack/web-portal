@@ -19,51 +19,9 @@ export type AvgHeartRateFluctuationsResponse = SqlResponse<{
 
 export type ParticipantItemId = string;
 
-export interface ParticipantListTotalItemsSqlRow {
-  total: string;
-}
-
-export interface ParticipantListItemSqlRow {
-  user_id: string;
-  email: string;
-  avg_hr_bpm: string;
-  steps: string;
-  last_synced: string;
-  avg_sleep_mins?: string;
-  avg_bp_systolic?: string;
-  avg_bp_diastolic?: string;
-}
-
-export type ParticipantListSortDirection = 'asc' | 'desc';
-
-export interface ParticipantListSort {
-  column: keyof ParticipantListItemSqlRow;
-  direction: ParticipantListSortDirection;
-}
-
-export type GetParticipantListRequest = {
-  offset: number;
-  limit: number;
-  sort: ParticipantListSort;
-};
-
-export type GetParticipantRequest = {
-  id: string;
-};
-
 export type GetParticipantHeartRateRequest = {
   startTime: string;
   endTime: string;
-};
-
-export type ParticipantHeartRateSqlRow = {
-  user_id: string;
-  time: string;
-  bpm: string;
-  age: string;
-  gender: string;
-  // TODO: right now this is just for mock purposes
-  anomaly?: boolean;
 };
 
 export type GetAverageParticipantHeartRateRequest = {
@@ -71,16 +29,82 @@ export type GetAverageParticipantHeartRateRequest = {
   endTime: string;
 };
 
-export type AverageParticipantHeartRateSqlRow = {
-  user_id: string;
-  last_synced: string;
-  avg_bpm: string;
-  age: string;
-  gender: string;
-};
-
 export type AverageStepCountSqlRow = {
   gender: string;
   day_of_week: string;
   steps: string;
+};
+
+export type ProfileAttribute = {
+  key?: 'email' | 'age' | 'gender';
+  value?: string;
+};
+
+export type HealthDataOverview = {
+  userId?: string;
+  averageSleep?: number;
+  lastSyncTime?: string;
+  latestAverageHR?: number;
+  latestAverageSystolicBP?: number;
+  latestAverageDiastolicBP?: number;
+  latestTotalStep?: number;
+  profiles?: ProfileAttribute[];
+};
+
+export type HealthDataOverviewSortDirection = 'ASC' | 'DESC';
+
+export type HealthDataOverviewSortColumn =
+  | 'ID'
+  | 'EMAIL'
+  | 'AVG_HR'
+  | 'TOTAL_STEPS'
+  | 'LAST_SYNCED';
+
+export interface HealthDataOverviewSort {
+  column: HealthDataOverviewSortColumn;
+  direction: HealthDataOverviewSortDirection;
+}
+
+export type HealthDataOverviewParams = {
+  limit: number;
+  offset: number;
+  sort: HealthDataOverviewSort;
+};
+
+export type HealthDataOverviewResponse = {
+  healthDataOverview: HealthDataOverview[];
+};
+
+export type HealthDataOverviewOfUserResponse = {
+  healthDataOverviewOfUser: HealthDataOverview;
+};
+
+export type CountTableRowsResponse = {
+  count: number;
+};
+
+type HeartRate = {
+  time?: string;
+  bpm?: number;
+};
+
+type HealthData = {
+  userId?: string;
+  profiles?: ProfileAttribute[];
+  heartRates?: HeartRate[];
+};
+
+type AverageHealthData = {
+  userId?: string;
+  lastSyncTime?: string;
+  profiles?: ProfileAttribute[];
+  averageHR?: number;
+};
+
+export type RawHealthDataResponse = {
+  rawHealthData: HealthData[];
+};
+
+export type AverageHealthDataResponse = {
+  averageHealthData: AverageHealthData[];
 };

@@ -1,5 +1,9 @@
 import { getLocation } from 'connected-react-router';
 import { matchPath } from 'react-router-dom';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { enableFetchMocks } from 'jest-fetch-mock';
 
 import {
   decodeAuthToken,
@@ -13,23 +17,41 @@ import {
   getStateFromAuthToken,
   isAuthorizedSelector,
   loadInitialStateFromStorage,
+  resendVerificationEmail,
   signin,
+  SUCCESS_CONFIRMATION_MESSAGE,
   userNameSelector,
+  useSignUp,
+  useVerifyEmail,
 } from 'src/modules/auth/auth.slice';
 import { allowedRoleTypes, rolesListFromApi } from 'src/modules/auth/userRole';
-import { AppDispatch, store } from 'src/modules/store/store';
-import { Path } from 'src/modules/navigation/store';
+import { AppDispatch, makeStore } from 'src/modules/store/store';
+import { makeHistory, Path } from 'src/modules/navigation/store';
 import { currentSnackbarSelector, hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { authTokenPayloadSelector } from 'src/modules/auth/auth.slice.authTokenPayloadSelector';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { maskEndpointAsFailure } from 'src/modules/api/mock';
 
 // eslint-disable-next-line prefer-destructuring
-const dispatch: AppDispatch = store.dispatch;
 const authToken =
   'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdfQ==';
 const refreshToken = `refresh.${authToken}`;
 const userInfo = { email: 'username@samsung.com', password: 'any', roles: ['team-admin'] };
 const projectId = 'project-id';
+
+let history: ReturnType<typeof makeHistory>;
+let store: ReturnType<typeof makeStore>;
+let dispatch: AppDispatch;
+
+beforeAll(() => {
+  enableFetchMocks();
+});
+
+beforeEach(() => {
+  history = makeHistory();
+  store = makeStore(history);
+  dispatch = store.dispatch;
+});
 
 describe('decodeAuthToken', () => {
   it('should return truth value', () => {
@@ -382,5 +404,163 @@ describe('store', () => {
   it('[NEGATIVE] should select user name and role with missing token', async () => {
     expect(userNameSelector(store.getState())).toBeUndefined();
     expect(userRoleSelector(store.getState())).toBeUndefined();
+  });
+});
+
+describe('useSignUp', () => {
+  const setUpHook = () =>
+    renderHook(() => useSignUp(), {
+      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+        <Provider store={store}>{children}</Provider>
+      ),
+    });
+
+  const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
+    hook.unmount();
+  };
+
+  let hook: ReturnType<typeof setUpHook>;
+
+  beforeEach(() => {
+    localStorage.setItem('API_URL', 'https://samsung.com/');
+  });
+
+  afterEach(() => {
+    act(() => unSetHook(hook));
+  });
+
+  it('should send a credentials', async () => {
+    hook = setUpHook();
+
+    expect(hook.result.current.isLoading).toBeFalsy();
+    expect(hook.result.current.error).toBeUndefined();
+
+    act(() => {
+      hook.result.current.signUp({
+        email: 'example@samsung.com',
+        password: 'pa55w0rd',
+        profile: {
+          name: 'UserName',
+        },
+      });
+    });
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: true,
+    });
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+    await waitFor(() => expect(hook.result.current.error).toBeFalsy());
+
+    expect(hook.result.current.error).toBeUndefined();
+  });
+
+  it('[NEGATIVE] should send credentials with an error', async () => {
+    hook = setUpHook();
+
+    expect(hook.result.current.isLoading).toBeFalsy();
+    expect(hook.result.current.error).toBeUndefined();
+
+    await act(async () => {
+      await maskEndpointAsFailure('signUp', async () => {
+        await hook.result.current.signUp({
+          email: 'example@samsung.com',
+          password: 'pa55w0rd',
+          profile: {
+            name: 'UserName',
+          },
+        });
+      });
+    });
+
+    expect(hook.result.current.isLoading).toBeFalsy();
+    expect(hook.result.current.error).not.toBeUndefined();
+  });
+});
+
+describe('useVerifyEmail', () => {
+  const setUpHook = (args: { token: string }) =>
+    renderHook(
+      (etchArgs: { token: string }) =>
+        useVerifyEmail({
+          fetchArgs: etchArgs || args,
+        }),
+      {
+        wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+          <Provider store={store}>{children}</Provider>
+        ),
+      }
+    );
+
+  const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
+    hook.unmount();
+  };
+
+  let hook: ReturnType<typeof setUpHook>;
+
+  beforeEach(() => {
+    localStorage.setItem('API_URL', 'https://samsung.com/');
+  });
+
+  afterEach(() => {
+    act(() => unSetHook(hook));
+  });
+
+  it('should verify email', async () => {
+    hook = setUpHook({
+      token: 'token',
+    });
+
+    expect(hook.result.current).toMatchObject({
+      isLoading: true,
+    });
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current.error).toBeUndefined();
+  });
+
+  it('[NEGATIVE] should verify email with an error', async () => {
+    hook = setUpHook({
+      token: 'token',
+    });
+
+    await act(async () => {
+      await maskEndpointAsFailure('verifyEmail', async () => {
+        await hook.result.current.fetch({
+          token: 'token1',
+        });
+      });
+    });
+
+    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+
+    expect(hook.result.current.error).not.toBeUndefined();
+  });
+});
+
+describe('resendVerificationEmail', () => {
+  it('should send request', async () => {
+    await dispatch(resendVerificationEmail({ email: 'example@samsung.com' }));
+
+    expect(currentSnackbarSelector(store.getState())).toMatchObject({
+      text: SUCCESS_CONFIRMATION_MESSAGE,
+    });
+  });
+
+  it('[NEGATIVE] should send a request and catch an error', async () => {
+    const failureMessage = 'failed';
+
+    await maskEndpointAsFailure(
+      'resendVerification',
+      async () => {
+        await dispatch(resendVerificationEmail({ email: 'example@samsung.com' }));
+      },
+      { message: failureMessage }
+    );
+
+    expect(currentSnackbarSelector(store.getState())).toMatchObject({
+      text: `Error: ${failureMessage}`,
+    });
   });
 });

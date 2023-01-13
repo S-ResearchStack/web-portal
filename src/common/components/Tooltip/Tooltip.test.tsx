@@ -9,7 +9,7 @@ import { ThemeProvider } from 'styled-components/';
 import theme from 'src/styles/theme';
 import TooltipProvider from 'src/common/components/Tooltip/TooltipProvider';
 import TooltipsList from 'src/common/components/Tooltip/TooltipsList';
-import { TooltipControls } from 'src/common/components/Tooltip/types';
+import { TooltipControls, TooltipPosition } from 'src/common/components/Tooltip/types';
 
 import Tooltip from './Tooltip';
 
@@ -297,6 +297,83 @@ describe('Tooltip', () => {
     expect(ttItem).toHaveTextContent('1');
   });
 
+  it('should render with different position', async () => {
+    for (const position of [
+      'tl',
+      't',
+      'tr',
+      'bl',
+      'b',
+      'br',
+      'rt',
+      'r',
+      'rb',
+      'lt',
+      'l',
+      'lb',
+      'abl',
+      'abr',
+      'atl',
+      'atr',
+    ]) {
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      act(() => {
+        render(
+          <ThemeProvider theme={theme}>
+            <TooltipProvider>
+              <Tooltip
+                show
+                trigger="hover"
+                content="Test"
+                position={position as TooltipPosition}
+                point={[100, 100]}
+                arrow
+              >
+                <button type="button">Trigger</button>
+              </Tooltip>
+              <TooltipsList />
+            </TooltipProvider>
+          </ThemeProvider>,
+          { container }
+        );
+      });
+
+      // eslint-disable-next-line no-await-in-loop
+      await waitFor(async () =>
+        // eslint-disable-next-line no-await-in-loop
+        expect(await screen.findByTestId('tooltip-item')).toBeInTheDocument()
+      );
+      // eslint-disable-next-line no-await-in-loop
+      expect(await screen.findByTestId('tooltip-item')).toHaveTextContent('Test');
+    }
+  });
+
+  it('[NEGATIVE] should render with invalid position', async () => {
+    act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <TooltipProvider>
+            <Tooltip
+              show
+              trigger="hover"
+              content="Test"
+              position={'invalid' as TooltipPosition}
+              point={[100, 100]}
+            >
+              <button type="button">Trigger</button>
+            </Tooltip>
+            <TooltipsList />
+          </TooltipProvider>
+        </ThemeProvider>,
+        { container }
+      );
+    });
+
+    await waitFor(async () =>
+      expect(await screen.findByTestId('tooltip-item')).toBeInTheDocument()
+    );
+  });
+
   it('should controlled open', async () => {
     act(() => {
       render(
@@ -400,6 +477,15 @@ describe('Tooltip', () => {
     expect(ttItem).toHaveTextContent('Test-1');
 
     act(() => {
+      ref.current?.setPoint([0, 0]);
+    });
+
+    expect(ttItem).toBeInTheDocument();
+
+    expect(ref.current?.getContainer()).toBeDefined();
+    expect(ref.current?.getTooltip()).toBeDefined();
+
+    act(() => {
       ref.current?.hide();
     });
 
@@ -407,6 +493,10 @@ describe('Tooltip', () => {
 
     expect(container.parentNode).toMatchSnapshot();
     expect(await screen.queryByTestId('tooltip-item')).toBeNull();
+
+    act(() => {
+      ref.current?.destroy();
+    });
   });
 
   it('[NEGATIVE] should render with wrong ref property', async () => {

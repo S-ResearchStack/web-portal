@@ -217,7 +217,7 @@ const SurveyEditor = () => {
 
   return (
     <>
-      <SurveyEditorContainer ref={containerRef}>
+      <SurveyEditorContainer data-testid="survey-editor" ref={containerRef}>
         <ExitPrompt when={hasSavingError} onExitCb={onExitPromptCb} />
         <ContentContainer $previewOpened={isPreviewOpened}>
           <Header

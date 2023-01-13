@@ -8,7 +8,8 @@ import * as api from 'src/modules/api/models';
 import { Timestamp } from 'src/common/utils/datetime';
 import Random from 'src/common/Random';
 import { ProjectIdParams } from 'src/modules/api/endpoints';
-import { parseNumber } from 'src/common/utils/number';
+import { roundNumber } from 'src/common/utils/number';
+import { SortDirectionOptions } from 'src/common/components/Table';
 
 export const DEFAULT_OVERVIEW_PARTICIPANT_LIST_RECORDS_PER_PAGE = 10;
 
@@ -29,7 +30,7 @@ export type OverviewParticipantListSortColumn = keyof OverviewParticipantItem;
 
 export interface OverviewParticipantListSort {
   column: OverviewParticipantListSortColumn;
-  direction: api.ParticipantListSortDirection;
+  direction: SortDirectionOptions;
 }
 
 export interface OverviewParticipantListFilter {
@@ -48,6 +49,26 @@ export interface ParticipantsListData {
   list: OverviewParticipantItem[];
 }
 
+const sortDirectionMap = [
+  ['ASC', 'asc'],
+  ['DESC', 'desc'],
+] as [api.HealthDataOverviewSortDirection, SortDirectionOptions][];
+
+const sortDirectionToApi = (d: SortDirectionOptions) =>
+  sortDirectionMap.find((m) => m[1] === d)?.[0] as api.HealthDataOverviewSortDirection;
+
+const sortColumnMap = [
+  ['ID', 'id'],
+  ['EMAIL', 'email'],
+  ['LAST_SYNCED', 'lastSync'],
+  ['LAST_SYNCED', 'localTime'],
+  ['AVG_HR', 'avgBpm'],
+  ['TOTAL_STEPS', 'avgSteps'],
+] as [api.HealthDataOverviewSortColumn, OverviewParticipantListSortColumn][];
+
+const sortColumnToApi = (c: OverviewParticipantListSortColumn) =>
+  sortColumnMap.find((m) => m[1] === c)?.[0] as api.HealthDataOverviewSortColumn;
+
 const emailsMock = [
   'jon.snow@email.com',
   'daenerys.targaryen@email.com',
@@ -61,95 +82,98 @@ const emailsMock = [
   'liz.lorina@email.com',
 ];
 
-export const participantListItemMock = (idx = 1) =>
+export const healthDataOverviewMock = (idx = 1) =>
   ({
-    user_id: `00${idx + 1}-20220512-${idx % 2 ? 'a' : 'b'}`,
-    email: Random.shared.arrayElement(emailsMock),
-    avg_hr_bpm: Random.shared.num(0, 1) > 0.1 ? String(Random.shared.int(60, 90)) : '',
-    steps: Random.shared.num(0, 1) > 0.1 ? String(Random.shared.int(1000, 20000)) : '',
-    last_synced: new Date(Date.now() - Random.shared.int(1, 24 * 60 * 3) * 60 * 1000).toString(),
-    avg_sleep_mins: Random.shared.num(300, 600).toString(),
-    avg_bp_systolic: '120.35',
-    avg_bp_diatolic: '75.111105',
-  } as api.ParticipantListItemSqlRow);
+    userId: `00${idx + 1}-20220512-${idx % 2 ? 'a' : 'b'}`,
+    profiles: [
+      {
+        key: 'email',
+        value: Random.shared.arrayElement(emailsMock),
+      },
+    ],
+    latestAverageHR: Random.shared.num(0, 1) > 0.1 ? Random.shared.num(60, 90) : undefined,
+    latestAverageSystolicBP:
+      Random.shared.num(0, 1) > 0.8 ? Random.shared.num(110, 140) : undefined,
+    latestAverageDiastolicBP: Random.shared.num(0, 1) > 0.8 ? Random.shared.num(60, 80) : undefined,
+    latestTotalStep: Random.shared.num(0, 1) > 0.1 ? Random.shared.int(1000, 20000) : undefined,
+    lastSyncTime: new Date(Date.now() - Random.shared.int(1, 24 * 60 * 3) * 60 * 1000).toString(),
+    averageSleep: Random.shared.num(300, 600),
+  } as api.HealthDataOverview);
 
-export const participantListMock = _range(
+export const healthDataOverviewListMock = _range(
   DEFAULT_OVERVIEW_PARTICIPANT_LIST_RECORDS_PER_PAGE * 15
-).map(participantListItemMock);
+).map(healthDataOverviewMock);
 
-export const getParticipantsMock: typeof API.getParticipants = ({
+export const getHealthDataOverviewMock: typeof API.getHealthDataOverview = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   projectId,
   limit,
   offset,
   sort,
 }) => {
-  let result: api.ParticipantListItemSqlRow[] = [];
+  let result: api.HealthDataOverview[] = [];
 
-  result =
-    sort.direction === 'asc'
-      ? _sortBy(participantListMock, [sort.column])
-      : _sortBy(participantListMock, [sort.column]).reverse();
+  const key = {
+    ID: 'userId',
+    EMAIL: (v: api.HealthDataOverview) => v.profiles?.find((p) => p.key === 'email')?.value,
+    LAST_SYNCED: 'lastSyncTime',
+    AVG_HR: 'latestAverageHR',
+    TOTAL_STEPS: 'latestTotalStep',
+  }[sort.column];
+
+  result = _sortBy(healthDataOverviewListMock, [key]);
+  if (sort.direction === 'DESC') {
+    result = result.reverse();
+  }
 
   result = result.slice(offset, Math.min(result.length, offset + limit));
 
-  return API.mock.response(result);
+  return API.mock.response({
+    healthDataOverview: result,
+  });
 };
 
-export const getParticipantsTotalItemsMock: typeof API.getParticipantsTotalItems = ({
+export const getUserProfilesCountMock: typeof API.getUserProfilesCount = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   projectId,
-}: ProjectIdParams) => API.mock.response([{ total: String(participantListMock.length) }]);
+}: ProjectIdParams) => API.mock.response({ count: healthDataOverviewListMock.length });
 
 API.mock.provideEndpoints({
-  getParticipantsTotalItems: getParticipantsTotalItemsMock,
-  getParticipants: getParticipantsMock,
+  getHealthDataOverview: getHealthDataOverviewMock,
+  getUserProfilesCount: getUserProfilesCountMock,
 });
 
 export const transformParticipantListSortParamsToApi = (
   sort: OverviewParticipantListSort
-): api.ParticipantListSort => ({
-  ...sort,
-  column: (
-    {
-      id: 'user_id',
-      email: 'email',
-      lastSync: 'last_synced',
-      localTime: 'last_synced',
-      avgBpm: 'avg_hr_bpm',
-      avgSteps: 'steps',
-    } as Record<OverviewParticipantListSortColumn, api.ParticipantListSort['column']>
-  )[sort.column],
+): api.HealthDataOverviewSort => ({
+  direction: sortDirectionToApi(sort.direction) || 'ASC',
+  column: sortColumnToApi(sort.column) || 'ID',
 });
 
-export const transformParticipantListItemFromApi = (
-  item: api.ParticipantListItemSqlRow
+export const transformHealthDataOverviewItemFromApi = (
+  item: api.HealthDataOverview
 ): OverviewParticipantItem => ({
-  id: item.user_id,
-  email: item.email,
-  avgBpm: parseNumber(item.avg_hr_bpm, { round: true }),
-  avgSteps: parseNumber(item.steps, { round: true }),
-  lastSync: new Date(item.last_synced || 0).valueOf(),
-  localTime: new Date(item.last_synced || 0).valueOf(),
-  avgSleepMins: parseNumber(item.avg_sleep_mins, { round: true }),
+  id: item.userId || '',
+  email: item.profiles?.find((i) => i.key === 'email')?.value || '',
+  avgBpm: roundNumber(item.latestAverageHR),
+  avgSteps: item.latestTotalStep,
+  lastSync: new Date(item.lastSyncTime || 0).valueOf(),
+  localTime: new Date(item.lastSyncTime || 0).valueOf(),
+  avgSleepMins: item.averageSleep,
   avgBloodPressure: (() => {
-    if (!item.avg_bp_systolic || !item.avg_bp_diastolic) {
+    const { latestAverageSystolicBP: sys, latestAverageDiastolicBP: dia } = item;
+
+    if (!Number.isFinite(sys) || !Number.isFinite(dia)) {
       return undefined;
     }
 
-    const sys = parseNumber(item.avg_bp_systolic, { round: true });
-    const dia = parseNumber(item.avg_bp_diastolic, { round: true });
-
-    if (!sys || !dia) {
-      return undefined;
-    }
-    return `${sys}/${dia}`;
+    return `${Math.round(sys as number)}/${Math.round(dia as number)}`;
   })(),
 });
 
-export const transformParticipantListFromRaw = (
-  items: api.ParticipantListItemSqlRow[]
-): OverviewParticipantItem[] => items.map(transformParticipantListItemFromApi);
+export const transformHealthDataOverviewListFromApi = (
+  items: api.HealthDataOverview[]
+): OverviewParticipantItem[] => items.map(transformHealthDataOverviewItemFromApi);
 
 const slice = createDataSlice({
   name: 'overview/participantsList',
@@ -167,16 +191,16 @@ const slice = createDataSlice({
 
     // prettier-ignore
     const [
-      { data: [{ total }] },
-      { data: list },
+      { data: { count: total } },
+      healthData,
     ] = await Promise.all([
-      API.getParticipantsTotalItems(baseOptions),
-      API.getParticipants(getParticipantsOptions),
+      API.getUserProfilesCount(baseOptions),
+      API.getHealthDataOverview(getParticipantsOptions)
     ]);
 
     return {
-      total: parseInt(total, 10),
-      list: transformParticipantListFromRaw(list),
+      total,
+      list: transformHealthDataOverviewListFromApi(healthData.data.healthDataOverview),
     };
   },
 });

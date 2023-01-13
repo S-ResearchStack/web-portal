@@ -11,6 +11,7 @@ export interface InputFieldBaseProps extends React.InputHTMLAttributes<HTMLInput
   label?: string | JSX.Element;
   helperText?: string;
   error?: boolean | string; // TODO: remove `boolean` when migration to v0.9 is complete
+  withoutErrorText?: boolean;
   disabled?: boolean;
 }
 type InputFieldShellProps = React.PropsWithChildren<InputFieldBaseProps>;
@@ -145,6 +146,7 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
   className,
   disabled,
   children,
+  withoutErrorText,
 }) => (
   <InputContainer className={className}>
     {helperText && (
@@ -156,9 +158,11 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
       {helperText || label || <>&nbsp;</>}
     </InputDescription>
     <InputWrapper error={error}>{children}</InputWrapper>
-    <InputErrorText data-testid="input-error" withOffset={!helperText}>
-      {typeof error === 'string' ? error : <>&nbsp;</>}
-    </InputErrorText>
+    {!withoutErrorText && (
+      <InputErrorText data-testid="input-error" withOffset={!helperText}>
+        {typeof error === 'string' ? error : <>&nbsp;</>}
+      </InputErrorText>
+    )}
   </InputContainer>
 );
 
@@ -172,6 +176,7 @@ const InputField = forwardRef(
       endExtra,
       disabled,
       className,
+      withoutErrorText,
       ...restProps
     }: InputFieldProps,
     ref: ForwardedRef<HTMLInputElement>
@@ -182,6 +187,7 @@ const InputField = forwardRef(
       error={error}
       className={className}
       disabled={disabled}
+      withoutErrorText={withoutErrorText}
     >
       <StyledTextField
         data-testid="input"

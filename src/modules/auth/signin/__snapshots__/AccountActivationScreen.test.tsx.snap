@@ -1,0 +1,861 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountActivationScreen should render 1`] = `
+.c26 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.c24 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 400ms;
+  transition-duration: 400ms;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: #4475E3;
+}
+
+.c24 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c24 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c24 > div {
+  color: #FFFFFF;
+}
+
+.c24 > div svg {
+  fill: #FFFFFF;
+}
+
+.c24:hover:enabled {
+  background-color: #2F65E0;
+}
+
+.c24:disabled {
+  background-color: #B3C6F1;
+}
+
+.c24:focus-visible:enabled {
+  border: 0.125rem solid #FFFFFF;
+  background-color: #4475E3;
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c25 {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transform: translate3d(0,0,0.0625rem);
+  -ms-transform: translate3d(0,0,0.0625rem);
+  transform: translate3d(0,0,0.0625rem);
+}
+
+.c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.c10 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c13 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 0.5rem);
+}
+
+.c9 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  box-sizing: border-box;
+  height: 3.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid #F7F8FA;
+  border-radius: 0.25rem;
+  -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  caret-color: #4475E3;
+}
+
+.c9:hover:enabled {
+  border-color: #2F65E0;
+}
+
+.c9:active:enabled,
+.c9:focus-visible {
+  outline: none;
+  border-color: #4475E3;
+}
+
+.c9:disabled {
+  color: #DBDBDB;
+  border-color: rgba(219,219,219,0.2);
+  background-color: rgba(219,219,219,0.2);
+}
+
+.c9::-webkit-input-placeholder {
+  color: #808080;
+}
+
+.c9::-moz-placeholder {
+  color: #808080;
+}
+
+.c9:-ms-input-placeholder {
+  color: #808080;
+}
+
+.c9::placeholder {
+  color: #808080;
+}
+
+.c9:disabled::-webkit-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c9:disabled::-moz-placeholder {
+  color: #DBDBDB;
+}
+
+.c9:disabled:-ms-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c9:disabled::placeholder {
+  color: #DBDBDB;
+}
+
+.c9:-webkit-autofill,
+.c9:-webkit-autofill:hover,
+.c9:-webkit-autofill:focus {
+  border: 0.0625rem solid rgba(219,219,219,0.2);
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: #F7F8FA !important;
+  background-image: unset !important;
+  -webkit-text-fill-color: #838383;
+}
+
+.c9:-webkit-autofill:focus {
+  border-color: #4475E3;
+}
+
+.c12 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  box-sizing: border-box;
+  height: 3.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid #F7F8FA;
+  border-radius: 0.25rem;
+  -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  caret-color: #4475E3;
+}
+
+.c12:hover:enabled {
+  border-color: #2F65E0;
+}
+
+.c12:active:enabled,
+.c12:focus-visible {
+  outline: none;
+  border-color: #4475E3;
+}
+
+.c12:disabled {
+  color: #DBDBDB;
+  border-color: rgba(219,219,219,0.2);
+  background-color: rgba(219,219,219,0.2);
+}
+
+.c12::-webkit-input-placeholder {
+  color: #808080;
+}
+
+.c12::-moz-placeholder {
+  color: #808080;
+}
+
+.c12:-ms-input-placeholder {
+  color: #808080;
+}
+
+.c12::placeholder {
+  color: #808080;
+}
+
+.c12:disabled::-webkit-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c12:disabled::-moz-placeholder {
+  color: #DBDBDB;
+}
+
+.c12:disabled:-ms-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c12:disabled::placeholder {
+  color: #DBDBDB;
+}
+
+.c12:-webkit-autofill,
+.c12:-webkit-autofill:hover,
+.c12:-webkit-autofill:focus {
+  border: 0.0625rem solid #4475E3;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: #F7F8FA !important;
+  background-image: unset !important;
+  -webkit-text-fill-color: #838383;
+}
+
+.c12:-webkit-autofill:focus {
+  border-color: #4475E3;
+}
+
+.c7 {
+  max-height: 3.5rem;
+}
+
+.c7:hover .c8:enabled {
+  border-color: #2F65E0;
+}
+
+.c6 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  gap: 0.5rem;
+  height: 1.125rem;
+}
+
+.c11 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #D14343;
+  padding-left: 1rem;
+  height: 1.0625rem;
+}
+
+.c14 {
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.c14 svg {
+  fill: #4475E3;
+}
+
+.c14:active,
+.c14:enabled:hover {
+  cursor: pointer;
+}
+
+.c14:active svg,
+.c14:enabled:hover svg {
+  fill: #4475E3;
+}
+
+.c14:disabled svg {
+  fill: #DBDBDB;
+}
+
+.c15 {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c15:hover {
+  cursor: pointer;
+}
+
+.c19 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+}
+
+.c22 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #838383;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+}
+
+.c21 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c18 {
+  display: inline-block;
+}
+
+.c18 input {
+  display: none;
+}
+
+.c18 .c20 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #DBDBDB;
+}
+
+.c18 .c20 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c27 {
+  position: relative;
+  height: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.c1 {
+  color: #474747;
+  min-width: 45.8125rem;
+  width: 55.556vw;
+  min-height: 44.037265625rem;
+  height: 53.403205vw;
+  max-height: 90vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin: auto;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c3 {
+  height: 40.0625rem;
+  width: 28rem;
+  margin: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.c4 {
+  font-family: Inter,sans-serif;
+  font-size: 2rem;
+  line-height: 2.625rem;
+  font-weight: 600;
+  font-style: normal;
+  margin: 0 auto 2.25rem;
+}
+
+.c16 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  height: 11.375rem;
+  width: 27.9375rem;
+  top: 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.c17 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  height: 2.5rem;
+}
+
+.c17:nth-child(2) {
+  height: 3.875rem;
+  width: 23.125rem;
+}
+
+.c23 {
+  color: #838383;
+}
+
+@media (max-height:44rem) {
+  .c0 {
+    overflow-y: scroll;
+  }
+}
+
+@media (max-width:45.75rem) {
+  .c0 {
+    overflow-x: scroll;
+  }
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+        width="55.556"
+      >
+        <div
+          class="c2"
+        >
+          <div
+            class="c3"
+          >
+            <div
+              class="c4"
+            >
+              Account activation
+            </div>
+            <div
+              class="c5"
+            >
+              <div
+                class="c6"
+                data-testid="input-description"
+                disabled=""
+              >
+                Email
+              </div>
+              <div
+                class="c7"
+              >
+                <input
+                  class="c8 c9"
+                  data-testid="input"
+                  disabled=""
+                  type="email"
+                  value=""
+                />
+                <div
+                  class="c10"
+                >
+                  <svg />
+                </div>
+              </div>
+              <div
+                class="c11"
+                data-testid="input-error"
+              >
+                 
+              </div>
+            </div>
+            <div
+              class="c5"
+            >
+              <div
+                class="c6"
+                data-testid="input-description"
+              >
+                Name
+              </div>
+              <div
+                class="c7"
+              >
+                <input
+                  class="c8 c12"
+                  data-testid="input"
+                  type="text"
+                  value=""
+                />
+                <div
+                  class="c13"
+                />
+              </div>
+              <div
+                class="c11"
+                data-testid="input-error"
+              >
+                 
+              </div>
+            </div>
+            <div
+              class="c5"
+            >
+              <div
+                class="c6"
+                data-testid="input-description"
+              >
+                Password
+              </div>
+              <div
+                class="c7"
+              >
+                <input
+                  class="c8 c12"
+                  data-testid="input"
+                  type="password"
+                  value=""
+                />
+                <div
+                  class="c10"
+                >
+                  <button
+                    class="c14 c15"
+                    color="primary"
+                  >
+                    <svg
+                      data-testid="icon"
+                    />
+                  </button>
+                </div>
+              </div>
+              <div
+                class="c11"
+                data-testid="input-error"
+              />
+            </div>
+            <div
+              class="c16"
+            >
+              <div
+                class="c17"
+              >
+                <div
+                  class="c18 "
+                  color="disabled"
+                  disabled=""
+                  kind="success"
+                  readonly=""
+                >
+                  <label
+                    class="c19"
+                    for="1"
+                  >
+                    <div
+                      class="c20 c21"
+                    >
+                      <svg />
+                    </div>
+                    <div
+                      class="c22"
+                      disabled=""
+                    >
+                      <span
+                        class="c23"
+                        disabled=""
+                        id="Be at least 12 characters in length"
+                      >
+                        Be at least 12 characters in length
+                      </span>
+                    </div>
+                  </label>
+                  <input
+                    checked=""
+                    disabled=""
+                    id="1"
+                    readonly=""
+                    type="checkbox"
+                  />
+                </div>
+              </div>
+              <div
+                class="c17"
+              >
+                <div
+                  class="c18 "
+                  color="disabled"
+                  disabled=""
+                  kind="success"
+                  readonly=""
+                >
+                  <label
+                    class="c19"
+                    for="2"
+                  >
+                    <div
+                      class="c20 c21"
+                    >
+                      <svg />
+                    </div>
+                    <div
+                      class="c22"
+                      disabled=""
+                    >
+                      <span
+                        class="c23"
+                        disabled=""
+                        id="Contain 1 upper case, 1 lower case, 1 number, and 1 special character"
+                      >
+                        Contain 1 upper case, 1 lower case, 1 number, and 1 special character
+                      </span>
+                    </div>
+                  </label>
+                  <input
+                    checked=""
+                    disabled=""
+                    id="2"
+                    readonly=""
+                    type="checkbox"
+                  />
+                </div>
+              </div>
+              <div
+                class="c17"
+              >
+                <div
+                  class="c18 "
+                  color="disabled"
+                  disabled=""
+                  kind="success"
+                  readonly=""
+                >
+                  <label
+                    class="c19"
+                    for="3"
+                  >
+                    <div
+                      class="c20 c21"
+                    >
+                      <svg />
+                    </div>
+                    <div
+                      class="c22"
+                      disabled=""
+                    >
+                      <span
+                        class="c23"
+                        disabled=""
+                        id="Does not contain more than 3 identical characters in a row"
+                      >
+                        Does not contain more than 3 identical characters in a row
+                      </span>
+                    </div>
+                  </label>
+                  <input
+                    checked=""
+                    disabled=""
+                    id="3"
+                    readonly=""
+                    type="checkbox"
+                  />
+                </div>
+              </div>
+              <div
+                class="c17"
+              >
+                <div
+                  class="c18 "
+                  color="disabled"
+                  disabled=""
+                  kind="success"
+                  readonly=""
+                >
+                  <label
+                    class="c19"
+                    for="4"
+                  >
+                    <div
+                      class="c20 c21"
+                    >
+                      <svg />
+                    </div>
+                    <div
+                      class="c22"
+                      disabled=""
+                    >
+                      <span
+                        class="c23"
+                        disabled=""
+                        id="Does not contain username"
+                      >
+                        Does not contain username
+                      </span>
+                    </div>
+                  </label>
+                  <input
+                    checked=""
+                    disabled=""
+                    id="4"
+                    readonly=""
+                    type="checkbox"
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              class="c24"
+              disabled=""
+              fill="solid"
+              style="overflow: hidden; position: relative;"
+            >
+              <div
+                class="c25"
+                data-testid="content"
+              >
+                Activate Account
+              </div>
+              <div
+                class="c26"
+                color="primaryPressed"
+                opacity="1,1"
+                scale="0"
+                style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+              />
+            </button>
+          </div>
+          <div
+            class="c27"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

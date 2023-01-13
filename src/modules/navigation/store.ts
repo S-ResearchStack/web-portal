@@ -8,7 +8,10 @@ export enum Path {
   Root = '/',
 
   SignIn = '/signin',
-  AccountActivation = '/account-activation',
+  AccountActivation = '/account/activation',
+  AccountCreate = '/account/create',
+  AccountConfirm = '/account/confirm',
+  AccountVerification = '/email-verification',
   CreateStudy = '/create-study',
 
   Overview = '/overview',

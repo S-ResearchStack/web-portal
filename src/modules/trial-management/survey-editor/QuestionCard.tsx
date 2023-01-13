@@ -198,7 +198,12 @@ const QuestionCard = forwardRef(
     };
 
     return (
-      <Container className={className} ref={ref} data-id={question.id}>
+      <Container
+        className={className}
+        ref={ref}
+        data-id={question.id}
+        data-testid={`question-${question.id}`}
+      >
         <QuestionNumber>Question {index + 1}</QuestionNumber>
         <MainInformation>
           <TitleContainer>

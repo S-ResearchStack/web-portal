@@ -176,9 +176,15 @@ const SqlQueryEditor: React.FC<SqlQueryEditorProps> = (props) => {
   }, [value]);
 
   return (
-    <Container $isError={isError} ref={containerRef}>
-      <textarea ref={textareaRef} />
-      <Button width={108} disabled={searchDisabled} onClick={onSearch} fill="solid">
+    <Container data-testid="sql-query-editor" $isError={isError} ref={containerRef}>
+      <textarea data-testid="sql-query-editor-textarea" ref={textareaRef} />
+      <Button
+        data-testid="sql-query-editor-send"
+        width={108}
+        disabled={searchDisabled}
+        onClick={onSearch}
+        fill="solid"
+      >
         Run
       </Button>
     </Container>

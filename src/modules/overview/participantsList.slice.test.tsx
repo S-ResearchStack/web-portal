@@ -5,20 +5,20 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { store } from 'src/modules/store/store';
 import {
   GetParticipantListParams,
-  getParticipantsMock,
-  getParticipantsTotalItemsMock,
+  getHealthDataOverviewMock,
+  getUserProfilesCountMock,
   OverviewParticipantItem,
   OverviewParticipantListSort,
   OverviewParticipantListSortColumn,
   participantListFetchArgsSelector,
   participantListPrevFetchArgsSelector,
-  transformParticipantListFromRaw,
-  transformParticipantListItemFromApi,
+  transformHealthDataOverviewItemFromApi,
+  transformHealthDataOverviewListFromApi,
   transformParticipantListSortParamsToApi,
   useParticipantList,
 } from 'src/modules/overview/participantsList.slice';
 import * as api from 'src/modules/api/models';
-import { ParticipantListItemSqlRow } from 'src/modules/api/models';
+import { HealthDataOverviewSort } from 'src/modules/api/models';
 import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 const setUpHook = (args: GetParticipantListParams | false) =>
@@ -46,44 +46,38 @@ const args: GetParticipantListParams = {
 
 describe('transformParticipantListItemFromApi', () => {
   it('should transform data', () => {
-    const participantFromApi: api.ParticipantListItemSqlRow = {
-      steps: '1',
-      avg_hr_bpm: '2',
-      avg_bp_diastolic: '3',
-      avg_bp_systolic: '4',
-      avg_sleep_mins: '5',
-      email: 'hello@example.com',
-      last_synced: new Date(1666623346000).toString(),
-      user_id: '6',
+    const participantFromApi: api.HealthDataOverview = {
+      userId: '6',
+      profiles: [
+        {
+          key: 'email',
+          value: 'hello@example.com',
+        },
+      ],
+      latestAverageHR: 2.1,
+      latestAverageSystolicBP: 122.7,
+      latestAverageDiastolicBP: 81.3,
+      latestTotalStep: 1,
+      averageSleep: 5,
+      lastSyncTime: new Date(1666623346000).toString(),
     };
 
     const participant: OverviewParticipantItem = {
       id: '6',
       email: 'hello@example.com',
       avgBpm: 2,
+      avgBloodPressure: '123/81',
       avgSteps: 1,
       lastSync: 1666623346000,
       localTime: 1666623346000,
       avgSleepMins: 5,
-      avgBloodPressure: '4/3',
     };
 
-    expect(transformParticipantListItemFromApi(participantFromApi)).toEqual(participant);
+    expect(transformHealthDataOverviewItemFromApi(participantFromApi)).toEqual(participant);
   });
 
   it('[NEGATIVE] should transform data with broken input data', () => {
-    expect(
-      transformParticipantListItemFromApi({
-        steps: '',
-        avg_hr_bpm: '',
-        avg_bp_diastolic: '',
-        avg_bp_systolic: '',
-        avg_sleep_mins: '',
-        email: '',
-        last_synced: '',
-        user_id: '',
-      })
-    ).toEqual({
+    expect(transformHealthDataOverviewItemFromApi({})).toEqual({
       id: '',
       email: '',
       avgBpm: undefined,
@@ -99,12 +93,12 @@ describe('transformParticipantListItemFromApi', () => {
 describe('transformParticipantListSortParamsToApi', () => {
   const getSortParams = (column: string) => ({
     column,
-    direction: 'asc',
+    direction: 'ASC',
   });
 
   const expectParam = (
     inParam: OverviewParticipantListSortColumn,
-    outParam: keyof ParticipantListItemSqlRow
+    outParam: HealthDataOverviewSort['column']
   ) =>
     expect(
       transformParticipantListSortParamsToApi(
@@ -114,61 +108,54 @@ describe('transformParticipantListSortParamsToApi', () => {
 
   // eslint-disable-next-line jest/expect-expect
   it('should transform data', () => {
-    expectParam('id', 'user_id');
-    expectParam('email', 'email');
-    expectParam('lastSync', 'last_synced');
-    expectParam('localTime', 'last_synced');
-    expectParam('avgBpm', 'avg_hr_bpm');
-    expectParam('avgSteps', 'steps');
+    expectParam('id', 'ID');
+    expectParam('email', 'EMAIL');
+    expectParam('lastSync', 'LAST_SYNCED');
+    expectParam('localTime', 'LAST_SYNCED');
+    expectParam('avgBpm', 'AVG_HR');
+    expectParam('avgSteps', 'TOTAL_STEPS');
   });
 
   // eslint-disable-next-line jest/expect-expect
   it('[NEGATIVE] should transform data with broken input data', () => {
-    expectParam(
-      'unexpected' as OverviewParticipantListSortColumn,
-      undefined as unknown as keyof ParticipantListItemSqlRow
-    );
+    expectParam('unexpected' as OverviewParticipantListSortColumn, 'ID');
   });
 });
 
 describe('transformParticipantListFromRaw', () => {
   it('should transform data', () => {
-    const participantFromApi: api.ParticipantListItemSqlRow = {
-      steps: '1',
-      avg_hr_bpm: '2',
-      avg_bp_diastolic: '3',
-      avg_bp_systolic: '4',
-      avg_sleep_mins: '5',
-      email: 'hello@example.com',
-      last_synced: new Date(1666623346000).toString(),
-      user_id: '6',
+    const participantFromApi: api.HealthDataOverview = {
+      userId: '6',
+      profiles: [
+        {
+          key: 'email',
+          value: 'hello@example.com',
+        },
+      ],
+      latestAverageHR: 2.1,
+      latestAverageSystolicBP: 122.7,
+      latestAverageDiastolicBP: 81.3,
+      latestTotalStep: 1,
+      averageSleep: 5,
+      lastSyncTime: new Date(1666623346000).toString(),
     };
 
     const participant: OverviewParticipantItem = {
       id: '6',
       email: 'hello@example.com',
       avgBpm: 2,
+      avgBloodPressure: '123/81',
       avgSteps: 1,
       lastSync: 1666623346000,
       localTime: 1666623346000,
       avgSleepMins: 5,
-      avgBloodPressure: '4/3',
     };
 
-    expect(transformParticipantListFromRaw([participantFromApi])).toEqual([participant]);
+    expect(transformHealthDataOverviewListFromApi([participantFromApi])).toEqual([participant]);
   });
 
   it('[NEGATIVE] should transform broken data', () => {
-    const participantFromApi: api.ParticipantListItemSqlRow = {
-      steps: '',
-      avg_hr_bpm: '',
-      avg_bp_diastolic: '',
-      avg_bp_systolic: '',
-      avg_sleep_mins: '',
-      email: '',
-      last_synced: '',
-      user_id: '',
-    };
+    const participantFromApi: api.HealthDataOverview = {};
 
     const participant: OverviewParticipantItem = {
       id: '',
@@ -181,7 +168,7 @@ describe('transformParticipantListFromRaw', () => {
       avgBloodPressure: undefined,
     };
 
-    expect(transformParticipantListFromRaw([participantFromApi])).toEqual([participant]);
+    expect(transformHealthDataOverviewListFromApi([participantFromApi])).toEqual([participant]);
   });
 });
 
@@ -211,7 +198,7 @@ describe('useParticipantList', () => {
 
     await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
 
-    const { data: list } = await getParticipantsMock({
+    const { data } = await getHealthDataOverviewMock({
       projectId: 'project_id',
       limit: args.filter.perPage,
       offset: args.filter.offset,
@@ -219,35 +206,35 @@ describe('useParticipantList', () => {
     });
 
     const {
-      data: [{ total }],
-    } = await getParticipantsTotalItemsMock({
+      data: { count: total },
+    } = await getUserProfilesCountMock({
       projectId: 'project_id',
     });
 
     expect(hook.result.current).toMatchObject({
       isLoading: false,
       data: {
-        list: transformParticipantListFromRaw(list),
-        total: parseInt(total, 10),
+        list: transformHealthDataOverviewListFromApi(data.healthDataOverview),
+        total,
       },
     });
   });
 
   it('[NEGATIVE] should fetch broken data from API', async () => {
     await maskEndpointAsSuccess(
-      'getParticipants',
+      'getHealthDataOverview',
       async () => {
         await maskEndpointAsSuccess(
-          'getParticipantsTotalItems',
+          'getUserProfilesCount',
           async () => {
             hook = setUpHook(args);
 
             await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
           },
-          { sqlResponse: null }
+          { response: null }
         );
       },
-      { sqlResponse: null }
+      { response: null }
     );
 
     expect(hook.result.current).toMatchObject({
@@ -259,7 +246,7 @@ describe('useParticipantList', () => {
 
   it('[NEGATIVE] should execute failure request to API', async () => {
     await maskEndpointAsFailure(
-      'getParticipants',
+      'getHealthDataOverview',
       async () => {
         hook = setUpHook(args);
         await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
@@ -308,7 +295,7 @@ describe('useParticipantList', () => {
     const newPerPage = 20;
 
     await maskEndpointAsFailure(
-      'getParticipantsTotalItems',
+      'getUserProfilesCount',
       async () => {
         act(() => {
           hook.result.current.fetch({

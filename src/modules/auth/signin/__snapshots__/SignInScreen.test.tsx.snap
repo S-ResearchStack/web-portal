@@ -1,0 +1,1469 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
+.c28 {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: default;
+  -webkit-user-drag: none;
+}
+
+.c28:hover {
+  cursor: pointer;
+}
+
+.c24 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  background-color: #E3EAFB;
+  pointer-events: none;
+}
+
+.c26 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.c21 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 7.5rem;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 0;
+  transition-duration: 0;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 2.5rem;
+  border: none;
+  background-color: transparent;
+}
+
+.c21 > div {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c21 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c21 > div {
+  color: #4475E3;
+}
+
+.c21 > div svg {
+  fill: #4475E3;
+}
+
+.c21:hover:enabled > div {
+  color: #2F65E0;
+}
+
+.c21:hover:enabled > div svg {
+  fill: #2F65E0;
+}
+
+.c21:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c21:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c21:disabled > div {
+  color: #B3C6F1;
+}
+
+.c21:disabled > div svg {
+  fill: #B3C6F1;
+}
+
+.c21:focus-visible {
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c21:focus-visible > div {
+  color: #4475E3;
+}
+
+.c21:focus-visible > div svg {
+  fill: #4475E3;
+}
+
+.c25 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 400ms;
+  transition-duration: 400ms;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: #4475E3;
+}
+
+.c25 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c25 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c25 > div {
+  color: #FFFFFF;
+}
+
+.c25 > div svg {
+  fill: #FFFFFF;
+}
+
+.c25:hover:enabled {
+  background-color: #2F65E0;
+}
+
+.c25:disabled {
+  background-color: #B3C6F1;
+}
+
+.c25:focus-visible:enabled {
+  border: 0.125rem solid #FFFFFF;
+  background-color: #4475E3;
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c23 {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transform: translate3d(0,0,0.0625rem);
+  -ms-transform: translate3d(0,0,0.0625rem);
+  transform: translate3d(0,0,0.0625rem);
+}
+
+.c17 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+}
+
+.c19 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c20 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  margin-top: 0.59375rem;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c15 {
+  display: inline-block;
+}
+
+.c15 input {
+  display: none;
+}
+
+.c15 .c18 > svg > :nth-child(1) {
+  -webkit-transition: stroke 300ms cubic-bezier(0.45,0.05,0,1),fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke 300ms cubic-bezier(0.45,0.05,0,1),fill 300ms cubic-bezier(0.45,0.05,0,1);
+  stroke: #B3C6F1;
+  fill: #FFFFFF;
+}
+
+.c15:hover > .c16 {
+  cursor: pointer;
+}
+
+.c15:hover .c18 > svg > :nth-child(1) {
+  fill: #ECF1FC;
+  stroke: #B3C6F1;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.c9 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 0.5rem);
+}
+
+.c11 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c8 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  box-sizing: border-box;
+  height: 3.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid #F7F8FA;
+  border-radius: 0.25rem;
+  -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  caret-color: #4475E3;
+}
+
+.c8:hover:enabled {
+  border-color: #2F65E0;
+}
+
+.c8:active:enabled,
+.c8:focus-visible {
+  outline: none;
+  border-color: #4475E3;
+}
+
+.c8:disabled {
+  color: #DBDBDB;
+  border-color: rgba(219,219,219,0.2);
+  background-color: rgba(219,219,219,0.2);
+}
+
+.c8::-webkit-input-placeholder {
+  color: #808080;
+}
+
+.c8::-moz-placeholder {
+  color: #808080;
+}
+
+.c8:-ms-input-placeholder {
+  color: #808080;
+}
+
+.c8::placeholder {
+  color: #808080;
+}
+
+.c8:disabled::-webkit-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled::-moz-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled:-ms-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled::placeholder {
+  color: #DBDBDB;
+}
+
+.c8:-webkit-autofill,
+.c8:-webkit-autofill:hover,
+.c8:-webkit-autofill:focus {
+  border: 0.0625rem solid #4475E3;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: #F7F8FA !important;
+  background-image: unset !important;
+  -webkit-text-fill-color: #838383;
+}
+
+.c8:-webkit-autofill:focus {
+  border-color: #4475E3;
+}
+
+.c6 {
+  max-height: 3.5rem;
+}
+
+.c6:hover .c7:enabled {
+  border-color: #2F65E0;
+}
+
+.c5 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  gap: 0.5rem;
+  height: 1.125rem;
+}
+
+.c10 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #D14343;
+  padding-left: 1rem;
+  height: 1.0625rem;
+}
+
+.c12 {
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.c12 svg {
+  fill: #4475E3;
+}
+
+.c12:active,
+.c12:enabled:hover {
+  cursor: pointer;
+}
+
+.c12:active svg,
+.c12:enabled:hover svg {
+  fill: #4475E3;
+}
+
+.c12:disabled svg {
+  fill: #DBDBDB;
+}
+
+.c13 {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c13:hover {
+  cursor: pointer;
+}
+
+.c1 {
+  color: #474747;
+  min-width: 42.6875rem;
+  width: 55.556vw;
+  min-height: 32.015625rem;
+  height: 41.667vw;
+  max-height: 90vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin: auto;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.c2 {
+  width: 28rem;
+  margin: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c3 {
+  font-family: Inter,sans-serif;
+  font-size: 2rem;
+  line-height: 2.625rem;
+  font-weight: 600;
+  font-style: normal;
+  margin: 2.5rem auto 2.625rem;
+}
+
+.c14 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  height: 3.9375rem;
+  color: #4475E3;
+}
+
+.c22 {
+  height: 2.125rem;
+}
+
+.c22:disabled > div {
+  color: #838383;
+}
+
+.c29 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #D14343;
+  height: 2.5rem;
+  width: 100%;
+  text-align: center;
+  padding-top: 1.25rem;
+}
+
+.c27 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  margin-top: 0.5rem;
+}
+
+.c27 a {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  color: #4475E3;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+@media (max-height:31.9375rem) {
+  .c0 {
+    overflow-y: scroll;
+  }
+}
+
+@media (max-width:42.625rem) {
+  .c0 {
+    overflow-x: scroll;
+  }
+}
+
+<div
+  class="c0"
+  data-testid="signin-screen"
+>
+  <div
+    class="c1"
+    width="55.556"
+  >
+    <div
+      class="c2"
+    >
+      <div
+        class="c3"
+      >
+        Sign in
+      </div>
+      <div
+        class="c4"
+      >
+        <div
+          class="c5"
+          data-testid="input-description"
+        >
+          Email
+        </div>
+        <div
+          class="c6"
+        >
+          <input
+            class="c7 c8"
+            data-testid="signin-screen-email"
+            name="email"
+            type="email"
+            value=""
+          />
+          <div
+            class="c9"
+          />
+        </div>
+        <div
+          class="c10"
+          data-testid="input-error"
+        >
+           
+        </div>
+      </div>
+      <div
+        class="c4"
+      >
+        <div
+          class="c5"
+          data-testid="input-description"
+        >
+          Password
+        </div>
+        <div
+          class="c6"
+        >
+          <input
+            autocomplete="new-password"
+            class="c7 c8"
+            data-testid="signin-screen-password"
+            name="password"
+            type="password"
+            value=""
+          />
+          <div
+            class="c11"
+          >
+            <button
+              class="c12 c13"
+              color="primary"
+            >
+              <svg
+                data-testid="icon"
+              />
+            </button>
+          </div>
+        </div>
+        <div
+          class="c10"
+          data-testid="input-error"
+        >
+           
+        </div>
+      </div>
+      <div
+        class="c14"
+      >
+        <div
+          class="c15"
+        >
+          <label
+            class="c16 c17"
+            for="checkbox_1"
+          >
+            <div
+              class="c18 c19"
+            >
+              <svg />
+            </div>
+            <div
+              class="c20"
+              data-testid="checkbox-label"
+            >
+              <div>
+                Remember me
+              </div>
+            </div>
+          </label>
+          <input
+            data-testid="signin-screen-remember"
+            id="checkbox_1"
+            type="checkbox"
+          />
+        </div>
+        <button
+          class="c21 c22"
+          disabled=""
+          fill="text"
+          style="overflow: hidden; position: relative;"
+          width="120"
+        >
+          <div
+            class="c23"
+            data-testid="content"
+          >
+            Forgot Password?
+          </div>
+          <div
+            class="c24"
+            color="primaryLightPressed"
+            opacity="1,1"
+            scale="0"
+            style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+          />
+        </button>
+      </div>
+      <button
+        class="c25"
+        data-testid="signin-screen-send"
+        disabled=""
+        fill="solid"
+        style="overflow: hidden; position: relative;"
+      >
+        <div
+          class="c23"
+          data-testid="content"
+        >
+          Sign In
+        </div>
+        <div
+          class="c26"
+          color="primaryPressed"
+          opacity="1,1"
+          scale="0"
+          style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+        />
+      </button>
+      <div
+        class="c27"
+      >
+        Don’t have an account?
+        <a
+          class="c28"
+          href="/account/create"
+        >
+          Create an account
+        </a>
+      </div>
+      <div
+        class="c29"
+        data-testid="signin-screen-error"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SignInScreen should sign in 1`] = `
+.c28 {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: default;
+  -webkit-user-drag: none;
+}
+
+.c28:hover {
+  cursor: pointer;
+}
+
+.c24 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  background-color: #E3EAFB;
+  pointer-events: none;
+}
+
+.c26 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.c21 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 7.5rem;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 0;
+  transition-duration: 0;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 2.5rem;
+  border: none;
+  background-color: transparent;
+}
+
+.c21 > div {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c21 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c21 > div {
+  color: #4475E3;
+}
+
+.c21 > div svg {
+  fill: #4475E3;
+}
+
+.c21:hover:enabled > div {
+  color: #2F65E0;
+}
+
+.c21:hover:enabled > div svg {
+  fill: #2F65E0;
+}
+
+.c21:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c21:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c21:disabled > div {
+  color: #B3C6F1;
+}
+
+.c21:disabled > div svg {
+  fill: #B3C6F1;
+}
+
+.c21:focus-visible {
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c21:focus-visible > div {
+  color: #4475E3;
+}
+
+.c21:focus-visible > div svg {
+  fill: #4475E3;
+}
+
+.c25 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 400ms;
+  transition-duration: 400ms;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: #4475E3;
+}
+
+.c25 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c25 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c25 > div {
+  color: #FFFFFF;
+}
+
+.c25 > div svg {
+  fill: #FFFFFF;
+}
+
+.c25:hover:enabled {
+  background-color: #2F65E0;
+}
+
+.c25:disabled {
+  background-color: #B3C6F1;
+}
+
+.c25:focus-visible:enabled {
+  border: 0.125rem solid #FFFFFF;
+  background-color: #4475E3;
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c23 {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transform: translate3d(0,0,0.0625rem);
+  -ms-transform: translate3d(0,0,0.0625rem);
+  transform: translate3d(0,0,0.0625rem);
+}
+
+.c17 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+}
+
+.c19 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c20 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  margin-top: 0.59375rem;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c15 {
+  display: inline-block;
+}
+
+.c15 input {
+  display: none;
+}
+
+.c15 .c18 > svg > :nth-child(1) {
+  -webkit-transition: stroke 300ms cubic-bezier(0.45,0.05,0,1),fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke 300ms cubic-bezier(0.45,0.05,0,1),fill 300ms cubic-bezier(0.45,0.05,0,1);
+  stroke: #B3C6F1;
+  fill: #FFFFFF;
+}
+
+.c15:hover > .c16 {
+  cursor: pointer;
+}
+
+.c15:hover .c18 > svg > :nth-child(1) {
+  fill: #ECF1FC;
+  stroke: #B3C6F1;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.c9 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 0.5rem);
+}
+
+.c11 > svg {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c8 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  box-sizing: border-box;
+  height: 3.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid #F7F8FA;
+  border-radius: 0.25rem;
+  -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  caret-color: #4475E3;
+}
+
+.c8:hover:enabled {
+  border-color: #2F65E0;
+}
+
+.c8:active:enabled,
+.c8:focus-visible {
+  outline: none;
+  border-color: #4475E3;
+}
+
+.c8:disabled {
+  color: #DBDBDB;
+  border-color: rgba(219,219,219,0.2);
+  background-color: rgba(219,219,219,0.2);
+}
+
+.c8::-webkit-input-placeholder {
+  color: #808080;
+}
+
+.c8::-moz-placeholder {
+  color: #808080;
+}
+
+.c8:-ms-input-placeholder {
+  color: #808080;
+}
+
+.c8::placeholder {
+  color: #808080;
+}
+
+.c8:disabled::-webkit-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled::-moz-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled:-ms-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c8:disabled::placeholder {
+  color: #DBDBDB;
+}
+
+.c8:-webkit-autofill,
+.c8:-webkit-autofill:hover,
+.c8:-webkit-autofill:focus {
+  border: 0.0625rem solid #4475E3;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: #F7F8FA !important;
+  background-image: unset !important;
+  -webkit-text-fill-color: #838383;
+}
+
+.c8:-webkit-autofill:focus {
+  border-color: #4475E3;
+}
+
+.c6 {
+  max-height: 3.5rem;
+}
+
+.c6:hover .c7:enabled {
+  border-color: #2F65E0;
+}
+
+.c5 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  gap: 0.5rem;
+  height: 1.125rem;
+}
+
+.c10 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #D14343;
+  padding-left: 1rem;
+  height: 1.0625rem;
+}
+
+.c12 {
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.c12 svg {
+  fill: #4475E3;
+}
+
+.c12:active,
+.c12:enabled:hover {
+  cursor: pointer;
+}
+
+.c12:active svg,
+.c12:enabled:hover svg {
+  fill: #4475E3;
+}
+
+.c12:disabled svg {
+  fill: #DBDBDB;
+}
+
+.c13 {
+  position: relative;
+  bottom: 2.6875rem;
+  left: calc(100% - 2rem);
+}
+
+.c13:hover {
+  cursor: pointer;
+}
+
+.c1 {
+  color: #474747;
+  min-width: 42.6875rem;
+  width: 55.556vw;
+  min-height: 32.015625rem;
+  height: 41.667vw;
+  max-height: 90vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin: auto;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.c2 {
+  width: 28rem;
+  margin: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c3 {
+  font-family: Inter,sans-serif;
+  font-size: 2rem;
+  line-height: 2.625rem;
+  font-weight: 600;
+  font-style: normal;
+  margin: 2.5rem auto 2.625rem;
+}
+
+.c14 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  height: 3.9375rem;
+  color: #4475E3;
+}
+
+.c22 {
+  height: 2.125rem;
+}
+
+.c22:disabled > div {
+  color: #838383;
+}
+
+.c29 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #D14343;
+  height: 2.5rem;
+  width: 100%;
+  text-align: center;
+  padding-top: 1.25rem;
+}
+
+.c27 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  margin-top: 0.5rem;
+}
+
+.c27 a {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  color: #4475E3;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+@media (max-height:31.9375rem) {
+  .c0 {
+    overflow-y: scroll;
+  }
+}
+
+@media (max-width:42.625rem) {
+  .c0 {
+    overflow-x: scroll;
+  }
+}
+
+<div
+  class="c0"
+  data-testid="signin-screen"
+>
+  <div
+    class="c1"
+    width="55.556"
+  >
+    <div
+      class="c2"
+    >
+      <div
+        class="c3"
+      >
+        Sign in
+      </div>
+      <div
+        class="c4"
+      >
+        <div
+          class="c5"
+          data-testid="input-description"
+        >
+          Email
+        </div>
+        <div
+          class="c6"
+        >
+          <input
+            class="c7 c8"
+            data-testid="signin-screen-email"
+            name="email"
+            type="email"
+            value=""
+          />
+          <div
+            class="c9"
+          />
+        </div>
+        <div
+          class="c10"
+          data-testid="input-error"
+        >
+           
+        </div>
+      </div>
+      <div
+        class="c4"
+      >
+        <div
+          class="c5"
+          data-testid="input-description"
+        >
+          Password
+        </div>
+        <div
+          class="c6"
+        >
+          <input
+            autocomplete="new-password"
+            class="c7 c8"
+            data-testid="signin-screen-password"
+            name="password"
+            type="password"
+            value=""
+          />
+          <div
+            class="c11"
+          >
+            <button
+              class="c12 c13"
+              color="primary"
+            >
+              <svg
+                data-testid="icon"
+              />
+            </button>
+          </div>
+        </div>
+        <div
+          class="c10"
+          data-testid="input-error"
+        >
+           
+        </div>
+      </div>
+      <div
+        class="c14"
+      >
+        <div
+          class="c15"
+        >
+          <label
+            class="c16 c17"
+            for="checkbox_1"
+          >
+            <div
+              class="c18 c19"
+            >
+              <svg />
+            </div>
+            <div
+              class="c20"
+              data-testid="checkbox-label"
+            >
+              <div>
+                Remember me
+              </div>
+            </div>
+          </label>
+          <input
+            data-testid="signin-screen-remember"
+            id="checkbox_1"
+            type="checkbox"
+          />
+        </div>
+        <button
+          class="c21 c22"
+          disabled=""
+          fill="text"
+          style="overflow: hidden; position: relative;"
+          width="120"
+        >
+          <div
+            class="c23"
+            data-testid="content"
+          >
+            Forgot Password?
+          </div>
+          <div
+            class="c24"
+            color="primaryLightPressed"
+            opacity="1,1"
+            scale="0"
+            style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+          />
+        </button>
+      </div>
+      <button
+        class="c25"
+        data-testid="signin-screen-send"
+        disabled=""
+        fill="solid"
+        style="overflow: hidden; position: relative;"
+      >
+        <div
+          class="c23"
+          data-testid="content"
+        >
+          Sign In
+        </div>
+        <div
+          class="c26"
+          color="primaryPressed"
+          opacity="1,1"
+          scale="0"
+          style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+        />
+      </button>
+      <div
+        class="c27"
+      >
+        Don’t have an account?
+        <a
+          class="c28"
+          href="/account/create"
+        >
+          Create an account
+        </a>
+      </div>
+      <div
+        class="c29"
+        data-testid="signin-screen-error"
+      />
+    </div>
+  </div>
+</div>
+`;

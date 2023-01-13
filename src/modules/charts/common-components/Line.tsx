@@ -34,6 +34,7 @@ const Line: React.FC<Props> = ({ id, data, color, xScale, yScale, strokeOpacity,
     <path
       className={LINE_CLASS_NAME}
       id={id}
+      data-testid={id}
       d={drawLine() || ''}
       fill="none"
       stroke={color}

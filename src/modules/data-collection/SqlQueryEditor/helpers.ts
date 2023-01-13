@@ -10,7 +10,7 @@ const noHint: CodeMirror.Hints = {
   to: Pos(0),
 };
 
-const handleError = (e: unknown) => {
+export const handleError = (e: unknown) => {
   if (e instanceof Error) {
     console.error(e);
   }
@@ -61,7 +61,11 @@ const handleStartTypingColumnHint = (props: {
   };
 };
 
-const handleColumnHint = (props: { columns: string[]; cursorCh: number; lineNum?: number }) => {
+export const handleColumnHint = (props: {
+  columns: string[];
+  cursorCh: number;
+  lineNum?: number;
+}) => {
   const { columns, cursorCh, lineNum = 0 } = props;
 
   return {

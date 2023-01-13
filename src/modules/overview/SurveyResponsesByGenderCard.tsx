@@ -51,6 +51,7 @@ const SurveyResponsesByGenderCard: React.FC = () => {
 
   return (
     <OverviewCard
+      data-testid="survey-responses-by-gender-card"
       title="Survey Responses by Gender"
       error={!!error}
       onReload={refetch}

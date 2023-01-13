@@ -11,10 +11,7 @@ import {
 } from 'src/common/utils/datetime';
 
 beforeAll(() => {
-  jest
-    .spyOn(Date, 'now')
-    .mockImplementation()
-    .mockReturnValue(+new Date(1970, 1, 1, 0, 10, 0));
+  jest.spyOn(Date, 'now').mockImplementation().mockReturnValue(+new Date(1970, 1, 1, 0, 10, 0));
 });
 describe('duration', () => {
   it('Should return value', () => {

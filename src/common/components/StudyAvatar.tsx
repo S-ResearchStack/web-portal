@@ -13,7 +13,7 @@ import { animation, boxShadow, px } from 'src/styles';
 export type AvatarSize = 's' | 'm' | 'xxl';
 
 const adjustSizes = ($selected = false) => ({
-  s: 36,
+  s: 40,
   m: $selected ? 69 : 62,
   xxl: $selected ? 147 : 142,
 });

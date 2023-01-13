@@ -10,6 +10,12 @@ export const SkeletonRect: FC<SkeletonRectProps> = ({ ...props }) => (
   <rect rx={4} fill="#E9E9E9" {...props} />
 ); // TODO: unknown color
 
+export type SkeletonPathProps = React.SVGAttributes<SVGPathElement>;
+
+export const SkeletonPath: FC<SkeletonPathProps> = ({ ...props }) => (
+  <path fill="#E9E9E9" {...props} />
+); // TODO: unknown color
+
 interface SkeletonLoadingProps
   extends React.PropsWithChildren<React.HTMLAttributes<SVGSVGElement>> {
   duration?: number;
@@ -100,9 +106,12 @@ const SkeletonLoading: FC<SkeletonLoadingProps> = ({
 
         {children &&
           Children.map(children, (child, idx) =>
-            cloneElement(child as unknown as React.ReactElement<SkeletonRectProps>, {
-              id: createElementId(idx),
-            })
+            cloneElement(
+              child as unknown as React.ReactElement<SkeletonRectProps | SkeletonPathProps>,
+              {
+                id: createElementId(idx),
+              }
+            )
           )}
 
         <rect

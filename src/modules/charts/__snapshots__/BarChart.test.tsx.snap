@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BarChart should render 1`] = `
+.c6 {
+  display: inline-block;
+  position: relative;
+}
+
+.c2 > .tick > text {
+  font-family: Inter,sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c3 > .tick > text {
+  font-family: Inter,sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c4 {
+  fill: #00B0D7;
+}
+
+.c5 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c5 value {
+  fill: #F7F8FA;
+  -webkit-dominant-baseline: middle;
+  dominant-baseline: middle;
+  text-anchor: middle;
+}
+
+.c0 {
+  position: relative;
+}
+
+.c1 .xAxis .tick line {
+  stroke: #F0F0F0;
+  stroke-width: 0.0625rem;
+  opacity: 0;
+}
+
+.c1 .xAxis .tick text {
+  font-family: Inter,sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+}
+
+.c1 .yAxis .tick line {
+  stroke: #F0F0F0;
+  stroke-width: 0.0625rem;
+  opacity: 1;
+}
+
+.c1 .yAxis .tick text {
+  font-family: Inter,sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  text-anchor: end;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <svg
+        class="c1"
+        height="1000"
+        width="1000"
+      >
+        <g
+          class="c2 xAxis"
+          fill="none"
+          font-family="sans-serif"
+          font-size="10"
+          text-anchor="middle"
+          transform="translate(0, 977)"
+        >
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(521.5,0)"
+          >
+            <line
+              stroke="currentColor"
+              y2="6"
+            />
+            <text
+              dy="0.71em"
+              fill="currentColor"
+              x="1"
+              y="12"
+            >
+              test
+            </text>
+          </g>
+        </g>
+        <g
+          class="c3 yAxis"
+          fill="none"
+          font-family="sans-serif"
+          font-size="10"
+          text-anchor="start"
+          transform="translate(43,0)"
+        >
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,977.5)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              0%
+            </text>
+          </g>
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,782.9)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              20%
+            </text>
+          </g>
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,588.3)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              40%
+            </text>
+          </g>
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,393.7)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              60%
+            </text>
+          </g>
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,199.09999999999994)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              80%
+            </text>
+          </g>
+          <g
+            class="tick"
+            opacity="1"
+            transform="translate(0,4.5)"
+          >
+            <line
+              stroke="currentColor"
+              x2="957"
+            />
+            <text
+              dy="0.32em"
+              fill="currentColor"
+              x="-8"
+              y="1"
+            >
+              100%
+            </text>
+          </g>
+        </g>
+        <g
+          class="bar"
+        >
+          <rect
+            class="c4"
+            data-testid="bar-0"
+            height="97.29999999999995"
+            id="bar-0"
+            width="602.91"
+            x="220.04500000000002"
+            y="879.7"
+          />
+          <text
+            class="c5"
+            dy="0"
+            x="522.5"
+            y="863.7"
+          />
+        </g>
+      </svg>
+      <span
+        class="c6"
+        data-testid="tooltip-container"
+      />
+    </div>
+  </div>
+</body>
+`;

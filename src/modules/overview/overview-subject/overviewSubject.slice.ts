@@ -1,32 +1,32 @@
 import createDataSlice from 'src/modules/store/createDataSlice';
-import API, { GetParticipantRequest } from 'src/modules/api';
+import API from 'src/modules/api';
 import {
-  participantListItemMock,
-  participantListMock,
-  transformParticipantListItemFromApi,
+  healthDataOverviewListMock,
+  healthDataOverviewMock,
+  transformHealthDataOverviewItemFromApi,
 } from 'src/modules/overview/participantsList.slice';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getParticipantMock: typeof API.getParticipant = ({ projectId, id }) =>
-  API.mock.response([
-    participantListMock.find((item) => item.user_id === id) || participantListItemMock(),
-  ]);
+const getHealthDataOverviewForUserMock: typeof API.getHealthDataOverviewForUser = ({ userId }) =>
+  API.mock.response({
+    healthDataOverviewOfUser:
+      healthDataOverviewListMock.find((u) => u.userId === userId) || healthDataOverviewMock(),
+  });
 
 API.mock.provideEndpoints({
-  getParticipant: getParticipantMock,
+  getHealthDataOverviewForUser: getHealthDataOverviewForUserMock,
 });
 
-export type GetOverviewSubjectParams = GetParticipantRequest & { studyId: string };
+export type GetOverviewSubjectParams = { id: string; studyId: string };
 
 export const overviewSubjectSlice = createDataSlice({
   name: 'overview/subject',
   fetchData: async ({ id, studyId }: GetOverviewSubjectParams) => {
-    const { data } = await API.getParticipant({
+    const { data } = await API.getHealthDataOverviewForUser({
       projectId: studyId,
-      id,
+      userId: id,
     });
 
-    return transformParticipantListItemFromApi(data[0]);
+    return transformHealthDataOverviewItemFromApi(data.healthDataOverviewOfUser);
   },
 });
 

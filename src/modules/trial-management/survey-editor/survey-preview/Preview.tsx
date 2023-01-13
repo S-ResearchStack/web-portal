@@ -254,8 +254,14 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
   );
 
   return (
-    <PreviewContainer $isOpen={!!isOpen}>
-      <CloseButton icon={<Close />} fill="text" width={164} onClick={onClose}>
+    <PreviewContainer data-testid="survey-preview" $isOpen={!!isOpen}>
+      <CloseButton
+        data-testid="survey-preview-close"
+        icon={<Close />}
+        fill="text"
+        width={164}
+        onClick={onClose}
+      >
         Close Preview
       </CloseButton>
       <DropdownWrapper>
@@ -284,6 +290,7 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
           </Content>
           <Buttons>
             <PreviewButton
+              data-testid="survey-preview-prev"
               disabled={activeQuestionIndex === 0}
               width={75}
               onClick={() => handleChangeActiveQuestion(activeQuestionIndex - 1)}
@@ -291,6 +298,7 @@ const Preview: FC<PreviewProps> = ({ isOpen, onClose }: PreviewProps) => {
               Previous
             </PreviewButton>
             <PreviewButton
+              data-testid="survey-preview-next"
               width={activeQuestionIndex === survey.questions.length - 1 ? 60 : 41}
               onClick={() => handleChangeActiveQuestion(activeQuestionIndex + 1)}
               disabled={isNextDisabled}

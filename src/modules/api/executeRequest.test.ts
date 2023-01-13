@@ -5,8 +5,12 @@ const responseData = {
 };
 
 beforeAll(() => {
-  global.fetch = jest.fn((url: string) =>
-    Promise.resolve({
+  global.fetch = jest.fn((url: string) => {
+    if (url.includes('connection-error')) {
+      return Promise.reject(new Error('Failed to connect'));
+    }
+
+    return Promise.resolve({
       ...(url.includes('error')
         ? {
             ok: false,
@@ -19,8 +23,8 @@ beforeAll(() => {
       headers: {},
       blob: () => Promise.resolve(url.includes('bad-data') ? null : responseData),
       json: () => Promise.resolve(url.includes('bad-data') ? null : responseData),
-    })
-  ) as unknown as typeof fetch;
+    });
+  }) as unknown as typeof fetch;
 });
 
 describe('executeRequest', () => {
@@ -68,5 +72,21 @@ describe('executeRequest', () => {
     });
 
     expect(data).toBeNull();
+  });
+
+  it('[NEGATIVE] should execute failure when failed to connect', async () => {
+    expect.assertions(2);
+
+    const response = await executeRequest({
+      url: 'https://samsung.com/connection-error',
+    });
+    expect(response.status).toBe(-1);
+    expect(String(response.error)).toMatch('Server connection failed');
+
+    try {
+      expect(response.data).toBeDefined();
+    } catch {
+      // ignore
+    }
   });
 });

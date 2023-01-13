@@ -41,6 +41,7 @@ const SurveyResponsesByAgeCard: React.FC = () => {
 
   return (
     <OverviewCard
+      data-testid="survey-responses-by-age-card"
       title="Survey Responses by Age"
       error={!!error}
       onReload={refetch}

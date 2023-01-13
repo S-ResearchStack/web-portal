@@ -107,6 +107,7 @@ const typography = {
   bodyMediumRegular: fontSpec(16, 24, 'regular', 'Inter'),
   bodyMediumSemibold: fontSpec(16, 24, 'semibold', 'Inter'),
   bodyLargeRegular: fontSpec(18, 26, 'regular', 'Inter'),
+  bodyLargeSemibold: fontSpec(18, 26, 'semibold', 'Inter'),
 
   headingXSmall: fontSpec(16, 21, 'semibold', 'Inter'),
   headingSmall: fontSpec(18, 23, 'semibold', 'Inter'),

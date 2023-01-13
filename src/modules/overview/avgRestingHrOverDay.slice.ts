@@ -16,39 +16,40 @@ export const getParticipantHeartRatesMock: typeof API.getParticipantHeartRates =
   startTime,
   endTime,
 }) => {
-  const startTs = DateTime.fromSQL(startTime).valueOf();
-  const endTs = DateTime.fromSQL(endTime).valueOf();
+  const startTs = DateTime.fromISO(startTime).valueOf();
+  const endTs = DateTime.fromISO(endTime).valueOf();
 
   const r = new Random(1);
 
-  return API.mock.response(
-    _range(1000).map((idx) => {
-      const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
+  return API.mock.response({
+    rawHealthData: _range(50).map((uIdx) => ({
+      userId: `user_${uIdx}`,
+      profiles: [
+        {
+          key: 'gender',
+          value: r.num() < 0.5 ? 'male' : 'female',
+        },
+      ],
+      heartRates: _range(20).map(() => {
+        const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
+        const hourOfDay = time.hour + time.minute / 60;
 
-      const hourOfDay = time.hour + time.minute / 60;
-      const wakeHour = r.num(6.5, 8);
-      const sleepHour = r.num(20, 24);
-      const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
-
-      const gender = r.num() < 0.5 ? 'male' : 'female';
-      const bpmExtra = gender === 'female' ? 1 : 0;
-
-      return {
-        user_id: `user_${idx % 50}`,
-        time: time.toISO(),
-        gender,
-        age: String(r.int(20, 100)),
-        bpm: String(
-          r.gaussNum({
+        const wakeHour = r.num(6.5, 8);
+        const sleepHour = r.num(20, 24);
+        const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
+        const gender = r.num() < 0.5 ? 'male' : 'female';
+        const bpmExtra = gender === 'female' ? 1 : 0;
+        return {
+          time: time.toSQL(),
+          bpm: r.gaussNum({
             min: bpmRange[0] + bpmExtra,
             max: bpmRange[1] + bpmExtra,
             standardDeviation: 4,
-          })
-        ),
-        anomaly: r.num() < 0.005,
-      };
-    })
-  );
+          }),
+        };
+      }),
+    })),
+  });
 };
 
 API.mock.provideEndpoints({
@@ -63,10 +64,12 @@ const avgRestingHrOverDaySlice = createDataSlice({
       .set({ hour: 6, minute: 0, second: 0, millisecond: 0 });
     const endTime = startTime.plus({ days: 1 });
 
-    const { data } = await API.getParticipantHeartRates({
+    const {
+      data: { rawHealthData: data },
+    } = await API.getParticipantHeartRates({
       projectId: studyId,
-      startTime: startTime.toSQL(),
-      endTime: endTime.toSQL(),
+      startTime: startTime.toISO(),
+      endTime: endTime.toISO(),
     });
 
     const startTimeMs = startTime.valueOf();
@@ -79,17 +82,34 @@ const avgRestingHrOverDaySlice = createDataSlice({
     }));
 
     const values = data
-      .map((d) => {
-        const ts = DateTime.fromISO(d.time).valueOf();
+      .reduce(
+        (acc, d) => {
+          const gender = d.profiles?.find((p) => p.key === 'gender')?.value;
+          for (const v of d.heartRates || []) {
+            if (!v.bpm || !v.time || !gender) {
+              // eslint-disable-next-line no-continue
+              continue;
+            }
 
-        return {
-          name: d.gender,
-          bucketIdx: timeBuckets.findIndex((b) => ts >= b.startMs && ts < b.endMs),
-          ts,
-          value: Number(d.bpm),
-          anomaly: d.anomaly,
-        };
-      })
+            const ts = DateTime.fromSQL(v.time).valueOf();
+            acc.push({
+              name: gender,
+              bucketIdx: timeBuckets.findIndex((b) => ts >= b.startMs && ts < b.endMs),
+              ts,
+              value: Number(v.bpm),
+              anomaly: false,
+            });
+          }
+          return acc;
+        },
+        [] as {
+          name: string;
+          bucketIdx: number;
+          ts: number;
+          value: number;
+          anomaly: boolean;
+        }[]
+      )
       .filter((v) => v.bucketIdx >= 0);
 
     const groupedValues = _groupBy(values, (v) => `${v.name}-${v.bucketIdx}`);

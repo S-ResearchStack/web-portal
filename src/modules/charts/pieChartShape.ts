@@ -44,6 +44,7 @@ export function drawPieChartShape<
     .data(pieData)
     .enter()
     .append('path')
+    .attr('data-testid', (d) => `arc-shape-${d.index}`)
     .attr('d', arcGenerator)
     .attr('fill', (d) => d.data.color)
     .on('mouseenter', (e, d) => onMouseEnter?.(e, d.index))

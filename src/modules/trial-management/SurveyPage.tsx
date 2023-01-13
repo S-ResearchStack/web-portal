@@ -181,7 +181,7 @@ const SurveyPage = () => {
   }
 
   return (
-    <Container>
+    <Container data-testid="survey-page">
       <ResponsiveContainer>
         {({ width }) => (
           <HeaderStickyContainer ref={headerRef} width={width}>

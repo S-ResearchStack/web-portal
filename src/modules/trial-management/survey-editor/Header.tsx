@@ -117,11 +117,22 @@ const Header: FC<HeaderProps> = ({
             {savedOn ? `Saved at ${DateTime.fromMillis(savedOn).toFormat('hh:mm a LLL d, y')}` : ''}
           </LastUpdateText>
           {showPreview && (
-            <Button fill="text" double="left" width={110} onClick={onPreview}>
+            <Button
+              data-testid="survey-editor-header-preview"
+              fill="text"
+              double="left"
+              width={110}
+              onClick={onPreview}
+            >
               Preview
             </Button>
           )}
-          <Button fill="solid" width={164} onClick={onPublish}>
+          <Button
+            data-testid="survey-editor-header-publish"
+            fill="solid"
+            width={164}
+            onClick={onPublish}
+          >
             Publish
           </Button>
         </RightSide>

@@ -26,12 +26,12 @@ export type DataSliceState<D, A> = PublicDataSliceState<D> & {
 
 type DataSliceOptions<D, N extends string, A> = {
   name: N;
-  fetchData: (args: A) => Promise<D>;
+  fetchData: (args: A, dispatch: unknown) => Promise<D>;
 };
 
 type FetchActionOptions = {
   force?: boolean;
-  onError?: () => void;
+  onError?: (e?: unknown) => void;
 };
 
 type HookParams<A, D> = {
@@ -51,7 +51,7 @@ type DataSliceReturnType<D, N, A> = {
     params?: HookParams<A, D>,
     snackBarParams?: ShowOnErrorSnackbarParams
   ) => DataSliceState<D, A> & {
-    fetch: (args: A, opts?: FetchActionOptions) => void;
+    fetch: (args: A, opts?: FetchActionOptions) => Promise<void>;
     refetch: () => Promise<void>;
     reset: () => void;
   };
@@ -137,7 +137,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
       }
       dispatch(slice.actions.loadingStarted({ fetchArgs: args }));
       try {
-        const data = await options.fetchData(args);
+        const data = await options.fetchData(args, dispatch);
 
         const { fetchArgs: currentArgs } = sliceStateSelector(getState());
         // discard received data
@@ -155,7 +155,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
             )
           );
           if (!applyDefaultApiErrorHandlers(err, dispatch)) {
-            opts?.onError?.();
+            opts?.onError?.(err);
           }
         }
       }

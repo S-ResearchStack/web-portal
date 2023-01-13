@@ -30,6 +30,8 @@ const MOCK_REQUEST_DURATION = 1500;
 
 const implementedEndpoints: (keyof ApiEndpoints)[] = [
   'signin',
+  'signUp',
+  'verifyEmail',
   'resetPassword',
   'getUsers',
   'inviteUser',
@@ -38,9 +40,9 @@ const implementedEndpoints: (keyof ApiEndpoints)[] = [
   'refreshToken',
   'getStudies',
   'createStudy',
-  'getParticipantsTotalItems',
-  'getParticipants',
-  'getParticipant',
+  'getHealthDataOverview',
+  'getHealthDataOverviewForUser',
+  'getUserProfilesCount',
   'getParticipantHeartRates',
   'getAverageParticipantHeartRate',
   'getAverageStepCount',
@@ -54,6 +56,7 @@ const implementedEndpoints: (keyof ApiEndpoints)[] = [
   'getTaskItemResults',
   'getTaskRespondedUsersCount',
   'getTaskCompletionTime',
+  'resendVerification',
 ];
 
 export const mockedEndpoints: Partial<ApiEndpoints> = {};

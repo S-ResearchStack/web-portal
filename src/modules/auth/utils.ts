@@ -9,3 +9,5 @@ type AuthTokenPayload = {
 };
 
 export const decodeAuthToken = (jwt: string): AuthTokenPayload => jwtDecode<AuthTokenPayload>(jwt);
+
+export const STORAGE_ALREADY_BEEN_AUTH_KEY = 'already_been_auth';

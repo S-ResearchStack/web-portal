@@ -80,7 +80,25 @@ module.exports = (env, argv) => {
           test: /\.svg$/i,
           issuer: /\.[jt]sx?$/,
           resourceQuery: { not: [/url/] },
-          use: ['@svgr/webpack'],
+          use: [
+            {
+              loader: '@svgr/webpack',
+              options: {
+                svgoConfig: {
+                  plugins: [
+                    {
+                      name: 'preset-default',
+                      params: {
+                        overrides: {
+                          removeViewBox: false,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
       ],
     },

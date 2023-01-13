@@ -12,7 +12,10 @@ import PrivateRoute from 'src/modules/navigation/private-route/PrivateRoute';
 import MainLayout from 'src/modules/main-layout/MainLayout';
 import SignInScreen from 'src/modules/auth/signin/SignInScreen';
 import AccountActivationScreen from 'src/modules/auth/signin/AccountActivationScreen';
-import CreateStudyScreen from 'src/modules/auth/signin/CreateStudyScreen';
+import SignUp from 'src/modules/auth/signup/SignUp';
+import CheckMailbox from 'src/modules/auth/signup/CheckMailbox';
+import AccountCreated from 'src/modules/auth/signup/AccountCreated';
+import CreateStudyScreen from 'src/modules/studies/CreateStudyScreen';
 import { TooltipProvider, TooltipsList } from 'src/common/components/Tooltip';
 import { theme, GlobalStyles } from 'src/styles';
 
@@ -28,9 +31,10 @@ const App = () => (
             <Switch>
               <Route path={Path.SignIn} component={SignInScreen} />
               <Route path={Path.AccountActivation} component={AccountActivationScreen} />
-              <PrivateRoute path={Path.CreateStudy}>
-                <CreateStudyScreen />
-              </PrivateRoute>
+              <Route path={Path.AccountCreate} component={SignUp} />
+              <Route path={Path.AccountConfirm} component={CheckMailbox} />
+              <Route path={Path.AccountVerification} component={AccountCreated} />
+              <PrivateRoute path={Path.CreateStudy} component={CreateStudyScreen} />
               <PrivateRoute>
                 <MainLayout />
               </PrivateRoute>

@@ -19,24 +19,6 @@ import {
 
 export const getRangeFromSelection = (v: [number, number]): number => v[1] - v[0];
 
-export const calcNextSelectionByMovement = (
-  currentSelection: [number, number],
-  originalSelectionRange: [number, number],
-  movement: number
-): [number, number] | null => {
-  const currentRange = getRangeFromSelection(currentSelection);
-  const originalRange = getRangeFromSelection(originalSelectionRange);
-  const k = currentRange / originalRange;
-  const nextSelection = currentSelection.map((v) => v - movement * k);
-  if (
-    nextSelection[0] < originalSelectionRange[0] ||
-    nextSelection[1] > originalSelectionRange[1]
-  ) {
-    return currentSelection;
-  }
-  return nextSelection as [number, number];
-};
-
 export const getMarginContextX = (fHeight: number) => ({
   ...MARGIN_CONTEXT_X,
   bottom: AXIS_X_HEIGHT + fHeight,

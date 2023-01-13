@@ -2,13 +2,14 @@ import React from 'react';
 import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import { getByText, render } from '@testing-library/react';
+import { act, getByText, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
 import Modal from './Modal';
 
 describe('Modal', () => {
-  it('test modal render', () => {
+  it('test modal render', async () => {
     const onAccept = jest.fn();
     const onDecline = jest.fn();
 
@@ -40,6 +41,14 @@ describe('Modal', () => {
 
     expect(description).toBeInTheDocument();
     expect(description).toBeVisible();
+
+    expect(onAccept).toHaveBeenCalledTimes(0);
+    await act(async () => userEvent.type(baseElement, '{enter}'));
+    expect(onAccept).toHaveBeenCalledTimes(1);
+
+    expect(onDecline).toHaveBeenCalledTimes(0);
+    await act(async () => userEvent.type(baseElement, '{escape}'));
+    expect(onDecline).toHaveBeenCalledTimes(1);
 
     rerender(
       <ThemeProvider theme={theme}>

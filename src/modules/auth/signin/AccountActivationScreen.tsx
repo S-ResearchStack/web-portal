@@ -13,7 +13,7 @@ import { useAppDispatch } from 'src/modules/store';
 import { px, typography } from 'src/styles';
 import { activateAccount } from '../auth.slice';
 import { useEnterPress } from './hooks';
-import ScreenCenteredCard from './ScreenCenteredCard';
+import ScreenCenteredCard from '../common/ScreenCenteredCard';
 
 type PasswordRequirement = {
   rule: string;

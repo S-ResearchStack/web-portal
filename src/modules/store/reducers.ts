@@ -15,7 +15,7 @@ import { DataSliceState } from 'src/modules/store/createDataSlice';
 
 const createReducer = <T, V>(asyncReducers?: { [key: string]: Reducer<DataSliceState<T, V>> }) =>
   combineReducers({
-    auth: authReducer,
+    ...authReducer,
     router: connectRouter(history),
     snackbar: snackbarReducer,
     studies: studiesReducer,

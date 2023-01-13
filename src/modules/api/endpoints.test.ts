@@ -6,11 +6,10 @@ import {
   getAverageStepCount,
   getAvgHeartRateFluctuations,
   getEligibilityQualifications,
-  getParticipant,
+  getHealthDataOverview,
+  getHealthDataOverviewForUser,
   getParticipantHeartRates,
-  getParticipants,
   getParticipantsTimeZones,
-  getParticipantsTotalItems,
   getStudies,
   getSurveyResponsesByAge,
   getSurveyResponsesByGender,
@@ -21,6 +20,7 @@ import {
   getTaskItemResults,
   getTaskRespondedUsersCount,
   getTasks,
+  getUserProfilesCount,
   getUsers,
   inviteUser,
   refreshToken,
@@ -28,8 +28,11 @@ import {
   removeUserRole,
   resetPassword,
   signin,
+  signUp,
+  verifyEmail,
   updateTask,
   updateUserRole,
+  resendVerification,
 } from 'src/modules/api/endpoints';
 
 const endpoints = [
@@ -47,9 +50,9 @@ const endpoints = [
   getSurveyResponsesByGender,
   getEligibilityQualifications,
   getAvgHeartRateFluctuations,
-  getParticipants,
-  getParticipantsTotalItems,
-  getParticipant,
+  getHealthDataOverview,
+  getHealthDataOverviewForUser,
+  getUserProfilesCount,
   getParticipantHeartRates,
   getAverageParticipantHeartRate,
   getAverageStepCount,
@@ -64,6 +67,9 @@ const endpoints = [
   getTablesList,
   getTableColumns,
   executeDataQuery,
+  signUp,
+  verifyEmail,
+  resendVerification,
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,11 +124,11 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getEligibilityQualifications, []],
   [getAvgHeartRateFluctuations, []],
   [
-    getParticipants,
-    [{ projectId, limit: 10, offset: 10, sort: { column: 'steps', direction: 'desc' } }],
+    getHealthDataOverview,
+    [{ projectId, limit: 10, offset: 10, sort: { column: 'EMAIL', direction: 'DESC' } }],
   ],
-  [getParticipantsTotalItems, [{ projectId }]],
-  [getParticipant, [{ projectId, id: 'id' }]],
+  [getUserProfilesCount, [{ projectId }]],
+  [getHealthDataOverviewForUser, [{ projectId, id: 'id' }]],
   [
     getParticipantHeartRates,
     [{ projectId, startTime: new Date().toISOString(), endTime: new Date().toISOString() }],
@@ -135,14 +141,17 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getTasks, [{ projectId }]],
   [getTask, [{ projectId, id: 'id' }]],
   [createTask, [{ projectId }]],
-  [updateTask, [{ projectId, revisionId: 1, id: 'id' }]],
-  [getTaskItemResults, [{ projectId, revisionId: 1, id: 'id' }]],
-  [getTaskCompletionTime, [{ projectId, revisionId: 1, id: 'id' }]],
+  [updateTask, [{ projectId, id: 'id' }]],
+  [getTaskItemResults, [{ projectId, id: 'id' }]],
+  [getTaskCompletionTime, [{ projectId, id: 'id' }]],
   [getTaskRespondedUsersCount, [{ projectId }]],
   [getParticipantsTimeZones, [{ projectId }]],
   [getTablesList, [projectId]],
   [getTableColumns, [projectId, 'id']],
   [executeDataQuery, [projectId, 'select * from table']],
+  [signUp, [{ email: 'example@samsung.com', password: 'pa55w0rd', profile: { name: 'username' } }]],
+  [verifyEmail, [{ token: 'token' }]],
+  [resendVerification, [{ email, password }]],
 ];
 
 for (const endpoint of endpointsList) {
@@ -195,7 +204,7 @@ for (const endpoint of endpointsList) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const response = await endpoint[0].apply(null, endpoint[1]);
-        expect(response.data).toBeNull();
+        expect(response.data).toBeNil();
       } catch (e) {
         // do nothing
       }

@@ -41,6 +41,7 @@ const AvgStepCountCard: React.FC = () => {
 
   return (
     <OverviewCard
+      data-testid="avg-step-count-card"
       title="Avg. Step Count"
       empty={!isLoading && !data.length}
       loading={isLoading && !data.length}

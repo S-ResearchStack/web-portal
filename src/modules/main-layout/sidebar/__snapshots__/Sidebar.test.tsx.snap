@@ -1,0 +1,474 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sidebar should render 1`] = `
+.c8 {
+  border-radius: 1.5625rem;
+  height: 2.5rem;
+  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  position: relative;
+  background-color: transparent !important;
+  opacity: 1;
+}
+
+.c8:hover {
+  opacity: 1;
+  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
+  cursor: pointer;
+}
+
+.c8:hover:active {
+  opacity: 1;
+  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
+  cursor: pointer;
+  -webkit-filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
+  filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
+}
+
+.c1 {
+  display: inline-block;
+  position: static;
+}
+
+.c5 {
+  position: absolute;
+  will-change: opacity,transform;
+  border-radius: 50%;
+  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+  z-index: 0;
+  background-color: #E3EAFB;
+  pointer-events: none;
+}
+
+.c2 {
+  position: relative;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transition-duration: 0;
+  transition-duration: 0;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 1.5rem;
+  width: 1.5rem;
+  border: none;
+  background-color: transparent;
+}
+
+.c2:hover {
+  cursor: pointer;
+}
+
+.c2 > div {
+  color: #4475E3;
+}
+
+.c2 > div svg {
+  fill: #4475E3;
+}
+
+.c2:hover:enabled > div {
+  color: #2F65E0;
+}
+
+.c2:hover:enabled > div svg {
+  fill: #2F65E0;
+}
+
+.c2:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c2:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c2:disabled > div {
+  color: #B3C6F1;
+}
+
+.c2:disabled > div svg {
+  fill: #B3C6F1;
+}
+
+.c2:focus-visible {
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c2:focus-visible > div {
+  color: #4475E3;
+}
+
+.c2:focus-visible > div svg {
+  fill: #4475E3;
+}
+
+.c2:hover:enabled {
+  background-color: #ECF1FC;
+}
+
+.c2:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c2:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c2:focus-visible:enabled {
+  background-color: #C7D6F7;
+  outline: none;
+}
+
+.c4 {
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transform: translate3d(0,0,0.0625rem);
+  -ms-transform: translate3d(0,0,0.0625rem);
+  transform: translate3d(0,0,0.0625rem);
+}
+
+.c0 {
+  height: 100%;
+  background-color: #FFFFFF;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #808080;
+  position: relative;
+  border-right: 0.0625rem solid #F7F8FA;
+  -webkit-transition: border 150ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 150ms cubic-bezier(0.45,0.05,0,1);
+  padding-bottom: 0.875rem;
+}
+
+.c6 {
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  opacity: 1;
+}
+
+.c20 {
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  opacity: 0;
+}
+
+.c10 {
+  margin-right: 1rem;
+}
+
+.c3 {
+  position: absolute !important;
+  z-index: 1100;
+  background-color: #F6F8FE;
+  top: -62.5rem;
+  left: -62.5rem;
+}
+
+.c7 {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 2.375rem;
+}
+
+.c7:hover {
+  cursor: pointer;
+}
+
+.c7:hover .c9 {
+  box-shadow: 0 0.5rem 0.625rem 0.125rem 0 rgba(0,0,0,0.12);
+}
+
+.c11 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  margin-top: 0.125rem;
+  word-break: break-word;
+  display: block;
+  color: #474747;
+}
+
+.c21 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  padding-left: 1rem;
+  position: relative;
+  overflow: hidden;
+  height: 3.9375rem;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  margin-top: 0.25rem;
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #2D2D2D !important;
+}
+
+.c21 svg {
+  fill: #808080;
+}
+
+.c22 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 600;
+  font-style: normal;
+  margin-bottom: 0.5rem;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.c13 {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  overflow: auto;
+  position: relative;
+}
+
+.c17 {
+  position: relative;
+  z-index: 1000;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+.c19 {
+  position: relative;
+  z-index: 1000;
+  margin: 0;
+  display: block;
+}
+
+.c15 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.c16 {
+  padding: 1rem;
+  height: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #808080 !important;
+}
+
+.c16 svg {
+  fill: #808080;
+}
+
+.c16:hover {
+  cursor: pointer;
+  background-color: #ECF1FC;
+  color: #4475E3 !important;
+}
+
+.c16:hover svg {
+  fill: #4475E3;
+}
+
+.c16::before {
+  content: '';
+  height: 2rem;
+  width: 0.25rem;
+  border-radius: 0.125rem 0rem 0rem 0.125rem;
+  position: absolute;
+  left: 11.75rem;
+  background-color: #4475E3;
+  color: #4475E3;
+  z-index: 100;
+  display: none;
+}
+
+.c16 > .c18 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c14 {
+  margin-top: auto;
+}
+
+.c14 .c12 {
+  opacity: 0;
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+}
+
+.c14:hover .c12 {
+  opacity: 1;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+      id="sidebar"
+      style="width: 12rem; padding-top: 1.625rem;"
+    >
+      <span
+        class="c1"
+        data-testid="tooltip-container"
+      />
+      <button
+        class="c2 c3"
+        fill="text"
+        style="overflow: hidden; position: relative;"
+      >
+        <div
+          class="c4"
+          data-testid="content"
+        >
+          <svg />
+        </div>
+        <div
+          class="c5"
+          color="primaryLightPressed"
+          opacity="1,1"
+          scale="0"
+          style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+        />
+      </button>
+      <div
+        class="c6 c7"
+      >
+        <div
+          class="c8 c9 c10"
+          color="disabled"
+        >
+          <svg
+            data-testid="avatar-icon"
+            fill="#DBDBDB"
+          />
+        </div>
+        <div
+          class="c11"
+        />
+      </div>
+      <div
+        class="c12 c13"
+      />
+      <div
+        class="c14"
+      >
+        <div
+          class="c12 c13"
+        >
+          <div
+            class="c15 c16"
+            data-testid="user-profile-signout-action"
+          >
+            <div
+              class="c17"
+            >
+              <svg />
+            </div>
+            <p
+              class="c18 c19"
+            >
+              Sign out
+            </p>
+            <div
+              class="c5"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </div>
+        <div
+          class="c20 c21"
+        >
+          <div
+            class="c22"
+          />
+          Unknown
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

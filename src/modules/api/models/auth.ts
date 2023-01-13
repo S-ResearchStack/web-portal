@@ -11,6 +11,21 @@ export type SigninResponse = {
   jwt: string;
   roles: string[];
   refreshToken: string;
+  profile: UserProfile;
+};
+
+export type SignUpRequest = {
+  email: string;
+  password: string;
+  profile: UserProfile;
+};
+
+export type VerifyEmailRequest = {
+  token: string;
+};
+
+export type ResendVerificationEmailRequest = {
+  email: string;
 };
 
 export type ResetPasswordRequest = {

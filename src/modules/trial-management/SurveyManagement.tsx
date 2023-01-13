@@ -10,6 +10,7 @@ import CollapseSection from 'src/common/components/CollapseSection';
 import { colors, px, typography } from 'src/styles';
 import { useAppDispatch } from 'src/modules/store';
 import { useSelectedStudyId } from 'src/modules/studies/studies.slice';
+import { useSurveyListData } from 'src/modules/trial-management/surveyList.slice';
 import { createSurvey, useSurveyEditor } from './survey-editor/surveyEditor.slice';
 import SurveyList from './SurveyList';
 
@@ -37,9 +38,15 @@ const SurveyManagement = () => {
   const studyId = useSelectedStudyId();
   const { isCreating } = useSurveyEditor();
 
+  const { data, isLoading } = useSurveyListData({
+    fetchArgs: false, // is used as a selector
+  });
+
   const handleCreateSurveyClick = useCallback(() => {
     studyId && dispatch(createSurvey({ studyId }));
   }, [studyId, dispatch]);
+
+  const isSurveyCollapsed = !isLoading && !data?.drafts.length && !data?.published.length;
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -53,6 +60,8 @@ const SurveyManagement = () => {
         </BackdropOverlay>
       )}
       <CollapseSection
+        defaultCollapsed={isSurveyCollapsed}
+        data-testid="survey-management"
         title="Survey Management"
         headerExtra={
           <CreateSurveyButton

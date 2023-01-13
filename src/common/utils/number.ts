@@ -20,6 +20,13 @@ export const parseNumber = (
   return n;
 };
 
+export const roundNumber = (n: number | undefined | null): number | undefined => {
+  if (Number.isFinite(n)) {
+    return Math.round(n as unknown as number);
+  }
+  return undefined;
+};
+
 export type PluralConfigMap = Map<Intl.LDMLPluralRule, string>;
 
 export const PLURAL_MINUTES: PluralConfigMap = new Map([

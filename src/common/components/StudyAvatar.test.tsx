@@ -21,7 +21,7 @@ describe('StudyAvatar', () => {
     const avatarIcon = queryByTestId('avatar-icon') as Element;
 
     expect(avatar).toBeInTheDocument();
-    expect(avatar).toHaveStyle(`height: ${px(36)}`);
+    expect(avatar).toHaveStyle(`height: ${px(40)}`);
     expect(avatarIcon.getAttribute('fill')).toBe(`${theme.colors.primary}`);
   });
 

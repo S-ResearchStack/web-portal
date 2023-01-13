@@ -48,7 +48,7 @@ const Overview: React.FC = () => {
   }, [userRole]);
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} data-testid="overview">
       <SimpleGrid fullScreen>{content}</SimpleGrid>
     </div>
   );

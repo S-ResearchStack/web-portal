@@ -52,17 +52,22 @@ export type SurveyResults = {
   responses?: SurveyResultsResponse[];
 };
 
+const mockProfile = () => [
+  {
+    key: 'age' as const,
+    value: Random.shared.int(20, 100).toString(),
+  },
+  {
+    key: 'gender' as const,
+    value: Random.shared.arrayElement(['female', 'male']),
+  },
+];
+
 const mockRadioAnswers = _range(300).map((idx) => ({
-  age: Random.shared.int(20, 100).toString(),
-  gender: Random.shared.arrayElement(['female', 'male']),
-  id: '1',
-  item_name: 'Question0',
+  itemName: 'Question0',
   result: Random.shared.arrayElement(['Yes', 'No', 'I dont remember']),
-  revision_id: '7',
-  task_id: '1',
-  user_id: `user_id_${idx}`,
-  started_at: '0',
-  submitted_at: '0',
+  userId: `user_id_${idx}`,
+  profiles: mockProfile(),
 }));
 
 const getCheckboxAnswer = () =>
@@ -73,47 +78,39 @@ const getCheckboxAnswer = () =>
   ).join(',');
 
 const mockCheckboxAnswers = _range(300).map((idx) => ({
-  age: Random.shared.int(20, 100).toString(),
-  gender: Random.shared.arrayElement(['female', 'male']),
-  id: '1',
-  item_name: 'Question1',
+  itemName: 'Question1',
   result: getCheckboxAnswer(),
-  revision_id: '7',
-  task_id: '1',
-  user_id: `user_id_${idx}`,
-  started_at: '0',
-  submitted_at: '0',
+  userId: `user_id_${idx}`,
+  profiles: mockProfile(),
 }));
 
 const mockSliderAnswers = _range(300).map((idx) => ({
-  age: Random.shared.int(20, 100).toString(),
-  gender: Random.shared.arrayElement(['female', 'male']),
-  id: '1',
-  item_name: 'Question2',
+  itemName: 'Question2',
   result: Random.shared.int(1, 10).toString(),
-  revision_id: '7',
-  task_id: '1',
-  user_id: `user_id_${idx}`,
-  started_at: '0',
-  submitted_at: '0',
+  userId: `user_id_${idx}`,
+  profiles: mockProfile(),
 }));
 
 const mockTaskItemResults = [...mockRadioAnswers, ...mockCheckboxAnswers, ...mockSliderAnswers];
 
 API.mock.provideEndpoints({
   getTaskItemResults() {
-    return API.mock.response(mockTaskItemResults);
+    return API.mock.response({
+      surveyResponse: mockTaskItemResults,
+    });
   },
   getTaskCompletionTime() {
-    return API.mock.response([
-      {
-        avg_completion_time_ms: Duration.fromObject({
-          minutes: 34,
-        })
-          .toMillis()
-          .toString(),
-      },
-    ]);
+    return API.mock.response({
+      taskResults: [
+        {
+          completionTime: {
+            averageInMS: Duration.fromObject({
+              minutes: 34,
+            }).toMillis(),
+          },
+        },
+      ],
+    });
   },
 });
 
@@ -126,23 +123,28 @@ const surveyDetailsSlice = createDataSlice({
   name: 'trialManagement/survey',
   fetchData: async ({ id, studyId }: GetSurveyDetailsDataParams) => {
     const [task] = (await API.getTask({ id, projectId: studyId })).data;
-    const [{ data: responses }, { data: totalParticipantsResponse }, { data: completionTimeData }] =
-      await Promise.all([
-        API.getTaskItemResults({
-          id,
-          revisionId: task.revisionId,
-          projectId: studyId,
-        }),
-        API.getParticipantsTotalItems({ projectId: studyId }),
-        API.getTaskCompletionTime({
-          id,
-          revisionId: task.revisionId,
-          projectId: studyId,
-        }),
-      ]);
+    const [
+      {
+        data: { surveyResponse: responses },
+      },
+      { data: totalParticipantsResponse },
+      {
+        data: { taskResults: completionTimeData },
+      },
+    ] = await Promise.all([
+      API.getTaskItemResults({
+        id,
+        projectId: studyId,
+      }),
+      API.getUserProfilesCount({ projectId: studyId }),
+      API.getTaskCompletionTime({
+        id,
+        projectId: studyId,
+      }),
+    ]);
 
-    const numTotalParticipants = Number(totalParticipantsResponse[0].total);
-    const participants = _values(_groupBy(responses, (r) => r.user_id)).map((r) => r[0]);
+    const numTotalParticipants = Number(totalParticipantsResponse.count);
+    const participants = _values(_groupBy(responses, (r) => r.userId)).map((r) => r[0]);
 
     return {
       surveyInfo: {
@@ -156,8 +158,10 @@ const surveyDetailsSlice = createDataSlice({
         targetParticipants: numTotalParticipants,
         completedParticipants: participants.length,
         responseRatePercents: calcPercentage(participants.length, numTotalParticipants),
-        avgCompletionTimeMs: Number(completionTimeData[0]?.avg_completion_time_ms ?? 0),
-        byGender: _entries(_groupBy(participants, (p) => p.gender)).map(([gender, ps]) => ({
+        avgCompletionTimeMs: Number(completionTimeData[0]?.completionTime?.averageInMS ?? 0),
+        byGender: _entries(
+          _groupBy(participants, (p) => p.profiles?.find((v) => v.key === 'gender')?.value || '')
+        ).map(([gender, ps]) => ({
           label: gender,
           value: ps.length,
           count: ps.length,
@@ -171,7 +175,7 @@ const surveyDetailsSlice = createDataSlice({
           [80, 100],
         ].map(([min, max]) => {
           const ps = participants.filter((p) => {
-            const age = Number(p.age);
+            const age = Number(p.profiles?.find((v) => v.key === 'age')?.value || 0);
             return age >= min && age < max;
           });
 
@@ -189,7 +193,7 @@ const surveyDetailsSlice = createDataSlice({
         questionDescription: q.description,
         questionType: q.type,
         answers: (() => {
-          const questionResponses = responses.filter((r) => r.item_name === q.id);
+          const questionResponses = responses.filter((r) => r.itemName === q.id);
 
           if (q.type === 'single') {
             return (q.answers as SelectableAnswer[]).map((a) => {
@@ -205,7 +209,7 @@ const surveyDetailsSlice = createDataSlice({
           if (q.type === 'multiple') {
             return (q.answers as SelectableAnswer[]).map((a) => {
               const matchingResponses = questionResponses.filter((r) =>
-                r.result.split(',').includes(a.value)
+                r.result?.split(',').includes(a.value)
               );
               return {
                 label: a.value,

@@ -1,6 +1,7 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
+import Link from 'src/common/components/Link';
 
 import { signin } from 'src/modules/auth/auth.slice';
 import { useAppDispatch } from 'src/modules/store';
@@ -10,7 +11,10 @@ import InputField from 'src/common/components/InputField';
 import PasswordInputField from 'src/common/components/PasswordInputField';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
 import { colors, px, typography } from 'src/styles';
-import ScreenCenteredCard from './ScreenCenteredCard';
+import InfoIcon from 'src/assets/icons/info.svg';
+import { Path } from 'src/modules/navigation/store';
+
+import ScreenCenteredCard from '../common/ScreenCenteredCard';
 import { useEnterPress } from './hooks';
 
 const MainWrapper = styled.div`
@@ -26,17 +30,15 @@ const MainWrapper = styled.div`
 `;
 
 const Content = styled.div`
-  height: ${px(448)};
   width: ${px(448)};
   margin: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 `;
 
 const Header = styled.div`
   ${typography.headingLargeSemibold};
-  margin: 0 auto ${px(42)};
+  margin: ${px(40)} auto ${px(42)};
 `;
 
 const ControlsWrapper = styled.div`
@@ -64,8 +66,57 @@ const ErrorText = styled.div`
   padding-top: ${px(20)};
 `;
 
+const NotificationContainer = styled.div`
+  display: flex;
+  margin-top: ${px(-18)};
+  margin-bottom: ${px(24)};
+
+  > svg {
+    width: ${px(24)};
+    height: ${px(24)};
+    margin-right: ${px(8)};
+
+    path {
+      fill: ${colors.statusErrorText};
+    }
+  }
+`;
+
+const NotificationMessage = styled.div`
+  ${typography.bodySmallRegular};
+  color: ${colors.statusErrorText};
+  flex: 1;
+`;
+
+const SignUpOffer = styled.div`
+  ${typography.bodySmallRegular};
+  color: ${colors.textPrimary};
+  margin-top: ${px(8)};
+
+  a {
+    ${typography.bodySmallSemibold};
+    color: ${colors.textPrimaryBlue};
+    display: inline-block;
+    margin-left: ${px(8)};
+  }
+`;
+
+const Notification = ({ email }: { email: string }) => (
+  <NotificationContainer>
+    <InfoIcon />
+    <NotificationMessage>
+      {`We found an account for ${email}. Please enter your password to sign in.`}
+    </NotificationMessage>
+  </NotificationContainer>
+);
+
 const SignInScreen: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
+  const existedEmail = useMemo(
+    () => new URLSearchParams(window.location.search).get('email') || '',
+    []
+  );
+
+  const [email, setEmail] = useState<string>(existedEmail);
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -122,16 +173,19 @@ const SignInScreen: React.FC = () => {
   }, [password, email, error]);
 
   return (
-    <MainWrapper>
+    <MainWrapper data-testid="signin-screen">
       <ScreenCenteredCard
         width={55.556}
         minWidth={683}
-        ratio={0.75}
+        ratio={(existedEmail ? 678 : 600) / 800}
         onMainButtonClick={handleClick}
       >
         <Content>
           <Header>Sign in</Header>
+          {existedEmail && <Notification email={existedEmail} />}
           <InputField
+            name="email"
+            data-testid="signin-screen-email"
             type="email"
             label="Email"
             value={email}
@@ -140,6 +194,8 @@ const SignInScreen: React.FC = () => {
             readOnly={isLoading}
           />
           <PasswordInputField
+            name="password"
+            data-testid="signin-screen-password"
             error={error}
             label="Password"
             value={password}
@@ -148,17 +204,33 @@ const SignInScreen: React.FC = () => {
             readOnly={isLoading}
           />
           <ControlsWrapper>
-            <Checkbox checked={rememberUser} onChange={handleCheckBoxChange}>
+            <Checkbox
+              data-testid="signin-screen-remember"
+              checked={rememberUser}
+              onChange={handleCheckBoxChange}
+            >
               <div>Remember me</div>
             </Checkbox>
             <StyledButton fill="text" width={120} rate="small" disabled>
               Forgot Password?
             </StyledButton>
           </ControlsWrapper>
-          <Button disabled={disabled} onClick={handleClick} fill="solid" $loading={isLoading}>
+          <Button
+            data-testid="signin-screen-send"
+            disabled={disabled}
+            onClick={handleClick}
+            fill="solid"
+            $loading={isLoading}
+          >
             Sign In
           </Button>
-          <ErrorText>{error && 'Incorrect email or password, please try again.'}</ErrorText>
+          <SignUpOffer>
+            Don’t have an account?
+            <Link to={Path.AccountCreate}>Create an account</Link>
+          </SignUpOffer>
+          <ErrorText data-testid="signin-screen-error">
+            {error && 'Incorrect email or password, please try again.'}
+          </ErrorText>
         </Content>
       </ScreenCenteredCard>
     </MainWrapper>

@@ -143,6 +143,7 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
       dataKey: 'email',
       label: 'Email',
       $width: getColumnWidthInPercents(220),
+      render: (email) => email || '—',
     },
     {
       dataKey: 'avgBpm',
@@ -188,7 +189,10 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
     (sortings) => {
       const { column, direction } = sortings[0];
       if (studyId && participantListFetchArgs) {
-        participantList.fetch({ ...participantListFetchArgs, sort: { column, direction } });
+        participantList.fetch({
+          ...participantListFetchArgs,
+          sort: { column, direction },
+        });
       }
     },
     [participantListFetchArgs, participantList, studyId]

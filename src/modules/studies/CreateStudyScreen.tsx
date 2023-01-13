@@ -13,7 +13,9 @@ import StudyAvatar from 'src/common/components/StudyAvatar';
 import { createStudy } from 'src/modules/studies/studies.slice';
 import { SpecColorType } from 'src/styles/theme';
 import { colors, px, typography } from 'src/styles';
-import ScreenCenteredCard from './ScreenCenteredCard';
+import StudyLayout from 'src/modules/studies/StudyLayout';
+
+import ScreenCenteredCard from '../auth/common/ScreenCenteredCard';
 
 const PLACEHOLDER = 'Name your study';
 
@@ -90,7 +92,7 @@ type AvatarInfo = {
 
 type AvatarIdx = number;
 
-const avatarColors: Array<AvatarInfo> = [
+export const avatarColors: Array<AvatarInfo> = [
   { color: 'secondarySkyblue' },
   { color: 'secondaryViolet' },
   { color: 'secondaryTangerine' },
@@ -235,60 +237,70 @@ const CreateStudyScreen: React.FC = () => {
   );
 
   return (
-    <MainWrapper>
-      <ScreenCenteredCard
-        width={55.556}
-        minWidth={666}
-        ratio={0.715}
-        onMainButtonClick={handleClick}
-      >
-        <Content>
-          <Header>Create a study</Header>
-          <InputField
-            ref={studyNameRef}
-            type="text"
-            label="Study Name"
-            value={studyName}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            tabIndex={0}
-            placeholder={isStudyNameInputFocused ? '' : PLACEHOLDER}
-            readOnly={isLoading}
-          />
-          <LogosWrapper>
-            <StyledTextHeading>
-              Study Logo
-              <StyledText>Select a logo to represent your study</StyledText>
-            </StyledTextHeading>
-            <StyledLogos
-              ref={studyAvatarsRef}
+    <StudyLayout>
+      <MainWrapper data-testid="create-study">
+        <ScreenCenteredCard
+          width={55.556}
+          minWidth={666}
+          ratio={0.715}
+          onMainButtonClick={handleClick}
+        >
+          <Content>
+            <Header>Create a study</Header>
+            <InputField
+              data-testid="create-study-name"
+              ref={studyNameRef}
+              type="text"
+              label="Study Name"
+              value={studyName}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               tabIndex={0}
-              onFocus={handleStudyAvatarsFocus}
-              onBlur={handleStudyAvatarsBlur}
+              placeholder={isStudyNameInputFocused ? '' : PLACEHOLDER}
+              readOnly={isLoading}
+            />
+            <LogosWrapper>
+              <StyledTextHeading>
+                Study Logo
+                <StyledText>Select a logo to represent your study</StyledText>
+              </StyledTextHeading>
+              <StyledLogos
+                ref={studyAvatarsRef}
+                tabIndex={0}
+                onFocus={handleStudyAvatarsFocus}
+                onBlur={handleStudyAvatarsBlur}
+              >
+                {avatarColors.map((avatar, idx: AvatarIdx) => (
+                  <AvatarWrapper $selected={selectedAvatarId === idx} key={avatar.color}>
+                    <StudyAvatar
+                      data-testid="create-study-avatar"
+                      key={avatar.color}
+                      color={avatar.color}
+                      size="m"
+                      $selected={selectedAvatarId === -1 ? undefined : selectedAvatarId === idx}
+                      faded={selectedAvatarId === idx || hoveredAvatarId === idx}
+                      onMouseEnter={() => handleAvatarMouseEnter(idx)}
+                      onMouseLeave={handleAvatarMouseLeave}
+                      onClick={() => handleSetSelected(idx)}
+                    />
+                  </AvatarWrapper>
+                ))}
+              </StyledLogos>
+            </LogosWrapper>
+            <Button
+              data-testid="create-study-send"
+              disabled={!isAllSet}
+              onClick={handleClick}
+              $loading={isLoading}
+              fill="solid"
             >
-              {avatarColors.map((avatar, idx: AvatarIdx) => (
-                <AvatarWrapper $selected={selectedAvatarId === idx} key={avatar.color}>
-                  <StudyAvatar
-                    key={avatar.color}
-                    color={avatar.color}
-                    size="m"
-                    $selected={selectedAvatarId === -1 ? undefined : selectedAvatarId === idx}
-                    faded={selectedAvatarId === idx || hoveredAvatarId === idx}
-                    onMouseEnter={() => handleAvatarMouseEnter(idx)}
-                    onMouseLeave={handleAvatarMouseLeave}
-                    onClick={() => handleSetSelected(idx)}
-                  />
-                </AvatarWrapper>
-              ))}
-            </StyledLogos>
-          </LogosWrapper>
-          <Button disabled={!isAllSet} onClick={handleClick} $loading={isLoading} fill="solid">
-            Create Study
-          </Button>
-        </Content>
-      </ScreenCenteredCard>
-    </MainWrapper>
+              Create Study
+            </Button>
+          </Content>
+        </ScreenCenteredCard>
+      </MainWrapper>
+    </StudyLayout>
   );
 };
 

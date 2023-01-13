@@ -145,7 +145,7 @@ export const useRipple = <T extends HTMLElement, P extends Partial<RippleTrigger
       setEnterAnimationEnd(false);
       setExitAnimationEnd(false);
       setMouseHold(true);
-      setScale(maxScale);
+      setScale(!maxScale ? 0 : maxScale);
       setSize(newSize);
       setKey(_uniqueId());
       setRippling(true);

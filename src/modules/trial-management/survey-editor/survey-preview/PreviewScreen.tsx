@@ -173,7 +173,7 @@ const PreviewScreen: FC<PreviewScreenProps> = ({
   }, [activeQuestion, multipleQuestion, singleQuestion, sliderQuestion]);
 
   return (
-    <ScreenContent>
+    <ScreenContent data-testid="survey-preview-screen">
       <PreviewProgressBar
         maxIndex={survey.questions.length}
         activeIndex={activeQuestionIndex + 1}

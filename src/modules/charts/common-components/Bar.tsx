@@ -58,6 +58,7 @@ const Bar: React.FC<Props> = ({
   <g className={BAR_CLASS_NAME} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
     <StyledRect
       id={id}
+      data-testid={id}
       x={rectProps.x}
       y={rectProps.y}
       width={rectProps.width}

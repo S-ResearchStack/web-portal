@@ -51,6 +51,7 @@ const Area: React.FC<Props> = ({
     <path
       className={AREA_CLASS_NAME}
       id={id}
+      data-testid={id}
       d={drawArea() || ''}
       fill={color}
       fillOpacity={visible ? fillOpacity || DEFAULT_OPACITY : 0}

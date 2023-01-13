@@ -128,7 +128,11 @@ export const createStudy =
 
 export const selectStudy = setSelectedStudyId;
 
+export const studiesIsLoadingSelector = (state: RootState) => state.studies.isLoading;
+
 export const studiesSelector = (state: RootState) => state.studies.studies;
+
+export const isLoadingSelector = (state: RootState) => state.studies.isLoading;
 
 export const selectedStudySelector = createSelector(
   [
@@ -139,7 +143,6 @@ export const selectedStudySelector = createSelector(
 );
 
 export const selectedStudyIdSelector = (state: RootState) => selectedStudySelector(state)?.id;
-
 export const useSelectedStudyId = () => useAppSelector(selectedStudyIdSelector);
 
 export default studiesSlice.reducer;

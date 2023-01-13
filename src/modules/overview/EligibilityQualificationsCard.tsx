@@ -47,6 +47,7 @@ const EligibilityQualificationsCard: React.FC = () => {
 
   return (
     <OverviewCard
+      data-testid="eligibility-qualifications-card"
       title="Eligibility Qualifications"
       subtitle="Recall the feelings you had today."
       error={!!error}

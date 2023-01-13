@@ -1,13 +1,8 @@
 import _range from 'lodash/range';
 import createDataSlice from 'src/modules/store/createDataSlice';
-import API, {
-  ParticipantListTotalItemsSqlRow,
-  TaskItem,
-  TaskListResponse,
-  TaskRespondedUsersCountSqlRow,
-} from 'src/modules/api';
+import API, { CountTableRowsResponse, TaskItem, TaskListResponse } from 'src/modules/api';
 import { Timestamp } from 'src/common/utils/datetime';
-import { Task } from 'src/modules/api/models/tasks';
+import { Task, TaskResultsResponse } from 'src/modules/api/models/tasks';
 import { RootState } from 'src/modules/store';
 import Random from 'src/common/Random';
 
@@ -93,12 +88,14 @@ API.mock.provideEndpoints({
     return t ? API.mock.response([t]) : API.mock.failedResponse({ status: 404 });
   },
   getTaskRespondedUsersCount() {
-    return API.mock.response(
-      mockTasks.map((t) => ({
-        task_id: t.id,
-        num_users_responded: String(Math.round(new Random(1).num(0, mockTasks.length))),
-      }))
-    );
+    return API.mock.response({
+      taskResults: mockTasks.map((t) => ({
+        taskId: t.id,
+        numberOfRespondedUser: {
+          count: Math.round(new Random(1).num(0, mockTasks.length)),
+        },
+      })),
+    });
   },
 });
 
@@ -137,10 +134,10 @@ export const transformSurveyListFromApi = ({
   taskResponsesCountData,
 }: {
   tasksData: TaskListResponse;
-  totalParticipantsData: ParticipantListTotalItemsSqlRow[];
-  taskResponsesCountData: TaskRespondedUsersCountSqlRow[];
+  totalParticipantsData: CountTableRowsResponse;
+  taskResponsesCountData: TaskResultsResponse;
 }): SurveyListCategories => {
-  const totalParticipants = Number(totalParticipantsData?.[0]?.total) || 0;
+  const totalParticipants = Number(totalParticipantsData?.count) || 0;
 
   const tasks: SurveyListItem[] = (Array.isArray(tasksData) ? tasksData : []).map((t) => ({
     id: t.id,
@@ -151,9 +148,11 @@ export const transformSurveyListFromApi = ({
     revisionId: t.revisionId,
     description: t.description,
     totalParticipants,
-    respondedParticipants: Array.isArray(taskResponsesCountData)
-      ? Number(taskResponsesCountData.find((trc) => trc.task_id === t.id)?.num_users_responded) || 0
-      : 0,
+    respondedParticipants:
+      Number(
+        taskResponsesCountData.taskResults.find((trc) => trc.taskId === t.id)?.numberOfRespondedUser
+          ?.count
+      ) || 0,
   }));
 
   return {
@@ -169,7 +168,7 @@ export const surveyListSlice = createDataSlice({
       await Promise.all([
         API.getTasks({ projectId: studyId }),
         API.getTaskRespondedUsersCount({ projectId: studyId }),
-        API.getParticipantsTotalItems({ projectId: studyId }),
+        API.getUserProfilesCount({ projectId: studyId }),
       ]);
 
     return transformSurveyListFromApi({

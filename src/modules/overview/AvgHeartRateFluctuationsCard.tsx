@@ -30,6 +30,7 @@ const AvgHeartRateFluctuationsCard: React.FC = () => {
 
   return (
     <OverviewCard
+      data-testid="avg-heart-rate-fluctuations-card"
       title="Avg. Heart Rate Fluctuations"
       subtitle="HR Value + / - from baseline (ECG monitor patch)"
       error={!!error}

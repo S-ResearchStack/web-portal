@@ -34,7 +34,7 @@ const StudySettings: FC<StudySettingsProps> = ({
   });
 
   return (
-    <SimpleGrid fullScreen>
+    <SimpleGrid data-testid="study-settings" fullScreen>
       <CollapseSection title="Study Settings" onCollapsedChange={setCollapsed}>
         <MembersList
           shouldShowInviteTooltip={isNewStudy}

@@ -81,7 +81,7 @@ describe('useOverviewSubject', () => {
     expect(hook.result.current).toMatchObject({
       isLoading: false,
       data: expect.objectContaining({
-        avgBloodPressure: expect.toBeOneOf([expect.any(Number), undefined]),
+        avgBloodPressure: expect.toBeOneOf([expect.any(String), undefined]),
         avgBpm: expect.toBeOneOf([expect.any(Number), undefined]),
         avgSleepMins: expect.toBeOneOf([expect.any(Number), undefined]),
         avgSteps: expect.toBeOneOf([expect.any(Number), undefined]),
@@ -95,7 +95,7 @@ describe('useOverviewSubject', () => {
 
   it('[NEGATIVE] should fetch broken data from API', async () => {
     await maskEndpointAsSuccess(
-      'getParticipant',
+      'getHealthDataOverviewForUser',
       async () => {
         act(() => {
           hook = setUpHook(args);
@@ -103,7 +103,7 @@ describe('useOverviewSubject', () => {
 
         await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
       },
-      { sqlResponse: null }
+      { response: null }
     );
 
     expect(hook.result.current).toMatchObject({
@@ -115,7 +115,7 @@ describe('useOverviewSubject', () => {
 
   it('[NEGATIVE] should execute failure request to API', async () => {
     await maskEndpointAsFailure(
-      'getParticipant',
+      'getHealthDataOverviewForUser',
       async () => {
         act(() => {
           hook = setUpHook(args);

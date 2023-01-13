@@ -16,14 +16,18 @@ describe('getAverageParticipantHeartRateMock', () => {
       projectId: 'project-id',
     });
 
-    expect({ data }).toMatchObject({
-      data: expect.arrayContaining([
+    expect(data).toMatchObject({
+      averageHealthData: expect.arrayContaining([
         expect.objectContaining({
-          user_id: expect.any(String),
-          gender: expect.any(String),
-          age: expect.any(String),
-          avg_bpm: expect.any(String),
-          last_synced: expect.any(String),
+          userId: expect.any(String),
+          profiles: expect.arrayContaining([
+            {
+              key: expect.any(String),
+              value: expect.any(String),
+            },
+          ]),
+          averageHR: expect.any(Number),
+          lastSyncTime: expect.any(String),
         }),
       ]),
     });
@@ -36,14 +40,18 @@ describe('getAverageParticipantHeartRateMock', () => {
       projectId: 'project-id',
     });
 
-    expect({ data }).toMatchObject({
-      data: expect.arrayContaining([
+    expect(data).toMatchObject({
+      averageHealthData: expect.arrayContaining([
         expect.objectContaining({
-          user_id: expect.any(String),
-          gender: expect.any(String),
-          age: expect.any(String),
-          avg_bpm: expect.any(String),
-          last_synced: null,
+          userId: expect.any(String),
+          profiles: expect.arrayContaining([
+            {
+              key: expect.any(String),
+              value: expect.any(String),
+            },
+          ]),
+          averageHR: expect.any(Number),
+          lastSyncTime: null,
         }),
       ]),
     });

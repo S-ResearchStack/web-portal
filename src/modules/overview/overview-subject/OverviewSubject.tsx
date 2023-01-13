@@ -74,7 +74,7 @@ const OverviewSubject = () => {
 
   return (
     <>
-      <SimpleGrid fullScreen>
+      <SimpleGrid fullScreen data-testid="overview-subject">
         <Header title="Participant Management" fallbackUrl={sectionPath} />
       </SimpleGrid>
       <SimpleGrid fullScreen>

@@ -406,6 +406,10 @@ exports[`Pagination test pagination render 1`] = `
   background-color: transparent;
 }
 
+.c12:hover {
+  cursor: pointer;
+}
+
 .c12 > div {
   color: #4475E3;
 }
@@ -463,100 +467,6 @@ exports[`Pagination test pagination render 1`] = `
 }
 
 .c12:focus-visible:enabled {
-  background-color: #C7D6F7;
-  outline: none;
-}
-
-.c15 {
-  position: relative;
-  display: -webkit-box !important;
-  display: -webkit-flex !important;
-  display: -ms-flexbox !important;
-  display: flex !important;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  border-radius: 0.25rem;
-  width: 100%;
-  white-space: nowrap;
-  padding: 0;
-  overflow: hidden;
-  -webkit-transition-duration: 0;
-  transition-duration: 0;
-  -webkit-transition-property: background-color;
-  transition-property: background-color;
-  height: 1.5rem;
-  width: 1.5rem;
-  border: none;
-  background-color: transparent;
-}
-
-.c15:hover {
-  cursor: pointer;
-}
-
-.c15 > div {
-  color: #4475E3;
-}
-
-.c15 > div svg {
-  fill: #4475E3;
-}
-
-.c15:hover:enabled > div {
-  color: #2F65E0;
-}
-
-.c15:hover:enabled > div svg {
-  fill: #2F65E0;
-}
-
-.c15:hover:enabled:active > div {
-  color: #2057D5;
-}
-
-.c15:hover:enabled:active > div svg {
-  fill: #2057D5;
-}
-
-.c15:disabled > div {
-  color: #B3C6F1;
-}
-
-.c15:disabled > div svg {
-  fill: #B3C6F1;
-}
-
-.c15:focus-visible {
-  outline: 0.125rem solid #C7D6F7;
-}
-
-.c15:focus-visible > div {
-  color: #4475E3;
-}
-
-.c15:focus-visible > div svg {
-  fill: #4475E3;
-}
-
-.c15:hover:enabled {
-  background-color: #ECF1FC;
-}
-
-.c15:hover:enabled:active > div {
-  color: #2057D5;
-}
-
-.c15:hover:enabled:active > div svg {
-  fill: #2057D5;
-}
-
-.c15:focus-visible:enabled {
   background-color: #C7D6F7;
   outline: none;
 }
@@ -759,7 +669,7 @@ exports[`Pagination test pagination render 1`] = `
         class="c1"
         data-testid="info"
       >
-        1-11 of 1000
+        41-51 of 1000
       </div>
       <div
         class="c2"
@@ -793,7 +703,6 @@ exports[`Pagination test pagination render 1`] = `
         <button
           class="c12 c13"
           data-testid="go-to-first"
-          disabled=""
           fill="text"
         >
           <div
@@ -806,7 +715,6 @@ exports[`Pagination test pagination render 1`] = `
         <button
           class="c12 c13"
           data-testid="go-to-previous"
-          disabled=""
           fill="text"
         >
           <div
@@ -817,7 +725,7 @@ exports[`Pagination test pagination render 1`] = `
           </div>
         </button>
         <button
-          class="c15 c13"
+          class="c12 c13"
           data-testid="go-to-next"
           fill="text"
         >
@@ -829,7 +737,7 @@ exports[`Pagination test pagination render 1`] = `
           </div>
         </button>
         <button
-          class="c15 c13"
+          class="c12 c13"
           data-testid="go-to-last"
           fill="text"
         >

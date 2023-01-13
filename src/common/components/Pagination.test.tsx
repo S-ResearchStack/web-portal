@@ -10,7 +10,7 @@ import Pagination from './Pagination';
 describe('Pagination', () => {
   const TOTAL = 1000;
   const PAGE_SIZE = 10;
-  const CURRENT_OFFSET = 0;
+  const CURRENT_OFFSET = 40;
 
   it('test pagination render', async () => {
     const onPageChange = jest.fn();
@@ -42,15 +42,25 @@ describe('Pagination', () => {
     expect(lastButton).toBeInTheDocument();
     expect(info).toBeInTheDocument();
 
-    expect(prevButton).toBeDisabled();
-    expect(firstButton).toBeDisabled();
+    expect(prevButton).not.toBeDisabled();
+    expect(firstButton).not.toBeDisabled();
     expect(nextButton).not.toBeDisabled();
     expect(lastButton).not.toBeDisabled();
-    expect(info).toHaveTextContent(`${CURRENT_OFFSET + 1}-${PAGE_SIZE + 1} of ${TOTAL}`);
+    expect(info).toHaveTextContent(
+      `${CURRENT_OFFSET + 1}-${CURRENT_OFFSET + PAGE_SIZE + 1} of ${TOTAL}`
+    );
 
     await userEvent.click(nextButton);
+    expect(onPageChange).toHaveBeenLastCalledWith(50, 10);
 
-    expect(onPageChange).toHaveBeenCalledTimes(1);
+    await userEvent.click(prevButton);
+    expect(onPageChange).toHaveBeenLastCalledWith(30, 10);
+
+    await userEvent.click(firstButton);
+    expect(onPageChange).toHaveBeenLastCalledWith(0, 10);
+
+    await userEvent.click(lastButton);
+    expect(onPageChange).toHaveBeenLastCalledWith(990, 10);
   });
 
   it('[NEGATIVE] should render with wrong props', async () => {

@@ -30,9 +30,9 @@ describe('getAvgHeartRateFluctuationsMock', () => {
 
 const setUpHook = (args: { studyId: string }) =>
   renderHook(
-    (etchArgs: { studyId: string }) =>
+    (fetchArgs: { studyId: string }) =>
       useAvgStepCountData({
-        fetchArgs: etchArgs || args,
+        fetchArgs: fetchArgs || args,
       }),
     {
       wrapper: ({ children }: React.PropsWithChildren<unknown>) => (

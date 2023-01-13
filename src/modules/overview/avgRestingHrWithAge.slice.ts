@@ -16,28 +16,34 @@ export const getAverageParticipantHeartRateMock: typeof API.getAverageParticipan
 }) => {
   const r = new Random(2);
 
-  const startTs = DateTime.fromSQL(startTime).valueOf();
-  const endTs = DateTime.fromSQL(endTime).valueOf();
+  const startTs = DateTime.fromISO(startTime).valueOf();
+  const endTs = DateTime.fromISO(endTime).valueOf();
 
-  return API.mock.response(
-    _range(200).map((idx) => {
+  return API.mock.response({
+    averageHealthData: _range(200).map((idx) => {
       const gender = r.num() < 0.5 ? 'male' : 'female';
       return {
-        user_id: `user_${idx}`,
-        gender,
-        age: String(r.gaussInt({ min: 21, max: 99, mean: 45, standardDeviation: 20 })),
-        avg_bpm: String(
-          r.gaussNum({
-            min: 51,
-            max: 89,
-            mean: gender === 'male' ? 73 : 75,
-            standardDeviation: 6,
-          })
-        ),
-        last_synced: DateTime.fromMillis(r.int(startTs, endTs)).toISO(),
+        userId: `user_${idx}`,
+        profiles: [
+          {
+            key: 'gender',
+            value: gender,
+          },
+          {
+            key: 'age',
+            value: String(r.gaussInt({ min: 21, max: 99, mean: 45, standardDeviation: 20 })),
+          },
+        ],
+        averageHR: r.gaussNum({
+          min: 51,
+          max: 89,
+          mean: gender === 'male' ? 73 : 75,
+          standardDeviation: 6,
+        }),
+        lastSyncTime: DateTime.fromMillis(r.int(startTs, endTs)).toSQL(),
       };
-    })
-  );
+    }),
+  });
 };
 
 API.mock.provideEndpoints({
@@ -69,19 +75,26 @@ const avgRestingHrWithAgeSlice = createDataSlice({
     const startTime = DateTime.utc().minus({ days: 1 }).startOf('day');
     const endTime = startTime.plus({ days: 1 });
 
-    const { data } = await API.getAverageParticipantHeartRate({
+    const {
+      data: { averageHealthData: data },
+    } = await API.getAverageParticipantHeartRate({
       projectId: studyId,
-      startTime: startTime.toSQL(),
-      endTime: endTime.toSQL(),
+      startTime: startTime.toISO(),
+      endTime: endTime.toISO(),
     });
 
-    const values = data.map((d) => ({
-      name: d.gender,
-      age: Number(d.age),
-      value: Number(d.avg_bpm),
-      color: getGenderColor(d.gender),
-      lastSync: DateTime.fromISO(d.last_synced).valueOf(),
-    }));
+    const values = data
+      .filter((d) => Number.isFinite(d.averageHR))
+      .map((d) => {
+        const gender = d.profiles?.find((p) => p.key === 'gender')?.value || '';
+        return {
+          name: gender,
+          age: Number(d.profiles?.find((p) => p.key === 'age')?.value || '0'),
+          value: d.averageHR || 0,
+          color: getGenderColor(gender),
+          lastSync: DateTime.fromSQL(d.lastSyncTime || '').valueOf(),
+        };
+      });
 
     const groupedByName = _groupBy(values, (v) => v.name);
     const trendLinesPerGroup = Object.values(groupedByName).map((gv) => {

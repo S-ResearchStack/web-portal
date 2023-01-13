@@ -17,7 +17,6 @@ import reducer, {
   StudiesState,
   studiesSelector,
   transformStudyFromApi,
-  selectedStudyIdSelector,
   setSelectedStudyId,
   selectedStudySelector,
   createStudy,
@@ -27,6 +26,7 @@ import reducer, {
   fetchStudiesFinished,
   studiesSlice,
   reset,
+  selectedStudyIdSelector,
 } from './studies.slice';
 
 const TEST_ERR_TEXT_MESSAGE = 'test-error';
@@ -189,6 +189,8 @@ describe('store', () => {
   });
 
   it('[NEGATIVE] should support cache mechanism while request failure', async () => {
+    await dispatch(fetchStudies());
+
     await dispatch(fetchStudies());
 
     const beforeStudies = studiesSelector(store.getState());

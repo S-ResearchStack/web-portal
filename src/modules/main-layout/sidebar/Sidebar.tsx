@@ -8,7 +8,7 @@ import { Path, sectionPathSelector } from 'src/modules/navigation/store';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
 import { userNameSelector } from 'src/modules/auth/auth.slice';
 import { signout } from 'src/modules/auth/auth.slice.signout';
-import { selectedStudySelector } from 'src/modules/studies/studies.slice';
+import { selectedStudySelector, isLoadingSelector } from 'src/modules/studies/studies.slice';
 import {
   DESKTOP_WIDTH_BREAKPOINT,
   LAPTOP_WIDTH_BREAKPOINT,
@@ -28,6 +28,7 @@ import ResizeIcon from 'src/assets/icons/resize.svg';
 import { px, typography, colors, animation, boxShadow } from 'src/styles';
 import { getRoleFunction, getRoleLabel } from 'src/modules/auth/userRole';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import SkeletonLoading, { SkeletonPath } from 'src/common/components/SkeletonLoading';
 
 import {
   getSidebarWidth,
@@ -188,8 +189,8 @@ const StudyPanel = styled(FadeOutContainer)<Minimizable>`
   text-align: ${({ minimized }) => minimized && 'center'};
   ${({ desktopType }) => getBasePadding(desktopType)};
   margin-bottom: ${({ desktopType }) =>
-    (desktopType === 'desktop' && px(36)) ||
-    (desktopType === 'smallDesktop' && px(40)) ||
+    (desktopType === 'desktop' && px(32)) ||
+    (desktopType === 'smallDesktop' && px(38)) ||
     (desktopType === 'laptop' && px(20))};
   &:hover {
     cursor: pointer;
@@ -347,7 +348,7 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
   pointer-events: ${({ disabled }) => disabled && 'none'};
   ${({ selected, desktopType, $barWidth, disabled }) => {
     const pipeWidth = desktopType === 'desktop' ? 8 : 4;
-    const leftByBarWidth = ($barWidth as number) - pipeWidth;
+    const leftByBarWidth: number = ($barWidth as number) - pipeWidth;
     return css`
       ::before {
         content: '';
@@ -384,11 +385,46 @@ const PanelWrapper = styled.div`
   margin-top: auto;
 `;
 
+export interface UserMenuProps {
+  desktopType: DesktopType;
+  barWidth: number;
+  minimized: boolean;
+  onSignOut: React.DOMAttributes<HTMLElement>['onClick'];
+  onSetTooltipParams?: React.DOMAttributes<HTMLElement>['onMouseEnter'];
+  onClearTooltipParams?: React.DOMAttributes<HTMLElement>['onMouseLeave'];
+}
+
+export const UserMenu = ({
+  desktopType,
+  onSignOut,
+  barWidth,
+  onSetTooltipParams,
+  minimized,
+  onClearTooltipParams,
+}: UserMenuProps) => (
+  <Menu onMouseLeave={onClearTooltipParams || (() => {})}>
+    <MenuItem
+      data-testid="user-profile-signout-action"
+      onMouseEnter={onSetTooltipParams || (() => {})}
+      $barWidth={barWidth}
+      minimized={minimized}
+      onClick={onSignOut}
+      desktopType={desktopType}
+    >
+      <MenuIcon $barWidth={barWidth}>
+        <SignOutIcon />
+      </MenuIcon>
+      <Title minimized={minimized}>Sign out</Title>
+    </MenuItem>
+  </Menu>
+);
+
 const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
   const sectionPath = useSelector(sectionPathSelector);
   const username = useAppSelector(userNameSelector);
   const userRole = useAppSelector(userRoleSelector);
   const selectedStudy = useAppSelector(selectedStudySelector);
+  const isStudyLoading = useAppSelector(isLoadingSelector);
   const { width: screenWidth } = useWindowSize();
   const [tooltipPos, setTooltipPos] = useState<Position>(INITIAL_POS);
   const [resizeBtnVisible, setResizeBtnVisible] = useState<boolean>(false);
@@ -467,10 +503,6 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
   };
 
   const handleStudyClick = () => {
-    if (!selectedStudy) {
-      return;
-    }
-
     onStudyClick();
     setTooltipTitle('');
   };
@@ -525,14 +557,28 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
         onMouseLeave={clearTooltipParams}
         desktopType={desktopType}
       >
-        <StyledAvatar
-          minimized={minimized}
-          color={selectedStudy?.color || 'disabled'}
-          onMouseEnter={(e) => handleSetTooltipParams(e, selectedStudy?.name || '')}
-        />
-        <StudyName $barWidth={barWidth} minimized={minimized}>
-          {selectedStudy?.name || ''}
-        </StudyName>
+        {isStudyLoading ? (
+          <SkeletonLoading>
+            <SkeletonPath
+              x="0"
+              y="0"
+              width={40}
+              height={40}
+              d="M39.2305 27.8106C37.593 35.4309 33.3858 40 20.0787 40C6.53063 40 2.51968 35.503 0.793622 27.8107C0.328504 25.7378 0.0218898 22.6266 0 20.1972C0 17.656 0.310709 14.3417 0.793622 12.1893C2.51968 4.49704 6.53063 0 20 0C33.3858 0 37.593 4.56907 39.2305 12.1893C39.734 14.5323 40 17.2426 40 20.1183C39.9835 22.9703 39.7179 25.5428 39.2305 27.8106Z"
+            />
+          </SkeletonLoading>
+        ) : (
+          <>
+            <StyledAvatar
+              minimized={minimized}
+              color={selectedStudy?.color || 'disabled'}
+              onMouseEnter={(e) => handleSetTooltipParams(e, selectedStudy?.name || '')}
+            />
+            <StudyName $barWidth={barWidth} minimized={minimized}>
+              {selectedStudy?.name || ''}
+            </StudyName>
+          </>
+        )}
       </StudyPanel>
       <Menu onMouseLeave={clearTooltipParams}>
         {menuItems.map(({ title, icon, section }) => (
@@ -553,20 +599,14 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
         ))}
       </Menu>
       <PanelWrapper>
-        <Menu onMouseLeave={clearTooltipParams}>
-          <MenuItem
-            onMouseEnter={(e) => handleSetTooltipParams(e, 'Sign out')}
-            $barWidth={barWidth}
-            minimized={minimized}
-            onClick={handleSignOut}
-            desktopType={desktopType}
-          >
-            <MenuIcon $barWidth={barWidth}>
-              <SignOutIcon />
-            </MenuIcon>
-            <Title minimized={minimized}>Sign out</Title>
-          </MenuItem>
-        </Menu>
+        <UserMenu
+          barWidth={barWidth}
+          onClearTooltipParams={clearTooltipParams}
+          onSetTooltipParams={(e) => handleSetTooltipParams(e, 'Sign out')}
+          minimized={minimized}
+          onSignOut={handleSignOut}
+          desktopType={desktopType}
+        />
         <UserPanel
           $visible={!!userRoleLabel && !!username}
           minimized={minimized}

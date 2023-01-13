@@ -1,4 +1,4 @@
-interface MatchedBrowser {
+export interface MatchedBrowser {
   isSafari: boolean;
   isFirefox: boolean;
   isChrome: boolean;
@@ -14,15 +14,18 @@ const browser: MatchedBrowser = {
   isIe: false,
 };
 
-if (navigator.vendor.match(/google/i)) {
+const vendor = navigator.vendor || '';
+const userAgent = navigator.userAgent || '';
+
+if (vendor.match(/google/i)) {
   browser.isChrome = true;
-} else if (navigator.vendor.match(/apple/i)) {
+} else if (vendor.match(/apple/i)) {
   browser.isSafari = true;
-} else if (navigator.userAgent.match(/firefox\//i)) {
+} else if (userAgent.match(/firefox\//i)) {
   browser.isFirefox = true;
-} else if (navigator.userAgent.match(/edge\//i)) {
+} else if (userAgent.match(/edge\//i)) {
   browser.isEdge = true;
-} else if (navigator.userAgent.match(/trident\//i)) {
+} else if (userAgent.match(/trident\//i)) {
   browser.isIe = true;
 }
 

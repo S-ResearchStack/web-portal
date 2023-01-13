@@ -243,7 +243,7 @@ const PublishSurvey: FC<PublishSurveyProps> = ({ open, onClose }) => {
     <BackdropOverlay id="publish-survey" open={open}>
       <Centred>
         <Fade in={open} unmountOnExit>
-          <Container>
+          <Container data-testid="publish-survey">
             <TimeNoLongerValid open={secondsToStart < 0} onClose={updateExpiredStartDateTime} />
             <Content>
               <Header>Publish Survey</Header>

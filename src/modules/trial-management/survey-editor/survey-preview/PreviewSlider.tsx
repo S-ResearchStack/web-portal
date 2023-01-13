@@ -134,10 +134,11 @@ const PreviewSlider: FC<PreviewSliderProps> = ({
   }, [activeIndex, minIndex]);
 
   return (
-    <SliderContainer>
+    <SliderContainer data-testid="survey-preview-slider">
       <ScaleWrapper>
         {_range(0, areasNumber).map((i) => (
           <SliderScalePointWrapper
+            data-testid="survey-preview-slider-point"
             index={i}
             areasNumber={areasNumber}
             onClick={() => onChange(i + minIndex)}
@@ -150,12 +151,12 @@ const PreviewSlider: FC<PreviewSliderProps> = ({
       <SliderBar />
       <Pointer index={selectedPoint} areasNumber={areasNumber} />
       <ValuesContainer>
-        <div>{minIndex}</div>
-        <div>{maxIndex}</div>
+        <div data-testid="survey-preview-slider-min-value">{minIndex}</div>
+        <div data-testid="survey-preview-slider-max-value">{maxIndex}</div>
       </ValuesContainer>
       <LabelsContainer>
-        <div>{minLabel}</div>
-        <div>{maxLabel}</div>
+        <div data-testid="survey-preview-slider-min-label">{minLabel}</div>
+        <div data-testid="survey-preview-slider-max-label">{maxLabel}</div>
       </LabelsContainer>
     </SliderContainer>
   );

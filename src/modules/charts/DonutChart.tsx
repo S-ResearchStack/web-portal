@@ -80,6 +80,7 @@ function drawPieChartLabels(
     .append('text')
     .text('')
     .attr('id', (d) => getShapeId(d.index))
+    .attr('data-testid', (d) => getShapeId(d.index))
     .on('mouseenter', (event, d) => onMouseEnter(event, d.index))
     .on('mouseleave', onMouseLeave);
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ChevronDownIcon from 'src/assets/icons/section_chevron_down.svg';
 import ChevronUpIcon from 'src/assets/icons/section_chevron_up.svg';
@@ -72,6 +72,7 @@ type Props = ExtendProps<
     disabled?: boolean;
     headerExtra?: React.ReactNode;
     onCollapsedChange?: (isCollapsed: boolean) => void;
+    defaultCollapsed?: boolean;
   }>
 >;
 
@@ -81,9 +82,14 @@ const CollapseSection: React.FC<Props> = ({
   headerExtra,
   onCollapsedChange,
   children,
+  defaultCollapsed,
   ...rest
 }) => {
-  const [isCollapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setCollapsed] = useState(!!defaultCollapsed);
+
+  useEffect(() => {
+    setCollapsed(!!defaultCollapsed);
+  }, [defaultCollapsed]);
 
   const handleClick = () => {
     const newState = !isCollapsed;
