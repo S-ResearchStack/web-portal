@@ -88,12 +88,6 @@ type HeartRate = {
   bpm?: number;
 };
 
-type HealthData = {
-  userId?: string;
-  profiles?: ProfileAttribute[];
-  heartRates?: HeartRate[];
-};
-
 type AverageHealthData = {
   userId?: string;
   lastSyncTime?: string;
@@ -101,8 +95,16 @@ type AverageHealthData = {
   averageHR?: number;
 };
 
+type RawHealthData = {
+  userId?: string;
+  profiles?: ProfileAttribute[];
+  healthData?: {
+    heartRates?: HeartRate[];
+  };
+};
+
 export type RawHealthDataResponse = {
-  rawHealthData: HealthData[];
+  rawHealthData: RawHealthData[];
 };
 
 export type AverageHealthDataResponse = {

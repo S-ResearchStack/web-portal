@@ -2,7 +2,7 @@ import { request } from './apiService';
 import { Response } from './executeRequest';
 import * as API from './models';
 import { SqlRequest, SqlResponse } from './models/sql';
-import { GetTableColumnsRow, GetTableListRow } from './models';
+import { GetTablesResponse } from './models';
 import { GraphQlRequest, GraphQlResponse } from './models/graphql';
 
 export type ProjectIdParams = { projectId: string };
@@ -227,7 +227,7 @@ export const getParticipantHeartRates = ({
   rawHealthData(from: "${startTime}", to: "${endTime}", includeAttributes: ["gender"]) {
     userId
     profiles { key value }
-    heartRates { time bpm }
+    healthData { heartRates { time bpm } }
   }
 }`,
   });
@@ -344,15 +344,19 @@ export const getParticipantsTimeZones = ({ projectId }: ProjectIdParams) =>
   });
 
 export const getTablesList = (projectId: string) =>
-  sqlRequest<GetTableListRow>({
+  graphQlRequest<GetTablesResponse>({
     projectId,
-    sql: `show tables`,
+    query: `{
+  tables { name }
+}`,
   });
 
 export const getTableColumns = (projectId: string, tableId: string) =>
-  sqlRequest<GetTableColumnsRow>({
+  graphQlRequest<GetTablesResponse>({
     projectId,
-    sql: `describe ${tableId}`,
+    query: `{
+  tables(nameFilter: "${tableId}") { name columns { name type } }
+}`,
   });
 
 export const executeDataQuery = (projectId: string, sql: string) =>

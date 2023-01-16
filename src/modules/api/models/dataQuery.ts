@@ -1,10 +1,11 @@
-export type GetTableListRow = {
-  Table: string;
+type TableDefinition = {
+  name?: string;
+  columns?: {
+    name?: string;
+    type?: string;
+  }[];
 };
 
-export type GetTableColumnsRow = {
-  Column: string;
-  Type: string;
-  Extra: string;
-  Comment: string;
+export type GetTablesResponse = {
+  tables?: TableDefinition[];
 };

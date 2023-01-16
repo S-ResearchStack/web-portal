@@ -46,17 +46,21 @@ export const executeDataQueryMock: typeof API.executeDataQuery = (_, sql) => {
 API.mock.provideEndpoints({
   executeDataQuery: executeDataQueryMock,
   getTablesList() {
-    return API.mock.response(_range(5).map((v) => ({ Table: `table_${v}` })));
+    return API.mock.response({
+      tables: _range(5).map((v) => ({ name: `table_${v}` })),
+    });
   },
   getTableColumns(_, tableId) {
-    return API.mock.response(
-      generateColumnsByTableId(tableId).map((c) => ({
-        Column: c,
-        Type: '',
-        Extra: '',
-        Comment: '',
-      }))
-    );
+    return API.mock.response({
+      tables: [
+        {
+          columns: generateColumnsByTableId(tableId).map((c) => ({
+            name: c,
+            type: '',
+          })),
+        },
+      ],
+    });
   },
 });
 
@@ -143,7 +147,8 @@ export const fetchTables =
   async (dispatch) => {
     try {
       dispatch(tablesStart());
-      const tables = (await API.getTablesList(projectId)).data.map((t) => t.Table);
+      const res = await API.getTablesList(projectId);
+      const tables = (res.data.tables || []).map((t) => t.name || '');
       dispatch(tablesSuccess({ tableMap: _zipObject(tables, []), projectId }));
     } catch (e) {
       dispatch(tablesFailure());
@@ -155,9 +160,8 @@ export const fetchColumns =
   (projectId: string, tableId: string): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
-      const columns = (await API.getTableColumns(projectId, tableId)).data.map(
-        ({ Column }) => Column
-      );
+      const res = await API.getTableColumns(projectId, tableId);
+      const columns = (res.data.tables?.[0].columns || []).map(({ name }) => name || '');
 
       dispatch(columnsSuccess(_zipObject([tableId], [columns])));
     } catch (e) {

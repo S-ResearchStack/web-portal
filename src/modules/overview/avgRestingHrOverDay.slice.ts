@@ -30,24 +30,26 @@ export const getParticipantHeartRatesMock: typeof API.getParticipantHeartRates =
           value: r.num() < 0.5 ? 'male' : 'female',
         },
       ],
-      heartRates: _range(20).map(() => {
-        const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
-        const hourOfDay = time.hour + time.minute / 60;
+      healthData: {
+        heartRates: _range(20).map(() => {
+          const time = DateTime.fromMillis(r.int(startTs, endTs)).toUTC();
+          const hourOfDay = time.hour + time.minute / 60;
 
-        const wakeHour = r.num(6.5, 8);
-        const sleepHour = r.num(20, 24);
-        const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
-        const gender = r.num() < 0.5 ? 'male' : 'female';
-        const bpmExtra = gender === 'female' ? 1 : 0;
-        return {
-          time: time.toSQL(),
-          bpm: r.gaussNum({
-            min: bpmRange[0] + bpmExtra,
-            max: bpmRange[1] + bpmExtra,
-            standardDeviation: 4,
-          }),
-        };
-      }),
+          const wakeHour = r.num(6.5, 8);
+          const sleepHour = r.num(20, 24);
+          const bpmRange = hourOfDay < wakeHour || hourOfDay > sleepHour ? [55, 60] : [70, 75];
+          const gender = r.num() < 0.5 ? 'male' : 'female';
+          const bpmExtra = gender === 'female' ? 1 : 0;
+          return {
+            time: time.toSQL(),
+            bpm: r.gaussNum({
+              min: bpmRange[0] + bpmExtra,
+              max: bpmRange[1] + bpmExtra,
+              standardDeviation: 4,
+            }),
+          };
+        }),
+      },
     })),
   });
 };
@@ -85,7 +87,7 @@ const avgRestingHrOverDaySlice = createDataSlice({
       .reduce(
         (acc, d) => {
           const gender = d.profiles?.find((p) => p.key === 'gender')?.value;
-          for (const v of d.heartRates || []) {
+          for (const v of d.healthData?.heartRates || []) {
             if (!v.bpm || !v.time || !gender) {
               // eslint-disable-next-line no-continue
               continue;

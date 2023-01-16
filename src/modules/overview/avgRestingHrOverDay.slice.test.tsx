@@ -27,12 +27,14 @@ describe('getParticipantHeartRatesMock', () => {
               value: expect.any(String),
             },
           ]),
-          heartRates: expect.arrayContaining([
-            {
-              time: expect.any(String),
-              bpm: expect.any(Number),
-            },
-          ]),
+          healthData: expect.objectContaining({
+            heartRates: expect.arrayContaining([
+              {
+                time: expect.any(String),
+                bpm: expect.any(Number),
+              },
+            ]),
+          }),
         }),
       ]),
     });
@@ -55,12 +57,14 @@ describe('getParticipantHeartRatesMock', () => {
               value: expect.any(String),
             },
           ]),
-          heartRates: expect.arrayContaining([
-            {
-              time: null,
-              bpm: expect.any(Number),
-            },
-          ]),
+          healthData: expect.objectContaining({
+            heartRates: expect.arrayContaining([
+              {
+                time: null,
+                bpm: expect.any(Number),
+              },
+            ]),
+          }),
         }),
       ]),
     });

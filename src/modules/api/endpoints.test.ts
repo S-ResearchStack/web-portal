@@ -146,7 +146,7 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getTaskCompletionTime, [{ projectId, id: 'id' }]],
   [getTaskRespondedUsersCount, [{ projectId }]],
   [getParticipantsTimeZones, [{ projectId }]],
-  [getTablesList, [projectId]],
+  [getTablesList, []],
   [getTableColumns, [projectId, 'id']],
   [executeDataQuery, [projectId, 'select * from table']],
   [signUp, [{ email: 'example@samsung.com', password: 'pa55w0rd', profile: { name: 'username' } }]],
