@@ -1,8 +1,10 @@
 import qs from 'qs';
 
+type MethodType = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
 export type RequestOptions<TReq> = {
   url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: MethodType;
   query?: Record<string, unknown>;
   body?: TReq;
   headers?: Record<string, string>;

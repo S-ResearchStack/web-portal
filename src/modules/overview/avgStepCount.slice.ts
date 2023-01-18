@@ -90,9 +90,10 @@ const avgStepCountSlice = createDataSlice({
       projectId: studyId,
     });
 
+    const sortedItems = [...items].sort((prev, next) => +next.day_of_week - +prev.day_of_week);
+
     return (
-      items
-        .sort((prev, next) => +next.day_of_week - +prev.day_of_week)
+      sortedItems
         .map((item) => ({
           name: item.gender,
           dataKey: daysOfWeek[+item.day_of_week - 1], // sql query returns day of week in 1..7 range

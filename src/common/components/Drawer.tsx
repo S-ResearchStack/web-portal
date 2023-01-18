@@ -7,9 +7,17 @@ import Slide, { SlideDirection, SlideProps } from 'src/common/components/animati
 import combineRefs from 'src/common/utils/combineRefs';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 
+type NecessaryDrawerProps =
+  | 'onEnter'
+  | 'onEntering'
+  | 'onEntered'
+  | 'onExit'
+  | 'onExiting'
+  | 'onExited';
+
 interface DrawerProps
   extends React.PropsWithChildren<object>,
-    Pick<SlideProps, 'onEnter' | 'onEntering' | 'onEntered' | 'onExit' | 'onExiting' | 'onExited'> {
+    Pick<SlideProps, NecessaryDrawerProps> {
   open: boolean;
   direction?: SlideDirection;
 }

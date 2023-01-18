@@ -143,11 +143,10 @@ export const surveyQuestionFromApi = (ti: TaskItem): QuestionItem | undefined =>
   } as QuestionItem;
 };
 
-export const surveyQuestionListFromApi = (ti: TaskItem[]): QuestionItem[] =>
-  ti
-    .sort((a, b) => a.sequence - b.sequence)
-    .map(surveyQuestionFromApi)
-    .filter(Boolean) as QuestionItem[];
+export const surveyQuestionListFromApi = (ti: TaskItem[]): QuestionItem[] => {
+  const sortedTaskItem = [...ti].sort((a, b) => a.sequence - b.sequence);
+  return sortedTaskItem.map(surveyQuestionFromApi).filter(Boolean) as QuestionItem[];
+};
 
 export const surveyFromApi = (studyId: string, t: Task): SurveyItem => ({
   studyId,

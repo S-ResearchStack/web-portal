@@ -4,6 +4,8 @@ import { DateTime, Duration } from 'luxon';
 export type Timestamp = number;
 export type ISOTimestamp = string;
 
+type TimeType = Timestamp | ISOTimestamp | DateTime | Date;
+
 export const LOCALE = 'en';
 
 export const duration = (params: DurationLikeObject): Timestamp =>
@@ -19,7 +21,7 @@ export const day = (count = 1): Timestamp => duration({ day: count });
 
 export const getTimeDiff = (ts: Timestamp): Timestamp => Date.now() - ts;
 
-export const format = (ts: Timestamp | ISOTimestamp | DateTime | Date, fmt: string): string => {
+export const format = (ts: TimeType, fmt: string): string => {
   let date: DateTime;
 
   if (ts instanceof DateTime) {

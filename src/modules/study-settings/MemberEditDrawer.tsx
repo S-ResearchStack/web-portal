@@ -259,10 +259,15 @@ interface RoleAccessProps {
   roles: string[];
 }
 
-type ConfirmCloseOrRemoveMemberModalProps = Pick<
-  ModalProps,
-  'open' | 'onAccept' | 'onDecline' | 'acceptProcessing' | 'onExited' | 'onEnter'
->;
+type NecessaryModalProps =
+  | 'open'
+  | 'onAccept'
+  | 'onDecline'
+  | 'acceptProcessing'
+  | 'onExited'
+  | 'onEnter';
+
+type ConfirmCloseOrRemoveMemberModalProps = Pick<ModalProps, NecessaryModalProps>;
 
 const ConfirmCloseModal: FC<ConfirmCloseOrRemoveMemberModalProps> = ({ ...props }) => (
   <Modal

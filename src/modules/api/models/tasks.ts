@@ -49,18 +49,20 @@ type FrequencyQuestion = {
   tag: 'WEEKLY' | 'MONTHLY' | 'YEARLY';
 };
 
+type TaskItemQuestionProperties =
+  | ChoiceQuestion
+  | TextQuestion
+  | ScaleQuestion
+  | DateQuestion
+  | TimeQuestion
+  | FrequencyQuestion;
+
 export type TaskItemQuestion = {
   title: string;
   explanation?: string;
   required: boolean;
   type: TaskItemQuestionType;
-  properties:
-    | ChoiceQuestion
-    | TextQuestion
-    | ScaleQuestion
-    | DateQuestion
-    | TimeQuestion
-    | FrequencyQuestion;
+  properties: TaskItemQuestionProperties;
 };
 
 type TaskItemRow = {
@@ -95,7 +97,9 @@ export type TaskListResponse = Task[];
 
 type TaskUpdateItem = Omit<TaskItem, 'name'>;
 
-export type TaskUpdate = Omit<Partial<Task>, 'id' | 'revisionId' | 'createdAt' | 'items'> & {
+type UnnecessaryTaskProps = 'id' | 'revisionId' | 'createdAt' | 'items';
+
+export type TaskUpdate = Omit<Partial<Task>, UnnecessaryTaskProps> & {
   items: TaskUpdateItem[];
 };
 

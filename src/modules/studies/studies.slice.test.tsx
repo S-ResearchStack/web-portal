@@ -5,12 +5,10 @@ import { act, renderHook } from '@testing-library/react';
 import { AppDispatch, store } from 'src/modules/store/store';
 import * as api from 'src/modules/api';
 import { SpecColorType } from 'src/styles/theme';
-
 import { currentSnackbarSelector } from 'src/modules/snackbar/snackbar.slice';
 import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
 import { mockStudies } from './studies.slice.mock';
-
 import reducer, {
   fetchStudies,
   initialState,

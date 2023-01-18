@@ -43,9 +43,17 @@ const BackdropContent = styled(BackdropBase)<{ loaderBackdrop?: boolean }>`
     `}
 `;
 
+type NecessaryFadeProps =
+  | 'onEnter'
+  | 'onEntering'
+  | 'onEntered'
+  | 'onExit'
+  | 'onExiting'
+  | 'onExited';
+
 export interface BackdropOverlayProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>,
-    Pick<FadeProps, 'onEnter' | 'onEntering' | 'onEntered' | 'onExit' | 'onExiting' | 'onExited'> {
+    Pick<FadeProps, NecessaryFadeProps> {
   open?: boolean;
   loaderBackdrop?: boolean;
 }

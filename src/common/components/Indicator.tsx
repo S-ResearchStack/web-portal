@@ -4,8 +4,10 @@ import styled from 'styled-components';
 
 import { colors, px } from 'src/styles';
 
+type IndicatorColor = 'success' | 'warning' | 'error' | 'info';
+
 export type IndicatorProps = {
-  color?: 'success' | 'warning' | 'error' | 'info';
+  color?: IndicatorColor;
   size?: 's' | 'm';
 } & React.HTMLAttributes<HTMLDivElement>;
 

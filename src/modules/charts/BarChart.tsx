@@ -132,7 +132,7 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
       .paddingInner(isHorizontal ? 0.34 : 0.37);
   }, [domainName, isHorizontal, xRange, yRange]);
 
-  const getPercantage = (d: DataItem) => (d.value / d.totalValue) * 100;
+  const getPercentage = (d: DataItem) => (d.value / d.totalValue) * 100;
 
   const getBarKeyByIndex = (index: number) => `bar-${index}`;
 
@@ -253,29 +253,29 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
             isHorizontal={isHorizontal}
             rectProps={{
               x: isHorizontal ? margins.left : scaleBand(d.name) || 0,
-              y: isHorizontal ? +(scaleBand(d.name) || 0) : scaleLinear(getPercantage(d)),
+              y: isHorizontal ? +(scaleBand(d.name) || 0) : scaleLinear(getPercentage(d)),
               height: isHorizontal
                 ? scaleBand.bandwidth()
-                : scaleLinear(0) - scaleLinear(getPercantage(d)),
+                : scaleLinear(0) - scaleLinear(getPercentage(d)),
               width: isHorizontal
-                ? scaleLinear(getPercantage(d)) - scaleLinear(0)
+                ? scaleLinear(getPercentage(d)) - scaleLinear(0)
                 : scaleBand.bandwidth(),
             }}
             textProps={{
               x: isHorizontal
-                ? scaleLinear(getPercantage(d)) -
-                  (getPercantage(d) > 10 ? scaleLinear(0) : 0) +
+                ? scaleLinear(getPercentage(d)) -
+                  (getPercentage(d) > 10 ? scaleLinear(0) : 0) +
                   LABEL_MARGIN
                 : +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2 + 1,
               y: isHorizontal
                 ? +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2
                 : height -
                   margins.bottom -
-                  (scaleLinear(0) - scaleLinear(getPercantage(d))) +
-                  (getPercantage(d) > 10 ? LABEL_MARGIN : -LABEL_MARGIN),
+                  (scaleLinear(0) - scaleLinear(getPercentage(d))) +
+                  (getPercentage(d) > 10 ? LABEL_MARGIN : -LABEL_MARGIN),
               dy: isHorizontal ? '.35em' : '0', // vertical align middle
-              fill: getPercantage(d) > 10 ? theme.colors.primaryWhite : theme.colors.textPrimary,
-              text: `${getPercantage(d)}%`,
+              fill: getPercentage(d) > 10 ? theme.colors.primaryWhite : theme.colors.textPrimary,
+              text: `${getPercentage(d)}%`,
             }}
             onMouseEnter={(event) => onBarMouseEnter(event, index)}
             onMouseLeave={onBarMouseLeave}

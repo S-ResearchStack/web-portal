@@ -142,7 +142,7 @@ const EmptyContainer = styled.div`
 
 export type SwitchStudyProps = {
   onStudySelectionFinished?: () => void;
-  canCreate?: boolean;
+  canCreate: boolean;
 };
 
 const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFinished }) => {

@@ -13,6 +13,8 @@ const GRID_SIZE = 8;
 
 const DEFAULT_POSITION: TooltipPosition = 't';
 
+type RectProperties = 'left' | 'top' | 'width' | 'height';
+
 const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSProperties => {
   switch (position || DEFAULT_POSITION) {
     case 'atr':
@@ -184,7 +186,7 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
     const ah = ARROW_H;
     const gs = GRID_SIZE;
 
-    let pointsRect: Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+    let pointsRect: Pick<DOMRect, RectProperties>;
     const { width: tW, height: tH } = floating.refs.floating.current.getBoundingClientRect();
 
     if (point) {

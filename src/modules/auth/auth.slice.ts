@@ -213,7 +213,7 @@ export const useSignUp = () => {
 };
 
 const handleTokensReceived =
-  (authToken: string, refreshToken: string, rememberUser = false): AppThunk<Promise<void>> =>
+  (authToken: string, refreshToken: string, rememberUser?: boolean): AppThunk<Promise<void>> =>
   async (dispatch) => {
     if (rememberUser) {
       localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
@@ -240,10 +240,23 @@ const verifyEmailSlice = createDataSlice({
 
 export const redirectToStudyScreenByRole =
   (): AppThunk<Promise<void>> => async (dispatch, getState) => {
-    const tokenPayload = authTokenPayloadSelector(getState());
-    const isFirstTime = false; // TODO: need to have API or make it defined somehow
+    let isStudiesExists = false;
+    let isStudiesHaveError = false;
 
-    if (tokenPayload.roles?.some((r: { role: string }) => r.role === 'team-admin') && isFirstTime) {
+    try {
+      const { data } = await API.getStudies();
+      isStudiesExists = !!data.length;
+    } catch (e) {
+      isStudiesHaveError = true;
+    }
+
+    const tokenPayload = authTokenPayloadSelector(getState());
+
+    if (
+      tokenPayload.roles?.some((r: { role: string }) => r.role === 'team-admin') &&
+      !isStudiesExists &&
+      !isStudiesHaveError
+    ) {
       dispatch(push(Path.CreateStudy));
     } else {
       dispatch(push([Path.Overview, SWITCH_STUDY_SEARCH_PARAM].join('?')));

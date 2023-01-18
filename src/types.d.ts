@@ -17,12 +17,6 @@ declare module '*.svg?url' {
   export default src;
 }
 
-declare module 'connected-react-router' {
-  interface ConnectedRouterProps {
-    children: React.ReactNode;
-  }
-}
-
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'production' | 'development' | 'test' | 'none';

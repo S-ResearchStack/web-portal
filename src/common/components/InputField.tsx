@@ -16,10 +16,12 @@ export interface InputFieldBaseProps extends React.InputHTMLAttributes<HTMLInput
 }
 type InputFieldShellProps = React.PropsWithChildren<InputFieldBaseProps>;
 
+type InputType = 'email' | 'password' | 'text' | 'date' | 'number';
+
 export interface InputFieldProps
   extends InputFieldBaseProps,
     React.InputHTMLAttributes<HTMLInputElement> {
-  type?: 'email' | 'password' | 'text' | 'date' | 'number';
+  type?: InputType;
   endExtra?: { component: JSX.Element; extraWidth: number };
   lighten?: boolean;
 }

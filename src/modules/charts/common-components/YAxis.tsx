@@ -11,12 +11,14 @@ const AxisGroup = styled.g`
   }
 `;
 
+type YScale =
+  | d3.ScaleLinear<number, number, never>
+  | d3.ScaleTime<number, number, never>
+  | d3.ScaleBand<string>
+  | d3.ScaleBand<string | number>;
+
 type Props = {
-  yScale:
-    | d3.ScaleLinear<number, number, never>
-    | d3.ScaleTime<number, number, never>
-    | d3.ScaleBand<string>
-    | d3.ScaleBand<string | number>;
+  yScale: YScale;
   tickSize: number;
   xOffset: number;
   ticks?: number;

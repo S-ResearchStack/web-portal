@@ -348,7 +348,7 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
   pointer-events: ${({ disabled }) => disabled && 'none'};
   ${({ selected, desktopType, $barWidth, disabled }) => {
     const pipeWidth = desktopType === 'desktop' ? 8 : 4;
-    const leftByBarWidth: number = ($barWidth as number) - pipeWidth;
+    const leftByBarWidth = $barWidth - pipeWidth;
     return css`
       ::before {
         content: '';
