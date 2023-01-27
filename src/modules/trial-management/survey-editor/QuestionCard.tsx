@@ -236,8 +236,15 @@ const QuestionCard = forwardRef(
               fill="text"
               icon={<DeleteIcon />}
               rate="icon"
+              aria-label="Delete Question"
             />
-            <Button onClick={handleQuestionCopy} fill="text" icon={<CopyIcon />} rate="icon" />
+            <Button
+              onClick={handleQuestionCopy}
+              fill="text"
+              icon={<CopyIcon />}
+              rate="icon"
+              aria-label="Copy Question"
+            />
           </CardActions>
         </Footer>
       </Container>

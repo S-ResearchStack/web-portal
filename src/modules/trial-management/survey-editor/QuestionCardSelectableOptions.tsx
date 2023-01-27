@@ -172,12 +172,14 @@ const QuestionCardSelectableOptions: FC<QuestionCardSelectableOptionsProps> = ({
             icon={<CloseIcon />}
             onClick={() => onRemove(item)}
             $hidden={!isRemoveAllowed}
+            aria-label="Delete Question"
           />
           <DragIconButton
             fill="text"
             rate="icon"
             icon={<DragTriggerIcon />}
             ref={dragRef as React.RefObject<HTMLButtonElement>}
+            aria-label="Drag and Drop Question"
           />
         </OptionActions>
       </OptionContainer>

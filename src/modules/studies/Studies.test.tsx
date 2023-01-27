@@ -18,8 +18,8 @@ import Studies from 'src/modules/studies/Studies';
 
 describe('Studies', () => {
   it('should render', async () => {
-    await act(async () => {
-      await render(
+    await act(() => {
+      render(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <ConnectedRouter history={history}>

@@ -24,12 +24,6 @@ import {
 } from '../common-helpers';
 import ZoomControls from './ZoomControls';
 
-export interface AreaDataItem {
-  x: number;
-  y0: number;
-  y1: number;
-}
-
 const gradientPoints = [
   { offset: '0%' },
   { offset: '41%' },
@@ -504,6 +498,7 @@ const Zoom: React.FC<Props> = ({
         $visible={
           isResetButtonShown(lastXRelativeSelection, lastYRelativeSelection) && showZoomControls
         }
+        aria-label="Zoom Out"
       />
       <SvgContainer
         ref={svgRef}

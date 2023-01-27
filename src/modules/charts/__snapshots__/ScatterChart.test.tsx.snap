@@ -230,6 +230,7 @@ exports[`ScatterChart should render 1`] = `
         class="c0"
       >
         <button
+          aria-label="Zoom Out"
           class="c1 c2"
           color="textSecondaryGray"
         >

@@ -103,7 +103,7 @@ const SurveyCard: FC<SurveyCardProps> = ({ item, ...props }) => {
         ? 0
         : Math.round((item.respondedParticipants / item.totalParticipants) * 100);
 
-    let footer: React.ReactNode = null;
+    let footer: React.ReactNode;
     if (!isPublished) {
       footer = (
         <FooterModifiedText>{`Modified on ${formatDate(item.modifiedAt)}`}</FooterModifiedText>

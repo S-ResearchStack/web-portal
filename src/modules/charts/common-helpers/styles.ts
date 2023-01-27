@@ -13,7 +13,6 @@ interface ContainerProps {
 export const DOTS_CONTAINER_CLASS_NAME = 'dots';
 export const X_AXIS_CLASS_NAME = 'xAxis';
 export const Y_AXIS_CLASS_NAME = 'yAxis';
-export const ZOOM_CLASS_NAME = 'zoom';
 
 export const Container = styled.div.attrs<ContainerProps>(({ width, height }) => ({
   style: {

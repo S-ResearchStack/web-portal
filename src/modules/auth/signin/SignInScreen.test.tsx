@@ -20,6 +20,8 @@ import { STORAGE_REFRESH_TOKEN_KEY, STORAGE_TOKEN_KEY } from 'src/modules/auth/u
 // eslint-disable-next-line prefer-destructuring
 const dispatch: AppDispatch = store.dispatch;
 
+const passwordValue = 'samsung';
+
 describe('SignInScreen', () => {
   beforeEach(() => {
     dispatch(authSlice.actions.clearAuth());
@@ -51,7 +53,6 @@ describe('SignInScreen', () => {
     await userEvent.type(email, emailValue);
     expect(email).toHaveValue(emailValue);
 
-    const passwordValue = 'samsung';
     await userEvent.type(password, passwordValue);
     expect(password).toHaveValue(passwordValue);
 
@@ -91,11 +92,10 @@ describe('SignInScreen', () => {
     const send = await screen.findByTestId('signin-screen-send');
     const error = await screen.findByTestId('signin-screen-error');
 
-    const emailValue = 'hello@example.com';
-    await userEvent.type(email, emailValue);
-    expect(email).toHaveValue(emailValue);
+    const unsatisfactoryEmailValue = 'hello@example.com';
+    await userEvent.type(email, unsatisfactoryEmailValue);
+    expect(email).toHaveValue(unsatisfactoryEmailValue);
 
-    const passwordValue = 'samsung';
     await userEvent.type(password, passwordValue);
     expect(password).toHaveValue(passwordValue);
 

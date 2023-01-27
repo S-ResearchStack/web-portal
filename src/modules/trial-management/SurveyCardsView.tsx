@@ -132,7 +132,7 @@ const CollapseAnimation: FC<CollapseAnimationProps> = ({ open, maxRowsCount, chi
   );
 };
 
-interface SurveyCardsViewProps extends React.PropsWithChildren<unknown> {
+interface SurveyCardsViewProps extends React.PropsWithChildren {
   title: string;
   list: SurveyListItem[];
   isLoading?: boolean;

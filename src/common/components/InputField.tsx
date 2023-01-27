@@ -10,7 +10,7 @@ export const RIGHT_PADDING = 8;
 export interface InputFieldBaseProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | JSX.Element;
   helperText?: string;
-  error?: boolean | string; // TODO: remove `boolean` when migration to v0.9 is complete
+  error?: React.ReactNode;
   withoutErrorText?: boolean;
   disabled?: boolean;
 }
@@ -162,7 +162,7 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
     <InputWrapper error={error}>{children}</InputWrapper>
     {!withoutErrorText && (
       <InputErrorText data-testid="input-error" withOffset={!helperText}>
-        {typeof error === 'string' ? error : <>&nbsp;</>}
+        {error || <>&nbsp;</>}
       </InputErrorText>
     )}
   </InputContainer>

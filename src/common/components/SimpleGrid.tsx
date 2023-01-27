@@ -91,9 +91,7 @@ export interface ColumnsOption {
   columns?: ColumnsOptionValue;
 }
 
-export interface SimpleGridContainerProps
-  extends Required<ColumnsOption>,
-    React.PropsWithChildren<unknown> {
+export interface SimpleGridContainerProps extends Required<ColumnsOption>, React.PropsWithChildren {
   $width: number;
   $minMargin: number;
   $verticalGap?: boolean;

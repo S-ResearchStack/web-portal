@@ -57,6 +57,7 @@ export const ContentWrapper = styled.div`
 
 const StudiesContentWrapper = styled(ContentWrapper)`
   overflow: auto;
+  flex-direction: column;
 `;
 
 const MainContentWrapper = styled(ContentWrapper)`
@@ -215,11 +216,33 @@ const MainLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSwitchStudyInTransition, showUserInStudy]);
 
+  const studiesContentRef = useRef<HTMLDivElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // disable elements focus between content containers
+  useEvent(
+    'keydown',
+    (e) => {
+      const evt = e as unknown as KeyboardEvent;
+      const target = evt.target as unknown as Node;
+      const currentContainer = isSwitchStudy ? studiesContentRef.current : mainContentRef.current;
+
+      if (evt.key === 'Tab' && currentContainer && !currentContainer.contains(target)) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        document.body.focus();
+      }
+    },
+    document.body,
+    { capture: true }
+  );
+
   return (
     <LayoutContentCtx.Provider value={contentRef}>
       <Layout data-testid="main-layout" ref={layoutRef} isSwitchStudy={isSwitchStudy}>
-        <StudiesContentWrapper>
+        <StudiesContentWrapper ref={studiesContentRef}>
           <Studies hideUser={!showUserInStudy} onStudySelectionFinished={toggleIsSwitchStudy} />
+          {isSwitchStudy && <SnackbarContainer useSimpleGrid />}
         </StudiesContentWrapper>
         <MainContentWrapper>
           <Sidebar onStudyClick={onStudyClick} />
@@ -243,7 +266,7 @@ const MainLayout = () => {
                 </Route>
                 <Redirect to={Path.Overview} />
               </Switch>
-              <SnackbarContainer useSimpleGrid />
+              {!isSwitchStudy && <SnackbarContainer useSimpleGrid />}
             </Content>
           )}
         </MainContentWrapper>

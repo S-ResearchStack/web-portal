@@ -733,6 +733,9 @@ exports[`MainLayout should render 1`] = `
 
 .c2 {
   overflow: auto;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c22 {
@@ -760,6 +763,7 @@ exports[`MainLayout should render 1`] = `
             class="c6"
           >
             <button
+              aria-label="Previous Study"
               class="c7 c8"
               disabled=""
               fill="text"
@@ -869,6 +873,7 @@ exports[`MainLayout should render 1`] = `
               </div>
             </div>
             <button
+              aria-label="Next Study"
               class="c7 c8"
               disabled=""
               fill="text"
@@ -907,6 +912,7 @@ exports[`MainLayout should render 1`] = `
         data-testid="tooltip-container"
       />
       <button
+        aria-label="Resize"
         class="c25 c26"
         fill="text"
         style="overflow: hidden; position: relative;"

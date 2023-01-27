@@ -2,7 +2,7 @@
   "name": "open-source-portal-frontend",
   "license": "UNLICENSED",
   "private": true,
-  "version": "0.9.55",
+  "version": "0.9.65",
   "scripts": {
     "dev:base": "webpack serve --mode development",
     "dev": "cross-env MOCK_API=always yarn dev:base",
@@ -128,6 +128,7 @@
     "jest-environment-jsdom": "^29.2.1",
     "jest-extended": "^3.2.0",
     "jest-fetch-mock": "^3.0.3",
+    "jest-junit": "^15.0.0",
     "jest-localstorage-mock": "^2.4.22",
     "jest-styled-components": "^7.1.1",
     "jest-transform-stub": "^2.0.0",

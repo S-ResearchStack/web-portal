@@ -547,6 +547,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
           icon={<ResizeIcon />}
           onClick={toggleBarWidth}
           ref={resizeBtnRef}
+          aria-label="Resize"
         />
       )}
       <StudyPanel

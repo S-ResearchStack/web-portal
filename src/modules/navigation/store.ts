@@ -12,6 +12,11 @@ export enum Path {
   AccountCreate = '/account/create',
   AccountConfirm = '/account/confirm',
   AccountVerification = '/email-verification',
+  ForgotPassword = '/account/forgot',
+  ForgotPasswordConfirm = '/account/forgot/confirm',
+  ResetPassword = '/account/forgot/reset',
+  ResetPasswordComplete = '/account/forgot/complete',
+
   CreateStudy = '/create-study',
 
   Overview = '/overview',
@@ -25,10 +30,6 @@ export enum Path {
   DataCollectionSubject = '/data-collection/participants/:subjectId',
   StudySettings = '/study-settings',
 }
-
-export type LocationState = {
-  from: Location;
-};
 
 export const makeHistory = () =>
   process.env.NODE_ENV !== 'test'

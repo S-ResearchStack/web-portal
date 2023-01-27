@@ -639,6 +639,7 @@ exports[`Studies should render 1`] = `
               class="c3"
             >
               <button
+                aria-label="Previous Study"
                 class="c4 c5"
                 disabled=""
                 fill="text"
@@ -748,6 +749,7 @@ exports[`Studies should render 1`] = `
                 </div>
               </div>
               <button
+                aria-label="Next Study"
                 class="c4 c5"
                 disabled=""
                 fill="text"

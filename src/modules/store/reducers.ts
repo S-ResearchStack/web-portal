@@ -12,6 +12,8 @@ import dataCollectionReducer from 'src/modules/data-collection/dataCollection.sl
 import sidebarReducer from 'src/modules/main-layout/sidebar/sidebar.slice';
 import { history } from 'src/modules/navigation/store';
 import { DataSliceState } from 'src/modules/store/createDataSlice';
+import forgotPasswordReducers from 'src/modules/auth/forgot-password/forgotPassword.slice';
+import resetPasswordReducers from 'src/modules/auth/forgot-password/resetPassword.slice';
 
 const createReducer = <T, V>(asyncReducers?: { [key: string]: Reducer<DataSliceState<T, V>> }) =>
   combineReducers({
@@ -24,6 +26,8 @@ const createReducer = <T, V>(asyncReducers?: { [key: string]: Reducer<DataSliceS
     ...studySettingsReducer,
     ...overviewReducers,
     ...trialManagementReducer,
+    ...forgotPasswordReducers,
+    ...resetPasswordReducers,
     ...asyncReducers,
   });
 

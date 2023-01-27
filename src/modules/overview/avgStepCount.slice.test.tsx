@@ -35,7 +35,7 @@ const setUpHook = (args: { studyId: string }) =>
         fetchArgs: fetchArgs || args,
       }),
     {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     }

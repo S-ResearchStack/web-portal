@@ -16,18 +16,8 @@ import { Path } from 'src/modules/navigation/store';
 
 import ScreenCenteredCard from '../common/ScreenCenteredCard';
 import { useEnterPress } from './hooks';
-
-const MainWrapper = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  @media (max-height: ${px(511)}) {
-    overflow-y: scroll;
-  }
-  @media (max-width: ${px(682)}) {
-    overflow-x: scroll;
-  }
-`;
+import ScreenHeader from '../common/ScreenHeader';
+import ScreenWrapper from '../common/ScreenWrapper';
 
 const Content = styled.div`
   width: ${px(448)};
@@ -36,8 +26,7 @@ const Content = styled.div`
   flex-direction: column;
 `;
 
-const Header = styled.div`
-  ${typography.headingLargeSemibold};
+const Header = styled(ScreenHeader)`
   margin: ${px(40)} auto ${px(42)};
 `;
 
@@ -173,7 +162,11 @@ const SignInScreen: React.FC = () => {
   }, [password, email, error]);
 
   return (
-    <MainWrapper data-testid="signin-screen">
+    <ScreenWrapper
+      data-testid="signin-screen"
+      mediaMaxHeightToScrollY={511}
+      mediaMaxWidthToScrollX={682}
+    >
       <ScreenCenteredCard
         width={55.556}
         minWidth={683}
@@ -192,6 +185,7 @@ const SignInScreen: React.FC = () => {
             onChange={handleEmailChange}
             error={error}
             readOnly={isLoading}
+            aria-label="Email"
           />
           <PasswordInputField
             name="password"
@@ -202,6 +196,7 @@ const SignInScreen: React.FC = () => {
             onChange={handlePasswordChange}
             autoComplete="new-password"
             readOnly={isLoading}
+            aria-label="Password"
           />
           <ControlsWrapper>
             <Checkbox
@@ -233,7 +228,7 @@ const SignInScreen: React.FC = () => {
           </ErrorText>
         </Content>
       </ScreenCenteredCard>
-    </MainWrapper>
+    </ScreenWrapper>
   );
 };
 

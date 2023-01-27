@@ -12,7 +12,7 @@ import { px } from 'src/styles';
 
 const ICON_BUTTON_WIDTH = 24;
 
-const StyledEndExtraButton = styled(IconButton)<{ selected: boolean; error?: boolean | string }>`
+const StyledEndExtraButton = styled(IconButton)`
   position: relative;
   bottom: ${browser.isSafari ? px(43) : px(41)};
   left: calc(100% - ${px(ICON_BUTTON_WIDTH + RIGHT_PADDING)});
@@ -27,10 +27,9 @@ type EndExtraProps = {
   onClick: () => void;
   color: SpecColorType;
   disabled?: boolean;
-  error?: boolean | string;
 };
 
-export const EndExtra = ({ selected, onClick, color, disabled, error }: EndExtraProps) => (
+export const EndExtra = ({ selected, onClick, color, disabled }: EndExtraProps) => (
   <StyledEndExtraButton
     selected={selected}
     onClick={onClick}
@@ -38,7 +37,7 @@ export const EndExtra = ({ selected, onClick, color, disabled, error }: EndExtra
     $size="s"
     color={color}
     disabled={disabled}
-    error={error}
+    aria-label={selected ? 'Hide Password' : 'Show Password'}
   />
 );
 
@@ -71,7 +70,6 @@ const PasswordInputField = ({
       endExtra={{
         component: (
           <EndExtra
-            error={error}
             selected={isPasswordVisible}
             onClick={toggleChecked}
             color={endExtraColor}

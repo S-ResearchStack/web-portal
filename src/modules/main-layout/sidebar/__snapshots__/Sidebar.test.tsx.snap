@@ -393,6 +393,7 @@ exports[`Sidebar should render 1`] = `
         data-testid="tooltip-container"
       />
       <button
+        aria-label="Resize"
         class="c2 c3"
         fill="text"
         style="overflow: hidden; position: relative;"

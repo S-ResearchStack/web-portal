@@ -4,7 +4,7 @@ import styled, { FlattenSimpleInterpolation } from 'styled-components';
 import { PropsWithTheme } from 'src/styles/themeHelpers';
 import { colors, px, typography } from 'src/styles';
 
-interface ChipsProps extends React.PropsWithChildren<unknown> {
+interface ChipsProps extends React.PropsWithChildren {
   type: 'disabled' | 'success';
 }
 

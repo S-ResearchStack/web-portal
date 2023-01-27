@@ -19,7 +19,7 @@ describe('getEligibilityQualificationsMock', () => {
 
 const setUpHook = () =>
   renderHook(() => useEligibilityQualificationsData({ fetchArgs: undefined }), {
-    wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+    wrapper: ({ children }: React.PropsWithChildren) => (
       <Provider store={store}>{children}</Provider>
     ),
   });

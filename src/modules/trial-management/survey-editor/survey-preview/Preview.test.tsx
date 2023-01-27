@@ -45,7 +45,7 @@ describe('Preview', () => {
     const studies = studiesSelector(store.getState());
     expect(studies).not.toHaveLength(0);
 
-    await dispatch(setSelectedStudyId(studies[0].id));
+    dispatch(setSelectedStudyId(studies[0].id));
     expect(selectedStudyIdSelector(store.getState())).toBe(studies[0].id);
 
     const surveyId = '1';
@@ -60,7 +60,7 @@ describe('Preview', () => {
     expect(editedSurvey).not.toBeUndefined();
 
     await act(async () => {
-      renderResult = await render(
+      renderResult = render(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <ConnectedRouter history={history}>
@@ -81,8 +81,8 @@ describe('Preview', () => {
     // @ts-ignore
     const { rerender } = renderResult;
 
-    await act(async () => {
-      await rerender(
+    await act(() => {
+      rerender(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <ConnectedRouter history={history}>

@@ -200,7 +200,7 @@ describe('actions', () => {
     renderHook(
       (fetchArgs: SurveyListSliceFetchArgs) => useSurveyListData({ fetchArgs: fetchArgs || args }),
       {
-        wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+        wrapper: ({ children }: React.PropsWithChildren) => (
           <Provider store={store}>{children}</Provider>
         ),
       }
@@ -1144,7 +1144,7 @@ describe('newId', () => {
 describe('useSurveyEditor', () => {
   const setUpSurveyEditorHook = () =>
     renderHook(() => useSurveyEditor(), {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     });

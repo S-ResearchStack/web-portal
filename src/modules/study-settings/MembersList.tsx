@@ -99,7 +99,13 @@ const TooltipCloseButton = styled(IconButton)`
 const TooltipContent: FC<{ onClose: () => void }> = ({ onClose }) => (
   <TooltipContentContainer>
     <span>Start by adding your team members.</span>
-    <TooltipCloseButton onClick={onClose} icon={CloseIcon} $size="m" color="onPrimary" />
+    <TooltipCloseButton
+      onClick={onClose}
+      icon={CloseIcon}
+      $size="m"
+      color="onPrimary"
+      aria-label="Close"
+    />
   </TooltipContentContainer>
 );
 
@@ -249,6 +255,7 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
           fill="text"
           onClick={handleInviteMemberButtonClick}
           rate="small"
+          aria-label="Invite member"
         >
           Invite member
         </InviteMemberButton>

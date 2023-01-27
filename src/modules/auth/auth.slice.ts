@@ -208,12 +208,12 @@ export const useSignUp = () => {
   const signUpState = useSelector(signUpSelector);
   return {
     ...signUpState,
-    signUp: (...data: Parameters<typeof signUp>) => dispatch(signUp(...data)),
+    signUp: async (...data: Parameters<typeof signUp>) => dispatch(signUp(...data)),
   };
 };
 
 const handleTokensReceived =
-  (authToken: string, refreshToken: string, rememberUser?: boolean): AppThunk<Promise<void>> =>
+  (authToken: string, refreshToken: string, rememberUser = false): AppThunk<Promise<void>> =>
   async (dispatch) => {
     if (rememberUser) {
       localStorage.setItem(STORAGE_TOKEN_KEY, authToken);

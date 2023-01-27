@@ -39,8 +39,7 @@ const AvgRestingHrOverDayCard: React.FC = () => {
 
   const history = useHistory();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDotClick = (_: React.MouseEvent<SVGPathElement, MouseEvent>, d: DataItem) => {
+  const handleDotClick = () => {
     const SUBJECT_ID = 'SUBJECT_ID'; // TODO replace to d.id
     history.push(
       generatePath(Path.OverviewSubject, {

@@ -20,6 +20,10 @@ import { TooltipProvider, TooltipsList } from 'src/common/components/Tooltip';
 import { theme, GlobalStyles } from 'src/styles';
 
 import 'src/modules/auth/authProvider';
+import ForgotPassword from 'src/modules/auth/forgot-password/ForgotPassword';
+import ForgotPasswordCheckMailbox from 'src/modules/auth/forgot-password/ForgotPasswordCheckMailbox';
+import ResetPassword from 'src/modules/auth/forgot-password/ResetPassword';
+import PasswordChanged from 'src/modules/auth/forgot-password/PasswordChanged';
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -34,7 +38,17 @@ const App = () => (
               <Route path={Path.AccountCreate} component={SignUp} />
               <Route path={Path.AccountConfirm} component={CheckMailbox} />
               <Route path={Path.AccountVerification} component={AccountCreated} />
-              <PrivateRoute path={Path.CreateStudy} component={CreateStudyScreen} />
+              <Route exact path={Path.ForgotPassword} component={ForgotPassword} />
+              <Route
+                exact
+                path={Path.ForgotPasswordConfirm}
+                component={ForgotPasswordCheckMailbox}
+              />
+              <Route exact path={Path.ResetPassword} component={ResetPassword} />
+              <Route exact path={Path.ResetPasswordComplete} component={PasswordChanged} />
+              <PrivateRoute path={Path.CreateStudy}>
+                <CreateStudyScreen />
+              </PrivateRoute>
               <PrivateRoute>
                 <MainLayout />
               </PrivateRoute>

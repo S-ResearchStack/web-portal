@@ -8,6 +8,7 @@ interface ResultMessageProps extends React.PropsWithChildren<unknown> {
   title: JSX.Element | string;
   description: JSX.Element | string;
   moreSpace?: boolean;
+  compactTitleMargin?: boolean;
 }
 
 const Content = styled.div`
@@ -30,10 +31,12 @@ const Picture = styled.div<Pick<ResultMessageProps, 'moreSpace'>>`
   height: ${(moreSpace) => px(moreSpace ? 240 : 205)};
 `;
 
-const Title = styled.h2<Pick<ResultMessageProps, 'moreSpace'>>`
+const Title = styled.h2<Pick<ResultMessageProps, 'moreSpace' | 'compactTitleMargin'>>`
   ${({ moreSpace }) => (moreSpace ? typography.headingMedium : typography.headingLargeSemibold)};
   margin: 0;
-  margin-top: ${({ moreSpace }) => px(moreSpace ? 48 : 32)};
+  margin-top: ${({ moreSpace, compactTitleMargin }) =>
+    // eslint-disable-next-line no-nested-ternary
+    px(moreSpace ? 48 : compactTitleMargin ? 6 : 32)};
 `;
 
 const Description = styled.p<Pick<ResultMessageProps, 'moreSpace'>>`
@@ -51,6 +54,7 @@ const Childs = styled.div``;
 
 const ResultMessage: React.FC<ResultMessageProps> = ({
   moreSpace,
+  compactTitleMargin,
   picture,
   title,
   description,
@@ -58,7 +62,9 @@ const ResultMessage: React.FC<ResultMessageProps> = ({
 }) => (
   <Content>
     <Picture moreSpace={moreSpace}>{picture}</Picture>
-    <Title moreSpace={moreSpace}>{title}</Title>
+    <Title moreSpace={moreSpace} compactTitleMargin={compactTitleMargin}>
+      {title}
+    </Title>
     <Description moreSpace={moreSpace}>{description}</Description>
     {children && <Childs>{children}</Childs>}
   </Content>

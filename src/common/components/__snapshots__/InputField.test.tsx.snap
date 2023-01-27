@@ -820,9 +820,7 @@ exports[`InputField test InputField error state 1`] = `
       <div
         class="c6"
         data-testid="input-error"
-      >
-         
-      </div>
+      />
     </div>
   </div>
 </body>

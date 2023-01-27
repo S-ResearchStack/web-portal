@@ -4,7 +4,7 @@ import { px } from 'src/styles';
 
 import SuccessImg from 'src/assets/illustrations/success.svg';
 import Card from 'src/common/components/Card';
-import ResultMessage from 'src/modules/auth/signup/ResultMessage';
+import ResultMessage from 'src/modules/auth/common/ResultMessage';
 import Button from 'src/common/components/Button';
 import { useHistory } from 'react-router-dom';
 import { Path } from 'src/modules/navigation/store';

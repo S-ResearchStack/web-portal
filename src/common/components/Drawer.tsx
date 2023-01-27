@@ -63,6 +63,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
       <BackdropOverlay open={Boolean(open)}>
         <Slide {...slideProps} in={Boolean(open)} direction={direction}>
           <DrawerBox
+            role="alertdialog"
             ref={combineRefs([boxRef, ref])}
             aria-modal={open}
             aria-hidden={!open}

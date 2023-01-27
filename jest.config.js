@@ -22,4 +22,8 @@ module.exports = {
   setupFilesAfterEnv: ['jest-extended/all'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.stories.{ts,tsx}'],
   testTimeout: 60000,
+  reporters: [
+    'default',
+    ['jest-junit', { outputDirectory: 'test-reports', outputName: 'report.xml' }],
+  ],
 };

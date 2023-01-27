@@ -469,7 +469,7 @@ export const saveSurveyIfRequired =
 
 let autoSaveTimeoutId = 0;
 
-export const autoSaveIfRequired = (): AppThunk<void> => (dispatch) => {
+export const autoSaveIfRequired = (): AppThunk => (dispatch) => {
   if (autoSaveTimeoutId) {
     clearTimeout(autoSaveTimeoutId);
   }

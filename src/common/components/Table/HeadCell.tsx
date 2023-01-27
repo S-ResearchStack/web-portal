@@ -107,6 +107,16 @@ const HeadCell = <T,>({
 
   const isSortable = !!sortParams && !!column.label;
 
+  let buttonAriaLabel;
+
+  if (!isActive) {
+    buttonAriaLabel = 'Sort disabled';
+  } else if (isSortedColumnCell === 'desc') {
+    buttonAriaLabel = 'desc';
+  } else {
+    buttonAriaLabel = 'asc';
+  }
+
   return (
     <HeadCellContainer
       sortable={isSortable}
@@ -139,7 +149,12 @@ const HeadCell = <T,>({
       </Tooltip>
       {isSortable && (
         <SortColumnBtnContainer>
-          <IconButton $size="m" icon={SortIconButton} color="disabled" />
+          <IconButton
+            $size="m"
+            icon={SortIconButton}
+            color="disabled"
+            aria-label={buttonAriaLabel}
+          />
         </SortColumnBtnContainer>
       )}
       {isActive && isProcessing && <Loader />}

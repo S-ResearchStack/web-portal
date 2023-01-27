@@ -35,8 +35,9 @@ import { maskEndpointAsFailure } from 'src/modules/api/mock';
 // eslint-disable-next-line prefer-destructuring
 const authToken =
   'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdfQ==';
+const wrongPassword = 'wrongpwd';
 const refreshToken = `refresh.${authToken}`;
-const userInfo = { email: 'username@samsung.com', password: 'any', roles: ['team-admin'] };
+const userInfo = { email: 'username@samsung.com', testPassword: 'any', roles: ['team-admin'] };
 const projectId = 'project-id';
 
 let history: ReturnType<typeof makeHistory>;
@@ -218,7 +219,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: userInfo.password,
+        password: userInfo.testPassword,
       })
     );
 
@@ -239,7 +240,7 @@ describe('store', () => {
       await dispatch(
         signin({
           email: 'userInfo.email',
-          password: 'userInfo.password',
+          password: wrongPassword,
         })
       );
     } catch (e) {
@@ -253,7 +254,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: userInfo.password,
+        password: userInfo.testPassword,
         rememberUser: true,
       })
     );
@@ -269,7 +270,7 @@ describe('store', () => {
       await dispatch(
         signin({
           email: 'userInfo.email',
-          password: 'userInfo.password',
+          password: wrongPassword,
           rememberUser: true,
         })
       );
@@ -284,7 +285,7 @@ describe('store', () => {
     const pendedSignInAction = dispatch(
       signin({
         email: 'invalid@email.com',
-        password: userInfo.password,
+        password: userInfo.testPassword,
         rememberUser: true,
       })
     );
@@ -297,7 +298,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: userInfo.password,
+        password: userInfo.testPassword,
         rememberUser: true,
       })
     );
@@ -330,7 +331,7 @@ describe('store', () => {
       activateAccount({
         email: userInfo.email,
         name: userInfo.email.split('@')[0],
-        password: userInfo.password,
+        password: userInfo.testPassword,
         resetToken: 'reset-token',
       })
     );
@@ -343,7 +344,7 @@ describe('store', () => {
       activateAccount({
         email: userInfo.email,
         name: userInfo.email.split('@')[0],
-        password: userInfo.password,
+        password: userInfo.testPassword,
         resetToken: '',
       })
     );
@@ -357,7 +358,7 @@ describe('store', () => {
       activateAccount({
         email: 'invalid@email.com',
         name: userInfo.email.split('@')[0],
-        password: userInfo.password,
+        password: userInfo.testPassword,
         resetToken: 'reset-token',
       })
     );
@@ -372,7 +373,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: userInfo.password,
+        password: userInfo.testPassword,
       })
     );
 
@@ -390,7 +391,7 @@ describe('store', () => {
     await dispatch(
       signin({
         email: userInfo.email,
-        password: userInfo.password,
+        password: userInfo.testPassword,
       })
     );
 
@@ -438,7 +439,7 @@ describe('useSignUp', () => {
     act(() => {
       hook.result.current.signUp({
         email: 'example@samsung.com',
-        password: 'pa55w0rd',
+        password: userInfo.testPassword,
         profile: {
           name: 'UserName',
         },
@@ -465,7 +466,7 @@ describe('useSignUp', () => {
       await maskEndpointAsFailure('signUp', async () => {
         await hook.result.current.signUp({
           email: 'example@samsung.com',
-          password: 'pa55w0rd',
+          password: userInfo.testPassword,
           profile: {
             name: 'UserName',
           },

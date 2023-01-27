@@ -77,9 +77,9 @@ type EndpointType = (...args: any) => any;
 type EndpointTuple<T extends EndpointType> = [T, Parameters<T>];
 type Endpoints<T extends EndpointType[]> = EndpointTuple<T[number]>[];
 
-const email = 'hello@samsung.com';
-const password = 'pa55w0rd';
-const projectId = 'project-id';
+const testEmail = 'hello@samsung.com';
+const testPassword = 'pa55w0rd';
+const testProjectId = 'project-id';
 
 const responseData = {
   test: 'test',
@@ -109,12 +109,12 @@ beforeAll(() => {
 });
 
 const endpointsList: Endpoints<typeof endpoints> = [
-  [signin, [{ email, password }]],
-  [resetPassword, [{ email, password, resetToken: '12' }]],
+  [signin, [{ email: testEmail, password: testPassword }]],
+  [resetPassword, [{ email: testEmail, password: testPassword, resetToken: '12' }]],
   [getStudies, []],
   [createStudy, [{ name: 'test', info: { color: '#fff' } }]],
-  [getUsers, [{ projectId }]],
-  [inviteUser, [{ email, roles: ['team-admin'] }]],
+  [getUsers, [{ projectId: testProjectId }]],
+  [inviteUser, [{ email: testEmail, roles: ['team-admin'] }]],
   [removeUser, [{ accountId: '1', roles: ['team-admin'] }]],
   [updateUserRole, [{ accountId: '1', roles: ['team-admin'] }]],
   [removeUserRole, [{ accountId: '1', roles: ['team-admin'] }]],
@@ -125,33 +125,55 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getAvgHeartRateFluctuations, []],
   [
     getHealthDataOverview,
-    [{ projectId, limit: 10, offset: 10, sort: { column: 'EMAIL', direction: 'DESC' } }],
+    [
+      {
+        projectId: testProjectId,
+        limit: 10,
+        offset: 10,
+        sort: { column: 'EMAIL', direction: 'DESC' },
+      },
+    ],
   ],
-  [getUserProfilesCount, [{ projectId }]],
-  [getHealthDataOverviewForUser, [{ projectId, id: 'id' }]],
+  [getUserProfilesCount, [{ projectId: testProjectId }]],
+  [getHealthDataOverviewForUser, [{ projectId: testProjectId, id: 'id' }]],
   [
     getParticipantHeartRates,
-    [{ projectId, startTime: new Date().toISOString(), endTime: new Date().toISOString() }],
+    [
+      {
+        projectId: testProjectId,
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+      },
+    ],
   ],
   [
     getAverageParticipantHeartRate,
-    [{ projectId, startTime: new Date().toISOString(), endTime: new Date().toISOString() }],
+    [
+      {
+        projectId: testProjectId,
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+      },
+    ],
   ],
-  [getAverageStepCount, [{ projectId }]],
-  [getTasks, [{ projectId }]],
-  [getTask, [{ projectId, id: 'id' }]],
-  [createTask, [{ projectId }]],
-  [updateTask, [{ projectId, id: 'id' }]],
-  [getTaskItemResults, [{ projectId, id: 'id' }]],
-  [getTaskCompletionTime, [{ projectId, id: 'id' }]],
-  [getTaskRespondedUsersCount, [{ projectId }]],
-  [getParticipantsTimeZones, [{ projectId }]],
+  [getAverageStepCount, [{ projectId: testProjectId }]],
+  [getTasks, [{ projectId: testProjectId }]],
+  [getTask, [{ projectId: testProjectId, id: 'id' }]],
+  [createTask, [{ projectId: testProjectId }]],
+  [updateTask, [{ projectId: testProjectId, id: 'id' }]],
+  [getTaskItemResults, [{ projectId: testProjectId, id: 'id' }]],
+  [getTaskCompletionTime, [{ projectId: testProjectId, id: 'id' }]],
+  [getTaskRespondedUsersCount, [{ projectId: testProjectId }]],
+  [getParticipantsTimeZones, [{ projectId: testProjectId }]],
   [getTablesList, []],
-  [getTableColumns, [projectId, 'id']],
-  [executeDataQuery, [projectId, 'select * from table']],
-  [signUp, [{ email: 'example@samsung.com', password: 'pa55w0rd', profile: { name: 'username' } }]],
+  [getTableColumns, [testProjectId, 'id']],
+  [executeDataQuery, [testProjectId, 'select * from table']],
+  [
+    signUp,
+    [{ email: 'example@samsung.com', password: testPassword, profile: { name: 'username' } }],
+  ],
   [verifyEmail, [{ token: 'token' }]],
-  [resendVerification, [{ email, password }]],
+  [resendVerification, [{ email: testEmail, password: testPassword }]],
 ];
 
 for (const endpoint of endpointsList) {

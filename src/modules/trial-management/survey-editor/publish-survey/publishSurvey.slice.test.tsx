@@ -43,7 +43,7 @@ describe('useParticipantsTimeZones', () => {
       (fetchArgs: { studyId: string }) =>
         useParticipantsTimeZones({ fetchArgs: fetchArgs || args }),
       {
-        wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+        wrapper: ({ children }: React.PropsWithChildren) => (
           <Provider store={store}>{children}</Provider>
         ),
       }
@@ -296,7 +296,7 @@ describe('publishSurvey', () => {
 describe('usePublishSurveySlice', () => {
   const setUpPublishSurveySliceHook = () =>
     renderHook(() => usePublishSurveySlice(), {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     });

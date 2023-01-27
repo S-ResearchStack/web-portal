@@ -1,3 +1,4 @@
+import React from 'react';
 import CodeMirror, { Pos } from 'codemirror';
 
 import { getTableNameFromQuery } from '../helpers';
@@ -260,6 +261,7 @@ export const initEditor = (props: {
     extraKeys: { 'Ctrl-Space': 'autocomplete', Tab: 'autocomplete' },
     mode: 'text/x-trino',
     hintOptions: { container: containerRef.current },
+    screenReaderLabel: 'Query',
   });
   cm.setValue(value);
 

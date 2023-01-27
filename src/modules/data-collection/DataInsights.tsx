@@ -48,7 +48,12 @@ const DataInsights = () => {
         title="Data Query"
         headerExtra={
           <Tooltip arrow static trigger="hover" position="l" content="Documentation for Data Query">
-            <a href={SQL_DOCUMENTATION_URL} target="_blank" rel="noreferrer">
+            <a
+              href={SQL_DOCUMENTATION_URL}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Data Query Documentation"
+            >
               <QuestionIconStyled />
             </a>
           </Tooltip>

@@ -64,44 +64,6 @@ export const getTooltipPosition = (pointX: number, pointY: number, svgRect?: DOM
   return isBottomPosition ? 'b' : 't';
 };
 
-/* prevent chart from going out of focus borders */
-
-export const appendClipPath = (
-  svgRef: React.RefObject<SVGSVGElement>,
-  focusWidth: number,
-  focusHeight: number
-) => {
-  d3.select(svgRef.current).select('#clip').remove();
-  d3.select(svgRef.current)
-    .append('defs')
-    .append('clipPath')
-    .attr('transform', `translate(${MARGIN_FOCUS.left}, ${MARGIN_FOCUS.top})`)
-    .attr('id', 'clip')
-    .append('rect')
-    .attr('width', focusWidth)
-    .attr('height', focusHeight);
-};
-
-/* dragging the chart area */
-
-export const brushXSelection = (svgRef: React.RefObject<SVGSVGElement>) => {
-  const brushNode = d3
-    .select(svgRef.current)
-    .select('.context')
-    .select<SVGGElement>('.brushX')
-    .node();
-  return brushNode && ((d3.brushSelection(brushNode) as [number, number]) || null);
-};
-
-export const brushYSelection = (svgRef: React.RefObject<SVGSVGElement>) => {
-  const brushNode = d3
-    .select(svgRef.current)
-    .select('.context')
-    .select<SVGGElement>('.brushY')
-    .node();
-  return brushNode && ((d3.brushSelection(brushNode) as [number, number]) || null);
-};
-
 export const initBrushX = (
   focusHeight: number,
   focusWidth: number,
@@ -133,29 +95,6 @@ export const initBrushY = (
       ],
     ])
     .on('brush end', brushedY);
-
-export const appendLines = <T extends { name: string }>(
-  svgRef: React.RefObject<SVGSVGElement>,
-  values: T[][],
-  drawLine: (d: T[]) => string | null,
-  colorScale: d3.ScaleOrdinal<string, string, never>
-) => {
-  d3.select(svgRef.current).select('.focus').selectAll('path').remove();
-
-  const focus = d3.select(svgRef.current).select('.focus');
-
-  focus
-    .selectAll('.line')
-    .data(values)
-    .enter()
-    .append('path')
-    .attr('class', 'line')
-    .attr('id', (d) => `line-${d[0].name}`)
-    .attr('fill', 'none')
-    .attr('stroke', (d) => colorScale(d[0].name))
-    .attr('stroke-width', 3)
-    .attr('d', drawLine);
-};
 
 export const updateContext = (
   svgRef: React.RefObject<SVGSVGElement>,
@@ -209,16 +148,6 @@ export const updateContext = (
     moveLastSelection
   );
 };
-
-export const gradientPoints = [
-  { offset: '0%' },
-  { offset: '41%' },
-  { offset: '41%', isColored: true },
-  { offset: '50%', isColored: true },
-  { offset: '59%', isColored: true },
-  { offset: '59%' },
-  { offset: '100%' },
-];
 
 export const formatTimeAxisTick = (d: d3.NumberValue) => {
   const utcD = DateTime.fromMillis(d.valueOf()).toUTC();

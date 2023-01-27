@@ -45,15 +45,15 @@ describe('studySettings slice', () => {
     const getState = () => store.getState()['studySettings/membersEdit'];
 
     expect(getState().isOpen).toBeFalse();
-    await dispatch(openInviteEditMember({ id: 'test' }));
+    dispatch(openInviteEditMember({ id: 'test' }));
     expect(getState().isOpen).toBeTrue();
 
-    await dispatch(closeInviteEditMember());
+    dispatch(closeInviteEditMember());
     expect(getState().isOpen).toBeFalse();
 
     dispatch(inviteStudyMember({ email: 'test@example.com', role: 'team-admin' }));
     expect(getState().isSending).toBeTrue();
 
-    await dispatch(removeStudyMember({ id: 'test' }));
+    dispatch(removeStudyMember({ id: 'test' }));
   });
 });

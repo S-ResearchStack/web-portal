@@ -29,7 +29,7 @@ const sidebarSlice = createSlice({
 
 const { setCollapsed, setForceCollapsed } = sidebarSlice.actions;
 
-export const toggleSidebarCollapsed = (): AppThunk<void> => (dispatch, getStore) => {
+export const toggleSidebarCollapsed = (): AppThunk => (dispatch, getStore) => {
   const newState = !getStore().sidebar.isCollapsed;
   localStorage.setItem(IS_COLLAPSED_STORAGE_KEY, JSON.stringify(newState));
   dispatch(setCollapsed(newState));

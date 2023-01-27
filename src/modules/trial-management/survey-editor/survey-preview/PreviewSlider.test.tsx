@@ -28,8 +28,8 @@ describe('PreviewSlider', () => {
     const activeIndex = 5;
     const onChange = jest.fn();
 
-    await act(async () => {
-      await render(
+    await act(() => {
+      render(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <ConnectedRouter history={history}>

@@ -68,7 +68,12 @@ const HelpFloatButton = () => (
       content="Here you can find the documentation for survey creation!"
       trigger="hover"
     >
-      <FloatButton href={DOCUMENTATION_URL} target="_blank" rel="noreferrer">
+      <FloatButton
+        href={DOCUMENTATION_URL}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Survey creation documentation"
+      >
         <HelpIcon />
       </FloatButton>
     </FloatButtonTooltip>

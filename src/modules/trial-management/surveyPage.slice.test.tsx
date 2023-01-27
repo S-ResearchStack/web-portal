@@ -15,7 +15,7 @@ const setUpHook = (args: GetSurveyDetailsDataParams | false) =>
     (fetchArgs: GetSurveyDetailsDataParams) =>
       useSurveyDetailsData({ fetchArgs: fetchArgs || args }),
     {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     }

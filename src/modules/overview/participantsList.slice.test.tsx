@@ -25,7 +25,7 @@ const setUpHook = (args: GetParticipantListParams | false) =>
   renderHook(
     (fetchArgs: GetParticipantListParams) => useParticipantList({ fetchArgs: fetchArgs || args }),
     {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     }

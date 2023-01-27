@@ -170,16 +170,36 @@ const Pagination: FC<PaginationProps> = ({
             maxVisibleMenuItems={5}
           />
         </DropDownContainer>
-        <ArrowButton disabled={isPrevDisabled} onClick={goToFirst} data-testid="go-to-first">
+        <ArrowButton
+          disabled={isPrevDisabled}
+          onClick={goToFirst}
+          data-testid="go-to-first"
+          aria-label="Go to First"
+        >
           <PageFirstIcon />
         </ArrowButton>
-        <ArrowButton disabled={isPrevDisabled} onClick={goToPrev} data-testid="go-to-previous">
+        <ArrowButton
+          disabled={isPrevDisabled}
+          onClick={goToPrev}
+          data-testid="go-to-previous"
+          aria-label="Go to Previous"
+        >
           <ChevronLeftIcon />
         </ArrowButton>
-        <ArrowButton disabled={isNextDisabled} onClick={goToNext} data-testid="go-to-next">
+        <ArrowButton
+          disabled={isNextDisabled}
+          onClick={goToNext}
+          data-testid="go-to-next"
+          aria-label="Go to Next"
+        >
           <ChevronRightIcon />
         </ArrowButton>
-        <ArrowButton disabled={isNextDisabled} onClick={goToLast} data-testid="go-to-last">
+        <ArrowButton
+          disabled={isNextDisabled}
+          onClick={goToLast}
+          data-testid="go-to-last"
+          aria-label="Go to Last"
+        >
           <PageLastIcon />
         </ArrowButton>
       </Controls>

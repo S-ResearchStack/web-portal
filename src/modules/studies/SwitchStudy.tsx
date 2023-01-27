@@ -22,7 +22,7 @@ import ArrowLeft from 'src/assets/icons/arrow_left_xxl.svg';
 import ArrowRight from 'src/assets/icons/arrow_right_xxl.svg';
 import { animation, colors, px, typography } from 'src/styles';
 import SkeletonLoading, { SkeletonRect, SkeletonPath } from 'src/common/components/SkeletonLoading';
-import ResultMessage from 'src/modules/auth/signup/ResultMessage';
+import ResultMessage from 'src/modules/auth/common/ResultMessage';
 import EmptyStateImg from 'src/assets/illustrations/empty_state.svg';
 import { SWITCH_STUDY_SEARCH_PARAM } from 'src/modules/main-layout/constants';
 
@@ -234,6 +234,7 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
         onClick={() => setSlideIndex(slideIndex - 1)}
         disabled={slideIndex === 0}
         visible={studies.length > 1}
+        aria-label="Previous Study"
       />
       <Content>
         <Header>
@@ -308,6 +309,7 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
         onClick={() => setSlideIndex(slideIndex + 1)}
         disabled={slideIndex === studies.length - 1}
         visible={studies.length > 1}
+        aria-label="Next Study"
       />
     </Container>
   );

@@ -180,7 +180,7 @@ export const useInviteEditMember = () =>
   useAppSelector((state) => state['studySettings/membersEdit']);
 
 export const openInviteEditMember =
-  ({ id }: { id?: string }): AppThunk<void> =>
+  ({ id }: { id?: string }): AppThunk =>
   (dispatch, getState) => {
     if (id) {
       const members = membersListSlice.stateSelector(getState());
@@ -198,7 +198,7 @@ export const openInviteEditMember =
 export const closeInviteEditMember = membersEdit.actions.close;
 
 export const editStudyMember =
-  (m: MembersEditData): AppThunk<void> =>
+  (m: MembersEditData): AppThunk =>
   (dispatch) => {
     console.info(`Update study member ${JSON.stringify(m)}`);
     // TODO: update roles?
@@ -207,7 +207,7 @@ export const editStudyMember =
   };
 
 export const inviteStudyMember =
-  ({ email, role }: Required<Pick<MembersEditData, 'email' | 'role'>>): AppThunk<void> =>
+  ({ email, role }: Required<Pick<MembersEditData, 'email' | 'role'>>): AppThunk =>
   async (dispatch, getState) => {
     dispatch(membersEdit.actions.createOrUpdateMemberInit());
     try {
@@ -233,7 +233,7 @@ export const inviteStudyMember =
   };
 
 export const removeStudyMember =
-  (m: Required<Pick<MembersEditData, 'id'>>): AppThunk<void> =>
+  (m: Required<Pick<MembersEditData, 'id'>>): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(membersEdit.actions.deleteMemberInit());

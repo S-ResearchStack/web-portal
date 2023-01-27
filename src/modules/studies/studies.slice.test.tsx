@@ -294,7 +294,7 @@ describe('store', () => {
 
   it('should use `useSelectedStudyId` hook', async () => {
     const view = renderHook(() => useSelectedStudyId(), {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
+      wrapper: ({ children }: React.PropsWithChildren) => (
         <Provider store={store}>{children}</Provider>
       ),
     });

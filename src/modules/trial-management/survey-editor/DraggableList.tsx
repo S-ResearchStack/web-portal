@@ -23,7 +23,7 @@ export interface DraggableItemRendererProps<T> {
 
 export type DraggableItemRenderer<T> = (options: DraggableItemRendererProps<T>) => JSX.Element;
 
-export interface DraggableItemProps<T> extends React.PropsWithChildren<unknown> {
+export interface DraggableItemProps<T> extends React.PropsWithChildren {
   position: number;
   item: DraggableItem<T>;
   items: DraggableItem<T>[];

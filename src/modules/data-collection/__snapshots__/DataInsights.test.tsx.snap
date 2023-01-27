@@ -465,6 +465,7 @@ exports[`DataCollection should render 1`] = `
               style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 0px;"
             >
               <textarea
+                aria-label="Query"
                 autocapitalize="off"
                 autocorrect="off"
                 spellcheck="false"

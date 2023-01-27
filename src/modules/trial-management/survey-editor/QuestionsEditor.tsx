@@ -86,7 +86,7 @@ const LimitsCounterValues = styled.div`
   color: ${colors.textSecondaryGray};
 `;
 
-interface LimitsCounterProps extends React.PropsWithChildren<unknown> {
+interface LimitsCounterProps extends React.PropsWithChildren {
   current: number;
   max: number;
 }
@@ -167,6 +167,7 @@ const TitleEditor: FC<TitleEditorProps> = ({
           onChange={handleTitleChange}
           error={error}
           disabled={loading}
+          aria-label="Survey Title"
         />
       </LimitsCounter>
       <LimitsCounter current={description.length} max={MAX_DESCRIPTION_LENGTH}>
@@ -176,6 +177,7 @@ const TitleEditor: FC<TitleEditorProps> = ({
           value={description}
           onChange={handleDescriptionChange}
           disabled={loading}
+          aria-label="Survey Description"
         />
       </LimitsCounter>
     </TitleEditorContainer>

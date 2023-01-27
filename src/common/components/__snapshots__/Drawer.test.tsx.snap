@@ -72,6 +72,7 @@ exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
             aria-modal="1"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
           />
         </div>
       </div>
@@ -160,6 +161,7 @@ exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
             aria-hidden="true"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
           />
         </div>
       </div>
@@ -249,6 +251,7 @@ exports[`Drawer test drawer section direction 1`] = `
             aria-modal="true"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
           >
             <div>
               Content
@@ -342,6 +345,7 @@ exports[`Drawer test drawer section direction 2`] = `
             aria-modal="true"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
             style="webkit-overflow-scrolling: touch;"
           >
             <div>
@@ -436,6 +440,7 @@ exports[`Drawer test drawer section render 1`] = `
             aria-modal="false"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
           >
             <div>
               Content
@@ -529,6 +534,7 @@ exports[`Drawer test drawer section render 2`] = `
             aria-modal="true"
             class="c4"
             data-testid="drawer-box"
+            role="alertdialog"
             style="webkit-overflow-scrolling: touch;"
           >
             <div>

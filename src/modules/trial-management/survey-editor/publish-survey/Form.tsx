@@ -35,7 +35,7 @@ const FormContent = styled.div`
 
 const Form = styled.div``;
 
-interface FormBlockProps extends React.PropsWithChildren<unknown> {
+interface FormBlockProps extends React.PropsWithChildren {
   label: string;
 }
 

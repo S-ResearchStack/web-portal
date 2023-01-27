@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { colors, px, typography } from 'src/styles';
@@ -7,9 +7,11 @@ import Link from 'src/common/components/Link';
 import Card from 'src/common/components/Card';
 import ResultMessage from 'src/modules/auth/common/ResultMessage';
 import { SnackbarContainer } from 'src/modules/snackbar';
-import { useAppDispatch } from 'src/modules/store';
-import { resendVerificationEmail } from 'src/modules/auth/auth.slice';
+import { usePasswordRecovery } from 'src/modules/auth/forgot-password/forgotPassword.slice';
 import useSearchParam from 'react-use/lib/useSearchParam';
+import { useAppDispatch } from 'src/modules/store';
+import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
+import usePrevious from 'react-use/lib/usePrevious';
 
 const Container = styled.div`
   display: flex;
@@ -33,7 +35,6 @@ const ContentCard = styled(Card)`
 const ResendEmailOffer = styled.div`
   ${typography.bodySmallRegular};
   margin-top: ${px(53)};
-
   a {
     ${typography.bodySmallSemibold};
     color: ${colors.textPrimaryBlue};
@@ -42,19 +43,29 @@ const ResendEmailOffer = styled.div`
   }
 `;
 
-const CheckMailbox = () => {
-  const email = useSearchParam('email') || '';
+const ForgotPasswordCheckMailbox = () => {
+  const email = useSearchParam('email') || 'only-for-dev'; // TODO: replace 'only-for-dev' to '' (empty string)
   const dispatch = useAppDispatch();
 
+  const { isLoading, error, recoveryPassword } = usePasswordRecovery();
+  const prevIsLoading = usePrevious(isLoading);
+
   const handleResend = useCallback(
-    (evt: React.MouseEvent<HTMLAnchorElement>) => {
+    async (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       evt.stopPropagation();
 
-      dispatch(resendVerificationEmail({ email }));
+      await recoveryPassword({ email });
     },
-    [dispatch, email]
+    [email, recoveryPassword]
   );
+
+  // show toast when mail is resent
+  useEffect(() => {
+    if (!isLoading && prevIsLoading && !error) {
+      dispatch(showSnackbar({ text: 'Email resent.' }));
+    }
+  }, [dispatch, isLoading, prevIsLoading, error]);
 
   return (
     <>
@@ -62,18 +73,19 @@ const CheckMailbox = () => {
         <ContentCard>
           <ResultMessage
             picture={<EmailSuccessImg />}
-            title="Check your mailbox"
+            title="Check Mailbox"
+            compactTitleMargin
             description={
               <>
-                We’ve emailed an account activation link to
+                We&apos;ve emailed a link to reset your password to
                 <br />
                 <strong>{email}</strong>
               </>
             }
           >
             <ResendEmailOffer>
-              Didn’t get the email?
-              <Link data-testid="signup-check-mailbox-resend" to="/" onClick={handleResend}>
+              Didn&apos;t get the email?
+              <Link to="/" onClick={handleResend}>
                 Resend the email
               </Link>
             </ResendEmailOffer>
@@ -85,4 +97,4 @@ const CheckMailbox = () => {
   );
 };
 
-export default CheckMailbox;
+export default ForgotPasswordCheckMailbox;

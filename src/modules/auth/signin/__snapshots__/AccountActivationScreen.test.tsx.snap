@@ -647,6 +647,7 @@ exports[`AccountActivationScreen should render 1`] = `
                   class="c10"
                 >
                   <button
+                    aria-label="Show Password"
                     class="c14 c15"
                     color="primary"
                   >
@@ -659,7 +660,9 @@ exports[`AccountActivationScreen should render 1`] = `
               <div
                 class="c11"
                 data-testid="input-error"
-              />
+              >
+                 
+              </div>
             </div>
             <div
               class="c16"
