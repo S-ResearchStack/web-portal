@@ -114,7 +114,7 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getStudies, []],
   [createStudy, [{ name: 'test', info: { color: '#fff' } }]],
   [getUsers, [{ projectId: testProjectId }]],
-  [inviteUser, [{ email: testEmail, roles: ['team-admin'] }]],
+  [inviteUser, [[{ email: testEmail, roles: ['team-admin'] }]]],
   [removeUser, [{ accountId: '1', roles: ['team-admin'] }]],
   [updateUserRole, [{ accountId: '1', roles: ['team-admin'] }]],
   [removeUserRole, [{ accountId: '1', roles: ['team-admin'] }]],

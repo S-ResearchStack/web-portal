@@ -2,7 +2,7 @@
   "name": "open-source-portal-frontend",
   "license": "UNLICENSED",
   "private": true,
-  "version": "0.9.65",
+  "version": "0.9.65-hotfix1",
   "scripts": {
     "dev:base": "webpack serve --mode development",
     "dev": "cross-env MOCK_API=always yarn dev:base",

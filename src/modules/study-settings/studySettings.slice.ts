@@ -59,10 +59,11 @@ API.mock.provideEndpoints({
     return API.mock.response(membersListMock);
   },
   inviteUser(req) {
+    const [{ email, roles }] = req;
     membersListMock.push({
       id: String(random.int()),
-      email: req.email,
-      roles: req.roles,
+      email,
+      roles,
     });
 
     return API.mock.response(undefined);
@@ -217,10 +218,12 @@ export const inviteStudyMember =
         return;
       }
 
-      const res = await API.inviteUser({
-        email,
-        roles: [roleToApi(isGlobalRoleType(role) ? { role } : { role, projectId: studyId })],
-      });
+      const res = await API.inviteUser([
+        {
+          email,
+          roles: [roleToApi(isGlobalRoleType(role) ? { role } : { role, projectId: studyId })],
+        },
+      ]);
       res.checkError();
       dispatch(membersEdit.actions.createOrUpdateMemberSuccess());
 

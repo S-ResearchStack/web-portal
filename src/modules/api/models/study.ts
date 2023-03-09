@@ -16,7 +16,7 @@ export type CreateStudyRequest = Pick<Study, 'name' | 'info'>;
 export type InviteUserRequest = {
   email: string;
   roles: string[];
-};
+}[];
 
 export type UserProfile = {
   name?: string;
