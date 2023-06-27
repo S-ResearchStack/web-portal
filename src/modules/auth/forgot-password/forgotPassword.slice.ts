@@ -2,14 +2,32 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, ErrorType, RootState, useAppDispatch, WithLoading } from 'src/modules/store';
-import waitFor from 'src/common/utils/waitFor';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
+import API from 'src/modules/api';
 
-type PasswordRecoveryState = WithLoading;
+API.mock.provideEndpoints({
+  forgotPassword(body) {
+    if (body.email.includes('invalid')) {
+      return API.mock.failedResponse({
+        status: 404,
+      });
+    }
+    return API.mock.response(undefined);
+  },
+});
+
+type PasswordRecoveryError = {
+  message: ErrorType;
+  isNotFound?: boolean;
+};
+
+export type PasswordRecoveryState = Omit<WithLoading, 'error'> & {
+  error?: PasswordRecoveryError;
+};
 
 export const passwordRecoveryInitialState: PasswordRecoveryState = {};
 
-const passwordRecoverySlice = createSlice({
+export const passwordRecoverySlice = createSlice({
   name: 'forgotPassword',
   initialState: passwordRecoveryInitialState,
   reducers: {
@@ -20,49 +38,77 @@ const passwordRecoverySlice = createSlice({
     requestRecoveryPasswordSuccess(state) {
       state.isLoading = false;
     },
-    requestRecoveryPasswordFailure(state, { payload }: PayloadAction<ErrorType>) {
+    requestRecoveryPasswordFailure(state, { payload }: PayloadAction<PasswordRecoveryError>) {
       state.isLoading = false;
       state.error = payload;
+    },
+    clearRecoveryPasswordError(state) {
+      state.error = undefined;
     },
   },
 });
 
-// prettier-ignore
 const requestRecoveryPassword =
-  // eslint-disable-next-line
-  (body: { email: string }): AppThunk<Promise<void>> =>
+  ({ email }: { email: string }): AppThunk<Promise<boolean>> =>
   async (dispatch) => {
     try {
       dispatch(passwordRecoverySlice.actions.requestRecoveryPasswordInit());
-      await waitFor(1000);
+
+      const res = await API.forgotPassword({
+        email,
+      });
+
+      if (res.status === 404) {
+        dispatch(
+          passwordRecoverySlice.actions.requestRecoveryPasswordFailure({
+            message: String(res.error),
+            isNotFound: true,
+          })
+        );
+        return false;
+      }
+
+      res.checkError();
+
       dispatch(passwordRecoverySlice.actions.requestRecoveryPasswordSuccess());
+      return true;
     } catch (e) {
-      dispatch(passwordRecoverySlice.actions.requestRecoveryPasswordFailure(String(e)));
+      dispatch(
+        passwordRecoverySlice.actions.requestRecoveryPasswordFailure({ message: String(e) })
+      );
+
       applyDefaultApiErrorHandlers(e, dispatch);
+      return false;
     }
   };
 
-export const passwordRecoverySelector = (state: RootState): PasswordRecoveryState =>
+const passwordRecoverySelector = (state: RootState): PasswordRecoveryState =>
   state[passwordRecoverySlice.name];
 
 export const usePasswordRecovery = () => {
   const state = useSelector(passwordRecoverySelector);
   const dispatch = useAppDispatch();
 
-  const recoveryPassword = useCallback(
+  const sendPasswordRecoveryRequest = useCallback(
     async (payload: Parameters<typeof requestRecoveryPassword>[0]) => {
       if (!payload.email || state.isLoading) {
-        return;
+        return false;
       }
 
-      await dispatch(requestRecoveryPassword(payload));
+      const isOk = await dispatch(requestRecoveryPassword(payload));
+      return isOk;
     },
     [state.isLoading, dispatch]
   );
 
+  const clearError = useCallback(() => {
+    dispatch(passwordRecoverySlice.actions.clearRecoveryPasswordError());
+  }, [dispatch]);
+
   return {
     ...state,
-    recoveryPassword,
+    sendPasswordRecoveryRequest,
+    clearError,
   };
 };
 

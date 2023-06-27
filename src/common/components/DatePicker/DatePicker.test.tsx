@@ -23,7 +23,7 @@ describe('DatePicker', () => {
     const datePicker = getByTestId('date-picker') as Element;
     expect(datePicker).toBeInTheDocument();
 
-    expect(getByText(baseElement, 'Select')).toBeInTheDocument();
+    expect(getByText(baseElement, 'Select date')).toBeInTheDocument();
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -37,7 +37,7 @@ describe('DatePicker', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(getByText(baseElement, 'Sat, Jan 01, 2022')).toBeInTheDocument();
+    expect(getByText(baseElement, 'Saturday, Jan 01, 2022')).toBeInTheDocument();
 
     expect(baseElement).toMatchSnapshot();
   });

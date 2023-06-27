@@ -10,6 +10,7 @@ import {
   STORAGE_TOKEN_KEY,
   STORAGE_REFRESH_TOKEN_KEY,
 } from 'src/modules/auth/utils';
+import { STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY } from 'src/modules/overview/studyProgress.slice';
 import { signout } from 'src/modules/auth/auth.slice.signout';
 import {
   activateAccount,
@@ -24,21 +25,32 @@ import {
   useSignUp,
   useVerifyEmail,
 } from 'src/modules/auth/auth.slice';
-import { allowedRoleTypes, rolesListFromApi } from 'src/modules/auth/userRole';
+import {
+  allowedRoleTypes,
+  getRolesForStudy,
+  userRolesListFromApi,
+} from 'src/modules/auth/userRole';
 import { AppDispatch, makeStore } from 'src/modules/store/store';
 import { makeHistory, Path } from 'src/modules/navigation/store';
 import { currentSnackbarSelector, hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { authTokenPayloadSelector } from 'src/modules/auth/auth.slice.authTokenPayloadSelector';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import { maskEndpointAsFailure } from 'src/modules/api/mock';
+import { GENERIC_SERVER_ERROR_TEXT } from '../api/executeRequest';
+import { MOCK_ACCOUNT_ID } from '../study-settings/utils';
 
 // eslint-disable-next-line prefer-destructuring
 const authToken =
-  'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdfQ==';
+  'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdLCJzdWIiOiJhZG1pbi1pZCJ9';
 const wrongPassword = 'wrongpwd';
 const refreshToken = `refresh.${authToken}`;
-const userInfo = { email: 'username@samsung.com', testPassword: 'any', roles: ['team-admin'] };
+const userInfo = {
+  email: 'username@samsung.com',
+  testPassword: 'any',
+  roles: ['team-admin'],
+};
 const projectId = 'project-id';
+const userName = 'Samuel';
 
 let history: ReturnType<typeof makeHistory>;
 let store: ReturnType<typeof makeStore>;
@@ -59,6 +71,7 @@ describe('decodeAuthToken', () => {
     expect(decodeAuthToken(authToken)).toEqual({
       email: userInfo.email,
       roles: userInfo.roles,
+      sub: MOCK_ACCOUNT_ID,
     });
   });
 
@@ -98,17 +111,22 @@ describe('rolesListFromApi', () => {
       r !== 'team-admin' ? `${projectId}:${r}` : r
     );
 
-    expect(rolesListFromApi(userRolesFromApi)).toEqual([
-      { role: 'team-admin', projectId: undefined },
-      { role: 'researcher', projectId: 'project-id' },
-      { role: 'project-owner', projectId: 'project-id' },
-    ]);
+    expect(getRolesForStudy(userRolesListFromApi(userRolesFromApi), 'project-id')).toEqual({
+      roles: [
+        'principal-investigator',
+        'research-assistant',
+        'data-scientist',
+        'study-creator',
+        'team-admin',
+      ],
+      projectId: 'project-id',
+    });
   });
 
   it('[NEGATIVE] should return failure value while unknown role', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
-    expect(rolesListFromApi(['unknown-role'])).toHaveLength(0);
+    expect(userRolesListFromApi(['unknown-role'])).toHaveLength(0);
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Invalid role'));
 
     spy.mockRestore();
@@ -117,7 +135,7 @@ describe('rolesListFromApi', () => {
   it('[NEGATIVE] should return failure value while existed role without project', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
-    expect(rolesListFromApi(['researcher'])).toHaveLength(0);
+    expect(userRolesListFromApi(['research-assistant'])).toHaveLength(0);
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Project required for role'));
 
     spy.mockRestore();
@@ -129,8 +147,7 @@ describe('getStateFromAuthToken', () => {
     expect({ ...getStateFromAuthToken(authToken), refreshToken }).toEqual({
       authToken,
       refreshToken,
-      userRoles: rolesListFromApi(userInfo.roles),
-      username: userInfo.email,
+      userRoles: userRolesListFromApi(userInfo.roles),
     });
   });
 
@@ -177,17 +194,28 @@ describe('store', () => {
 
   it('should apply success state', () => {
     expect(
-      authSlice.reducer(undefined, authSlice.actions.authSuccess({ authToken, refreshToken }))
-    ).toEqual({ ...getStateFromAuthToken(authToken), refreshToken });
+      authSlice.reducer(
+        undefined,
+        authSlice.actions.authSuccess({ authToken, refreshToken, userName })
+      )
+    ).toEqual({ ...getStateFromAuthToken(authToken), refreshToken, userName });
   });
 
   it('[NEGATIVE] should apply success state with broken parameters', () => {
     expect(
       authSlice.reducer(
         undefined,
-        authSlice.actions.authSuccess({ authToken: 'authToken', refreshToken: 'refreshToken' })
+        authSlice.actions.authSuccess({
+          authToken: 'authToken',
+          refreshToken: 'refreshToken',
+          userName: '',
+        })
       )
-    ).toEqual({ authToken: getStateFromAuthToken('authToken'), refreshToken: 'refreshToken' });
+    ).toEqual({
+      authToken: getStateFromAuthToken('authToken'),
+      refreshToken: 'refreshToken',
+      userName: '',
+    });
   });
 
   it('should clear state', () => {
@@ -203,14 +231,18 @@ describe('store', () => {
 
   it('should check authorized state', () => {
     expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    dispatch(authSlice.actions.authSuccess({ authToken, refreshToken }));
+    dispatch(authSlice.actions.authSuccess({ authToken, refreshToken, userName }));
     expect(isAuthorizedSelector(store.getState())).toBeTruthy();
   });
 
   it('[NEGATIVE] should check authorized state with broken token', () => {
     expect(isAuthorizedSelector(store.getState())).toBeFalsy();
     dispatch(
-      authSlice.actions.authSuccess({ authToken: 'authToken', refreshToken: 'refreshToken' })
+      authSlice.actions.authSuccess({
+        authToken: 'authToken',
+        refreshToken: 'refreshToken',
+        userName: '',
+      })
     );
     expect(isAuthorizedSelector(store.getState())).toBeFalsy();
   });
@@ -307,9 +339,9 @@ describe('store', () => {
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBe(authToken);
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBe(refreshToken);
 
-    dispatch(signout());
+    signout();
 
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
+    expect(localStorage.getItem(STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
   });
@@ -319,9 +351,10 @@ describe('store', () => {
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
 
-    dispatch(signout());
+    signout();
 
     expect(isAuthorizedSelector(store.getState())).toBeFalsy();
+    expect(localStorage.getItem(STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
   });
@@ -329,7 +362,6 @@ describe('store', () => {
   it('should activate account', async () => {
     await dispatch(
       activateAccount({
-        email: userInfo.email,
         name: userInfo.email.split('@')[0],
         password: userInfo.testPassword,
         resetToken: 'reset-token',
@@ -342,7 +374,6 @@ describe('store', () => {
   it('[NEGATIVE] should activate account with failure', async () => {
     await dispatch(
       activateAccount({
-        email: userInfo.email,
         name: userInfo.email.split('@')[0],
         password: userInfo.testPassword,
         resetToken: '',
@@ -350,21 +381,7 @@ describe('store', () => {
     );
 
     expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    expect(currentSnackbarSelector(store.getState()).text).toMatch('Failed to activate account');
-
-    dispatch(hideSnackbar());
-
-    await dispatch(
-      activateAccount({
-        email: 'invalid@email.com',
-        name: userInfo.email.split('@')[0],
-        password: userInfo.testPassword,
-        resetToken: 'reset-token',
-      })
-    );
-
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    expect(currentSnackbarSelector(store.getState()).text).toMatch('Failed to activate account');
+    expect(currentSnackbarSelector(store.getState()).text).toMatch(GENERIC_SERVER_ERROR_TEXT);
 
     dispatch(hideSnackbar());
   });
@@ -379,7 +396,7 @@ describe('store', () => {
 
     expect(authTokenPayloadSelector(store.getState())).toEqual({
       email: userInfo.email,
-      roles: [{ role: 'team-admin', projectId: undefined }],
+      roles: [{ roles: ['team-admin'], projectId: undefined }],
     });
   });
 
@@ -395,9 +412,9 @@ describe('store', () => {
       })
     );
 
-    expect(userNameSelector(store.getState())).toEqual(userInfo.email.split('@')[0]);
+    expect(userNameSelector(store.getState())).toEqual(userName);
     expect(userRoleSelector(store.getState())).toEqual({
-      role: 'team-admin',
+      roles: ['team-admin'],
       projectId: undefined,
     });
   });
@@ -561,7 +578,7 @@ describe('resendVerificationEmail', () => {
     );
 
     expect(currentSnackbarSelector(store.getState())).toMatchObject({
-      text: `Error: ${failureMessage}`,
+      text: GENERIC_SERVER_ERROR_TEXT,
     });
   });
 });

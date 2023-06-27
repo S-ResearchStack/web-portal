@@ -1,9 +1,11 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { generatePath, useHistory } from 'react-router-dom';
 
 import styled from 'styled-components';
 import _isNumber from 'lodash/isNumber';
 import _isEqual from 'lodash/isEqual';
+import { Duration } from 'luxon';
 
 import {
   useParticipantList,
@@ -12,12 +14,9 @@ import {
   GetParticipantListParams,
   participantListPrevFetchArgsSelector,
 } from 'src/modules/overview/participantsList.slice';
-import Table, {
-  ColumnOptions,
-  getColumnWidthInPercents,
-  RowKeyExtractor,
-  SortCallback,
-} from 'src/common/components/Table';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { isDataScientist } from 'src/modules/auth/userRole';
+import Table, { ColumnOptions, RowKeyExtractor, SortCallback } from 'src/common/components/Table';
 import { px, typography } from 'src/styles';
 import Indicator, { IndicatorProps } from 'src/common/components/Indicator';
 import * as dt from 'src/common/utils/datetime';
@@ -34,6 +33,7 @@ import { Path } from 'src/modules/navigation/store';
 import { BASE_TABLE_BODY_HEIGHT } from 'src/common/components/Table/BaseTable';
 
 import OverviewCard from './OverviewCard';
+import { GENERIC_SERVER_ERROR_TEXT } from '../api/executeRequest';
 
 const ParticipantListContainer = styled(OverviewCard)`
   padding: ${px(24)};
@@ -70,6 +70,26 @@ export const getIndicatorTypeByTs = (ts: dt.Timestamp): IndicatorProps['color'] 
 const renderBpmOrSteps = (value?: number): React.ReactNode =>
   _isNumber(value) ? num.format(value) : '—';
 
+const renderSleep = (value?: number) => {
+  if (!_isNumber(value)) {
+    return '—';
+  }
+
+  const { hours, minutes } = Duration.fromObject({
+    minutes: value,
+  }).shiftTo('hours', 'minutes', 'seconds');
+  return `${hours}:${minutes}`;
+};
+
+const renderSpO2 = (value?: number) => (_isNumber(value) ? Math.round(value) : '—');
+
+const renderBP = (sys?: number, dia?: number) =>
+  _isNumber(sys) || _isNumber(dia)
+    ? [sys ? `Sys ${sys}` : null, dia ? `Dia ${dia}` : null].filter(Boolean).join(' - ')
+    : '—';
+
+const renderBG = (value?: number) => (_isNumber(value) ? String(value) : '—');
+
 const LAST_SYNC_UPDATE_INTERVAL = 1000;
 
 const LastSync: FC<React.PropsWithChildren<object>> = ({ children }) => (
@@ -91,6 +111,8 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
   const studyId = useSelectedStudyId();
   const participantListFetchArgs = useAppSelector(participantListFetchArgsSelector);
   const participantListPrevFetchArgs = useAppSelector(participantListPrevFetchArgsSelector);
+  const userRoles = useSelector(userRoleSelector)?.roles;
+  const phiDataHidden = isDataScientist(userRoles);
 
   const participantList = useParticipantList({
     fetchArgs:
@@ -98,6 +120,7 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
       (studyId === participantListPrevFetchArgs?.studyId && participantListFetchArgs
         ? participantListFetchArgs
         : { studyId, ...defaultFetchArgs }),
+    refetchSilentlyOnMount: true,
   });
 
   const isSortLoading = useMemo(
@@ -126,7 +149,7 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
       fetchArgs: !!participantItemFetchArgs && participantItemFetchArgs,
     },
     {
-      text: "Can't get participant data.",
+      text: GENERIC_SERVER_ERROR_TEXT,
       showErrorIcon: true,
     }
   );
@@ -137,42 +160,78 @@ const ParticipantListCard: React.FC<Props> = ({ subjectSection }) => {
     {
       dataKey: 'id',
       label: 'Participant ID',
-      $width: getColumnWidthInPercents(159),
+      $width: 129,
     },
     {
       dataKey: 'email',
       label: 'Email',
-      $width: getColumnWidthInPercents(220),
+      $width: 192,
+      isEmpty: phiDataHidden,
       render: (email) => email || '—',
     },
     {
       dataKey: 'avgBpm',
-      label: 'Avg. HR bpm',
-      $width: getColumnWidthInPercents(135),
+      label: 'Avg. HR (bpm)',
+      $width: 142,
       render: (bpm) => renderBpmOrSteps(bpm as number | undefined),
+    },
+    {
+      dataKey: 'avgRR',
+      label: 'Avg. RR (bpm)',
+      $width: 141,
+      render: (bpm) => renderBpmOrSteps(bpm as number | undefined),
+    },
+    {
+      dataKey: 'avgSleepMins',
+      label: 'Avg. Time in Bed',
+      $width: 151,
+      render: (sleepMins) => renderSleep(sleepMins as number | undefined),
     },
     {
       dataKey: 'avgSteps',
       label: 'Avg. Steps',
-      $width: getColumnWidthInPercents(135),
+      $width: 120,
       render: (steps) => renderBpmOrSteps(steps as number | undefined),
+    },
+    {
+      dataKey: 'avgSpO2',
+      label: 'Avg. SpO2 (%)',
+      $width: 141,
+      render: (spo2) => renderSpO2(spo2 as number | undefined),
+    },
+    {
+      dataKey: 'avgBloodPressureSys',
+      label: 'Avg. BP (mmHg)',
+      $width: 153,
+      render: (_, { avgBloodPressureSys, avgBloodPressureDia }) =>
+        renderBP(avgBloodPressureSys, avgBloodPressureDia),
+    },
+    {
+      dataKey: 'avgBG',
+      label: 'Avg. BG (mg/dL)',
+      $width: 153,
+      render: (bg) => renderBG(bg as number | undefined),
     },
     {
       dataKey: 'lastSync',
       label: 'Last Synced',
-      $width: getColumnWidthInPercents(120),
-      render: (lastSync) => (
-        <LastSync>
-          <LastSyncIndicator color={getIndicatorTypeByTs(lastSync as number)} />
-          {dt.getRelativeTimeByTs(lastSync as number)}
-        </LastSync>
-      ),
+      $width: 130,
+      render: (lastSync) =>
+        lastSync ? (
+          <LastSync>
+            <LastSyncIndicator color={getIndicatorTypeByTs(lastSync as number)} />
+            {dt.getRelativeTimeByTs(lastSync as number)}
+          </LastSync>
+        ) : (
+          '—'
+        ),
     },
     {
       dataKey: 'localTime',
-      label: 'Your local time',
-      $width: getColumnWidthInPercents(143),
-      render: (localTime) => dt.getAbsoluteTimeByTs(localTime as number).join(' '),
+      label: 'Your Local Time',
+      $width: 157,
+      render: (localTime) =>
+        localTime ? dt.getAbsoluteTimeByTs(localTime as number).join(' ') : '—',
     },
   ];
 

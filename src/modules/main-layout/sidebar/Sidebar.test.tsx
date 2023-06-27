@@ -8,10 +8,6 @@ import { ThemeProvider } from 'styled-components/';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupRangeMock';
-
 import Sidebar from 'src/modules/main-layout/sidebar/Sidebar';
 
 describe('Sidebar', () => {

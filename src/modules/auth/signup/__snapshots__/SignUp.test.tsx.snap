@@ -13,6 +13,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
 
 .c24 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -93,6 +94,73 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
+.c19 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  cursor: unset !important;
+}
+
+.c22 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #838383;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+}
+
+.c21 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c18 {
+  display: inline-block;
+}
+
+.c18 input {
+  display: none;
+}
+
+.c18 .c20 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #DBDBDB;
+}
+
+.c18 .c20 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
 .c7 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -147,9 +215,9 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
 }
 
 .c11:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c11::-webkit-input-placeholder {
@@ -292,72 +360,6 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
   flex-shrink: 0;
 }
 
-.c19 {
-  display: inline-grid;
-  gap: 0.25rem;
-  grid-template-columns: 2.5rem 1fr;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-}
-
-.c22 {
-  font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
-  font-weight: 400;
-  font-style: normal;
-  color: #838383;
-  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: 100%;
-}
-
-.c21 {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.c18 {
-  display: inline-block;
-}
-
-.c18 input {
-  display: none;
-}
-
-.c18 .c20 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #DBDBDB;
-}
-
-.c18 .c20 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
 .c16 {
   margin-top: 0.875rem;
   margin-bottom: 1.625rem;
@@ -365,6 +367,10 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
 
 .c17 {
   height: 2.5rem;
+}
+
+.c17 * {
+  cursor: default;
 }
 
 .c23 {
@@ -514,6 +520,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-email"
+                maxlength="256"
                 name="email"
                 placeholder="Enter email"
                 type="email"
@@ -539,6 +546,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-name"
+                maxlength="30"
                 name="name"
                 placeholder="Enter name"
                 type="text"
@@ -564,6 +572,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-password"
+                maxlength="256"
                 name="password"
                 placeholder="Enter password"
                 type="password"
@@ -601,6 +610,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <label
                 class="c19"
                 for="1"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -641,6 +651,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <label
                 class="c19"
                 for="2"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -681,6 +692,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <label
                 class="c19"
                 for="3"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -721,6 +733,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 1`] = `
               <label
                 class="c19"
                 for="4"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -803,6 +816,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
 
 .c30 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -883,6 +897,111 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
+.c23 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  cursor: unset !important;
+}
+
+.c26 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+}
+
+.c25 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c36 .c24 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #DBDBDB;
+}
+
+.c36 .c24 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c21 {
+  display: inline-block;
+}
+
+.c21 input {
+  display: none;
+}
+
+.c21 .c24 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #FF3333;
+}
+
+.c21 .c24 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c21:hover > .c22 {
+  cursor: pointer;
+}
+
+.c28 {
+  display: inline-block;
+}
+
+.c28 input {
+  display: none;
+}
+
+.c28 .c24 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #2DC008;
+}
+
+.c28 .c24 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c28:hover > .c22 {
+  cursor: pointer;
+}
+
 .c7 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -937,9 +1056,9 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
 }
 
 .c11:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c11::-webkit-input-placeholder {
@@ -1020,9 +1139,9 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
 }
 
 .c15:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c15::-webkit-input-placeholder {
@@ -1184,110 +1303,6 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
   flex-shrink: 0;
 }
 
-.c23 {
-  display: inline-grid;
-  gap: 0.25rem;
-  grid-template-columns: 2.5rem 1fr;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-}
-
-.c26 {
-  font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
-  font-weight: 400;
-  font-style: normal;
-  color: #474747;
-  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: 100%;
-}
-
-.c25 {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.c36 .c24 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #DBDBDB;
-}
-
-.c36 .c24 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c21 {
-  display: inline-block;
-}
-
-.c21 input {
-  display: none;
-}
-
-.c21 .c24 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #FF3333;
-}
-
-.c21 .c24 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c21:hover > .c22 {
-  cursor: pointer;
-}
-
-.c28 {
-  display: inline-block;
-}
-
-.c28 input {
-  display: none;
-}
-
-.c28 .c24 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #2DC008;
-}
-
-.c28 .c24 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c28:hover > .c22 {
-  cursor: pointer;
-}
-
 .c19 {
   margin-top: 0.875rem;
   margin-bottom: 1.625rem;
@@ -1295,6 +1310,10 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
 
 .c20 {
   height: 2.5rem;
+}
+
+.c20 * {
+  cursor: default;
 }
 
 .c27 {
@@ -1453,6 +1472,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-email"
+                maxlength="256"
                 name="email"
                 placeholder="Enter email"
                 type="email"
@@ -1478,6 +1498,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-name"
+                maxlength="30"
                 name="name"
                 placeholder="Enter name"
                 type="text"
@@ -1503,6 +1524,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <input
                 class="c10 c15"
                 data-testid="auth-signup-password"
+                maxlength="256"
                 name="password"
                 placeholder="Enter password"
                 type="password"
@@ -1539,6 +1561,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <label
                 class="c22 c23"
                 for="1"
+                kind="error"
               >
                 <div
                   class="c24 c25"
@@ -1576,6 +1599,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <label
                 class="c22 c23"
                 for="2"
+                kind="error"
               >
                 <div
                   class="c24 c25"
@@ -1613,6 +1637,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <label
                 class="c22 c23"
                 for="3"
+                kind="success"
               >
                 <div
                   class="c24 c25"
@@ -1650,6 +1675,7 @@ exports[`SignUp [NEGATIVE] should render with a invalid data 2`] = `
               <label
                 class="c22 c23"
                 for="4"
+                kind="error"
               >
                 <div
                   class="c24 c25"
@@ -1730,6 +1756,7 @@ exports[`SignUp should render 1`] = `
 
 .c24 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1810,6 +1837,73 @@ exports[`SignUp should render 1`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
+.c19 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  cursor: unset !important;
+}
+
+.c22 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #838383;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+}
+
+.c21 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c18 {
+  display: inline-block;
+}
+
+.c18 input {
+  display: none;
+}
+
+.c18 .c20 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #DBDBDB;
+}
+
+.c18 .c20 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
 .c7 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -1864,9 +1958,9 @@ exports[`SignUp should render 1`] = `
 }
 
 .c11:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c11::-webkit-input-placeholder {
@@ -2009,72 +2103,6 @@ exports[`SignUp should render 1`] = `
   flex-shrink: 0;
 }
 
-.c19 {
-  display: inline-grid;
-  gap: 0.25rem;
-  grid-template-columns: 2.5rem 1fr;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-}
-
-.c22 {
-  font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
-  font-weight: 400;
-  font-style: normal;
-  color: #838383;
-  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: 100%;
-}
-
-.c21 {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.c18 {
-  display: inline-block;
-}
-
-.c18 input {
-  display: none;
-}
-
-.c18 .c20 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #DBDBDB;
-}
-
-.c18 .c20 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
 .c16 {
   margin-top: 0.875rem;
   margin-bottom: 1.625rem;
@@ -2082,6 +2110,10 @@ exports[`SignUp should render 1`] = `
 
 .c17 {
   height: 2.5rem;
+}
+
+.c17 * {
+  cursor: default;
 }
 
 .c23 {
@@ -2231,6 +2263,7 @@ exports[`SignUp should render 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-email"
+                maxlength="256"
                 name="email"
                 placeholder="Enter email"
                 type="email"
@@ -2256,6 +2289,7 @@ exports[`SignUp should render 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-name"
+                maxlength="30"
                 name="name"
                 placeholder="Enter name"
                 type="text"
@@ -2281,6 +2315,7 @@ exports[`SignUp should render 1`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-password"
+                maxlength="256"
                 name="password"
                 placeholder="Enter password"
                 type="password"
@@ -2318,6 +2353,7 @@ exports[`SignUp should render 1`] = `
               <label
                 class="c19"
                 for="1"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -2358,6 +2394,7 @@ exports[`SignUp should render 1`] = `
               <label
                 class="c19"
                 for="2"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -2398,6 +2435,7 @@ exports[`SignUp should render 1`] = `
               <label
                 class="c19"
                 for="3"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -2438,6 +2476,7 @@ exports[`SignUp should render 1`] = `
               <label
                 class="c19"
                 for="4"
+                kind="success"
               >
                 <div
                   class="c20 c21"
@@ -2520,6 +2559,7 @@ exports[`SignUp should render 2`] = `
 
 .c25 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -2604,6 +2644,103 @@ exports[`SignUp should render 2`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
+.c20 {
+  display: inline-grid;
+  gap: 0.25rem;
+  grid-template-columns: 2.5rem 1fr;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  cursor: unset !important;
+}
+
+.c23 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+}
+
+.c22 {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c32 .c21 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #DBDBDB;
+}
+
+.c32 .c21 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c33 .c21 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #FF3333;
+}
+
+.c33 .c21 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c33:hover > .c19 {
+  cursor: pointer;
+}
+
+.c18 {
+  display: inline-block;
+}
+
+.c18 input {
+  display: none;
+}
+
+.c18 .c21 > svg > :nth-child(1) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  fill: #2DC008;
+}
+
+.c18 .c21 > svg > :nth-child(2) {
+  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c18:hover > .c19 {
+  cursor: pointer;
+}
+
 .c7 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -2658,9 +2795,9 @@ exports[`SignUp should render 2`] = `
 }
 
 .c11:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c11::-webkit-input-placeholder {
@@ -2807,102 +2944,6 @@ exports[`SignUp should render 2`] = `
   flex-shrink: 0;
 }
 
-.c20 {
-  display: inline-grid;
-  gap: 0.25rem;
-  grid-template-columns: 2.5rem 1fr;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-}
-
-.c23 {
-  font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
-  font-weight: 400;
-  font-style: normal;
-  color: #474747;
-  -webkit-transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: color 300ms cubic-bezier(0.45,0.05,0,1);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: 100%;
-}
-
-.c22 {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.c32 .c21 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #DBDBDB;
-}
-
-.c32 .c21 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c33 .c21 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #FF3333;
-}
-
-.c33 .c21 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c33:hover > .c19 {
-  cursor: pointer;
-}
-
-.c18 {
-  display: inline-block;
-}
-
-.c18 input {
-  display: none;
-}
-
-.c18 .c21 > svg > :nth-child(1) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  fill: #2DC008;
-}
-
-.c18 .c21 > svg > :nth-child(2) {
-  -webkit-transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: stroke-color 300ms cubic-bezier(0.45,0.05,0,1), fill 300ms cubic-bezier(0.45,0.05,0,1);
-}
-
-.c18:hover > .c19 {
-  cursor: pointer;
-}
-
 .c16 {
   margin-top: 0.875rem;
   margin-bottom: 1.625rem;
@@ -2910,6 +2951,10 @@ exports[`SignUp should render 2`] = `
 
 .c17 {
   height: 2.5rem;
+}
+
+.c17 * {
+  cursor: default;
 }
 
 .c24 {
@@ -3059,6 +3104,7 @@ exports[`SignUp should render 2`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-email"
+                maxlength="256"
                 name="email"
                 placeholder="Enter email"
                 type="email"
@@ -3084,6 +3130,7 @@ exports[`SignUp should render 2`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-name"
+                maxlength="30"
                 name="name"
                 placeholder="Enter name"
                 type="text"
@@ -3109,6 +3156,7 @@ exports[`SignUp should render 2`] = `
               <input
                 class="c10 c11"
                 data-testid="auth-signup-password"
+                maxlength="256"
                 name="password"
                 placeholder="Enter password"
                 type="password"
@@ -3145,6 +3193,7 @@ exports[`SignUp should render 2`] = `
               <label
                 class="c19 c20"
                 for="1"
+                kind="success"
               >
                 <div
                   class="c21 c22"
@@ -3182,6 +3231,7 @@ exports[`SignUp should render 2`] = `
               <label
                 class="c19 c20"
                 for="2"
+                kind="success"
               >
                 <div
                   class="c21 c22"
@@ -3219,6 +3269,7 @@ exports[`SignUp should render 2`] = `
               <label
                 class="c19 c20"
                 for="3"
+                kind="success"
               >
                 <div
                   class="c21 c22"
@@ -3256,6 +3307,7 @@ exports[`SignUp should render 2`] = `
               <label
                 class="c19 c20"
                 for="4"
+                kind="success"
               >
                 <div
                   class="c21 c22"

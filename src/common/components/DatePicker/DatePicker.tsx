@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { autoUpdate, offset } from '@floating-ui/react-dom';
 import { useDismiss, useFloating, useInteractions } from '@floating-ui/react-dom-interactions';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import CalendarIcon from 'src/assets/icons/calendar.svg';
 import Portal from 'src/common/components/Portal';
@@ -13,7 +13,7 @@ import CalendarPopover from './CalendarPopover';
 const InputLabel = styled.div<{ $placeholder: boolean }>`
   ${typography.bodyMediumRegular};
   color: ${({ $placeholder, theme }) =>
-    $placeholder ? theme.colors.textSecondaryGray : theme.colors.textPrimaryDark};
+    $placeholder ? theme.colors.textSecondaryGray : theme.colors.textPrimary};
 `;
 
 const CalendarIconStyled = styled(CalendarIcon)``;
@@ -38,8 +38,12 @@ const InputContainer = styled.div<{ $disabled?: boolean; $highlight?: boolean }>
 
   ${InputLabel} {
     margin-left: ${px(15)};
-    color: ${({ $disabled, theme }) =>
-      $disabled ? theme.colors.disabled : theme.colors.textPrimaryDark};
+
+    ${({ $disabled, theme }) =>
+      $disabled &&
+      css`
+        color: ${theme.colors.disabled};
+      `};
   }
 
   ${CalendarIconStyled} {
@@ -59,6 +63,8 @@ type Props = ExtendProps<
     max?: Date;
     portal?: boolean;
     updatePosition?: boolean;
+    onOpen?: () => void;
+    onClose?: () => void;
   }
 >;
 
@@ -70,6 +76,8 @@ const DatePicker: React.FC<Props> = ({
   max,
   portal,
   updatePosition,
+  onOpen,
+  onClose,
   ...rest
 }) => {
   const [isOpen, setOpen] = useState(false);
@@ -78,7 +86,10 @@ const DatePicker: React.FC<Props> = ({
     middleware: [offset(8)],
     placement: 'bottom',
     open: isOpen,
-    onOpenChange: setOpen,
+    onOpenChange: (v) => {
+      setOpen(v);
+      v ? onOpen?.() : onClose?.();
+    },
     whileElementsMounted: updatePosition || portal ? autoUpdate : undefined,
   });
   const popoverInteractions = useInteractions([useDismiss(popover.context)]);
@@ -86,15 +97,17 @@ const DatePicker: React.FC<Props> = ({
   useEffect(() => {
     if (disabled) {
       setOpen(false);
+      onClose?.();
     }
-  }, [disabled]);
+  }, [disabled, onClose]);
 
   const handleSelectedDateChange = useCallback(
     (d: Date) => {
       setOpen(false);
+      onClose?.();
       onChange(d);
     },
-    [onChange]
+    [onChange, onClose]
   );
 
   const popoverElement = isOpen && (
@@ -123,6 +136,7 @@ const DatePicker: React.FC<Props> = ({
         onClick() {
           if (!disabled && !isOpen) {
             setOpen(true);
+            onOpen?.();
           }
         },
       })}
@@ -130,7 +144,7 @@ const DatePicker: React.FC<Props> = ({
       $highlight={value && isOpen}
     >
       <InputLabel $placeholder={!value} data-testid="input-label">
-        {value ? format(value, 'EEE, MMM dd, yyyy') : 'Select'}
+        {value ? format(value, 'EEEE, MMM dd, yyyy') : 'Select date'}
       </InputLabel>
       <CalendarIconStyled />
       {portal ? (

@@ -15,7 +15,7 @@ import { ColumnOptions, SortOptions } from './types';
 import Loader from './Loader';
 import { ROW_HEIGHT } from './constants';
 
-export interface HeadCellProps<T> {
+interface HeadCellProps<T> {
   isActive: boolean;
   sortParams?: SortOptions<T>;
   column: ColumnOptions<T>;
@@ -24,9 +24,9 @@ export interface HeadCellProps<T> {
   isFirstRender: boolean;
 }
 
-export const HEAD_CELL_MAX_ACTIONS_COUNTER = 1;
+const HEAD_CELL_MAX_ACTIONS_COUNTER = 1;
 
-export const SortColumnBtnContainer = styled.div`
+const SortColumnBtnContainer = styled.div`
   width: ${px(24)};
   height: ${px(24)};
   margin-left: ${px(8)};
@@ -35,7 +35,7 @@ export const SortColumnBtnContainer = styled.div`
   justify-content: center;
 `;
 
-export const HeadCellContainer = styled(BodyCellContainer)<{ sortable: boolean; active: boolean }>`
+const HeadCellContainer = styled(BodyCellContainer)<{ sortable: boolean; active: boolean }>`
   user-select: none;
   color: ${colors.primary};
   box-shadow: inset 0 ${px(-1)} 0 ${colors.primaryLight};

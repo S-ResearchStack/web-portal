@@ -129,17 +129,19 @@ const GroupedBarChart = ({
     [chartMargin, height]
   );
 
-  const xScale = useMemo(
-    () => (isHorizontal ? d3.scaleLinear([0, maxValue], xRange).nice() : d3.scaleBand(x, xRange)),
-    [isHorizontal, maxValue, x, xRange]
+  const xScaleLinear = useMemo(
+    () => d3.scaleLinear([0, maxValue], xRange).nice(),
+    [maxValue, xRange]
   );
-  const yScale = useMemo(
-    () =>
-      isHorizontal
-        ? d3.scaleBand(y, yRange)
-        : d3.scaleLinear([showYNegativeArea ? -maxValue : 0, maxValue], yRange).nice(),
-    [isHorizontal, maxValue, showYNegativeArea, y, yRange]
+  const xScaleBand = useMemo(() => d3.scaleBand(x, xRange), [x, xRange]);
+
+  const yScaleBand = useMemo(() => d3.scaleBand(y, yRange), [y, yRange]);
+
+  const yScaleLinear = useMemo(
+    () => d3.scaleLinear([showYNegativeArea ? -maxValue : 0, maxValue], yRange).nice(),
+    [maxValue, showYNegativeArea, yRange]
   );
+
   const zScale = useMemo(
     () =>
       d3.scaleOrdinal(
@@ -151,9 +153,9 @@ const GroupedBarChart = ({
   const crossScale = useMemo(
     () =>
       d3
-        .scaleBand(z, [0, ((isHorizontal ? yScale : xScale) as d3.ScaleBand<string>).bandwidth()])
+        .scaleBand(z, [0, (isHorizontal ? yScaleBand : xScaleBand).bandwidth()])
         .padding((2 / numberOfKeys) * 0.56),
-    [isHorizontal, numberOfKeys, xScale, yScale, z]
+    [isHorizontal, numberOfKeys, xScaleBand, yScaleBand, z]
   );
 
   const updateAxis = useCallback(() => {
@@ -194,26 +196,20 @@ const GroupedBarChart = ({
     d3.select(svgRef.current).select('.bars').selectAll('rect').remove();
 
     const xCoord = (i: number) =>
-      isHorizontal
-        ? (xScale as d3.ScaleLinear<number, number, never>)(0)
-        : (xScale(x[i] as number) || 0) + (crossScale(z[i]) || 0);
+      isHorizontal ? xScaleLinear(0) : (xScaleBand(x[i] as number) || 0) + (crossScale(z[i]) || 0);
 
     const yCoord = (i: number) =>
       isHorizontal
-        ? (yScale(y[i] as number) || 0) + (crossScale(z[i]) || 0)
-        : (yScale as d3.ScaleLinear<number, number, never>)(y[i] < 0 ? 0 : (y[i] as number));
+        ? (yScaleBand(y[i] as number) || 0) + (crossScale(z[i]) || 0)
+        : yScaleLinear(y[i] < 0 ? 0 : (y[i] as number));
 
     const barWidth = (i: number) =>
-      isHorizontal
-        ? (xScale(x[i] as number) || 0) - (xScale as d3.ScaleLinear<number, number, never>)(0)
-        : crossScale.bandwidth();
+      isHorizontal ? xScaleLinear(x[i] as number) - xScaleLinear(0) : crossScale.bandwidth();
 
     const barHeight = (i: number) =>
       isHorizontal
         ? crossScale.bandwidth()
-        : Math.abs(
-            (yScale as d3.ScaleLinear<number, number, never>)(0) - (yScale(y[i] as number) || 0)
-          );
+        : Math.abs(yScaleLinear(0) - yScaleLinear(y[i] as number));
 
     d3.select(svgRef.current)
       .select('.bars')
@@ -225,7 +221,19 @@ const GroupedBarChart = ({
       .attr('width', barWidth)
       .attr('height', barHeight)
       .attr('fill', (i) => zScale(z[i]));
-  }, [updateAxis, y, isHorizontal, xScale, x, crossScale, z, yScale, zScale]);
+  }, [
+    updateAxis,
+    y,
+    isHorizontal,
+    xScaleLinear,
+    xScaleBand,
+    x,
+    crossScale,
+    z,
+    yScaleLinear,
+    yScaleBand,
+    zScale,
+  ]);
 
   useEffect(() => {
     updateChart();
@@ -238,7 +246,7 @@ const GroupedBarChart = ({
   return (
     <StyledSvg ref={svgRef} width={width} height={height} isHorizontal={!!isHorizontal}>
       <XAxis
-        xScale={xScale}
+        xScale={isHorizontal ? xScaleLinear : xScaleBand}
         removeDomain
         yOffset={height - chartMargin.bottom}
         yTickOffset={isHorizontal ? 31 : 24}
@@ -249,21 +257,17 @@ const GroupedBarChart = ({
           el.selectAll('.tick text')
             .attr(
               'transform',
-              (!isHorizontal &&
-                `translate(-${(xScale as d3.ScaleBand<string>).bandwidth() / 2}, 0)`) ||
-                null
+              (!isHorizontal && `translate(-${xScaleBand.bandwidth() / 2}, 0)`) || null
             )
             .style('text-anchor', isHorizontal ? '' : 'start');
           el.selectAll('.tick line').attr(
             'transform',
-            !isHorizontal
-              ? `translate(-${(xScale as d3.ScaleBand<string>).bandwidth() / 2}, 0)`
-              : null
+            !isHorizontal ? `translate(-${xScaleBand.bandwidth() / 2}, 0)` : null
           );
         }}
       />
       <YAxis
-        yScale={yScale}
+        yScale={isHorizontal ? yScaleBand : yScaleLinear}
         xOffset={chartMargin.left}
         removeDomain
         tickSize={width - chartMargin.left - chartMargin.right}
@@ -279,9 +283,7 @@ const GroupedBarChart = ({
 
           el.selectAll('.tick line').attr(
             'transform',
-            isHorizontal
-              ? `translate(0, ${(yScale as d3.ScaleBand<string>).bandwidth() / 2})`
-              : null
+            isHorizontal ? `translate(0, ${yScaleBand.bandwidth() / 2})` : null
           );
         }}
       />

@@ -38,7 +38,8 @@
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-expressions": "off",
     "jest/no-mocks-import": "off",
-    "jest/no-conditional-expect": "off"
+    "jest/no-conditional-expect": "off",
+    "no-continue": "off"
   },
   "overrides": [
     {

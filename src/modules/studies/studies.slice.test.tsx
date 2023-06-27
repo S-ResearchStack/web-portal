@@ -1,13 +1,13 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { DateTime } from 'luxon';
 import { act, renderHook } from '@testing-library/react';
-
 import { AppDispatch, store } from 'src/modules/store/store';
 import * as api from 'src/modules/api';
 import { SpecColorType } from 'src/styles/theme';
-import { currentSnackbarSelector } from 'src/modules/snackbar/snackbar.slice';
 import { maskEndpointAsFailure, maskEndpointAsSuccess } from 'src/modules/api/mock';
 
+import { authSlice } from '../auth/auth.slice';
 import { mockStudies } from './studies.slice.mock';
 import reducer, {
   fetchStudies,
@@ -29,11 +29,18 @@ import reducer, {
 
 const TEST_ERR_TEXT_MESSAGE = 'test-error';
 
+const authToken =
+  'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdLCJzdWIiOiIxMjMifQ==';
+
 // eslint-disable-next-line prefer-destructuring
 const dispatch: AppDispatch = store.dispatch;
 const studiesMock = mockStudies.map(transformStudyFromApi);
 
 describe('transformStudyFromApi', () => {
+  afterAll(() => {
+    dispatch(authSlice.actions.clearAuth());
+  });
+
   it('should transform data', () => {
     const fromWithColor: api.Study = {
       id: { value: '1' },
@@ -42,6 +49,7 @@ describe('transformStudyFromApi', () => {
         color: 'secondarySkyBlue',
       },
       isOpen: true,
+      createdAt: '2022-10-31T09:00:00',
     };
 
     const fromWithoutColor: api.Study = {
@@ -49,18 +57,21 @@ describe('transformStudyFromApi', () => {
       name: 'SleepCare Study',
       info: {},
       isOpen: true,
+      createdAt: '2022-10-31T09:00:00',
     };
 
     const toWithColor: Study = {
       id: fromWithColor.id.value,
       name: fromWithColor.name,
       color: fromWithColor.info.color as SpecColorType,
+      createdAt: DateTime.fromISO(fromWithColor.createdAt, { zone: 'utc' }).toMillis(),
     };
 
     const toWithoutColor: Study = {
       id: fromWithoutColor.id.value,
       name: fromWithoutColor.name,
       color: 'disabled',
+      createdAt: DateTime.fromISO(fromWithoutColor.createdAt, { zone: 'utc' }).toMillis(),
     };
 
     expect(transformStudyFromApi(fromWithColor)).toEqual(toWithColor);
@@ -68,13 +79,14 @@ describe('transformStudyFromApi', () => {
   });
 
   it('[NEGATIVE] should transform wrong data', () => {
-    const toWithoutColor = {
-      id: '',
-      name: undefined,
-      color: 'disabled',
-    };
-
-    expect(transformStudyFromApi({} as unknown as api.Study)).toEqual(toWithoutColor);
+    expect(transformStudyFromApi({} as unknown as api.Study)).toEqual(
+      expect.objectContaining({
+        id: '',
+        name: undefined,
+        color: 'disabled',
+        createdAt: expect.any(Number),
+      })
+    );
   });
 });
 
@@ -84,21 +96,21 @@ describe('store', () => {
   });
 
   it('should support success lifecycle', async () => {
-    let currentState = reducer(initialState, { type: '' });
+    let currentState = reducer.studies(initialState, { type: '' });
 
     expect(currentState).toEqual({
       studies: [],
       isLoading: false,
     } as StudiesState);
 
-    currentState = reducer(initialState, fetchStudiesStarted());
+    currentState = reducer.studies(initialState, fetchStudiesStarted());
 
     expect(currentState).toEqual({
       studies: [],
       isLoading: true,
     } as StudiesState);
 
-    currentState = reducer(initialState, fetchStudiesFinished(studiesMock));
+    currentState = reducer.studies(initialState, fetchStudiesFinished(studiesMock));
 
     expect(currentState).toEqual({
       studies: studiesMock,
@@ -108,21 +120,21 @@ describe('store', () => {
   });
 
   it('[NEGATIVE] should support failure lifecycle', async () => {
-    let currentState = reducer(initialState, { type: '' });
+    let currentState = reducer.studies(initialState, { type: '' });
 
     expect(currentState).toEqual({
       studies: [],
       isLoading: false,
     } as StudiesState);
 
-    currentState = reducer(initialState, fetchStudiesStarted());
+    currentState = reducer.studies(initialState, fetchStudiesStarted());
 
     expect(currentState).toEqual({
       studies: [],
       isLoading: true,
     } as StudiesState);
 
-    currentState = reducer(
+    currentState = reducer.studies(
       initialState,
       fetchStudiesFinished(null as unknown as typeof studiesMock)
     );
@@ -232,10 +244,7 @@ describe('store', () => {
     );
 
     const afterStudies = studiesSelector(store.getState());
-    const currentSnackbar = currentSnackbarSelector(store.getState());
-
     expect(afterStudies).toHaveLength(0);
-    expect(currentSnackbar.text).toMatch(TEST_ERR_TEXT_MESSAGE);
   });
 
   it('should set default selected study', async () => {
@@ -264,26 +273,33 @@ describe('store', () => {
   });
 
   it('should create study', async () => {
-    const study: Omit<Study, 'id'> = {
+    dispatch(
+      authSlice.actions.authSuccess({ authToken, refreshToken: authToken, userName: 'User Name' })
+    );
+
+    const study: Omit<Study, 'id' | 'createdAt'> = {
       name: 'test-study-name',
       color: 'primary',
     };
 
-    await dispatch(createStudy(study));
+    await dispatch(createStudy(study, ['principal-investigator']));
 
     expect(selectedStudySelector(store.getState())).toMatchObject(study);
+
+    dispatch(authSlice.actions.clearAuth());
   });
 
   it('[NEGATIVE] should catch an error when trying to create a study', async () => {
     const study: Omit<Study, 'id'> = {
       name: 'test-study-name',
       color: 'primary',
+      createdAt: 1652648400000,
     };
 
     await maskEndpointAsFailure(
       'getStudies',
       async () => {
-        await dispatch(createStudy(study));
+        await dispatch(createStudy(study, ['principal-investigator']));
       },
       { message: 'error' }
     );

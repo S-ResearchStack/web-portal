@@ -26,6 +26,8 @@ const StyledIndicator = styled.div<IndicatorProps>`
   border-radius: 50%;
   height: ${({ size }) => px(getSize(size))};
   width: ${({ size }) => px(getSize(size))};
+  min-width: ${({ size }) => px(getSize(size))};
+  min-height: ${({ size }) => px(getSize(size))};
 `;
 
 const Indicator = (props: IndicatorProps) => <StyledIndicator {...props} />;

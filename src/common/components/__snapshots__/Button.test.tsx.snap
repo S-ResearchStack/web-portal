@@ -14,6 +14,7 @@ exports[`Button [NEGATIVE] should render with wrong \`fill\` property 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -79,7 +80,7 @@ exports[`Button [NEGATIVE] should render with wrong \`fill\` property 1`] = `
     <button
       class="c0"
       data-testid="text-button"
-      fill="unavaliable"
+      fill="unavailable"
       style="overflow: hidden; position: relative;"
     >
       <div
@@ -118,6 +119,7 @@ exports[`Button [NEGATIVE] should render with wrong \`loading\` property 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -239,6 +241,7 @@ exports[`Button [NEGATIVE] should render without children 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -383,6 +386,7 @@ exports[`Button test bordered button 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -515,6 +519,7 @@ exports[`Button test bordered button 2`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -650,6 +655,7 @@ exports[`Button test bordered button 3`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -751,6 +757,7 @@ exports[`Button test solid button 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -874,6 +881,7 @@ exports[`Button test solid button 2`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1000,6 +1008,7 @@ exports[`Button test solid button 3`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1099,6 +1108,7 @@ exports[`Button test text button 1`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1245,6 +1255,7 @@ exports[`Button test text button 2`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1394,6 +1405,7 @@ exports[`Button test text button 3`] = `
 
 .c0 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;

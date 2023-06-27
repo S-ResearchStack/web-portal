@@ -1,0 +1,610 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`scalable renderEditorContent should render editor content 1`] = `
+.c5 {
+  position: relative;
+  width: 100%;
+}
+
+.c8 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.c9 {
+  grid-area: right-icon;
+}
+
+.c6 {
+  width: 100%;
+  height: 3.5rem;
+  padding: 0 1rem;
+  padding-right: 0.5rem;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-areas: ' label right-icon';
+  grid-template-columns: 1fr 24px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid transparent;
+  border-top-width: 0;
+  -webkit-transition: all 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: all 300ms cubic-bezier(0.45,0.05,0,1);
+}
+
+.c6:hover {
+  cursor: pointer;
+}
+
+.c7 {
+  border-top-width: 0.0625rem;
+  border-color: !important;
+  border-radius: 0.25rem;
+}
+
+.c7:hover {
+  border-color: #2F65E0;
+}
+
+.c10 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+  box-sizing: border-box;
+  height: 3.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  background-color: #F7F8FA;
+  border: 0.0625rem solid #F7F8FA;
+  border-radius: 0.25rem;
+  -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: border 300ms cubic-bezier(0.45,0.05,0,1);
+  caret-color: #4475E3;
+}
+
+.c10:hover:enabled {
+  border-color: #2F65E0;
+}
+
+.c10:active:enabled,
+.c10:focus-visible {
+  outline: none;
+  border-color: #4475E3;
+}
+
+.c10:disabled {
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #808080;
+}
+
+.c10::-moz-placeholder {
+  color: #808080;
+}
+
+.c10:-ms-input-placeholder {
+  color: #808080;
+}
+
+.c10::placeholder {
+  color: #808080;
+}
+
+.c10:disabled::-webkit-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c10:disabled::-moz-placeholder {
+  color: #DBDBDB;
+}
+
+.c10:disabled:-ms-input-placeholder {
+  color: #DBDBDB;
+}
+
+.c10:disabled::placeholder {
+  color: #DBDBDB;
+}
+
+.c10:-webkit-autofill,
+.c10:-webkit-autofill:hover,
+.c10:-webkit-autofill:focus {
+  border: 0.0625rem solid #4475E3;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: #F7F8FA !important;
+  background-image: unset !important;
+  -webkit-text-fill-color: #838383;
+}
+
+.c10:-webkit-autofill:focus {
+  border-color: #4475E3;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.625rem 0rem 0.5rem;
+}
+
+.c3 {
+  display: grid;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 2rem;
+}
+
+.c1 > .c2:first-child {
+  grid-template-columns: 7.5rem 5.75rem;
+}
+
+.c1 > .c2:last-child {
+  grid-template-columns: 2.25rem 14.125rem;
+}
+
+.c4 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #474747;
+}
+
+@media screen and (min-width:64rem) {
+  .c0 {
+    padding-left: 0.5rem;
+    margin-bottom: 0rem;
+  }
+}
+
+@media screen and (min-width:90rem) {
+  .c0 {
+    padding: 0.625rem 0rem 0.5rem;
+  }
+}
+
+@media screen and (min-width:64rem) {
+  .c1 {
+    gap: 2rem;
+  }
+}
+
+@media screen and (min-width:90rem) {
+  .c1 {
+    gap: 2rem;
+  }
+}
+
+@media screen and (min-width:64rem) {
+  .c1 > .c2:first-child {
+    grid-template-columns: 7.5rem 5.75rem;
+  }
+}
+
+@media screen and (min-width:90rem) {
+  .c1 > .c2:first-child {
+    grid-template-columns: 7.5rem 5.75rem;
+  }
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <div
+          class="c2 c3"
+        >
+          <div
+            class="c4"
+          >
+            Minimum number
+          </div>
+          <div
+            class="c5"
+          >
+            <div
+              class="c6 c7"
+              data-testid="value-item"
+            >
+              <div
+                class="c8"
+              >
+                0
+              </div>
+              <svg
+                class="c9"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="c2 c3"
+        >
+          <div
+            class="c4"
+          >
+            Label
+          </div>
+          <input
+            class="c10"
+            maxlength="20"
+            value="Label1"
+          />
+        </div>
+      </div>
+      <div
+        class="c1"
+      >
+        <div
+          class="c2 c3"
+        >
+          <div
+            class="c4"
+          >
+            Maximum number
+          </div>
+          <div
+            class="c5"
+          >
+            <div
+              class="c6 c7"
+              data-testid="value-item"
+            >
+              <div
+                class="c8"
+              >
+                10
+              </div>
+              <svg
+                class="c9"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="c2 c3"
+        >
+          <div
+            class="c4"
+          >
+            Label
+          </div>
+          <input
+            class="c10"
+            maxlength="20"
+            value="Label2"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`scalable renderPreviewContent should render preview content 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  height: 4.375rem;
+}
+
+.c7 {
+  width: 100%;
+  background-color: #ECF1FC;
+  height: 0.125rem;
+}
+
+.c2 {
+  width: 100%;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  position: absolute;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  padding: 0 0.375rem;
+}
+
+.c3 {
+  cursor: pointer;
+  height: 2.25rem;
+  position: relative;
+  top: -0.3125rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  width: calc((100% / 10) / 2);
+}
+
+.c5 {
+  cursor: pointer;
+  height: 2.25rem;
+  position: relative;
+  top: -0.3125rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: calc(100% / 10);
+}
+
+.c6 {
+  cursor: pointer;
+  height: 2.25rem;
+  position: relative;
+  top: -0.3125rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  width: calc((100% / 10) / 2);
+}
+
+.c4 {
+  cursor: pointer;
+  width: 0.125rem;
+  position: relative;
+  top: 1.25rem;
+  height: 0.375rem;
+  background-color: #4475E3;
+}
+
+.c9 {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-family: Inter,sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 0.8125rem;
+  color: #474747;
+  position: absolute;
+  top: 1.75rem;
+  left: 0;
+}
+
+.c10 {
+  color: #808080;
+  text-transform: uppercase;
+  -webkit-letter-spacing: 0.0625rem;
+  -moz-letter-spacing: 0.0625rem;
+  -ms-letter-spacing: 0.0625rem;
+  letter-spacing: 0.0625rem;
+  top: 2.8125rem;
+}
+
+.c8 {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  background-color: #4475E3;
+  border-radius: 50%;
+  box-shadow: 0 0 0.5rem rgba(32,87,213,0.25);
+  top: -0.5rem;
+  left: 0;
+  opacity: 1;
+}
+
+.c0 {
+  margin-top: 1.5rem;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+        data-testid="survey-preview-slider"
+      >
+        <div
+          class="c2"
+        >
+          <div
+            class="c3"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c5"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+          <div
+            class="c6"
+            data-testid="survey-preview-slider-point"
+          >
+            <div
+              class="c4"
+            />
+          </div>
+        </div>
+        <div
+          class="c7"
+        />
+        <div
+          class="c8"
+        />
+        <div
+          class="c9"
+        >
+          <div
+            data-testid="survey-preview-slider-min-value"
+          >
+            0
+          </div>
+          <div
+            data-testid="survey-preview-slider-max-value"
+          >
+            10
+          </div>
+        </div>
+        <div
+          class="c9 c10"
+        >
+          <div
+            data-testid="survey-preview-slider-min-label"
+          >
+            Label1
+          </div>
+          <div
+            data-testid="survey-preview-slider-max-label"
+          >
+            Label2
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

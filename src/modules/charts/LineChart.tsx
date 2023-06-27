@@ -54,7 +54,7 @@ const SvgContainer = styled(StyledSvg)`
   }
 `;
 
-const LineChart = ({
+const LineChartWithDynamicAxis = ({
   width,
   height,
   data,
@@ -294,12 +294,7 @@ const LineChart = ({
 
   return (
     <Container width={width} height={height} ref={containerRef}>
-      <SvgContainer
-        ref={svgRef}
-        focusWidth={getFocusWidth(width)}
-        viewBox={`0, 0, ${width}, ${height}`}
-        $contextVisible={false}
-      >
+      <SvgContainer ref={svgRef} viewBox={`0, 0, ${width}, ${height}`} $contextVisible={false}>
         {xAxis}
         {yAxis}
         {lineItems}
@@ -326,4 +321,4 @@ const LineChart = ({
   );
 };
 
-export default LineChart;
+export default LineChartWithDynamicAxis;

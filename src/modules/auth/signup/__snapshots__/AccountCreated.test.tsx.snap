@@ -13,6 +13,7 @@ exports[`AccountCreated [NEGATIVE] should render without a token 1`] = `
 
 .c9 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -128,6 +129,13 @@ exports[`AccountCreated [NEGATIVE] should render without a token 1`] = `
   -ms-flex: 1;
   flex: 1;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c4 {
@@ -249,14 +257,6 @@ exports[`AccountCreated [NEGATIVE] should render without a token 1`] = `
   width: 28rem;
 }
 
-@media (min-width:64rem) {
-
-}
-
-@media (min-width:90rem) {
-
-}
-
 <body>
   <div>
     <div
@@ -289,7 +289,7 @@ exports[`AccountCreated [NEGATIVE] should render without a token 1`] = `
               Congratulations! You have successfully created an account for
               <br />
               <strong />
-               Continue to the web portal to access and
+              . Continue to the web portal to access and
               <br />
               create studies.
             </p>
@@ -309,7 +309,7 @@ exports[`AccountCreated [NEGATIVE] should render without a token 1`] = `
                     class="c10"
                     data-testid="content"
                   >
-                    Continue to Portal
+                    Continue to portal
                   </div>
                   <div
                     class="c11"
@@ -345,6 +345,7 @@ exports[`AccountCreated should render 1`] = `
 
 .c9 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -460,6 +461,13 @@ exports[`AccountCreated should render 1`] = `
   -ms-flex: 1;
   flex: 1;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c4 {
@@ -574,14 +582,6 @@ exports[`AccountCreated should render 1`] = `
   width: 28rem;
 }
 
-@media (min-width:64rem) {
-
-}
-
-@media (min-width:90rem) {
-
-}
-
 <div
   class="c0"
   data-testid="account-created"
@@ -612,9 +612,9 @@ exports[`AccountCreated should render 1`] = `
           Congratulations! You have successfully created an account for
           <br />
           <strong>
-            examole.com
+            example.com
           </strong>
-           Continue to the web portal to access and
+          . Continue to the web portal to access and
           <br />
           create studies.
         </p>
@@ -634,7 +634,7 @@ exports[`AccountCreated should render 1`] = `
                 class="c10"
                 data-testid="content"
               >
-                Continue to Portal
+                Continue to portal
               </div>
               <div
                 class="c11"

@@ -16,13 +16,23 @@ type Props = {
   xScale: d3.ScaleLinear<number, number, never> | d3.ScaleTime<number, number, never>;
   yScale: d3.ScaleLinear<number, number, never>;
   strokeOpacity: number;
+  interpolation?: boolean;
 };
 
-const Line: React.FC<Props> = ({ id, data, color, xScale, yScale, strokeOpacity, width }) => {
+const Line: React.FC<Props> = ({
+  id,
+  data,
+  color,
+  xScale,
+  yScale,
+  strokeOpacity,
+  width,
+  interpolation = true,
+}) => {
   const drawLine = () =>
     d3
       .line<LineDataItem>()
-      .curve(d3.curveCatmullRom)
+      .curve(interpolation ? d3.curveCatmullRom : d3.curveLinear)
       .x((dataItem) => xScale(dataItem.x))
       .y((dataItem) => yScale(dataItem.y))(data);
 

@@ -29,10 +29,13 @@ export type ResendVerificationEmailRequest = {
 };
 
 export type ResetPasswordRequest = {
-  email: string;
   password: string;
   resetToken: string;
   profile?: UserProfile;
+};
+
+export type ForgotPasswordRequest = {
+  email: string;
 };
 
 export type RefreshTokenBody = {

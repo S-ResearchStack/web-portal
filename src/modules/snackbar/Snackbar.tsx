@@ -37,6 +37,7 @@ const ActionButton = styled.div`
   color: ${colors.onPrimary};
   text-transform: uppercase;
   margin-left: ${px(24)};
+  cursor: pointer;
 `;
 
 const ColoredErrorIcon = styled(ErrorIcon)`

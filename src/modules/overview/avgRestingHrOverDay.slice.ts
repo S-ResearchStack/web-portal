@@ -9,6 +9,7 @@ import { DateTime, Duration } from 'luxon';
 import API from 'src/modules/api';
 
 import createDataSlice from 'src/modules/store/createDataSlice';
+import { convertSqlUtcDateStringToTimestamp } from 'src/common/utils/datetime';
 import Random from 'src/common/Random';
 import { getGenderColor } from './gender';
 
@@ -61,7 +62,7 @@ API.mock.provideEndpoints({
 const avgRestingHrOverDaySlice = createDataSlice({
   name: 'overview/avgRestingHrOverDay',
   fetchData: async ({ studyId }: { studyId: string }) => {
-    const startTime = DateTime.utc()
+    const startTime = DateTime.now()
       .minus({ days: 1 })
       .set({ hour: 6, minute: 0, second: 0, millisecond: 0 });
     const endTime = startTime.plus({ days: 1 });
@@ -83,24 +84,25 @@ const avgRestingHrOverDaySlice = createDataSlice({
       endMs: startMs + bucketMs,
     }));
 
-    const values = data
+    const values = (data || [])
       .reduce(
         (acc, d) => {
           const gender = d.profiles?.find((p) => p.key === 'gender')?.value;
           for (const v of d.healthData?.heartRates || []) {
             if (!v.bpm || !v.time || !gender) {
-              // eslint-disable-next-line no-continue
               continue;
             }
 
-            const ts = DateTime.fromSQL(v.time).valueOf();
-            acc.push({
-              name: gender,
-              bucketIdx: timeBuckets.findIndex((b) => ts >= b.startMs && ts < b.endMs),
-              ts,
-              value: Number(v.bpm),
-              anomaly: false,
-            });
+            const ts = convertSqlUtcDateStringToTimestamp(v.time);
+            if (ts) {
+              acc.push({
+                name: gender,
+                bucketIdx: timeBuckets.findIndex((b) => ts >= b.startMs && ts < b.endMs),
+                ts,
+                value: Number(v.bpm),
+                anomaly: false,
+              });
+            }
           }
           return acc;
         },

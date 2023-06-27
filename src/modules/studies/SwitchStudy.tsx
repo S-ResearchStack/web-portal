@@ -61,7 +61,9 @@ const Header = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: ${px(68)};
+  padding-top: ${px(5)};
 `;
 
 const CarouselWrapper = styled.div`
@@ -94,11 +96,12 @@ const Studies = styled.div`
   align-items: center;
   margin: auto;
   min-height: ${px(436)};
+  row-gap: ${px(16)};
 `;
 
 const Title = styled.div`
   ${typography.headingMedium};
-  margin: ${px(5)} 0 0 ${px(40)};
+  margin-left: ${px(40)};
 `;
 
 const StudyContainer = styled.div<{ $selected: boolean | undefined }>`
@@ -107,7 +110,7 @@ const StudyContainer = styled.div<{ $selected: boolean | undefined }>`
   flex-direction: column;
   align-items: center;
   width: ${px(144)};
-  height: ${px(210)};
+  height: ${px(227)};
   padding-top: ${({ $selected }) => ($selected ? 0 : px(4))};
   margin: 0 ${px(40)} ${px(8)};
 `;
@@ -123,9 +126,15 @@ const StudyName = styled.div<{
   text-align: center;
   opacity: ${({ dimmed }) => dimmed && 0.75};
   max-width: ${px(144)};
-  overflow-x: hidden;
+  display: block;
+  display: -webkit-box;
+  height: fit-content;
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: break-spaces;
 `;
 
 const StudyCounter = styled.div`
@@ -147,7 +156,7 @@ export type SwitchStudyProps = {
 
 const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFinished }) => {
   const isLoading = useAppSelector(studiesIsLoadingSelector);
-  const rowStudies = useAppSelector(studiesSelector);
+  const studies = useAppSelector(studiesSelector);
   const selectedStudy = useAppSelector(selectedStudySelector);
   const dispatch = useAppDispatch();
   const [hoveredItemIdx, setHoveredItemIdx] = useState<number | null>(null);
@@ -163,13 +172,16 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
     }
   }, [isVisible]);
 
-  const studies = useMemo(
+  const studyPages = useMemo(
     () =>
       _chunk(
-        rowStudies.map((s) => ({ ...s, selected: selectedId ? s.id === selectedId : undefined })),
+        studies.map((s) => ({ ...s, selected: selectedId ? s.id === selectedId : undefined })),
         MAX_STUDIES_PER_SCREEN
-      ),
-    [selectedId, rowStudies]
+      ).map((ss, idx) => ({
+        id: idx,
+        studies: ss,
+      })),
+    [selectedId, studies]
   );
 
   const handleStudySelected = (id: string) => {
@@ -194,23 +206,22 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
   const Counter = useCallback(
     (index: number) => {
       let counter = <>&nbsp;</>;
-      if (studies.length > 1) {
+      if (studyPages.length > 1) {
         counter = (
           <>
-            {Math.abs(index) * MAX_STUDIES_PER_SCREEN + studies[index].length} of{' '}
-            {studies.flat().length}
+            {Math.abs(index) * MAX_STUDIES_PER_SCREEN + studyPages[index].studies.length} of{' '}
+            {studies.length}
           </>
         );
       }
       return counter;
     },
-    [studies]
+    [studyPages, studies.length]
   );
 
   const loadingRow = useMemo(
     () =>
-      _range(0, MAX_STUDIES_PER_SCREEN).map((_, idx) => (
-        // eslint-disable-next-line react/no-array-index-key
+      _range(0, MAX_STUDIES_PER_SCREEN).map((idx) => (
         <StudyContainer key={idx} $selected={false}>
           <SkeletonLoading>
             <SkeletonPath
@@ -233,27 +244,26 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
         width={80}
         onClick={() => setSlideIndex(slideIndex - 1)}
         disabled={slideIndex === 0}
-        visible={studies.length > 1}
+        visible={studyPages.length > 1}
         aria-label="Previous Study"
       />
       <Content>
         <Header>
           <Title>Study Collection</Title>
           {canCreate && (
-            <Button fill="text" width={246} icon={<Plus />} onClick={createStudy}>
+            <Button fill="text" width={246} icon={<Plus />} onClick={createStudy} rippleOff>
               Create new study
             </Button>
           )}
         </Header>
         {/* eslint-disable-next-line no-nested-ternary */}
-        {studies.length ? (
+        {studyPages.length ? (
           <CarouselWrapper ref={ref}>
             <StyledCarousel>
-              <Inner index={slideIndex} total={studies.length}>
-                {studies.map((studiesChunk, index) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Studies key={index}>
-                    {studiesChunk.map(({ id, name, color, selected }, idx) => {
+              <Inner index={slideIndex} total={studyPages.length}>
+                {studyPages.map((page) => (
+                  <Studies key={page.id}>
+                    {page.studies.map(({ id, name, color, selected }, idx) => {
                       const isItemHovered = hoveredItemIdx === idx;
                       return (
                         <StudyContainer
@@ -307,8 +317,8 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
         fill="text"
         width={80}
         onClick={() => setSlideIndex(slideIndex + 1)}
-        disabled={slideIndex === studies.length - 1}
-        visible={studies.length > 1}
+        disabled={slideIndex === studyPages.length - 1}
+        visible={studyPages.length > 1}
         aria-label="Next Study"
       />
     </Container>

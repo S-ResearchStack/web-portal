@@ -68,9 +68,8 @@ export type QueryResult = SqlResponse<unknown> & { totalCount: number; queryPara
 export type TablesMap = Record<string, string[]>;
 
 export interface DataCollectionState {
-  projectId?: string;
   query: string;
-  tables: TablesMap;
+  tables?: TablesMap;
   queryResult?: QueryResult;
   error?: string;
   isDataLoading?: boolean;
@@ -81,7 +80,6 @@ export const DEFAULT_QUERY_STATE = 'select * from';
 
 export const initialState: DataCollectionState = {
   query: DEFAULT_QUERY_STATE,
-  tables: {},
 };
 
 export const dataCollectionSlice = createSlice({
@@ -94,13 +92,13 @@ export const dataCollectionSlice = createSlice({
     tablesStart(state) {
       state.isTablesLoading = true;
     },
-    tablesSuccess(state, { payload }: PayloadAction<{ projectId: string; tableMap: TablesMap }>) {
+    tablesSuccess(state, { payload }: PayloadAction<{ tableMap: TablesMap }>) {
       state.tables = payload.tableMap;
-      state.projectId = payload.projectId;
       state.isTablesLoading = false;
     },
     tablesFailure(state) {
       state.isTablesLoading = false;
+      state.tables = {};
     },
     columnsSuccess(state, { payload }: PayloadAction<TablesMap>) {
       state.tables = { ...state.tables, ...payload };
@@ -125,7 +123,6 @@ export const dataCollectionSlice = createSlice({
       state.error = initialState.error;
       state.isDataLoading = initialState.isDataLoading;
       state.isTablesLoading = initialState.isTablesLoading;
-      state.projectId = initialState.projectId;
     },
   },
 });
@@ -149,7 +146,7 @@ export const fetchTables =
       dispatch(tablesStart());
       const res = await API.getTablesList(projectId);
       const tables = (res.data.tables || []).map((t) => t.name || '');
-      dispatch(tablesSuccess({ tableMap: _zipObject(tables, []), projectId }));
+      dispatch(tablesSuccess({ tableMap: _zipObject(tables, []) }));
     } catch (e) {
       dispatch(tablesFailure());
       applyDefaultApiErrorHandlers(e, dispatch);
@@ -226,6 +223,5 @@ export const errorSelector = (state: RootState) => state.dataCollection.error;
 export const queryResultSelector = (state: RootState) => state.dataCollection.queryResult;
 export const dataLoadingSelector = (state: RootState) => state.dataCollection.isDataLoading;
 export const tablesLoadingSelector = (state: RootState) => state.dataCollection.isTablesLoading;
-export const tablesProjectIdSelector = (state: RootState) => state.dataCollection.projectId;
 
 export default dataCollectionSlice.reducer;

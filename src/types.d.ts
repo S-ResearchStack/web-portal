@@ -1,3 +1,14 @@
+declare module '@transcend-io/conflux';
+declare module 'native-file-system-adapter';
+
+interface ShowSaveFilePickerOptions {
+  suggestedName: string;
+}
+
+interface Window {
+  showSaveFilePicker: (options?: ShowSaveFilePickerOptions) => Promise<FileSystemFileHandle>;
+}
+
 declare module '*.svg' {
   import * as React from 'react';
 

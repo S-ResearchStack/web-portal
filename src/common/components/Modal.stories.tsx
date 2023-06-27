@@ -18,7 +18,7 @@ Confirm.args = {
   title: 'Enable Access',
   description: [
     'Are you sure you want to enable the member access?',
-    <br />,
+    <br key="br" />,
     'By doing this, they gain access to the data of this study again.',
   ],
   acceptLabel: 'Enable Access',
@@ -46,7 +46,7 @@ ConfirmWithCustomActions.args = {
   title: 'Enable Access',
   description: [
     'Are you sure you want to enable the member access?',
-    <br />,
+    <br key="br" />,
     'By doing this, they gain access to the data of this study again.',
   ],
   declineLabel: 'Cancel',

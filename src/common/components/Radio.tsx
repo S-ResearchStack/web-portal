@@ -24,7 +24,12 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   isLegend?: boolean;
 }
 
-const Label = styled.label<{ withDescription: boolean; isLegend: boolean; reverse: boolean }>`
+const Label = styled.label<{
+  withDescription: boolean;
+  isLegend: boolean;
+  reverse: boolean;
+  kind?: RadioKind;
+}>`
   display: inline-grid;
   gap: ${({ isLegend }) => px(isLegend ? 10 : 4)};
   grid-template-columns: ${({ withDescription, isLegend, reverse }) =>
@@ -35,6 +40,8 @@ const Label = styled.label<{ withDescription: boolean; isLegend: boolean; revers
         : `${px(isLegend ? 20 : 40)} 1fr`
       : px(40)};
   align-items: flex-start;
+  cursor: ${({ kind }) =>
+    (kind === 'filled' || kind === 'success' || kind === 'error') && 'unset !important'};
 `;
 
 const Child = styled.div<{ disabled?: boolean }>`
@@ -196,7 +203,13 @@ const Radio = ({
       disabled={disabled}
       className={className || ''}
     >
-      <Label htmlFor={id} withDescription={!!children} isLegend={!!isLegend} reverse={!!reverse}>
+      <Label
+        kind={kind}
+        htmlFor={id}
+        withDescription={!!children}
+        isLegend={!!isLegend}
+        reverse={!!reverse}
+      >
         {children && reverse && <Child disabled={disabled}>{children}</Child>}
         <Icon isLegend={!!isLegend}>
           {(kind === 'error' && radioIcon.error) ||

@@ -1,5 +1,4 @@
 import React from 'react';
-import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import { act, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
@@ -10,10 +9,13 @@ import theme from 'src/styles/theme';
 import TooltipProvider from 'src/common/components/Tooltip/TooltipProvider';
 import TooltipsList from 'src/common/components/Tooltip/TooltipsList';
 import { TooltipControls, TooltipPosition } from 'src/common/components/Tooltip/types';
+import { disableDateNowMock } from 'src/__mocks__/setUpDateMock';
 
 import Tooltip from './Tooltip';
 
 beforeAll(() => {
+  disableDateNowMock();
+
   global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
     unobserve: jest.fn(),

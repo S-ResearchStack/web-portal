@@ -1,9 +1,24 @@
 import { request } from './apiService';
-import { Response } from './executeRequest';
+import executeRequest, { Response } from './executeRequest';
 import * as API from './models';
+import {
+  ActivityTaskType,
+  CreatePublicationSliceFetchArgs,
+  EducationListSliceFetchArgs,
+  GetStorageObjectDownloadUrlResponse,
+  GetTablesResponse,
+  LabVisitItemResponse,
+  LabVisitListResponse,
+  LabVisitSaveItemRequest,
+} from './models';
 import { SqlRequest, SqlResponse } from './models/sql';
-import { GetTablesResponse } from './models';
 import { GraphQlRequest, GraphQlResponse } from './models/graphql';
+import { ParticipantEnrollmentPeriod } from '../overview/participantEnrollment.slice';
+import { LabVisitListFetchArgs } from '../study-management/participant-management/lab-visit/labVisit.slice';
+import {
+  LabVisitParticipantSuggestionItemRequest,
+  LabVisitParticipantSuggestionResponse,
+} from './models/labVisit';
 
 export type ProjectIdParams = { projectId: string };
 
@@ -20,17 +35,6 @@ const baseSqlRequest = <R>({ projectId, sql }: SqlRequestParams) =>
       sql: (Array.isArray(sql) ? sql.join(' ') : sql).replaceAll(/ {2,}/g, ' '),
     },
   });
-
-const sqlRequest = async <R>(params: SqlRequestParams): Promise<Response<R[]>> => {
-  const res = await baseSqlRequest<R>(params);
-
-  return {
-    ...res,
-    get data() {
-      return res.data?.data || null;
-    },
-  };
-};
 
 type GraphQlRequestParams = {
   projectId: string;
@@ -91,8 +95,16 @@ export const resendVerification = (body: API.ResendVerificationEmailRequest) =>
   });
 
 export const resetPassword = (body: API.ResetPasswordRequest) =>
-  request<API.ResetPasswordRequest, void>({
+  request<API.ResetPasswordRequest, API.SigninResponse>({
     path: '/account-service/user/password/reset',
+    method: 'POST',
+    noAuth: true,
+    body,
+  });
+
+export const forgotPassword = (body: API.ForgotPasswordRequest) =>
+  request<API.ForgotPasswordRequest, void>({
+    path: '/account-service/user/password/forgot',
     method: 'POST',
     noAuth: true,
     body,
@@ -116,18 +128,10 @@ export const getUsers = ({ projectId }: { projectId?: string } = {}) =>
     query: { projectId },
   });
 
-export const inviteUser = (body: API.InviteUserRequest) =>
-  request<API.InviteUserRequest, void>({
+export const inviteUsers = (body: API.InviteUsersRequest) =>
+  request<API.InviteUsersRequest, void>({
     path: '/account-service/invitations',
     method: 'POST',
-    body,
-  });
-
-// TODO: check path
-export const removeUser = (body: API.RemoveUserRequest) =>
-  request<API.RemoveUserRequest, void>({
-    path: '/account-service/remove',
-    method: 'DELETE',
     body,
   });
 
@@ -149,27 +153,8 @@ export const refreshToken = (body: API.RefreshTokenBody) =>
   request<API.RefreshTokenBody, API.RefreshTokenBody>({
     path: '/account-service/token/refresh',
     method: 'POST',
+    noAuth: true,
     body,
-  });
-
-export const getSurveyResponsesByAge = () =>
-  request<void, API.SurveyResponsesByAgeResponse>({
-    path: '/survey/by-gender',
-  });
-
-export const getSurveyResponsesByGender = () =>
-  request<void, API.SurveyResponsesByGenderResponse>({
-    path: '/survey/by-age',
-  });
-
-export const getEligibilityQualifications = () =>
-  request<void, API.EligibilityQualificationsResponse>({
-    path: '/eligibility-qualifications',
-  });
-
-export const getAvgHeartRateFluctuations = () =>
-  request<void, API.AvgHeartRateFluctuationsResponse>({
-    path: '/avg-heart-rate-fluctuations',
   });
 
 export const getHealthDataOverview = ({
@@ -185,8 +170,27 @@ export const getHealthDataOverview = ({
     userId
     profiles { key value }
     latestAverageHR
+    latestAverageSystolicBP
+    latestAverageDiastolicBP
     latestTotalStep
     lastSyncTime
+    averageSleep
+    latestAverageSPO2
+    latestAverageBG
+    latestAverageRR
+  }
+}`,
+  });
+
+export const getHealthDataParticipantIds = ({
+  projectId,
+  limit,
+}: LabVisitParticipantSuggestionItemRequest & ProjectIdParams) =>
+  graphQlRequest<LabVisitParticipantSuggestionResponse>({
+    projectId,
+    query: `{
+  healthDataOverview(offset: 0, limit: ${limit}, includeAttributes: ["email"]) {
+    userId
   }
 }`,
   });
@@ -206,6 +210,9 @@ export const getHealthDataOverviewForUser = ({
     latestTotalStep
     lastSyncTime
     averageSleep
+    latestAverageSPO2
+    latestAverageBG
+    latestAverageRR
   }
 }`,
   });
@@ -249,43 +256,70 @@ export const getAverageParticipantHeartRate = ({
 }`,
   });
 
-export const getAverageStepCount = ({ projectId }: ProjectIdParams) =>
-  sqlRequest<API.AverageStepCountSqlRow>({
-    projectId,
-    sql: [
-      `with`,
-      `  steps_per_day as (`,
-      `    select steps.user_id as user_id,`,
-      `       sum(steps.count) as total_steps,`,
-      `       date(end_time) as day,`,
-      `       json_extract_scalar(up.profile, '$.gender') as gender`,
-      `    from steps`,
-      `    join user_profiles up on up.user_id = steps.user_id`,
-      `    where end_time < now()`,
-      `    group by steps.user_id, date(end_time), json_extract_scalar(up.profile, '$.gender')`,
-      `  )`,
-      `select avg(spd.total_steps) as steps,`,
-      `  spd.gender,`,
-      `  dow(spd.day) as day_of_week`,
-      `from steps_per_day as spd`,
-      `group by spd.gender, dow(spd.day)`,
-    ],
-  });
-
 export const getTasks = ({ projectId }: ProjectIdParams) =>
   request<void, API.TaskListResponse>({
     path: `/api/projects/${projectId}/tasks`,
+    query: {
+      type: 'SURVEY',
+    },
+  });
+
+export const getActivities = ({ projectId }: ProjectIdParams) =>
+  request<void, API.ActivityListResponse>({
+    path: `/api/projects/${projectId}/tasks`,
+    query: {
+      type: 'ACTIVITY',
+    },
+  });
+
+export const getTaskRespondedUsersCount = ({ projectId }: ProjectIdParams) =>
+  graphQlRequest<API.TaskResultsResponse>({
+    projectId,
+    query: `{
+  taskResults {
+    taskId
+    numberOfRespondedUser { count }
+  }
+}`,
   });
 
 export const getTask = ({ projectId, id }: ProjectIdParams & { id: string }) =>
   request<void, [API.Task]>({
     path: `/api/projects/${projectId}/tasks/${id}`,
+    query: {
+      type: 'SURVEY',
+    },
+  });
+
+export const getActivityTask = ({ projectId, id }: ProjectIdParams & { id: string }) =>
+  request<void, [API.ActivityTask]>({
+    path: `/api/projects/${projectId}/tasks/${id}`,
+    query: {
+      type: 'ACTIVITY',
+    },
+  });
+
+export const getEducationPublication = ({ projectId, id }: ProjectIdParams & { id: string }) =>
+  request<void, [API.Publication]>({
+    path: `/api/projects/${projectId}/education/${id}`,
   });
 
 export const createTask = ({ projectId }: ProjectIdParams) =>
-  request<void, API.CreateTaskResponse>({
+  request<{ type: 'SURVEY' }, API.CreateTaskResponse>({
     method: 'POST',
     path: `/api/projects/${projectId}/tasks`,
+    body: {
+      type: 'SURVEY',
+    },
+  });
+
+export const createActivityTask = ({ projectId }: ProjectIdParams & { type: ActivityTaskType }) =>
+  request<{ type: 'ACTIVITY' }, API.CreateTaskResponse>({
+    method: 'POST',
+    path: `/api/projects/${projectId}/tasks`,
+    body: {
+      type: 'ACTIVITY',
+    },
   });
 
 export const updateTask = (
@@ -299,14 +333,54 @@ export const updateTask = (
     query: {
       revision_id: revisionId,
     },
+    keepalive: true,
   });
 
-export const getTaskItemResults = ({ projectId, id }: ProjectIdParams & { id: string }) =>
+export const updateActivityTask = (
+  { projectId, id, revisionId }: ProjectIdParams & { id: string; revisionId: number },
+  body: API.ActivityTaskUpdate
+) =>
+  request<API.ActivityTaskUpdate, void>({
+    path: `/api/projects/${projectId}/tasks/${id}`,
+    method: 'PATCH',
+    body,
+    query: {
+      revision_id: revisionId,
+    },
+    keepalive: true,
+  });
+
+export const updateEducationPublication = (
+  { projectId, id, revisionId }: ProjectIdParams & { id: string; revisionId: number },
+  body: API.Publication
+) =>
+  request<API.Publication, void>({
+    path: `/api/projects/${projectId}/education/${id}`,
+    method: 'PATCH',
+    body,
+    query: {
+      revision_id: revisionId,
+    },
+  });
+
+export const getSurveyTaskItemResults = ({ projectId, id }: ProjectIdParams & { id: string }) =>
   graphQlRequest<API.SurveyResponseResponse>({
     projectId,
     query: `{
   surveyResponse(taskId: "${id}", includeAttributes: ["age", "gender"]) {
     itemName
+    userId
+    result
+    profiles { key value }
+  }
+}`,
+  });
+
+export const getActivityTaskItemResults = ({ projectId, id }: ProjectIdParams & { id: string }) =>
+  graphQlRequest<API.SurveyResponseResponse>({
+    projectId,
+    query: `{
+  surveyResponse(taskId: "${id}", includeAttributes: ["age", "gender"]) {
     userId
     result
     profiles { key value }
@@ -323,24 +397,6 @@ export const getTaskCompletionTime = ({ projectId, id }: ProjectIdParams & { id:
     completionTime { averageInMS }
   }
 }`,
-  });
-
-export const getTaskRespondedUsersCount = ({ projectId }: ProjectIdParams) =>
-  graphQlRequest<API.TaskResultsResponse>({
-    projectId,
-    query: `{
-  taskResults {
-    taskId
-    numberOfRespondedUser { count }
-  }
-}`,
-  });
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getParticipantsTimeZones = ({ projectId }: ProjectIdParams) =>
-  request<void, string[]>({
-    path: `/participants/list`,
-    method: 'GET',
   });
 
 export const getTablesList = (projectId: string) =>
@@ -363,4 +419,125 @@ export const executeDataQuery = (projectId: string, sql: string) =>
   baseSqlRequest<unknown>({
     projectId,
     sql,
+  });
+
+export const getLabVisitsList = ({ projectId }: LabVisitListFetchArgs) =>
+  request<LabVisitListFetchArgs, LabVisitListResponse>({
+    path: `/api/projects/${projectId}/in-lab-visits`,
+  });
+
+export const getParticipantDropout = (id: API.StudyId) =>
+  request<API.StudyId, API.ParticipantDropoutData>({
+    path: `/api/studies/${id}/dropout`,
+    body: id,
+  });
+
+export const getParticipantEnrollment = (period?: ParticipantEnrollmentPeriod) =>
+  request<void, API.ParticipantEnrollmentResponse>({
+    path: '/participant-enrollment',
+    query: { period },
+  });
+
+export const createLabVisit = ({ projectId, ...body }: LabVisitSaveItemRequest & ProjectIdParams) =>
+  request<LabVisitSaveItemRequest, Required<LabVisitItemResponse>>({
+    method: 'POST',
+    path: `/api/projects/${projectId}/in-lab-visits`,
+    body,
+  });
+
+export const updateLabVisit = ({ projectId, ...body }: LabVisitSaveItemRequest & ProjectIdParams) =>
+  request<LabVisitSaveItemRequest, Required<LabVisitItemResponse>>({
+    method: 'PATCH',
+    path: `/api/projects/${projectId}/in-lab-visits/${body.id}`,
+    body,
+  });
+
+export const getPublications = ({ projectId }: EducationListSliceFetchArgs) =>
+  request<void, API.EducationListResponse>({
+    method: 'GET',
+    path: `/api/education/${projectId}`,
+  });
+
+export const createPublication = ({ projectId, source }: CreatePublicationSliceFetchArgs) =>
+  request<API.CreatePublicationRequestBody, API.CreatePublicationResponse>({
+    method: 'POST',
+    path: `/api/education/${projectId}/publications`,
+    body: { source },
+  });
+
+export const getStorageObjects = ({
+  projectId,
+  path,
+}: API.GetStorageObjectsParams & ProjectIdParams) =>
+  request<void, API.GetStorageObjectsResponse>({
+    method: 'GET',
+    path: `/cloud-storage/projects/${projectId}/list`,
+    query: { path },
+  });
+
+export const getStorageObjectUploadUrl = ({
+  projectId,
+  objectName,
+}: API.GetStorageObjectUploadUrlParams & ProjectIdParams) =>
+  request<void, API.GetStorageObjectUploadUrlResponse>({
+    method: 'GET',
+    path: `/cloud-storage/projects/${projectId}/upload-url`,
+    query: {
+      object_name: objectName,
+    },
+    readResponseAsText: true,
+  });
+
+export const uploadStorageObject = ({ signedUrl, blob }: { signedUrl: string; blob: File }) =>
+  executeRequest<File, void>({
+    url: signedUrl,
+    method: 'PUT',
+    body: blob,
+  });
+
+export const deleteStorageObject = ({
+  projectId,
+  objectName,
+}: API.DeleteStorageObjectParams & ProjectIdParams) =>
+  request<void, void>({
+    method: 'DELETE',
+    path: `/cloud-storage/projects/${projectId}/delete`,
+    query: { object_name: objectName },
+  });
+
+export const downloadStorageObject = ({
+  projectId,
+  objectName,
+}: API.DownloadStoragetObjectParams & ProjectIdParams) =>
+  request<void, Blob>({
+    method: 'GET',
+    path: `/cloud-storage/projects/${projectId}/download`,
+    query: { object_name: objectName },
+    readResponseAsBlob: true,
+  });
+
+export const getStorageObjectDownloadUrl = ({
+  projectId,
+  objectName,
+  expiresAfterSeconds,
+}: API.GetStorageObjectDownloadUrlParams & ProjectIdParams) =>
+  request<void, GetStorageObjectDownloadUrlResponse>({
+    method: 'GET',
+    path: `/cloud-storage/projects/${projectId}/download-url`,
+    query: {
+      object_name: objectName,
+      url_duration: expiresAfterSeconds,
+    },
+    readResponseAsText: true,
+  });
+
+export const streamDownloadStorageObject = ({
+  projectId,
+  objectName,
+}: API.DownloadStoragetObjectParams & ProjectIdParams) =>
+  request<void, ReadableStream>({
+    method: 'GET',
+    path: `/cloud-storage/projects/${projectId}/download`,
+    query: { object_name: objectName },
+    readResponseAsStream: true,
   });

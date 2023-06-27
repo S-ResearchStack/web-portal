@@ -1,29 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
-.c29 {
-  -webkit-text-decoration: none;
-  text-decoration: none;
-  cursor: default;
-  -webkit-user-drag: none;
-}
-
-.c29:hover {
-  cursor: pointer;
-}
-
-.c25 {
-  position: absolute;
-  will-change: opacity,transform;
-  border-radius: 50%;
-  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
-  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
-  z-index: 0;
-  background-color: #E3EAFB;
-  pointer-events: none;
-}
-
-.c27 {
+.c26 {
   position: absolute;
   will-change: opacity,transform;
   border-radius: 50%;
@@ -35,6 +13,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
 
 .c22 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -59,6 +38,10 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   height: 2.5rem;
   border: none;
   background-color: transparent;
+}
+
+.c22:hover {
+  cursor: pointer;
 }
 
 .c22 > div {
@@ -117,8 +100,9 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   fill: #4475E3;
 }
 
-.c26 {
+.c25 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -145,7 +129,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   background-color: #4475E3;
 }
 
-.c26 > div {
+.c25 > div {
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -153,27 +137,27 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   font-style: normal;
 }
 
-.c26 > div svg {
+.c25 > div svg {
   margin-right: 0.25rem;
 }
 
-.c26 > div {
+.c25 > div {
   color: #FFFFFF;
 }
 
-.c26 > div svg {
+.c25 > div svg {
   fill: #FFFFFF;
 }
 
-.c26:hover:enabled {
+.c25:hover:enabled {
   background-color: #2F65E0;
 }
 
-.c26:disabled {
+.c25:disabled {
   background-color: #B3C6F1;
 }
 
-.c26:focus-visible:enabled {
+.c25:focus-visible:enabled {
   border: 0.125rem solid #FFFFFF;
   background-color: #4475E3;
   outline: 0.125rem solid #C7D6F7;
@@ -316,9 +300,9 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
 }
 
 .c9:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c9::-webkit-input-placeholder {
@@ -389,13 +373,24 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
 
 .c11 {
   font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   font-weight: 400;
   font-style: normal;
-  color: #D14343;
+  color: #808080;
   padding-left: 1rem;
   height: 1.0625rem;
+}
+
+.c28 {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: default;
+  -webkit-user-drag: none;
+}
+
+.c28:hover {
+  cursor: pointer;
 }
 
 .c13 {
@@ -436,9 +431,9 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
 
 .c1 {
   color: #474747;
-  min-width: 42.6875rem;
+  min-width: 48.3125rem;
   width: 55.556vw;
-  min-height: 32.015625rem;
+  min-height: 36.234375rem;
   height: 41.667vw;
   max-height: 90vh;
   display: -webkit-box;
@@ -514,7 +509,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   color: #838383;
 }
 
-.c30 {
+.c29 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -527,7 +522,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   padding-top: 1.25rem;
 }
 
-.c28 {
+.c27 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -537,7 +532,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
   margin-top: 0.5rem;
 }
 
-.c28 a {
+.c27 a {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -593,6 +588,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
             class="c8 c9"
             data-testid="signin-screen-email"
             name="email"
+            placeholder="Enter your email"
             type="email"
             value=""
           />
@@ -602,7 +598,6 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
         </div>
         <div
           class="c11"
-          data-testid="input-error"
         >
            
         </div>
@@ -625,6 +620,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
             class="c8 c9"
             data-testid="signin-screen-password"
             name="password"
+            placeholder="Enter password"
             type="password"
             value=""
           />
@@ -644,7 +640,6 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
         </div>
         <div
           class="c11"
-          data-testid="input-error"
         >
            
         </div>
@@ -681,9 +676,8 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
         </div>
         <button
           class="c22 c23"
-          disabled=""
           fill="text"
-          style="overflow: hidden; position: relative;"
+          placeholder="Enter email"
           width="120"
         >
           <div
@@ -692,17 +686,10 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
           >
             Forgot Password?
           </div>
-          <div
-            class="c25"
-            color="primaryLightPressed"
-            opacity="1,1"
-            scale="0"
-            style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
-          />
         </button>
       </div>
       <button
-        class="c26"
+        class="c25"
         data-testid="signin-screen-send"
         disabled=""
         fill="solid"
@@ -715,7 +702,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
           Sign In
         </div>
         <div
-          class="c27"
+          class="c26"
           color="primaryPressed"
           opacity="1,1"
           scale="0"
@@ -723,18 +710,18 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
         />
       </button>
       <div
-        class="c28"
+        class="c27"
       >
         Don’t have an account?
         <a
-          class="c29"
+          class="c28"
           href="/account/create"
         >
           Create an account
         </a>
       </div>
       <div
-        class="c30"
+        class="c29"
         data-testid="signin-screen-error"
       />
     </div>
@@ -743,29 +730,7 @@ exports[`SignInScreen [NEGATIVE] should sign in with incorrect email 1`] = `
 `;
 
 exports[`SignInScreen should sign in 1`] = `
-.c29 {
-  -webkit-text-decoration: none;
-  text-decoration: none;
-  cursor: default;
-  -webkit-user-drag: none;
-}
-
-.c29:hover {
-  cursor: pointer;
-}
-
-.c25 {
-  position: absolute;
-  will-change: opacity,transform;
-  border-radius: 50%;
-  -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
-  animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
-  z-index: 0;
-  background-color: #E3EAFB;
-  pointer-events: none;
-}
-
-.c27 {
+.c26 {
   position: absolute;
   will-change: opacity,transform;
   border-radius: 50%;
@@ -777,6 +742,7 @@ exports[`SignInScreen should sign in 1`] = `
 
 .c22 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -801,6 +767,10 @@ exports[`SignInScreen should sign in 1`] = `
   height: 2.5rem;
   border: none;
   background-color: transparent;
+}
+
+.c22:hover {
+  cursor: pointer;
 }
 
 .c22 > div {
@@ -859,8 +829,9 @@ exports[`SignInScreen should sign in 1`] = `
   fill: #4475E3;
 }
 
-.c26 {
+.c25 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -887,7 +858,7 @@ exports[`SignInScreen should sign in 1`] = `
   background-color: #4475E3;
 }
 
-.c26 > div {
+.c25 > div {
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -895,27 +866,27 @@ exports[`SignInScreen should sign in 1`] = `
   font-style: normal;
 }
 
-.c26 > div svg {
+.c25 > div svg {
   margin-right: 0.25rem;
 }
 
-.c26 > div {
+.c25 > div {
   color: #FFFFFF;
 }
 
-.c26 > div svg {
+.c25 > div svg {
   fill: #FFFFFF;
 }
 
-.c26:hover:enabled {
+.c25:hover:enabled {
   background-color: #2F65E0;
 }
 
-.c26:disabled {
+.c25:disabled {
   background-color: #B3C6F1;
 }
 
-.c26:focus-visible:enabled {
+.c25:focus-visible:enabled {
   border: 0.125rem solid #FFFFFF;
   background-color: #4475E3;
   outline: 0.125rem solid #C7D6F7;
@@ -1058,9 +1029,9 @@ exports[`SignInScreen should sign in 1`] = `
 }
 
 .c9:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c9::-webkit-input-placeholder {
@@ -1131,13 +1102,24 @@ exports[`SignInScreen should sign in 1`] = `
 
 .c11 {
   font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   font-weight: 400;
   font-style: normal;
-  color: #D14343;
+  color: #808080;
   padding-left: 1rem;
   height: 1.0625rem;
+}
+
+.c28 {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: default;
+  -webkit-user-drag: none;
+}
+
+.c28:hover {
+  cursor: pointer;
 }
 
 .c13 {
@@ -1178,9 +1160,9 @@ exports[`SignInScreen should sign in 1`] = `
 
 .c1 {
   color: #474747;
-  min-width: 42.6875rem;
+  min-width: 48.3125rem;
   width: 55.556vw;
-  min-height: 32.015625rem;
+  min-height: 36.234375rem;
   height: 41.667vw;
   max-height: 90vh;
   display: -webkit-box;
@@ -1256,7 +1238,7 @@ exports[`SignInScreen should sign in 1`] = `
   color: #838383;
 }
 
-.c30 {
+.c29 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -1269,7 +1251,7 @@ exports[`SignInScreen should sign in 1`] = `
   padding-top: 1.25rem;
 }
 
-.c28 {
+.c27 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -1279,7 +1261,7 @@ exports[`SignInScreen should sign in 1`] = `
   margin-top: 0.5rem;
 }
 
-.c28 a {
+.c27 a {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -1335,6 +1317,7 @@ exports[`SignInScreen should sign in 1`] = `
             class="c8 c9"
             data-testid="signin-screen-email"
             name="email"
+            placeholder="Enter your email"
             type="email"
             value=""
           />
@@ -1344,7 +1327,6 @@ exports[`SignInScreen should sign in 1`] = `
         </div>
         <div
           class="c11"
-          data-testid="input-error"
         >
            
         </div>
@@ -1367,6 +1349,7 @@ exports[`SignInScreen should sign in 1`] = `
             class="c8 c9"
             data-testid="signin-screen-password"
             name="password"
+            placeholder="Enter password"
             type="password"
             value=""
           />
@@ -1386,7 +1369,6 @@ exports[`SignInScreen should sign in 1`] = `
         </div>
         <div
           class="c11"
-          data-testid="input-error"
         >
            
         </div>
@@ -1423,9 +1405,8 @@ exports[`SignInScreen should sign in 1`] = `
         </div>
         <button
           class="c22 c23"
-          disabled=""
           fill="text"
-          style="overflow: hidden; position: relative;"
+          placeholder="Enter email"
           width="120"
         >
           <div
@@ -1434,17 +1415,10 @@ exports[`SignInScreen should sign in 1`] = `
           >
             Forgot Password?
           </div>
-          <div
-            class="c25"
-            color="primaryLightPressed"
-            opacity="1,1"
-            scale="0"
-            style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
-          />
         </button>
       </div>
       <button
-        class="c26"
+        class="c25"
         data-testid="signin-screen-send"
         disabled=""
         fill="solid"
@@ -1457,7 +1431,7 @@ exports[`SignInScreen should sign in 1`] = `
           Sign In
         </div>
         <div
-          class="c27"
+          class="c26"
           color="primaryPressed"
           opacity="1,1"
           scale="0"
@@ -1465,18 +1439,18 @@ exports[`SignInScreen should sign in 1`] = `
         />
       </button>
       <div
-        class="c28"
+        class="c27"
       >
         Don’t have an account?
         <a
-          class="c29"
+          class="c28"
           href="/account/create"
         >
           Create an account
         </a>
       </div>
       <div
-        class="c30"
+        class="c29"
         data-testid="signin-screen-error"
       />
     </div>

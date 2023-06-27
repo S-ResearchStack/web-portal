@@ -9,8 +9,7 @@ import CollapseSection from 'src/common/components/CollapseSection';
 
 import MembersList from './MembersList';
 import MemberEditDrawer from './MemberEditDrawer';
-
-export const NEW_STUDY_QUERY_PARAM_NAME = 'newStudy';
+import { NEW_STUDY_QUERY_PARAM_NAME } from './utils';
 
 interface StudySettingsProps {
   isSwitchStudy: boolean;

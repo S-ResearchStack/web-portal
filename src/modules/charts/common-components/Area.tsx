@@ -2,7 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import _isNil from 'lodash/isNil';
 
-export interface AreaDataItem {
+interface AreaDataItem {
   x: number;
   y0: number;
   y1: number;

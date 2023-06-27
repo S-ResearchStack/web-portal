@@ -6,12 +6,7 @@ import Tooltip from 'src/common/components/Tooltip';
 import { SpecColorType } from 'src/styles/theme';
 import { colors, typography, px } from 'src/styles';
 import { drawPieChartShape } from './pieChartShape';
-import {
-  TooltipProps,
-  TooltipContent,
-  NO_RESPONSES_LABEL,
-  getEmptyStateData,
-} from './common-helpers';
+import { TooltipContent, NO_RESPONSES_LABEL, getEmptyStateData } from './common-helpers';
 
 const SVG_VIEWPORT_SIZE = 100;
 const START_ANGLE = 0;
@@ -118,40 +113,52 @@ type Props = {
 const PieChart = ({ data, width, height }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const theme = useTheme();
-  const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
+  const [currentHoveredShape, setCurrentHoveredShape] = useState<number>(-1);
 
   const isEmptyState = useMemo(() => data.every((d) => d.total === 0), [data]);
 
   const filteredData = useMemo(() => data.filter((d) => d.value !== 0), [data]);
 
+  const tooltipContent = useMemo(() => {
+    const hoveredShapeData = filteredData[currentHoveredShape];
+    if (!hoveredShapeData || !hoveredShapeData.total) {
+      return undefined;
+    }
+
+    return getTooltipContent(hoveredShapeData);
+  }, [currentHoveredShape, filteredData]);
+
+  const tooltipContainer = useMemo(
+    () =>
+      currentHoveredShape < 0
+        ? undefined
+        : (d3
+            .select(svgRef.current)
+            .select(`#${getShapeId(currentHoveredShape)}`)
+            .node() as HTMLElement),
+    [currentHoveredShape]
+  );
+
+  const tooltipPosition = useMemo(() => {
+    if (!svgRef.current || !tooltipContainer) {
+      return 'r';
+    }
+
+    const labelRect = tooltipContainer?.getBoundingClientRect();
+    const svgRect = svgRef.current.getBoundingClientRect();
+
+    return svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
+  }, [tooltipContainer]);
+
   const onLabelMouseEnter = useCallback(
     (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
-      if (isEmptyState || !svgRef.current) {
-        return;
-      }
-
-      const labelRect = (
-        d3
-          .select(svgRef.current)
-          .select(`#${getShapeId(index)}`)
-          .node() as Element
-      )?.getBoundingClientRect();
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const position = svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
-      const pointX = labelRect.left - svgRect.left + (position === 'r' ? labelRect.width : 0);
-      const pointY = labelRect.top - svgRect.top + labelRect.height / 2;
-
-      setTooltipProps({
-        content: getTooltipContent(filteredData[index]),
-        point: [pointX, pointY],
-        position,
-      });
+      setCurrentHoveredShape(index);
     },
-    [filteredData, isEmptyState]
+    []
   );
 
   const onLabelMouseLeave = useCallback(() => {
-    setTooltipProps(null);
+    setCurrentHoveredShape(-1);
   }, []);
 
   useEffect(() => {
@@ -188,10 +195,10 @@ const PieChart = ({ data, width, height }: Props) => {
       />
       <Tooltip
         static
-        content={tooltipProps?.content}
-        point={tooltipProps?.point}
-        show={!!tooltipProps}
-        position={tooltipProps?.position}
+        content={tooltipContent}
+        container={tooltipContainer}
+        show={!!tooltipContent && !!tooltipContainer && !isEmptyState}
+        position={tooltipPosition}
         arrow
       />
     </Container>

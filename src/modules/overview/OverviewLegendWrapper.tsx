@@ -7,11 +7,12 @@ import { SpecColorType } from 'src/styles/theme';
 import ChartLegend, { ChartLegendItem, ChartLegendMode } from 'src/common/components/ChartLegend';
 
 export const ADD_TREND_LABEL = 'Add trend line(s)';
-export const AVERAGE_LINE_LABEL = 'Average line(s)';
+export const AVERAGE_LINE_LABEL = 'Add range(s)';
 export const isTrendLinesHidden = (names: string[], trendItemName: string) =>
   names.includes(trendItemName);
 
 const addTrendItem = (name: string) => ({
+  id: '$trend',
   name,
   color: 'onSurface' as SpecColorType,
   ignoreAsLast: true,

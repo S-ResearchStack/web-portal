@@ -1,21 +1,27 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
-import _pick from 'lodash/pick';
-import _isEqual from 'lodash/isEqual';
+import { useSelector } from 'react-redux';
 import useClickAway from 'react-use/lib/useClickAway';
 import useUnmount from 'react-use/lib/useUnmount';
 import usePrevious from 'react-use/lib/usePrevious';
+import useKey from 'react-use/lib/useKey';
 import useStateValidator from 'react-use/lib/useStateValidator';
+
 import _union from 'lodash/union';
 import _without from 'lodash/without';
-import useKey from 'react-use/lib/useKey';
+import _xor from 'lodash/xor';
+import styled from 'styled-components';
 
+import WarningIcon from 'src/assets/icons/warning.svg';
 import DeleteIcon from 'src/assets/icons/trash_can_small.svg';
+import LockIcon from 'src/assets/icons/lock.svg';
+import Toggle from 'src/common/components/Toggle';
 import Drawer from 'src/common/components/Drawer';
 import InputField from 'src/common/components/InputField';
 import Checkbox from 'src/common/components/CheckBox';
 import Button from 'src/common/components/Button';
 import Modal, { ModalProps } from 'src/common/components/Modal';
+import { userEmailSelector } from 'src/modules/auth/auth.slice';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import { colors, px, typography } from 'src/styles';
 import {
   closeInviteEditMember,
@@ -25,12 +31,13 @@ import {
   useInviteEditMember,
 } from './studySettings.slice';
 import { useAppDispatch } from '../store';
-import { RoleType } from '../auth/userRole';
+import { getAccessByRole, getViewRoleByPriority, roleLabelsMap, RoleType } from '../auth/userRole';
 
 const DRAWER_ACTION_BUTTON_WIDTH = 164;
 
 interface MemberAccess {
-  label: string;
+  key: string;
+  label?: string;
   children?: MemberAccess[];
   data?: string[];
 }
@@ -43,7 +50,7 @@ interface MemberRole {
 }
 
 const Container = styled.div`
-  padding: ${px(32)};
+  padding: ${px(48)};
   color: ${colors.textPrimary};
   display: flex;
   flex-direction: column;
@@ -82,11 +89,48 @@ const Body = styled.div`
 `;
 
 const SubTitle = styled.div<{ big?: boolean }>`
-  ${({ big }) => (big ? typography.headingMedium : typography.headingXMedium)};
+  ${({ big }) => (big ? typography.bodyLargeSemibold : typography.headingXMedium)};
+`;
+
+const SectionSubTitle = styled.div`
+  ${typography.bodyMediumSemibold};
+`;
+
+const AccessColumn = styled.div`
+  height: ${px(50)};
+  margin-bottom: ${px(16)};
+`;
+
+const Warning = styled.div`
+  ${typography.bodySmallRegular};
+  color: ${colors.statusWarningText};
+  display: flex;
+  align-items: center;
+  column-gap: ${px(8)};
+  height: ${px(24)};
+`;
+
+const StyledWarningIcon = styled(WarningIcon)`
+  path {
+    fill: ${colors.statusWarning};
+  }
+`;
+
+const SubTitleDescription = styled.div`
+  ${typography.bodySmallRegular};
 `;
 
 const Column = styled.div`
-  flex: 1 1 50%;
+  > div {
+    margin-bottom: ${px(16)};
+  }
+  > div:first-child {
+    min-height: ${px(140)};
+  }
+
+  > div:nth-child(2) {
+    min-height: ${px(100)};
+  }
 `;
 
 const StyledInputField = styled(InputField)`
@@ -94,13 +138,10 @@ const StyledInputField = styled(InputField)`
 `;
 
 const Row = styled.div`
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 
-  ${Column} + ${Column} {
-    margin-left: ${px(70)};
-  }
+  column-gap: ${px(24)};
 `;
 
 const Section = styled.div<{ paddingTop?: number; paddingBottom?: number; gap?: number }>`
@@ -111,7 +152,7 @@ const Section = styled.div<{ paddingTop?: number; paddingBottom?: number; gap?: 
   padding-top: ${({ paddingTop }) => paddingTop && px(paddingTop)};
 
   :not(:last-child) {
-    border-bottom: ${px(1)} solid ${colors.disabled};
+    border-bottom: ${px(1)} solid rgba(68, 117, 227, 0.2); // TODO unknown color
   }
 `;
 
@@ -125,6 +166,7 @@ const RoleLabel = styled.div`
   ${typography.bodySmallSemibold};
   margin-bottom: ${px(10)};
   line-height: ${px(20)};
+  border-radius: ${px(4)};
 `;
 
 const RoleCaption = styled.div`
@@ -133,6 +175,7 @@ const RoleCaption = styled.div`
 `;
 
 const StyledCheckbox = styled(Checkbox)`
+  margin-top: ${px(12)};
   & ${RoleLabel} {
     margin-bottom: ${px(16)};
   }
@@ -147,25 +190,39 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `;
 
-const DataAccessHint = styled.div`
-  ${typography.headingXSmall};
+const ManagementAccess = styled.div`
+  width: 100%;
+  height: ${px(82)};
+  background-color: rgba(68, 117, 227, 0.05); // TODO unknown color
+  color: ${colors.black60};
+  ${typography.bodySmallRegular};
+  padding: ${px(20)} ${px(16)} 0 ${px(16)};
+  margin-top: ${px(12)};
 `;
 
-const DataAccessTitle = styled.div`
-  ${typography.headingXSmall};
-  margin-bottom: ${px(20)};
-  line-height: ${px(14)};
+const AccessLabel = styled.div<{ $checked: boolean }>`
+  color: ${({ $checked, theme }) => $checked && theme.colors.primary};
+  margin-left: ${px(3)};
+  > div {
+    &:first-child {
+      ${typography.bodySmallSemibold};
+      padding-bottom: ${px(8)};
+    }
+  }
+`;
+
+const DataAccessHint = styled.div`
+  ${typography.bodySmallRegular};
 `;
 
 const DataAccessLabel = styled.div`
-  line-height: ${px(14)};
-  ${typography.bodySmallRegular};
-  margin-bottom: ${px(4)};
+  line-height: ${px(21)};
+  ${typography.bodySmallSemibold};
+  margin-bottom: ${px(6)};
 `;
 
 const Ul = styled.ul`
   margin: 0;
-  margin-bottom: ${px(24)};
   padding: 0;
 `;
 
@@ -193,70 +250,227 @@ const DeleteButton = styled(Button)`
   }
 `;
 
-const IGNORE_ROLE_PREFIX = '_ignore_'; // TODO: remove mock
-
 const rolesList: MemberRole[] = [
   {
-    id: 'researcher',
-    label: 'Principal Investigator',
+    id: 'principal-investigator',
+    label: roleLabelsMap['principal-investigator'],
     caption: 'Principal Investigator has full control of the study',
     access: [
       {
-        label: 'Study Management',
+        key: 'pi-1',
         children: [
           {
-            label: 'Participant Management',
-            data: ['View participant list', 'View individual data'],
-          },
-          {
-            label: 'Survey Management',
+            key: 'pi-study-overview',
+            label: 'Study Overview',
             data: [
-              'Create a survey',
-              'Publish a survey',
-              'View survey responses',
-              'View survey analytics',
+              'View study progress',
+              'View participant dropout',
+              'View participant enrollment',
+              'View task compliance',
             ],
           },
+          {
+            key: 'pi-doc-management',
+            label: 'Document Management',
+            data: ['View education content', 'Edit education content', 'Publish education content'],
+          },
+          {
+            key: 'pi-members-access',
+            label: 'Members and Access',
+            data: ['View member list', 'Edit member access', 'Remove member'],
+          },
         ],
       },
       {
-        label: 'Data Insights',
-        children: [
-          { label: 'Sensor Data Highlights', data: ['View sensor data highlights'] },
-          { label: 'Data Query', data: ['Run query', 'Export .csv'] },
-        ],
-      },
-      {
-        label: 'Study Settings',
+        key: 'pi-2',
         children: [
           {
-            label: 'Role-Based Access Control',
-            data: ['Invite member', 'Edit member access', 'Remove member'],
+            key: 'pi-participant-management',
+            label: 'Participant Management',
+            data: [
+              'View participant list',
+              'View individual data',
+              'View in-lab visit record',
+              'Edit in-lab visit record',
+              'Download in-lab visit files',
+            ],
+          },
+          {
+            key: 'pi-sensor-data',
+            label: 'Sensor Data Highlights',
+            data: ['View sensor data highlights'],
+          },
+        ],
+      },
+      {
+        key: 'pi-3',
+        children: [
+          {
+            key: 'pi-task-management',
+            label: 'Task Management',
+            data: [
+              'Create a survey/activity task',
+              'Edit a survey/activity task',
+              'Publish a survey/activity task',
+              'View survey/activity task result',
+              'View survey/activity task analytics',
+            ],
+          },
+          {
+            key: 'pi-data-query',
+            label: 'Data Query',
+            data: ['Run query', 'Export .csv'],
           },
         ],
       },
     ],
   },
   {
-    // TODO: remove mock
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    id: `${IGNORE_ROLE_PREFIX}assistant` as any,
-    label: 'Research Assistant',
-    caption: 'Research asssistant has access to the participants data.',
-    access: [],
+    id: 'research-assistant',
+    label: roleLabelsMap['research-assistant'],
+    caption: 'Access to most aspects of the study.',
+    access: [
+      {
+        key: 'ra-1',
+        children: [
+          {
+            key: 'ra-study-overview',
+            label: 'Study Overview',
+            data: [
+              'View study progress',
+              'View participant dropout',
+              'View participant enrollment',
+              'View task compliance',
+            ],
+          },
+          {
+            key: 'ra-document-management',
+            label: 'Document Management',
+            data: ['View education content', 'Edit education content', 'Publish education content'],
+          },
+          {
+            key: 'ra-members-access',
+            label: 'Members and Access',
+            data: ['View member list'],
+          },
+        ],
+      },
+      {
+        key: 'ra-2',
+        children: [
+          {
+            key: 'ra-participant-management',
+            label: 'Participant Management',
+            data: [
+              'View participant list',
+              'View individual data',
+              'View in-lab visit record',
+              'Edit in-lab visit record',
+              'Download in-lab visit files',
+            ],
+          },
+          {
+            key: 'ra-sensor-data',
+            label: 'Sensor Data Highlights',
+            data: ['View sensor data highlights'],
+          },
+        ],
+      },
+      {
+        key: 'ra-3',
+        children: [
+          {
+            key: 'ra-task-management',
+            label: 'Task Management',
+            data: [
+              'Create a survey/activity task',
+              'Edit a survey/activity task',
+              'Publish a survey/activity task',
+              'View survey/activity task result',
+              'View survey/activity task analytics',
+            ],
+          },
+          {
+            key: 'ra-data-query',
+            label: 'Data Query',
+            data: ['Run query', 'Export .csv'],
+          },
+        ],
+      },
+    ],
   },
   {
-    // TODO: remove mock
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    id: `${IGNORE_ROLE_PREFIX}dataScientist` as any,
-    label: 'Data Scientist',
-    caption: 'Data scientist has access to essential features for data analysis.',
-    access: [],
+    id: 'data-scientist',
+    label: roleLabelsMap['data-scientist'],
+    caption: "Access to most aspects of the study except participants' personal information.",
+    access: [
+      {
+        key: 'ds-1',
+        children: [
+          {
+            key: 'ds-study-overview',
+            label: 'Study Overview',
+            data: [
+              'View study progress',
+              'View participant dropout',
+              'View participant enrollment',
+              'View task compliance',
+            ],
+          },
+          {
+            key: 'ds-document-management',
+            label: 'Document Management',
+            data: ['View education content', 'Edit education content', 'Publish education content'],
+          },
+          {
+            key: 'ds-members-access',
+            label: 'Members and Access',
+            data: ['View member list'],
+          },
+        ],
+      },
+      {
+        key: 'ds-2',
+        children: [
+          {
+            key: 'ds-participant-management',
+            label: 'Participant Management',
+            data: ['View participant list', 'View individual data'],
+          },
+          {
+            key: 'ds-sensor-data',
+            label: 'Sensor Data Highlights',
+            data: ['View sensor data highlights'],
+          },
+        ],
+      },
+      {
+        key: 'ds-3',
+        children: [
+          {
+            key: 'ds-task-management',
+            label: 'Task Management',
+            data: [
+              'Create a survey/activity task',
+              'Edit a survey/activity task',
+              'Publish a survey/activity task',
+              'View survey/activity task result',
+              'View survey/activity task analytics',
+            ],
+          },
+          {
+            key: 'ds-data-query',
+            label: 'Data Query',
+            data: ['Run query', 'Export .csv'],
+          },
+        ],
+      },
+    ],
   },
 ];
 
 interface RoleAccessProps {
-  roles: string[];
+  role: string;
 }
 
 type NecessaryModalProps =
@@ -295,18 +509,18 @@ const RemoveMemberModal: FC<ConfirmCloseOrRemoveMemberModalProps> = ({ ...props 
   />
 );
 
-const RoleAccess: FC<RoleAccessProps> = ({ roles }): JSX.Element =>
-  (roles.length ? (
-    roles.map((role) => (
-      <Row key={role}>
+const RoleAccess: FC<RoleAccessProps> = ({ role }): JSX.Element =>
+  role.length ? (
+    <>
+      <SectionSubTitle>Role-based access</SectionSubTitle>
+      <Row>
         {rolesList
           .find((r) => r.id === role)
           ?.access.map((access) => (
-            <Column key={access.label}>
-              <DataAccessTitle>{access.label}</DataAccessTitle>
+            <Column key={access.key}>
               {access.children?.map((child) => (
-                <React.Fragment key={child.label}>
-                  <DataAccessLabel>{child.label}</DataAccessLabel>
+                <div key={child.key}>
+                  <DataAccessLabel key={child.label}>{child.label}</DataAccessLabel>
                   {child.data ? (
                     <Ul>
                       {child.data.map((item) => (
@@ -314,19 +528,15 @@ const RoleAccess: FC<RoleAccessProps> = ({ roles }): JSX.Element =>
                       ))}
                     </Ul>
                   ) : null}
-                </React.Fragment>
+                </div>
               ))}
             </Column>
           ))}
       </Row>
-    ))
+    </>
   ) : (
-    <Row>
-      <Column>
-        <DataAccessHint>Please select a role to view data access.</DataAccessHint>
-      </Column>
-    </Row>
-  )) as JSX.Element;
+    <DataAccessHint>Please select a role to view data access.</DataAccessHint>
+  );
 
 interface UseInputArgs<T> {
   initialValue: T;
@@ -347,6 +557,11 @@ interface UseInputOutput<T> {
   setTouched: (touch?: boolean) => void;
   setValue: (value: T) => void;
   inputFieldProps: UseInputFieldProps<T>;
+}
+
+interface UseToggleOutput {
+  isValid: boolean;
+  isTouched: boolean;
 }
 
 const useInput = <T extends string>({
@@ -373,6 +588,8 @@ const useInput = <T extends string>({
     inputFieldProps,
   };
 };
+
+const useToggle = (): UseToggleOutput => ({ isValid: true, isTouched: true });
 
 interface UseCheckboxArgs<T> {
   initialValue: T[];
@@ -430,6 +647,17 @@ const MemberEditDrawer: FC = () => {
   const [isOpenConfirmClose, setOpenConfirmClose] = useState<boolean>(false);
   const [isOpenRemoveMember, setOpenRemoveMember] = useState<boolean>(false);
   const [isRemoveTransaction, setRemoveTransaction] = useState<boolean>(false);
+  const [toggleChecked, setToggleChecked] = useState<boolean>(false);
+
+  const userRoles = useSelector(userRoleSelector)?.roles;
+  // TODO: not supported by API currently
+  const hasMgmtAccess = false;
+  const {
+    allowRemoveMember,
+    // allowMgmtAccess
+  } = getAccessByRole(userRoles, hasMgmtAccess);
+  // TODO: not supported by API currently
+  const allowMgmtAccess = false;
 
   const isHotkeysDisabled = isOpenConfirmClose || isOpenRemoveMember || !inviteOrEditMember.isOpen;
 
@@ -438,43 +666,58 @@ const MemberEditDrawer: FC = () => {
     validator: (value) => /.+@.+\..+/.test(value.trim()),
   });
 
-  const rolesCheckboxes = useCheckboxArray<string>({
-    initialValue: [rolesList[0].id],
+  const rolesCheckboxes = useCheckboxArray<RoleType>({
+    initialValue: inviteOrEditMember.data?.roles || [],
     validator: (values) => values.length > 0,
   });
 
-  const form = useForm([emailField, rolesCheckboxes]);
+  const isProjectOwner = rolesCheckboxes.values.includes('principal-investigator');
+
+  useEffect(() => {
+    if (inviteOrEditMember.data?.mgmtAccess !== undefined) {
+      setToggleChecked(inviteOrEditMember.data?.mgmtAccess);
+    }
+    if (isProjectOwner) {
+      setToggleChecked(isProjectOwner);
+    }
+  }, [inviteOrEditMember, isProjectOwner]);
+
+  const form = useForm([emailField, rolesCheckboxes, useToggle()]);
 
   const isEditing = !!inviteOrEditMember.data?.id;
+
+  const userEmail = useSelector(userEmailSelector);
+  const isSelfEdit = userEmail === emailField.value;
 
   const isNetworkProcessing = useMemo(() => {
     const { isSending, isDeleting } = inviteOrEditMember;
     return isSending || isDeleting;
   }, [inviteOrEditMember]);
 
-  const hasChanges = useMemo(
-    // @TODO add normal logic for roles
-    () => {
-      const data = {
-        email: emailField.value,
-        roles: rolesCheckboxes.values,
-      };
+  const hasChanges = useMemo(() => {
+    const data = {
+      email: emailField.value,
+      roles: rolesCheckboxes.values,
+      mgmtAccess: toggleChecked,
+    };
 
-      const checkProps = ['email'];
+    const originalData = isEditing
+      ? { ...inviteOrEditMember.data }
+      : { email: '', roles: [], mgmtAccess: false };
 
-      return !_isEqual(
-        _pick(data, checkProps),
-        _pick(
-          {
-            ...inviteOrEditMember.data,
-            roles: [inviteOrEditMember.data?.role],
-          },
-          checkProps
-        )
-      );
-    },
-    [rolesCheckboxes.values, emailField.value, inviteOrEditMember.data]
-  );
+    return (
+      data.email !== originalData.email ||
+      _xor(data.roles, originalData.roles).length !== 0 ||
+      (allowMgmtAccess && data.mgmtAccess !== originalData.mgmtAccess)
+    );
+  }, [
+    emailField.value,
+    rolesCheckboxes.values,
+    toggleChecked,
+    allowMgmtAccess,
+    inviteOrEditMember.data,
+    isEditing,
+  ]);
 
   const handleChangeRole = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -483,12 +726,17 @@ const MemberEditDrawer: FC = () => {
       rolesCheckboxes.setTouched();
 
       if (target.checked) {
-        rolesCheckboxes.setValue(target.value);
+        rolesCheckboxes.setValue(target.value as RoleType);
       } else {
-        rolesCheckboxes.removeValue(target.value);
+        rolesCheckboxes.removeValue(target.value as RoleType);
       }
     },
     [rolesCheckboxes]
+  );
+
+  const handleToggle = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setToggleChecked(evt.target.checked),
+    [setToggleChecked]
   );
 
   const handleCloseAllModals = useCallback(() => {
@@ -505,8 +753,10 @@ const MemberEditDrawer: FC = () => {
     emailField.setTouched(false);
 
     rolesCheckboxes.resetValues();
+
+    setToggleChecked(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setToggleChecked]);
 
   const closeAndClear = useCallback(() => {
     dispatch(closeInviteEditMember());
@@ -570,11 +820,36 @@ const MemberEditDrawer: FC = () => {
   const lastDeletingState = usePrevious(inviteOrEditMember.isDeleting);
 
   useEffect(() => {
-    if (!inviteOrEditMember.isDeleting && lastDeletingState !== inviteOrEditMember.isDeleting) {
+    if (
+      !inviteOrEditMember.isDeleting &&
+      lastDeletingState !== inviteOrEditMember.isDeleting &&
+      !inviteOrEditMember.error
+    ) {
       setOpenRemoveMember(false);
       setOpenDrawer(false);
     }
-  }, [lastDeletingState, inviteOrEditMember.isDeleting]);
+    if (inviteOrEditMember.error) {
+      setOpenRemoveMember(false);
+    }
+  }, [inviteOrEditMember.error, lastDeletingState, inviteOrEditMember.isDeleting]);
+
+  useEffect(() => {
+    if (!inviteOrEditMember.isOpen) {
+      dispatch(closeInviteEditMember());
+    }
+  }, [inviteOrEditMember.isOpen, dispatch]);
+
+  const lastSendingState = usePrevious(inviteOrEditMember.isSending);
+
+  useEffect(() => {
+    if (
+      !inviteOrEditMember.isSending &&
+      lastSendingState !== inviteOrEditMember.isSending &&
+      !inviteOrEditMember.error
+    ) {
+      setOpenDrawer(false);
+    }
+  }, [inviteOrEditMember.error, inviteOrEditMember.isSending, lastSendingState]);
 
   const sendUser = useCallback(() => {
     if (isNetworkProcessing || !form.isValid || !form.isTouched || !hasChanges) {
@@ -587,14 +862,16 @@ const MemberEditDrawer: FC = () => {
           id: inviteOrEditMember.data?.id,
           name: emailField.value,
           email: emailField.value,
-          role: rolesCheckboxes.values[0] as RoleType,
+          roles: rolesCheckboxes.values,
+          mgmtAccess: toggleChecked,
         })
       );
     } else {
       dispatch(
         inviteStudyMember({
           email: emailField.value,
-          role: rolesCheckboxes.values[0] as RoleType,
+          roles: rolesCheckboxes.values,
+          mgmtAccess: toggleChecked,
         })
       );
     }
@@ -606,16 +883,9 @@ const MemberEditDrawer: FC = () => {
     form,
     emailField,
     hasChanges,
+    toggleChecked,
     isEditing,
   ]);
-
-  const lastSendingState = usePrevious(inviteOrEditMember.isSending);
-
-  useEffect(() => {
-    if (!inviteOrEditMember.isSending && lastSendingState !== inviteOrEditMember.isSending) {
-      setOpenDrawer(false);
-    }
-  }, [inviteOrEditMember.isSending, lastSendingState]);
 
   useKey('Escape', () => !isHotkeysDisabled && handleClose(), undefined, [
     isHotkeysDisabled,
@@ -659,10 +929,29 @@ const MemberEditDrawer: FC = () => {
   const tabIndex = isOpenDrawer && !isOpenRemoveMember && !isOpenConfirmClose ? 0 : -1;
   const ariaHidden = tabIndex < 0;
 
+  const isDataScientist =
+    rolesCheckboxes.values.length === 1 && rolesCheckboxes.values[0] === 'data-scientist';
+
+  const managementAccessSection = useMemo(
+    () =>
+      toggleChecked && rolesCheckboxes.values.length ? (
+        <>
+          <SectionSubTitle>Management access</SectionSubTitle>
+          <AccessColumn>
+            <DataAccessLabel>Members and Access</DataAccessLabel>
+            <Ul>
+              <Li key="Invite members">Invite members</Li>
+            </Ul>
+          </AccessColumn>
+        </>
+      ) : null,
+    [toggleChecked, rolesCheckboxes.values.length]
+  );
+
   const renderContent = () => (
     <Body>
       <div>
-        <Section paddingTop={20} paddingBottom={20}>
+        <Section paddingTop={20} paddingBottom={0}>
           <SubTitle big>Member Information</SubTitle>
           <Row>
             <Column>
@@ -671,15 +960,22 @@ const MemberEditDrawer: FC = () => {
                 tabIndex={tabIndex}
                 type="email"
                 label="Email"
+                disabled={isEditing}
+                endExtra={isEditing ? { component: <LockIcon />, extraWidth: 24 } : undefined}
                 {...emailField.inputFieldProps}
+                maxLength={256}
               />
             </Column>
             <Column />
           </Row>
         </Section>
 
-        <Section paddingTop={30} paddingBottom={35} gap={14}>
+        <Section paddingTop={30} paddingBottom={30} gap={14}>
           <SubTitle>Member Role</SubTitle>
+          <SubTitleDescription>
+            Select one or more roles based on the day-to-day tasks listed in the{' '}
+            <strong>Data Access</strong> section below.
+          </SubTitleDescription>
           {rolesList.map((role) => (
             <StyledCheckbox
               aria-disabled={ariaHidden}
@@ -687,7 +983,7 @@ const MemberEditDrawer: FC = () => {
               key={role.id}
               checked={rolesCheckboxes.values.includes(role.id)}
               value={role.id}
-              onChange={(e) => !role.id.startsWith(IGNORE_ROLE_PREFIX) && handleChangeRole(e)} // TODO: remove mock
+              onChange={handleChangeRole}
             >
               <Role>
                 <RoleLabel>{role.label}</RoleLabel>
@@ -695,14 +991,38 @@ const MemberEditDrawer: FC = () => {
               </Role>
             </StyledCheckbox>
           ))}
+          {allowMgmtAccess && (
+            <ManagementAccess>
+              <Toggle
+                label={
+                  <AccessLabel $checked={toggleChecked}>
+                    <div>Allow management access</div>
+                    <div>
+                      With management access, users can invite other team members to the study.
+                    </div>
+                  </AccessLabel>
+                }
+                disabled={isProjectOwner}
+                checked={toggleChecked}
+                onChange={handleToggle}
+              />
+            </ManagementAccess>
+          )}
         </Section>
-        <Section paddingTop={30} gap={25}>
+        <Section paddingTop={26} gap={23}>
           <SubTitle>Data Access</SubTitle>
-          <RoleAccess roles={rolesCheckboxes.values} />
+          {isDataScientist && (
+            <Warning>
+              <StyledWarningIcon />
+              All personal information for participants is hidden.
+            </Warning>
+          )}
+          <RoleAccess role={getViewRoleByPriority(rolesCheckboxes.values)} />
+          {managementAccessSection}
         </Section>
       </div>
 
-      {isEditing ? (
+      {isEditing && !isSelfEdit && allowRemoveMember ? (
         <div>
           <DeleteButton
             aria-disabled={ariaHidden}
@@ -724,9 +1044,9 @@ const MemberEditDrawer: FC = () => {
 
   return (
     <>
-      <Drawer ref={drawerRef} open={isOpenDrawer} onExited={closeAndClear}>
+      <Drawer ref={drawerRef} open={isOpenDrawer} onExited={closeAndClear} width={900}>
         <Container ref={containerRef} aria-hidden={ariaHidden} tabIndex={tabIndex}>
-          <Header hide={!!inviteOrEditMember.error}>
+          <Header>
             <Title>{isEditing ? 'Edit Member' : 'Invite Member'}</Title>
             <Actions>
               <Button
@@ -750,7 +1070,7 @@ const MemberEditDrawer: FC = () => {
                 onClick={sendUser}
                 width={DRAWER_ACTION_BUTTON_WIDTH}
               >
-                {isEditing ? 'Save' : 'Invite Member'}
+                {isEditing ? 'Save' : 'Invite member'}
               </Button>
             </Actions>
           </Header>

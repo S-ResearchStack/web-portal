@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
 import _omit from 'lodash/omit';
 import { useFloating, useDismiss, useInteractions } from '@floating-ui/react-dom-interactions';
@@ -15,12 +15,15 @@ const DEFAULT_POSITION: TooltipPosition = 't';
 
 type RectProperties = 'left' | 'top' | 'width' | 'height';
 
-const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSProperties => {
+const getTooltipArrowPositionStyles = (
+  position?: TooltipPosition,
+  gs = GRID_SIZE
+): React.CSSProperties => {
   switch (position || DEFAULT_POSITION) {
     case 'atr':
     case 'tl':
       return {
-        left: `calc(100% - ${px(ARROW_W + GRID_SIZE)})`,
+        left: `calc(100% - ${px(ARROW_W + gs)})`,
         top: '100%',
       };
 
@@ -40,7 +43,7 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
     case 'abr':
     case 'bl':
       return {
-        left: `calc(100% - ${px(ARROW_W + GRID_SIZE)})`,
+        left: `calc(100% - ${px(ARROW_W + gs)})`,
         top: px(-ARROW_H),
         transform: `rotate(180deg)`,
       };
@@ -55,7 +58,7 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
     case 'abl':
     case 'br':
       return {
-        left: px(GRID_SIZE),
+        left: px(gs),
         top: px(-ARROW_H),
         transform: `rotate(180deg)`,
       };
@@ -63,7 +66,7 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
     case 'rt':
       return {
         left: px(-ARROW_H * 1.5),
-        top: `calc(100% - ${px(ARROW_H + GRID_SIZE)})`,
+        top: `calc(100% - ${px(ARROW_H + gs)})`,
         transform: `rotate(90deg)`,
       };
 
@@ -77,14 +80,14 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
     case 'rb':
       return {
         left: px(-ARROW_H * 1.5),
-        top: px(GRID_SIZE),
+        top: px(gs),
         transform: `rotate(90deg)`,
       };
 
     case 'lt':
       return {
         left: `calc(100% - ${px(ARROW_H / 2)})`,
-        top: `calc(100% - ${px(ARROW_H + GRID_SIZE)})`,
+        top: `calc(100% - ${px(ARROW_H + gs)})`,
         transform: `rotate(-90deg)`,
       };
 
@@ -98,7 +101,7 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
     case 'lb':
       return {
         left: `calc(100% - ${px(ARROW_H / 2)})`,
-        top: px(GRID_SIZE),
+        top: px(gs),
         transform: `rotate(-90deg)`,
       };
 
@@ -109,10 +112,11 @@ const getTooltipArrowPositionStyles = (position?: TooltipPosition): React.CSSPro
 
 interface TooltipArrowProps {
   $position?: TooltipPosition;
+  $gs?: number;
 }
 
-const TooltipArrow = styled.div.attrs<TooltipArrowProps>(({ $position }) => ({
-  style: getTooltipArrowPositionStyles($position),
+const TooltipArrow = styled.div.attrs<TooltipArrowProps>(({ $position, $gs }) => ({
+  style: getTooltipArrowPositionStyles($position, $gs),
   'data-testid': 'tooltip-arrow',
 }))<TooltipArrowProps>`
   position: absolute;
@@ -137,16 +141,17 @@ const getPadding = (padding?: TooltipHorizontalPaddings) => {
 const TooltipContainer = styled.div<{ $show?: boolean; $padding?: TooltipHorizontalPaddings }>`
   ${typography.bodyXSmallSemibold};
   pointer-events: none;
-  display: ${({ $show }) => ($show ? 'block' : 'none')};
+  visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
   padding: ${px(8)} ${({ $padding }) => px(getPadding($padding))};
   background-color: ${colors.onSurface};
   color: ${colors.surface} !important;
   border-radius: ${px(4)};
   z-index: 1002;
   width: max-content;
+  word-wrap: break-word;
 
   * {
-    color: ${colors.surface};
+    color: ${colors.surface} !important;
   }
 `;
 
@@ -161,6 +166,7 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
   trigger,
   styles,
   horizontalPaddings,
+  centered,
   ...props
 }) => {
   const [isMounted, setMounted] = useState<boolean>(false);
@@ -182,12 +188,35 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
 
   const interactions = useInteractions([useDismiss(floating.context)]);
 
+  let isReadyToRender = false;
   if (isMounted && floating.refs.floating.current && (point || container)) {
+    isReadyToRender = true;
     const ah = ARROW_H;
-    const gs = GRID_SIZE;
+    const gs = centered ? 0 : GRID_SIZE;
 
     let pointsRect: Pick<DOMRect, RectProperties>;
-    const { width: tW, height: tH } = floating.refs.floating.current.getBoundingClientRect();
+    const floatingRect = floating.refs.floating.current.getBoundingClientRect();
+
+    // There are some edge cases when element position cannot be calculated yet.
+    // To avoid rendering tooltip at incorrect position, we will hide tooltip.
+    // However element still should be rendered so that its layout can be calculated.
+    if (
+      floatingRect.width === 0 &&
+      floatingRect.height === 0 &&
+      floatingRect.x === 0 &&
+      floatingRect.y === 0 &&
+      floatingRect.bottom === 0 &&
+      floatingRect.top === 0 &&
+      floatingRect.left === 0 &&
+      floatingRect.right === 0
+    ) {
+      isReadyToRender = false;
+    }
+    if (floating.x === null || floating.y === null) {
+      isReadyToRender = false;
+    }
+
+    const { width: tW, height: tH } = floatingRect;
 
     if (point) {
       pointsRect = { left: point[0], top: point[1], width: 0, height: 0 };
@@ -299,16 +328,23 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
     [floating]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     floating.reference(container || null);
   }, [container, floating]);
+
+  // Due to some reason (probably context + floating library + portals + something else),
+  // this component can get extra render when parent is already unmounted and container is not in the DOM,
+  // causing a tooltip to blink at incorrect position
+  if (container && !container.isConnected) {
+    isReadyToRender = false;
+  }
 
   return (
     <TooltipContainer
       data-testid="tooltip-item"
       {..._omit(props, ['onShow', 'onHide'])}
       id={id}
-      $show={show}
+      $show={isReadyToRender && show}
       $padding={horizontalPaddings}
       {...interactions.getFloatingProps({
         ref: setRefAndSetMounted,
@@ -320,7 +356,7 @@ const TooltipItem: FC<TooltipProps & React.HTMLAttributes<HTMLDivElement>> = ({
         },
       })}
     >
-      {arrow && <TooltipArrow $position={position} />}
+      {arrow && <TooltipArrow $position={position} $gs={centered ? 0 : GRID_SIZE} />}
       {content}
     </TooltipContainer>
   );

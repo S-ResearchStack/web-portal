@@ -7,7 +7,7 @@ import _without from 'lodash/without';
 import { Path } from 'src/modules/navigation/store';
 import { sortGenderLines } from 'src/modules/charts/utils';
 import ResponsiveContainer from 'src/common/components/ResponsiveContainer';
-import LineChart, { DataItem } from 'src/modules/charts/LineChart';
+import LineChart from 'src/modules/charts/LineChart';
 import { px } from 'src/styles';
 import { useSelectedStudyId } from 'src/modules/studies/studies.slice';
 import OverviewCard from './OverviewCard';
@@ -33,6 +33,7 @@ const AvgRestingHrOverDayCard: React.FC = () => {
     fetchArgs: !!studyId && {
       studyId,
     },
+    refetchSilentlyOnMount: true,
   });
 
   const [hiddenDataLines, setHiddenDataLines] = useState<string[]>([AVERAGE_LINE_LABEL]);
@@ -58,6 +59,15 @@ const AvgRestingHrOverDayCard: React.FC = () => {
     [hiddenDataLines]
   );
 
+  const lines = useMemo(
+    () =>
+      sortGenderLines(_uniqBy(data.values, ({ name }) => name)).map((l) => ({
+        ...l,
+        id: l.name,
+      })),
+    [data.values]
+  );
+
   return (
     <OverviewCard
       title="Avg. resting HR in 24 hrs"
@@ -69,7 +79,7 @@ const AvgRestingHrOverDayCard: React.FC = () => {
     >
       <OverviewLegendWrapper
         onDataChange={setHiddenDataLines}
-        lines={sortGenderLines(_uniqBy(data.values, ({ name }) => name)) as DataItem[]}
+        lines={lines}
         hiddenDataLines={hiddenDataLines}
         canToggle
         addTrendItemName={AVERAGE_LINE_LABEL}

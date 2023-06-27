@@ -16,7 +16,7 @@ const Container = styled.div`
   padding: ${px(24)};
   background: ${colors.backgroundSurface};
   border-radius: ${px(4)};
-  box-shadow: ${px(0)} ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12);
+  box-shadow: ${px(0)} ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12); // TODO unknown color
   display: flex;
   flex-direction: column;
   z-index: 1;
@@ -83,9 +83,7 @@ const ControlButton: FC<ControlButtonProps> = ({ children, disabled, ...props })
   const { rippleProps, addRippleTriggerProps, handleRippleOut } = useRipple<
     HTMLButtonElement,
     ControlButtonProps
-  >({
-    color: 'primary',
-  });
+  >({});
 
   useEffect(() => {
     if (disabled) {
@@ -113,12 +111,12 @@ const HeaderText = styled.div`
 const NUM_WEEKS_DISPLAYED = 6;
 const NUM_DAYS_PER_WEEK = 7;
 
-const CalendarContainer = styled.div`
+const CalendarContainer = styled.div<{ $isRange?: boolean }>`
   margin-top: ${px(16)};
   display: grid;
   grid-template-columns: repeat(${NUM_DAYS_PER_WEEK}, ${px(36)});
   grid-template-rows: ${px(32)} repeat(${NUM_WEEKS_DISPLAYED}, ${px(36)});
-  column-gap: ${px(2)};
+  column-gap: ${({ $isRange }) => !$isRange && px(2)};
   align-self: center;
 `;
 
@@ -137,15 +135,27 @@ const DateItem = styled(CalendarItem)<{
   $isDisabled: boolean;
   $isOtherMonth: boolean;
   $isSelected: boolean;
+  $isInRange?: boolean;
 }>`
   ${typography.bodyMediumRegular};
-  border-radius: ${px(2)};
+  ${({ $isInRange }) =>
+    $isInRange ? typography.bodyMediumSemibold : typography.bodyMediumRegular};
+  border-radius: ${({ $isInRange }) => !$isInRange && px(2)};
   color: ${({ theme, $isSelected, $isDisabled, $isOtherMonth }) =>
     ($isSelected && theme.colors.primaryWhite) ||
     ($isDisabled && theme.colors.disabled) ||
     ($isOtherMonth && theme.colors.textSecondaryGray) ||
     theme.colors.textPrimary};
-  background-color: ${({ theme, $isSelected }) => $isSelected && theme.colors.primary};
+  background-color: ${({ theme, $isSelected, $isInRange }) => {
+    if ($isSelected) {
+      return theme.colors.primary;
+    }
+    if ($isInRange) {
+      return theme.colors.primaryLight;
+    }
+
+    return '';
+  }};
   &:hover {
     background-color: ${({ theme, $isSelected, $isDisabled }) =>
       !$isSelected && !$isDisabled && theme.colors.primaryLight};
@@ -157,7 +167,9 @@ type Props = ExtendProps<
   React.HTMLAttributes<HTMLDivElement>,
   {
     selectedDate?: Date;
+    selectedRange?: Date[];
     onSelectedDateChange?: (d: Date) => void;
+    onSelectedRangeChange?: (d: Date[]) => void;
     minAllowedDate?: Date;
     maxAllowedDate?: Date;
   }
@@ -167,13 +179,23 @@ const weekdayLabels = _range(0, NUM_DAYS_PER_WEEK).map(
   (d) => DateTime.fromObject({ weekday: d + 1 }).weekdayShort
 );
 
+const isSameDate = (a: Date, b: DateTime) => DateTime.fromJSDate(a).hasSame(b, 'day');
+
 const CalendarPopover = React.forwardRef(
   (
-    { selectedDate, onSelectedDateChange, minAllowedDate, maxAllowedDate, ...rest }: Props,
+    {
+      selectedDate,
+      selectedRange,
+      onSelectedDateChange,
+      onSelectedRangeChange,
+      minAllowedDate,
+      maxAllowedDate,
+      ...rest
+    }: Props,
     ref: React.ForwardedRef<HTMLDivElement>
   ) => {
     const [currentMonth, setCurrentMonth] = useState(
-      DateTime.fromJSDate(selectedDate || new Date())
+      DateTime.fromJSDate((selectedRange ? selectedRange[0] : selectedDate) || new Date())
     );
     const adjustCurrentMonth = (change: number) =>
       setCurrentMonth(currentMonth.plus({ months: change }));
@@ -192,26 +214,62 @@ const CalendarPopover = React.forwardRef(
 
           return (
             <DateItem
+              data-testid={isDisabled ? undefined : `calendar-popover-enabled-date`}
+              data-date={d.startOf('day')}
               key={d.toISODate()}
               $isDisabled={isDisabled}
               $isOtherMonth={!isCurrentMonth}
-              $isSelected={!!selectedDate && DateTime.fromJSDate(selectedDate).hasSame(d, 'day')}
+              $isSelected={[...(selectedRange || []), selectedDate].some(
+                (sDate) => sDate && isSameDate(sDate, d)
+              )}
+              $isInRange={
+                selectedRange &&
+                selectedRange[0] &&
+                selectedRange[1] &&
+                d.startOf('day') < DateTime.fromJSDate(selectedRange[1]).startOf('day') &&
+                d.startOf('day') > DateTime.fromJSDate(selectedRange[0]).startOf('day')
+              }
               onClick={() => {
                 if (isDisabled) {
                   return;
                 }
 
-                if (!isCurrentMonth) {
-                  setCurrentMonth(d);
+                if (selectedRange) {
+                  if ([selectedRange[0]].some((sDate) => isSameDate(sDate, d))) {
+                    onSelectedRangeChange?.([]);
+                  } else if (!selectedRange[0] || (selectedRange[0] && selectedRange[1])) {
+                    onSelectedRangeChange?.([d.startOf('day').toJSDate()]);
+                  } else {
+                    let newRange = [...selectedRange];
+                    newRange[1] = d.startOf('day').toJSDate();
+                    if (newRange[1] < newRange[0]) {
+                      newRange = [newRange[1], newRange[0]];
+                    }
+
+                    onSelectedRangeChange?.(newRange);
+                  }
+                } else {
+                  if (!isCurrentMonth) {
+                    setCurrentMonth(d);
+                  }
+
+                  onSelectedDateChange?.(d.toJSDate());
                 }
-                onSelectedDateChange?.(d.toJSDate());
               }}
             >
               {d.day}
             </DateItem>
           );
         });
-    }, [currentMonth, selectedDate, onSelectedDateChange, minAllowedDate, maxAllowedDate]);
+    }, [
+      currentMonth,
+      selectedDate,
+      selectedRange,
+      onSelectedDateChange,
+      onSelectedRangeChange,
+      minAllowedDate,
+      maxAllowedDate,
+    ]);
 
     return (
       <Container {...rest} ref={ref}>
@@ -224,7 +282,7 @@ const CalendarPopover = React.forwardRef(
             <ChevronRightIcon />
           </NavigationButton>
         </NavigationHeader>
-        <CalendarContainer>
+        <CalendarContainer $isRange={!!selectedRange}>
           {weekdayLabels.map((d) => (
             <WeekdayItem key={`weekday-${d}`}>{d}</WeekdayItem>
           ))}

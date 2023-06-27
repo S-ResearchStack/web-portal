@@ -32,7 +32,7 @@ exports[`StackedBarChart should render 1`] = `
         width="1000"
       >
         <g
-          class="c0 xAxis"
+          class="c0 xAxis undefined"
           fill="none"
           font-family="sans-serif"
           font-size="10"
@@ -62,6 +62,18 @@ exports[`StackedBarChart should render 1`] = `
           fill="#00B0D7"
           fill-opacity="0.2"
           id="area-1"
+        />
+        <rect
+          fill-opacity="0"
+          id="area-label-0"
+          x="450px"
+          y="37px"
+        />
+        <rect
+          fill-opacity="0"
+          id="area-label-1"
+          x="950px"
+          y="37px"
         />
       </svg>
       <span

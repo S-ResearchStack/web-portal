@@ -1,58 +1,19 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
-import PasswordValidator from 'password-validator';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import useSearchParam from 'react-use/lib/useSearchParam';
+
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
 
 import LockIcon from 'src/assets/icons/lock.svg';
 import Button from 'src/common/components/Button';
 import InputField from 'src/common/components/InputField';
 import PasswordInputField from 'src/common/components/PasswordInputField';
-import Radio from 'src/common/components/Radio';
 import { SnackbarContainer } from 'src/modules/snackbar';
 import { useAppDispatch } from 'src/modules/store';
 import { px, typography } from 'src/styles';
 import { activateAccount } from '../auth.slice';
 import { useEnterPress } from './hooks';
 import ScreenCenteredCard from '../common/ScreenCenteredCard';
-
-type PasswordRequirement = {
-  rule: string;
-  passed?: boolean;
-  validator: PasswordValidator;
-};
-
-const getRequirements = (userName: string) => [
-  {
-    rule: 'Be at least 12 characters in length',
-    validator: new PasswordValidator().is().min(12),
-  },
-  {
-    rule: 'Contain 1 upper case, 1 lower case, 1 number, and 1 special character',
-    validator: new PasswordValidator()
-      .has()
-      .uppercase()
-      .has()
-      .lowercase()
-      .has()
-      .digits()
-      .has()
-      .symbols(),
-  },
-  {
-    rule: 'Does not contain more than 3 identical characters in a row',
-    validator: new PasswordValidator().not(/(.)\1{3,}/g),
-  },
-  {
-    rule: 'Does not contain username',
-    validator: new PasswordValidator().not(userName),
-  },
-];
-
-const checkPassword = (password: string, userName: string): Array<PasswordRequirement> =>
-  getRequirements(userName).map((r) => ({
-    ...r,
-    passed: password.length ? (r.validator.validate(password) as boolean) : undefined,
-  }));
+import { RequirementItem, useCheckPassword } from '../common/PasswordRequirements';
 
 const MainWrapper = styled.div`
   display: flex;
@@ -95,21 +56,7 @@ const RequirementsWrapper = styled.div`
   height: ${px(182)};
   width: ${px(447)};
   top: ${px(8)};
-  margin-bottom: ${px(10)};
-`;
-
-const StyledRequirement = styled.div`
-  ${typography.headingXSmall};
-  height: ${px(40)};
-  &:nth-child(2) {
-    height: ${px(62)};
-    width: ${px(370)};
-  }
-`;
-
-const RequirementText = styled.span<{ disabled: boolean }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.colors.textDisabled : theme.colors.textPrimary};
+  margin-bottom: ${px(24)};
 `;
 
 const AccountActivationScreen: React.FC = () => {
@@ -120,24 +67,14 @@ const AccountActivationScreen: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const { email, resetToken } = useMemo(() => {
-    const query = new URLSearchParams(location.search);
-    return {
-      email: query.get('email') || '',
-      resetToken: query.get('reset-token') || '',
-    };
-  }, [location.search]);
+  const email = useSearchParam('email') || '';
+  const resetToken = useSearchParam('reset-token') || '';
 
-  const [isPassed, requirements] = useMemo(() => {
-    // TODO: maybe later backend will provide user name
-    const userName = email.split('@')[0];
-
-    return [
-      checkPassword(password, userName).every((r) => r.passed === true),
-      checkPassword(password, userName),
-    ];
-  }, [password, email]);
+  // TODO: maybe later backend will provide user name
+  const [isPasswordPassed, requirements] = useCheckPassword({
+    password,
+    name: email.split('@')[0] || '',
+  });
 
   const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
@@ -155,7 +92,6 @@ const AccountActivationScreen: React.FC = () => {
       setLoading(true);
       await dispatch(
         activateAccount({
-          email,
           name,
           password,
           resetToken,
@@ -171,8 +107,8 @@ const AccountActivationScreen: React.FC = () => {
   useEnterPress(handleClick);
 
   useEffect(() => {
-    setDisabled(!password || !isPassed || !name);
-  }, [password, isPassed, name]);
+    setDisabled(!password || !isPasswordPassed || !name);
+  }, [password, isPasswordPassed, name]);
 
   return (
     <MainWrapper>
@@ -186,34 +122,32 @@ const AccountActivationScreen: React.FC = () => {
               value={email}
               disabled
               endExtra={{ component: <LockIcon />, extraWidth: 24 }}
+              placeholder="Enter email"
             />
-            <InputField type="text" label="Name" value={name} onChange={handleNameChange} />
+            <InputField
+              type="text"
+              label="Name"
+              value={name}
+              onChange={handleNameChange}
+              placeholder="Enter name"
+              maxLength={30}
+            />
             <PasswordInputField
-              error={password && !isPassed}
+              error={password && !isPasswordPassed}
               label="Password"
               value={password}
               onChange={handlePasswordChange}
+              placeholder="Enter password"
+              maxLength={256}
             />
             <RequirementsWrapper>
               {requirements.map((requirement) => (
-                <StyledRequirement key={`${requirement.rule}-wrapper`}>
-                  <Radio
-                    readOnly
-                    key={`${requirement.rule}-radio`}
-                    kind={(!password && 'success') || (requirement.passed ? 'success' : 'error')}
-                    color={requirement.passed ? 'statusSuccess' : 'disabled'}
-                    checked
-                    disabled={!password}
-                  >
-                    <RequirementText
-                      key={requirement.rule}
-                      id={requirement.rule}
-                      disabled={!requirement.passed}
-                    >
-                      {requirement.rule}
-                    </RequirementText>
-                  </Radio>
-                </StyledRequirement>
+                <RequirementItem
+                  key={requirement.rule}
+                  rule={requirement.rule}
+                  passed={!password ? undefined : requirement.passed}
+                  disabled={!password}
+                />
               ))}
             </RequirementsWrapper>
             <Button disabled={disabled} onClick={handleClick} fill="solid" $loading={isLoading}>

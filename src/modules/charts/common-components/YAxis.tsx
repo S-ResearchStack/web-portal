@@ -20,7 +20,8 @@ type YScale =
 type Props = {
   yScale: YScale;
   tickSize: number;
-  xOffset: number;
+  xOffset?: number;
+  yOffset?: number;
   ticks?: number;
   xTickOffset?: number;
   yTickOffset?: number;
@@ -36,6 +37,7 @@ const YAxis: React.FC<Props> = ({
   yScale,
   tickSize,
   xOffset,
+  yOffset,
   xTickOffset,
   yTickOffset,
   ticks,
@@ -70,7 +72,7 @@ const YAxis: React.FC<Props> = ({
 
   const gY = (g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) =>
     g
-      .attr('transform', `translate(${xOffset},0)`)
+      .attr('transform', `translate(${xOffset || 0},${yOffset || 0})`)
       .call(yAxis)
       .call((el) => {
         removeDomain && el.select('.domain').remove();

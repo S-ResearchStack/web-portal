@@ -1,5 +1,5 @@
 import { SpecColorType } from 'src/styles/theme';
 
 export function getGenderColor(g: string) {
-  return (g === 'female' ? 'secondaryViolet' : 'secondarySkyBlue') as SpecColorType;
+  return (g?.toLowerCase() === 'female' ? 'secondaryViolet' : 'secondarySkyBlue') as SpecColorType;
 }

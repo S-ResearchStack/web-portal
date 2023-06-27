@@ -23,7 +23,7 @@ const codemirrorHintsStyles = css`
     background-color: ${colors.surface};
     border: none;
     border-radius: ${px(2)};
-    box-shadow: 0 ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12);
+    box-shadow: 0 ${px(5)} ${px(12)} rgba(0, 0, 0, 0.12); // TODO unknown color
 
     .CodeMirror-hint {
       height: ${px(34)};
@@ -68,7 +68,7 @@ const Container = styled.div<{ $isError?: boolean }>`
     border-style: solid;
     border-color: ${({ $isError, theme }) =>
       $isError ? `${theme.colors.statusError} !important` : theme.colors.surface};
-    box-shadow: 0 0 ${px(2)} rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 ${px(2)} ${colors.black15};
     flex: 1;
     line-height: 1;
     transition: border 300ms ${animation.defaultTiming};
@@ -177,7 +177,7 @@ const SqlQueryEditor: React.FC<SqlQueryEditorProps> = (props) => {
 
   return (
     <Container data-testid="sql-query-editor" $isError={isError} ref={containerRef}>
-      <textarea data-testid="sql-query-editor-textarea" ref={textareaRef} />
+      <textarea data-testid="sql-query-editor-textarea" ref={textareaRef} maxLength={1000000} />
       <Button
         data-testid="sql-query-editor-send"
         width={108}

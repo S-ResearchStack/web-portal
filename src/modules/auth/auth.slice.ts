@@ -1,12 +1,12 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { push } from 'connected-react-router';
 import { useSelector } from 'react-redux';
-import _isObject from 'lodash/isObject';
 
 import API, {
   ResendVerificationEmailRequest,
   SigninResponse,
   SignUpRequest,
+  UserProfile,
   VerifyEmailRequest,
 } from 'src/modules/api';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
@@ -24,14 +24,19 @@ import {
 import createDataSlice from 'src/modules/store/createDataSlice';
 import { SWITCH_STUDY_SEARCH_PARAM } from 'src/modules/main-layout/constants';
 
-import { authTokenPayloadSelector } from './auth.slice.authTokenPayloadSelector';
-import { rolesListFromApi, roleToApi, isGlobalRoleType, allowedRoleTypes } from './userRole';
+import {
+  authTokenPayloadSelector,
+  getUserDataFromAuthToken,
+} from './auth.slice.authTokenPayloadSelector';
+import { roleToApi, isGlobalRoleType, allowedRoleTypes, userRolesListFromApi } from './userRole';
 import {
   decodeAuthToken,
   STORAGE_TOKEN_KEY,
   STORAGE_REFRESH_TOKEN_KEY,
   STORAGE_ALREADY_BEEN_AUTH_KEY,
+  STORAGE_USER_NAME_KEY,
 } from './utils';
+import { MOCK_ACCOUNT_ID } from '../study-settings/utils';
 
 const isValidEmail = (v: string) => v.includes('samsung');
 
@@ -44,7 +49,7 @@ const signinSuccessMock = ({ email }: { email: string }) => {
   if (roleFromEmail) {
     roles = isGlobalRoleType(roleFromEmail)
       ? [roleFromEmail]
-      : mockStudyIds.map((projectId) => roleToApi({ role: roleFromEmail, projectId }));
+      : mockStudyIds.map((projectId) => roleToApi({ roles: [roleFromEmail], projectId })).flat();
   }
 
   const header = window.btoa(JSON.stringify({}));
@@ -52,6 +57,7 @@ const signinSuccessMock = ({ email }: { email: string }) => {
     JSON.stringify({
       email,
       roles,
+      sub: MOCK_ACCOUNT_ID,
     })
   );
   const jwt = `${header}.${payload}`;
@@ -62,7 +68,7 @@ const signinSuccessMock = ({ email }: { email: string }) => {
     roles,
     refreshToken: `refresh.${jwt}`,
     profile: {
-      name: email.split('@')[0],
+      name: 'Samuel',
       status: 'active',
     },
   });
@@ -79,8 +85,8 @@ API.mock.provideEndpoints({
     });
   },
   resetPassword(body) {
-    if (isValidEmail(body.email) && body.resetToken) {
-      return API.mock.response(undefined);
+    if (body.resetToken) {
+      return signinSuccessMock({ email: 'success@samsung.com' });
     }
 
     return API.mock.failedResponse({
@@ -115,15 +121,15 @@ API.mock.provideEndpoints({
 interface AuthState {
   authToken?: string;
   refreshToken?: string;
+  userName?: string;
 }
 
 export const getStateFromAuthToken = (authToken: string) => {
   try {
-    const { roles, email } = decodeAuthToken(authToken);
+    const { roles } = decodeAuthToken(authToken);
     return {
       authToken,
-      userRoles: rolesListFromApi(roles),
-      username: email,
+      userRoles: userRolesListFromApi(roles),
     };
   } catch {
     return undefined;
@@ -133,8 +139,9 @@ export const getStateFromAuthToken = (authToken: string) => {
 export const loadInitialStateFromStorage = (): AuthState => {
   const authToken = localStorage.getItem(STORAGE_TOKEN_KEY) || undefined;
   const refreshToken = localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY) || undefined;
+  const userName = localStorage.getItem(STORAGE_USER_NAME_KEY) || undefined;
 
-  return { authToken, refreshToken };
+  return { authToken, refreshToken, userName };
 };
 
 const initialState: AuthState = {
@@ -145,21 +152,31 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authSuccess(_, { payload }: PayloadAction<{ authToken: string; refreshToken: string }>) {
-      return { ...getStateFromAuthToken(payload.authToken), refreshToken: payload.refreshToken };
+    authSuccess(
+      _,
+      { payload }: PayloadAction<{ authToken: string; refreshToken: string; userName: string }>
+    ) {
+      return {
+        ...getStateFromAuthToken(payload.authToken),
+        refreshToken: payload.refreshToken,
+        userName: payload.userName,
+      };
     },
     clearAuth(state) {
       state.authToken = undefined;
       state.refreshToken = undefined;
     },
+    setUserName(state, { payload }: PayloadAction<string>) {
+      state.userName = payload;
+    },
   },
 });
 
-export const { authSuccess, clearAuth } = authSlice.actions;
+export const { authSuccess } = authSlice.actions;
 
 const signUpInitialState: WithLoading = {};
 
-export const signUpSlice = createSlice({
+const signUpSlice = createSlice({
   name: 'signUp',
   initialState: signUpInitialState,
   reducers: {
@@ -177,11 +194,11 @@ export const signUpSlice = createSlice({
   },
 });
 
-export const signUpSelector = (state: RootState) => state[signUpSlice.name];
+const signUpSelector = (state: RootState) => state[signUpSlice.name];
 
 const HTTP_CODE_CONFLICT = 409;
 
-export const signUp =
+const signUp =
   (data: SignUpRequest): AppThunk =>
   async (dispatch) => {
     try {
@@ -195,11 +212,10 @@ export const signUp =
       }
       dispatch(push(`${redirectPath}?email=${encodeURIComponent(data.email)}`));
       dispatch(signUpSlice.actions.signUpSuccess());
+      dispatch(authSlice.actions.setUserName(data.profile.name || data.email));
     } catch (e) {
       dispatch(signUpSlice.actions.signUpFailure(String(e)));
-      if (!applyDefaultApiErrorHandlers(e, dispatch)) {
-        dispatch(showSnackbar({ text: String(e), showErrorIcon: true }));
-      }
+      applyDefaultApiErrorHandlers(e, dispatch);
     }
   };
 
@@ -212,28 +228,37 @@ export const useSignUp = () => {
   };
 };
 
-const handleTokensReceived =
-  (authToken: string, refreshToken: string, rememberUser = false): AppThunk<Promise<void>> =>
+export const handleTokensReceived =
+  (
+    authToken: string,
+    refreshToken: string,
+    profile: UserProfile | undefined,
+    rememberUser = false
+  ): AppThunk<Promise<void>> =>
   async (dispatch) => {
+    const userName = profile?.name || getUserDataFromAuthToken(authToken).email || '';
     if (rememberUser) {
       localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
       localStorage.setItem(STORAGE_REFRESH_TOKEN_KEY, refreshToken);
+      localStorage.setItem(STORAGE_USER_NAME_KEY, userName);
     } else {
       localStorage.removeItem(STORAGE_TOKEN_KEY);
       localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
+      localStorage.removeItem(STORAGE_USER_NAME_KEY);
     }
 
     localStorage.setItem(STORAGE_ALREADY_BEEN_AUTH_KEY, 'true');
 
-    dispatch(authSuccess({ authToken, refreshToken }));
+    dispatch(authSuccess({ authToken, refreshToken, userName }));
   };
 
 const verifyEmailSlice = createDataSlice({
   name: 'useVerifyEmail',
   fetchData: async (params: VerifyEmailRequest, dispatch) => {
     const response = await API.verifyEmail(params);
-    const { jwt, refreshToken } = response.data;
-    await (dispatch as AppDispatch)(handleTokensReceived(jwt, refreshToken, false));
+    response.checkError();
+    const { jwt, refreshToken, profile } = response.data;
+    await (dispatch as AppDispatch)(handleTokensReceived(jwt, refreshToken, profile, true));
     return {};
   },
 });
@@ -253,7 +278,7 @@ export const redirectToStudyScreenByRole =
     const tokenPayload = authTokenPayloadSelector(getState());
 
     if (
-      tokenPayload.roles?.some((r: { role: string }) => r.role === 'team-admin') &&
+      tokenPayload.roles?.some((r: { roles: string[] }) => r.roles.includes('team-admin')) &&
       !isStudiesExists &&
       !isStudiesHaveError
     ) {
@@ -277,20 +302,20 @@ export const signin =
   }): AppThunk<Promise<void>> =>
   async (dispatch) => {
     const res = await API.signin({ email, password });
-    const { jwt, refreshToken } = res.data;
+    const { jwt, refreshToken, profile } = res.data;
 
-    await dispatch(handleTokensReceived(jwt, refreshToken, rememberUser));
+    await dispatch(handleTokensReceived(jwt, refreshToken, profile, rememberUser));
     await dispatch(redirectToStudyScreenByRole());
+
+    profile.name && dispatch(authSlice.actions.setUserName(profile.name));
   };
 
 export const activateAccount =
   ({
-    email,
     name,
     password,
     resetToken,
   }: {
-    email: string;
     name: string;
     password: string;
     resetToken: string;
@@ -298,7 +323,6 @@ export const activateAccount =
   async (dispatch) => {
     try {
       const res = await API.resetPassword({
-        email,
         password,
         resetToken,
         profile: {
@@ -306,18 +330,21 @@ export const activateAccount =
           status: 'active',
         },
       });
-      res.checkError();
 
-      await dispatch(signin({ email, password, rememberUser: true }));
+      const { jwt, refreshToken, profile } = res.data;
+      await dispatch(handleTokensReceived(jwt, refreshToken, profile, true));
+      await dispatch(redirectToStudyScreenByRole());
     } catch (err) {
-      if (!applyDefaultApiErrorHandlers(err, dispatch)) {
-        dispatch(showSnackbar({ text: 'Failed to activate account' }));
-      }
+      applyDefaultApiErrorHandlers(err, dispatch);
     }
   };
 
 export const updateTokens = (): AppThunk<Promise<void>> => async (dispatch, getState) => {
-  const { authToken: actualAuthToken, refreshToken: actualRefreshToken } = getState().auth;
+  const {
+    authToken: actualAuthToken,
+    refreshToken: actualRefreshToken,
+    userName,
+  } = getState().auth;
 
   if (!actualAuthToken || !actualRefreshToken) {
     return;
@@ -327,7 +354,14 @@ export const updateTokens = (): AppThunk<Promise<void>> => async (dispatch, getS
     await API.refreshToken({ jwt: actualAuthToken, refreshToken: actualRefreshToken })
   ).data;
 
-  dispatch(handleTokensReceived(jwt, refreshToken, !!localStorage.getItem(STORAGE_TOKEN_KEY)));
+  dispatch(
+    handleTokensReceived(
+      jwt,
+      refreshToken,
+      { name: userName },
+      !!localStorage.getItem(STORAGE_TOKEN_KEY)
+    )
+  );
 };
 
 export const SUCCESS_CONFIRMATION_MESSAGE = 'Email resent.';
@@ -344,14 +378,7 @@ export const resendVerificationEmail =
         })
       );
     } catch (err) {
-      if (!applyDefaultApiErrorHandlers(err, dispatch)) {
-        dispatch(
-          showSnackbar({
-            text: _isObject(err) ? err.toString() : 'Failed to resend email',
-            showErrorIcon: true,
-          })
-        );
-      }
+      applyDefaultApiErrorHandlers(err, dispatch);
     }
   };
 
@@ -359,9 +386,11 @@ export const isAlreadyBeenAuthorized = () => !!localStorage.getItem(STORAGE_ALRE
 
 export const isAuthorizedSelector = (state: RootState) => !!state.auth.authToken;
 
+export const userEmailSelector = createSelector(authTokenPayloadSelector, (pl) => pl?.email);
+
 export const userNameSelector = createSelector(
-  authTokenPayloadSelector,
-  (pl) => pl?.email?.split('@')[0] || pl?.email
+  (state: RootState) => state.auth,
+  (auth) => auth.userName
 );
 
 export default {

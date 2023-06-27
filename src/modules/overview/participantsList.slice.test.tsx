@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { act, renderHook, waitFor } from '@testing-library/react';
-
 import { store } from 'src/modules/store/store';
 import {
   GetParticipantListParams,
@@ -37,6 +36,8 @@ const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
 };
 
 const TEST_PAGINATION_LIMIT = 10;
+const testTimestamp = 1683697098521;
+const testSQLUTCDate = '2023-05-10 05:38:18.521672';
 
 const args: GetParticipantListParams = {
   studyId: 'test-study-id',
@@ -59,18 +60,26 @@ describe('transformParticipantListItemFromApi', () => {
       latestAverageDiastolicBP: 81.3,
       latestTotalStep: 1,
       averageSleep: 5,
-      lastSyncTime: new Date(1666623346000).toString(),
+      lastSyncTime: testSQLUTCDate,
+      latestAverageBG: 155.91,
+      latestAverageRR: 80.3,
+      latestAverageSPO2: 99.5,
     };
 
     const participant: OverviewParticipantItem = {
       id: '6',
       email: 'hello@example.com',
       avgBpm: 2,
+      avgBloodPressureSys: 123,
+      avgBloodPressureDia: 81,
       avgBloodPressure: '123/81',
       avgSteps: 1,
-      lastSync: 1666623346000,
-      localTime: 1666623346000,
+      lastSync: testTimestamp,
+      localTime: testTimestamp,
       avgSleepMins: 5,
+      avgBG: 155.9,
+      avgRR: 80,
+      avgSpO2: 99.5,
     };
 
     expect(transformHealthDataOverviewItemFromApi(participantFromApi)).toEqual(participant);
@@ -82,10 +91,14 @@ describe('transformParticipantListItemFromApi', () => {
       email: '',
       avgBpm: undefined,
       avgSteps: undefined,
-      lastSync: 0,
-      localTime: 0,
+      lastSync: undefined,
+      localTime: undefined,
       avgSleepMins: undefined,
-      avgBloodPressure: undefined,
+      avgBloodPressureSys: undefined,
+      avgBloodPressureDia: undefined,
+      avgBG: undefined,
+      avgRR: undefined,
+      avgSpO2: undefined,
     });
   });
 });
@@ -137,18 +150,26 @@ describe('transformParticipantListFromRaw', () => {
       latestAverageDiastolicBP: 81.3,
       latestTotalStep: 1,
       averageSleep: 5,
-      lastSyncTime: new Date(1666623346000).toString(),
+      lastSyncTime: testSQLUTCDate,
+      latestAverageBG: 100.2,
+      latestAverageRR: 80.3,
+      latestAverageSPO2: 99.5,
     };
 
     const participant: OverviewParticipantItem = {
       id: '6',
       email: 'hello@example.com',
       avgBpm: 2,
+      avgBloodPressureSys: 123,
+      avgBloodPressureDia: 81,
       avgBloodPressure: '123/81',
       avgSteps: 1,
-      lastSync: 1666623346000,
-      localTime: 1666623346000,
+      lastSync: testTimestamp,
+      localTime: testTimestamp,
       avgSleepMins: 5,
+      avgBG: 100.2,
+      avgRR: 80,
+      avgSpO2: 99.5,
     };
 
     expect(transformHealthDataOverviewListFromApi([participantFromApi])).toEqual([participant]);
@@ -162,8 +183,8 @@ describe('transformParticipantListFromRaw', () => {
       email: '',
       avgBpm: undefined,
       avgSteps: undefined,
-      lastSync: 0,
-      localTime: 0,
+      lastSync: undefined,
+      localTime: undefined,
       avgSleepMins: undefined,
       avgBloodPressure: undefined,
     };
@@ -214,7 +235,7 @@ describe('useParticipantList', () => {
     expect(hook.result.current).toMatchObject({
       isLoading: false,
       data: {
-        list: transformHealthDataOverviewListFromApi(data.healthDataOverview),
+        list: transformHealthDataOverviewListFromApi(data.healthDataOverview || []),
         total,
       },
     });

@@ -10,7 +10,6 @@ import React, {
 import styled from 'styled-components';
 import _debounce from 'lodash/debounce';
 import _isEqual from 'lodash/isEqual';
-import usePrevious from 'react-use/lib/usePrevious';
 
 import {
   ITooltipItemContext,
@@ -30,13 +29,18 @@ const TooltipTrigger = styled.span<{ relative: boolean }>`
   position: ${({ relative }) => (relative ? 'relative' : 'static')};
 `;
 
-type TooltipComponentProps = React.PropsWithChildren<Omit<TooltipProps, 'id'>>;
+type TooltipComponentProps = React.PropsWithChildren<Omit<TooltipProps, 'id'>> & {
+  triggerStyle?: React.CSSProperties;
+};
 
 const Tooltip = forwardRef(
-  ({ children, ...props }: TooltipComponentProps, ref: React.ForwardedRef<TooltipControls>) => {
+  (
+    { children, triggerStyle, ...props }: TooltipComponentProps,
+    ref: React.ForwardedRef<TooltipControls>
+  ) => {
     const containerRef = useRef<HTMLSpanElement>(null);
     const tooltipCtx: ITooltipItemContext = useTooltipItemCtx();
-    const prevProps = usePrevious(props);
+    const [prevProps, setPrevProps] = useState<typeof props>();
     const [tooltipIdx, setTooltipIdx] = useState<TooltipID>();
     const [currentTooltip, setCurrenTooltip] = useState<TooltipProps>();
 
@@ -59,7 +63,16 @@ const Tooltip = forwardRef(
     }, []);
 
     useEffect(() => {
+      let unsubscribe: () => void;
+      if (tooltipIdx) {
+        unsubscribe = tooltipCtx.subscribe(tooltipIdx, setCurrenTooltip);
+      }
+      return () => unsubscribe?.();
+    }, [tooltipCtx, tooltipIdx]);
+
+    useEffect(() => {
       if (containerRef.current && tooltipIdx && !_isEqual(prevProps, props)) {
+        setPrevProps(props);
         tooltipCtx.setProps(tooltipIdx, {
           container: containerRef.current,
           ...props,
@@ -191,18 +204,11 @@ const Tooltip = forwardRef(
       return triggersProps;
     }, [props.trigger, props.show, tooltipIdx, setTooltipPropsDelayed]);
 
-    useEffect(() => {
-      let describe: () => void;
-      if (tooltipIdx) {
-        describe = tooltipCtx.subscribe(tooltipIdx, setCurrenTooltip);
-      }
-      return () => describe?.();
-    }, [tooltipCtx, tooltipIdx]);
-
     return (
       <TooltipTrigger
         ref={containerRef}
         {...evtProps}
+        style={triggerStyle}
         relative={!props.point}
         data-testid="tooltip-container"
       >
@@ -213,9 +219,6 @@ const Tooltip = forwardRef(
             key={tooltipIdx}
             id={tooltipIdx}
             {...(currentTooltip || props)}
-            {...(props.point
-              ? { point: props.point }
-              : { container: containerRef.current as HTMLElement })}
           />
         ) : null}
       </TooltipTrigger>

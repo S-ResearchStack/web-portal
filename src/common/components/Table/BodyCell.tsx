@@ -4,21 +4,24 @@ import styled from 'styled-components';
 import Tooltip, { TooltipControls } from 'src/common/components/Tooltip';
 import { animation, colors, px, typography } from 'src/styles';
 
-import { ROW_HEIGHT } from './constants';
+import { CELL_LINE_HEIGHT, CELL_VERTICAL_PADDING } from './constants';
 import { useCellTooltip } from './hooks';
 import { ColumnOptions } from './types';
 
-export interface TableCellProps<T> {
+interface TableCellProps<T> {
   column: ColumnOptions<T>;
   children: React.ReactNode;
+  linesCount?: number;
 }
 
-export type BodyCellContainerProps = Pick<ColumnOptions<object>, 'align' | '$width'>;
+type BodyCellContainerProps = Pick<ColumnOptions<object>, 'align' | '$width'> & {
+  linesCount?: number;
+};
 
 export const BodyCellContainer = styled.div<BodyCellContainerProps>`
   position: relative;
   box-sizing: border-box;
-  height: ${px(ROW_HEIGHT)};
+  height: ${({ linesCount }) => px(CELL_VERTICAL_PADDING + CELL_LINE_HEIGHT * (linesCount || 1))};
   display: flex;
   align-items: center;
   padding: ${px(7)} ${px(8)};
@@ -34,14 +37,14 @@ export const BodyCellContainer = styled.div<BodyCellContainerProps>`
 
   > span {
     ${typography.bodyXSmallRegular};
+    white-space: ${({ linesCount }) => (linesCount ? 'pre' : 'nowrap')};
     text-overflow: ellipsis;
-    white-space: nowrap;
     overflow: hidden;
     min-width: 100%;
   }
 `;
 
-const BodyCell = <T,>({ column, children }: TableCellProps<T>): JSX.Element => {
+const BodyCell = <T,>({ column, children, linesCount }: TableCellProps<T>): JSX.Element => {
   const tooltipRef = useRef<TooltipControls>(null);
   const { isShowTooltip, handleMouseEnter, handleMouseLeave, currentPos, tooltipStyles } =
     useCellTooltip(tooltipRef);
@@ -54,21 +57,27 @@ const BodyCell = <T,>({ column, children }: TableCellProps<T>): JSX.Element => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-id={column.dataKey}
+      linesCount={linesCount}
     >
-      <Tooltip
-        ref={tooltipRef}
-        show={isShowTooltip}
-        content={children}
-        styles={{
-          transform: `translateY(${px(shift)})`,
-          fontWeight: 400,
-          maxWidth: 300,
-          wordBreak: 'break-all',
-          ...tooltipStyles,
-        }}
-      >
-        {children}
-      </Tooltip>
+      {column.ellipsis !== false ? (
+        <Tooltip
+          ref={tooltipRef}
+          show={isShowTooltip}
+          content={children}
+          styles={{
+            transform: `translateY(${px(shift)})`,
+            fontWeight: 400,
+            maxWidth: 300,
+            wordBreak: 'break-all',
+            whiteSpace: 'pre-wrap',
+            ...tooltipStyles,
+          }}
+        >
+          {children}
+        </Tooltip>
+      ) : (
+        children
+      )}
     </BodyCellContainer>
   );
 };

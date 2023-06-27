@@ -1,17 +1,18 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import { px } from 'src/styles';
+import { replace } from 'connected-react-router';
+import useSearchParam from 'react-use/lib/useSearchParam';
 
 import SuccessImg from 'src/assets/illustrations/success.svg';
 import Card from 'src/common/components/Card';
 import ResultMessage from 'src/modules/auth/common/ResultMessage';
 import Button from 'src/common/components/Button';
-import { useHistory } from 'react-router-dom';
 import { Path } from 'src/modules/navigation/store';
 import { redirectToStudyScreenByRole, useVerifyEmail } from 'src/modules/auth/auth.slice';
 import { useAppDispatch } from 'src/modules/store';
 import { SnackbarContainer } from 'src/modules/snackbar';
-import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
+import { GENERIC_SERVER_ERROR_TEXT } from 'src/modules/api/executeRequest';
 
 const Container = styled.div`
   display: flex;
@@ -41,40 +42,28 @@ const NextStep = styled.div`
 `;
 
 const AccountCreated = () => {
-  const history = useHistory();
   const dispatch = useAppDispatch();
 
-  const { email, token } = useMemo(() => {
-    const qp = new URLSearchParams(history.location.search);
+  const email = useSearchParam('email') || '';
+  const token = useSearchParam('reset-token') || '';
 
-    return {
-      email: qp.get('email') || '',
-      token: qp.get('token') || '',
-    };
-  }, [history]);
-
-  const { isLoading, error } = useVerifyEmail({
-    fetchArgs: token ? { token } : false,
-  });
+  const { isLoading, error } = useVerifyEmail(
+    {
+      fetchArgs: token ? { token } : false,
+    },
+    {
+      text: GENERIC_SERVER_ERROR_TEXT,
+      showErrorIcon: true,
+    }
+  );
 
   useLayoutEffect(() => {
     if (!token) {
-      history.replace(Path.SignIn);
+      dispatch(replace(Path.SignIn));
     }
-  }, [history, token]);
+  }, [dispatch, token]);
 
   const isCtaDisabled = isLoading || !!error;
-
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        showSnackbar({
-          text: String(error),
-          showErrorIcon: true,
-        })
-      );
-    }
-  }, [dispatch, error]);
 
   const handleNext = useCallback(() => {
     if (isCtaDisabled) {
@@ -95,7 +84,7 @@ const AccountCreated = () => {
               <>
                 Congratulations! You have successfully created an account for
                 <br />
-                <strong>{email}</strong> Continue to the web portal to access and
+                <strong>{email}</strong>. Continue to the web portal to access and
                 <br />
                 create studies.
               </>
@@ -108,7 +97,7 @@ const AccountCreated = () => {
                 fill="solid"
                 onClick={handleNext}
               >
-                Continue to Portal
+                Continue to portal
               </Button>
             </NextStep>
           </ResultMessage>

@@ -243,21 +243,21 @@ exports[`ScatterChart should render 1`] = `
           viewBox="0, 0, 1000, 1000"
         >
           <g
-            class="c5 xAxis"
+            class="c5 xAxis undefined"
             fill="none"
             font-family="sans-serif"
             font-size="10"
             text-anchor="middle"
-            transform="translate(0, 978)"
+            transform="translate(0, 976)"
           >
             <g
               class="tick"
               opacity="1"
-              transform="translate(506.5,0)"
+              transform="translate(505.5,0)"
             >
               <line
                 stroke="currentColor"
-                y2="-973"
+                y2="-971"
               />
               <text
                 dy="0em"
@@ -274,16 +274,16 @@ exports[`ScatterChart should render 1`] = `
             font-family="sans-serif"
             font-size="10"
             text-anchor="start"
-            transform="translate(24,0)"
+            transform="translate(22,0)"
           >
             <g
               class="tick"
               opacity="1"
-              transform="translate(0,492)"
+              transform="translate(0,491)"
             >
               <line
                 stroke="currentColor"
-                x2="964"
+                x2="966"
               />
               <text
                 dy="0.32em"
@@ -296,7 +296,7 @@ exports[`ScatterChart should render 1`] = `
           </g>
           <path
             class="line"
-            d="M506,491.5L506,491.5"
+            d="M505,490.5L505,490.5"
             data-testid="line-test"
             fill="none"
             id="line-test"
@@ -310,15 +310,15 @@ exports[`ScatterChart should render 1`] = `
           >
             <rect
               fill="transparent"
-              height="973"
-              transform="translate(24, 5)"
-              width="964"
+              height="971"
+              transform="translate(22, 5)"
+              width="966"
             />
             <rect
               class="zoom"
-              height="973"
-              transform="translate(24, 5)"
-              width="964"
+              height="971"
+              transform="translate(22, 5)"
+              width="966"
             />
             <g
               class="dots"
@@ -332,7 +332,7 @@ exports[`ScatterChart should render 1`] = `
                 id="dot-0"
                 pointer-events="all"
                 r="4"
-                transform="translate(506,491.5)"
+                transform="translate(505,490.5)"
               />
             </g>
           </g>
@@ -407,11 +407,11 @@ exports[`ScatterChart should render 1`] = `
             </lineargradient>
             <clippath
               id="clip"
-              transform="translate(24, 5)"
+              transform="translate(22, 5)"
             >
               <rect
-                height="973"
-                width="964"
+                height="971"
+                width="966"
               />
             </clippath>
           </defs>
@@ -430,7 +430,7 @@ exports[`ScatterChart should render 1`] = `
                 height="4"
                 pointer-events="all"
                 transform="translate(0, -1)"
-                width="964"
+                width="966"
                 x="22"
                 y="0.5"
               />
@@ -444,8 +444,8 @@ exports[`ScatterChart should render 1`] = `
                 stroke="#fff"
                 style=""
                 transform="translate(0, -10)"
-                width="964"
-                x="24"
+                width="966"
+                x="22"
                 y="0.5"
               />
               <rect
@@ -456,7 +456,7 @@ exports[`ScatterChart should render 1`] = `
                 style=""
                 transform="translate(0, -7)"
                 width="6"
-                x="21"
+                x="19"
                 y="-2.5"
               />
               <rect
@@ -483,7 +483,7 @@ exports[`ScatterChart should render 1`] = `
                 pointer-events="all"
                 transform="translate(2)"
                 width="4"
-                x="990"
+                x="992"
                 y="24"
               />
               <rect
@@ -491,13 +491,13 @@ exports[`ScatterChart should render 1`] = `
                 cursor="move"
                 fill="#777"
                 fill-opacity="0.3"
-                height="973"
+                height="971"
                 shape-rendering="crispEdges"
                 stroke="#fff"
                 style=""
                 transform="translate(-7)"
                 width="4"
-                x="990"
+                x="992"
                 y="5"
               />
               <rect
@@ -508,7 +508,7 @@ exports[`ScatterChart should render 1`] = `
                 style=""
                 transform="translate(-4)"
                 width="10"
-                x="987"
+                x="989"
                 y="2"
               />
               <rect
@@ -519,8 +519,8 @@ exports[`ScatterChart should render 1`] = `
                 style=""
                 transform="translate(-4)"
                 width="10"
-                x="987"
-                y="975"
+                x="989"
+                y="973"
               />
             </g>
           </g>
@@ -530,6 +530,7 @@ exports[`ScatterChart should render 1`] = `
         >
           <div
             class="c8"
+            data-testid="zoom-out-button"
             disabled=""
           >
             <svg />
@@ -540,12 +541,17 @@ exports[`ScatterChart should render 1`] = `
           >
             <div
               class="c10"
+              data-testid="zoom-in-button"
             >
               <svg />
             </div>
           </span>
         </div>
       </div>
+      <span
+        class="c9"
+        data-testid="tooltip-container"
+      />
     </div>
   </div>
 </body>

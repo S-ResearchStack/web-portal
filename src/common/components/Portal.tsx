@@ -3,18 +3,14 @@ import { createPortal } from 'react-dom';
 import useUnmount from 'react-use/lib/useUnmount';
 import _uniqueId from 'lodash/uniqueId';
 
-export interface PortalProps {
+interface PortalProps {
   enabled: boolean;
   id?: string;
 }
 
 const createUniqueId = (id?: string): string => _uniqueId(id ? `${id}-` : '');
 
-const Portal: FC<React.PropsWithChildren<PortalProps>> = ({
-  enabled,
-  children,
-  id,
-}): React.ReactPortal => {
+const Portal: FC<React.PropsWithChildren<PortalProps>> = ({ enabled, children, id }) => {
   const rootRef = useRef<HTMLDivElement>(document.createElement('div'));
   const root = rootRef.current;
 
@@ -39,7 +35,7 @@ const Portal: FC<React.PropsWithChildren<PortalProps>> = ({
     removeRoot();
   });
 
-  return createPortal(children, rootRef.current);
+  return enabled ? createPortal(children, rootRef.current) : null;
 };
 
 export default Portal;

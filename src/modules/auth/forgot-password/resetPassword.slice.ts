@@ -3,15 +3,16 @@ import { useSelector } from 'react-redux';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, ErrorType, RootState, useAppDispatch, WithLoading } from 'src/modules/store';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
-import * as API from 'src/modules/api/models';
-import Api from 'src/modules/api';
-import { redirectToStudyScreenByRole } from 'src/modules/auth/auth.slice';
+import API from 'src/modules/api';
+import { handleTokensReceived } from 'src/modules/auth/auth.slice';
+import { Path } from 'src/modules/navigation/store';
+import { push } from 'connected-react-router';
 
-type PasswordRecoveryState = WithLoading;
+export type ResetPasswordState = WithLoading;
 
-export const resetPasswordInitialState: PasswordRecoveryState = {};
+export const resetPasswordInitialState: ResetPasswordState = {};
 
-const resetPasswordSlice = createSlice({
+export const resetPasswordSlice = createSlice({
   name: 'resetPassword',
   initialState: resetPasswordInitialState,
   reducers: {
@@ -30,21 +31,35 @@ const resetPasswordSlice = createSlice({
 });
 
 const requestResetPassword =
-  (body: Omit<API.ResetPasswordRequest, 'profile'>): AppThunk<Promise<void>> =>
+  ({
+    email,
+    password,
+    resetToken,
+  }: {
+    email: string;
+    password: string;
+    resetToken: string;
+  }): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       dispatch(resetPasswordSlice.actions.requestResetPasswordInit());
-      await Api.resetPassword(body);
-      // TODO: set auth token
+      const res = await API.resetPassword({
+        password,
+        resetToken,
+      });
+      const { jwt, refreshToken, profile } = res.data;
+
+      await dispatch(handleTokensReceived(jwt, refreshToken, profile, true));
+
       dispatch(resetPasswordSlice.actions.requestResetPasswordSuccess());
-      await dispatch(redirectToStudyScreenByRole());
+      dispatch(push(`${Path.ResetPasswordComplete}?email=${encodeURIComponent(email)}`));
     } catch (e) {
       dispatch(resetPasswordSlice.actions.requestResetPasswordFailure(String(e)));
       applyDefaultApiErrorHandlers(e, dispatch);
     }
   };
 
-export const resetPasswordSelector = (state: RootState): PasswordRecoveryState =>
+const resetPasswordSelector = (state: RootState): ResetPasswordState =>
   state[resetPasswordSlice.name];
 
 export const useResetPassword = () => {

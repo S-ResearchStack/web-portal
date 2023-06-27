@@ -1,4 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
+import { px } from 'src/styles/utils';
+
+export const previewDropdownMenuClassName = 'preview-dropdown-menu';
+export const PREVIEW_SCALE = 0.75;
 
 export default createGlobalStyle`
   * {
@@ -48,4 +52,14 @@ export default createGlobalStyle`
     overflow: visible;
   }
 
+  .${previewDropdownMenuClassName} {
+    border: none;
+    filter: drop-shadow(
+      0 
+      ${px(5 * PREVIEW_SCALE)} 
+      ${px(12 * PREVIEW_SCALE)} 
+      rgba(0, 0, 0, 0.12)
+    ); // TODO unknown color
+    margin-top: ${px(8 * PREVIEW_SCALE)};
+  }
 `;

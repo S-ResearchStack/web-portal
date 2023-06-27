@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import _isEqual from 'lodash/isEqual';
+import useMount from 'react-use/lib/useMount';
 import {
   ActionCreatorWithoutPayload,
   ActionCreatorWithPayload,
@@ -22,6 +23,7 @@ type EmptyFetchArgs = null;
 export type DataSliceState<D, A> = PublicDataSliceState<D> & {
   fetchArgs: A | EmptyFetchArgs;
   prevFetchArgs: A | EmptyFetchArgs;
+  isLoadingSilently?: boolean;
 };
 
 type DataSliceOptions<D, N extends string, A> = {
@@ -31,12 +33,14 @@ type DataSliceOptions<D, N extends string, A> = {
 
 type FetchActionOptions = {
   force?: boolean;
+  silent?: boolean;
   onError?: (e?: unknown) => void;
 };
 
 type HookParams<A, D> = {
   initialData?: D;
   fetchArgs: A | boolean;
+  refetchSilentlyOnMount?: boolean;
 };
 
 export type ShowOnErrorSnackbarParams = Omit<SnackbarInstance, 'id' | 'hideTimeoutId'> & {
@@ -87,9 +91,10 @@ function createDataSlice<D extends object, N extends string, A = void>(
           data: action.payload.data,
         });
       },
-      loadingStarted(state, action: PayloadAction<{ fetchArgs: A }>) {
+      loadingStarted(state, action: PayloadAction<{ fetchArgs: A; silent?: boolean }>) {
         return Object.assign(state, {
-          isLoading: true,
+          isLoading: !action.payload.silent,
+          isLoadingSilently: !!action.payload.silent,
           fetchArgs: action.payload.fetchArgs,
           prevFetchArgs: { ...state.fetchArgs },
           error: undefined,
@@ -98,6 +103,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
       loadingSuccess(state, action: PayloadAction<{ data: D }>) {
         return Object.assign(state, {
           isLoading: false,
+          isLoadingSilently: false,
           error: undefined,
           data: action.payload.data,
           prevFetchArgs: { ...state.fetchArgs },
@@ -106,6 +112,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
       loadingFailed(state, action: PayloadAction<ErrorType>) {
         return Object.assign(state, {
           isLoading: false,
+          isLoadingSilently: false,
           error: String(action.payload),
           data: undefined,
           prevFetchArgs: { ...state.fetchArgs },
@@ -113,6 +120,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
       },
       reset(state) {
         state.isLoading = undefined;
+        state.isLoadingSilently = undefined;
         state.data = undefined;
         state.error = undefined;
 
@@ -135,7 +143,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
           return;
         }
       }
-      dispatch(slice.actions.loadingStarted({ fetchArgs: args }));
+      dispatch(slice.actions.loadingStarted({ fetchArgs: args, silent: opts?.silent }));
       try {
         const data = await options.fetchData(args, dispatch);
 
@@ -148,13 +156,15 @@ function createDataSlice<D extends object, N extends string, A = void>(
       } catch (err) {
         const { fetchArgs: currentArgs } = sliceStateSelector(getState());
         if (_isEqual(args, currentArgs)) {
+          console.error(err);
           dispatch(
             slice.actions.loadingFailed(
               (err instanceof Error ? err.message : undefined) ||
                 `Failed to fetch data ${options.name}`
             )
           );
-          if (!applyDefaultApiErrorHandlers(err, dispatch)) {
+
+          if (!applyDefaultApiErrorHandlers(err, dispatch, false)) {
             opts?.onError?.(err);
           }
         }
@@ -168,7 +178,15 @@ function createDataSlice<D extends object, N extends string, A = void>(
     }
   };
 
-  const hook = (params?: HookParams<A, D>, snackBarParams?: ShowOnErrorSnackbarParams) => {
+  const refetchSilentlyIfRequiredThunk =
+    (): AppThunk<Promise<void>> => async (dispatch, getState) => {
+      const state = sliceStateSelector(getState());
+      if (!state.isLoading && !state.isLoadingSilently && !isFetchArgsEmpty(state.fetchArgs)) {
+        await dispatch(fetchThunk(state.fetchArgs, { force: true, silent: !state.error }));
+      }
+    };
+
+  const useSliceHook = (params?: HookParams<A, D>, snackBarParams?: ShowOnErrorSnackbarParams) => {
     const dispatch = useAppDispatch();
     const sliceState = useAppSelector((state) => sliceStateSelector(state));
     const isStudyListLoading = useAppSelector((state) => state.studies.isLoading);
@@ -212,6 +230,12 @@ function createDataSlice<D extends object, N extends string, A = void>(
       dispatch(slice.actions.setData({ data: params.initialData }));
     }, [dispatch, params?.fetchArgs, params?.initialData, sliceState.data, sliceState.fetchArgs]);
 
+    useMount(() => {
+      if (params?.refetchSilentlyOnMount) {
+        dispatch(refetchSilentlyIfRequiredThunk());
+      }
+    });
+
     return hookResult;
   };
 
@@ -219,7 +243,7 @@ function createDataSlice<D extends object, N extends string, A = void>(
     name: options.name,
     reducer: slice.reducer,
     stateSelector: sliceStateSelector,
-    hook,
+    hook: useSliceHook,
     actions: {
       ...slice.actions,
       fetch: fetchThunk,

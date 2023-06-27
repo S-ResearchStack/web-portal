@@ -4,6 +4,7 @@ import 'jest-styled-components';
 import { act, findByTestId, render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components/';
 import { userEvent } from '@storybook/testing-library';
+
 import BarChart from 'src/modules/charts/BarChart';
 import theme from '../../styles/theme';
 

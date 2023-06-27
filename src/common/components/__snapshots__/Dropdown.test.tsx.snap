@@ -12,8 +12,11 @@ exports[`Dropdown [NEGATIVE] should render with wrong \`items\` prop 1`] = `
   line-height: 1.3125rem;
   font-weight: 400;
   font-style: normal;
-  color: #474747;
+  color: #808080;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c4 {
@@ -63,7 +66,7 @@ exports[`Dropdown [NEGATIVE] should render with wrong \`items\` prop 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"
@@ -89,8 +92,11 @@ exports[`Dropdown [NEGATIVE] should render with wrong props 1`] = `
   line-height: 1.3125rem;
   font-weight: 400;
   font-style: normal;
-  color: #474747;
+  color: #808080;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c4 {
@@ -140,7 +146,7 @@ exports[`Dropdown [NEGATIVE] should render with wrong props 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"
@@ -166,8 +172,11 @@ exports[`Dropdown [NEGATIVE] should render without props 1`] = `
   line-height: 1.3125rem;
   font-weight: 400;
   font-style: normal;
-  color: #474747;
+  color: #808080;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c4 {
@@ -217,7 +226,7 @@ exports[`Dropdown [NEGATIVE] should render without props 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"
@@ -245,6 +254,9 @@ exports[`Dropdown check dropdown open menu on click 1`] = `
   font-style: normal;
   color: #474747;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c4 {
@@ -294,7 +306,7 @@ exports[`Dropdown check dropdown open menu on click 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"
@@ -324,6 +336,9 @@ exports[`Dropdown check menu item quantity in dropdown menu open 1`] = `
   font-style: normal;
   color: #474747;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c4 {
@@ -373,7 +388,7 @@ exports[`Dropdown check menu item quantity in dropdown menu open 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"
@@ -409,6 +424,9 @@ exports[`Dropdown test dropdown loading state 1`] = `
   font-style: normal;
   color: #474747;
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .c1 {
@@ -454,7 +472,7 @@ exports[`Dropdown test dropdown loading state 1`] = `
     >
       <div
         class="c1 c2"
-        data-testid="ValueItem"
+        data-testid="value-item"
       >
         <div
           class="c3"

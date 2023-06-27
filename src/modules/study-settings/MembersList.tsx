@@ -1,4 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import styled from 'styled-components';
 import _orderBy from 'lodash/orderBy';
 
@@ -6,20 +8,18 @@ import Button from 'src/common/components/Button';
 import IconButton from 'src/common/components/IconButton';
 import Table, { ColumnOptions, getColumnWidthInPercents } from 'src/common/components/Table';
 import Card, { TitleContainer } from 'src/common/components/Card';
-import { px, typography } from 'src/styles';
 import Indicator from 'src/common/components/Indicator';
 import { SIDEBAR_MINIMIZED_WIDTH } from 'src/modules/main-layout/sidebar/helper';
 import Tooltip from 'src/common/components/Tooltip';
 import ServiceScreen from 'src/common/components/ServiceScreen';
-import {
-  getRoleTextByRoleId,
-  getStatusTextByStatusId,
-  getStatusTypeByStatusId,
-} from 'src/modules/study-settings/utils';
+import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { getRoleLabels, getAccessByRole, RoleType } from 'src/modules/auth/userRole';
+import { getStatusTextByStatusId, getStatusTypeByStatusId } from 'src/modules/study-settings/utils';
 import { BASE_TABLE_BODY_HEIGHT } from 'src/common/components/Table/BaseTable';
 import PlusIcon from 'src/assets/icons/plus_small.svg';
 import CloseIcon from 'src/assets/icons/cross.svg';
 import { useMatchDeviceScreen } from 'src/common/components/SimpleGrid';
+import { colors, px, typography } from 'src/styles';
 
 import {
   openInviteEditMember,
@@ -38,11 +38,13 @@ const CardContainer = styled(Card)`
     padding-top: ${px(8)};
   }
   & > ${TitleContainer} {
-    height: ${px(72)};
+    height: ${px(58)};
   }
 `;
 
 const InviteMemberButton = styled(Button)`
+  padding-right: 0;
+  padding-left: 0;
   :first-child {
     padding-left: ${px(2)};
     svg {
@@ -56,7 +58,9 @@ const MembersTable = styled(Table)`
 ` as typeof Table;
 
 const EditButton = styled(Button)`
-  height: ${px(28)};
+  margin-left: ${px(-6)};
+  min-width: ${px(37)};
+
   &:hover,
   &:hover:active {
     background-color: transparent;
@@ -65,11 +69,24 @@ const EditButton = styled(Button)`
   > div {
     ${typography.bodyXSmallSemibold};
   }
+
+  &:disabled {
+    > div {
+      color: transparent;
+    }
+  }
 `;
 
-const StatusContainer = styled.div`
+const StatusContainer = styled.span`
   display: flex;
+  flex-shrink: 0;
   align-items: center;
+`;
+
+const AwaitConfirmation = styled.span`
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  color: ${colors.onDisabled};
 `;
 
 const StatusIndicator = styled(Indicator)`
@@ -110,9 +127,10 @@ const TooltipContent: FC<{ onClose: () => void }> = ({ onClose }) => (
 );
 
 type MembersListSortDirection = 'asc' | 'desc';
+type MemberListColumnType = StudyMember & { action?: boolean };
 
-export type StudyMembersListSort = {
-  column: keyof StudyMember;
+type StudyMembersListSort = {
+  column: keyof MemberListColumnType;
   direction: MembersListSortDirection;
 };
 
@@ -126,9 +144,13 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
   canShowInviteTooltip,
 }): JSX.Element => {
   const dispatch = useAppDispatch();
+  const studyId = useSelectedStudyId();
+  const userRoles = useSelector(userRoleSelector)?.roles;
 
+  // TODO: not supported by API currently
+  const hasMgmtAccess = false;
+  const { allowInvite, allowEdit } = getAccessByRole(userRoles, hasMgmtAccess);
   const [isShowingInviteTooltip, setShowingInviteTooltip] = useState(shouldShowInviteTooltip);
-
   const handleOpenEditMemberDrawer = (id?: string) => {
     dispatch(openInviteEditMember({ id }));
     setShowingInviteTooltip(false);
@@ -142,29 +164,42 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     return 40;
   }, [device]);
 
-  const columns: ColumnOptions<StudyMember>[] = [
-    {
-      dataKey: 'email',
-      label: 'Email',
-      $width: getColumnWidthInPercents(313.97),
-    },
+  const columns: ColumnOptions<MemberListColumnType>[] = [
     {
       dataKey: 'name',
       label: 'Name',
-      $width: getColumnWidthInPercents(193.4),
-    },
-    {
-      dataKey: 'role',
-      label: 'Role',
-      $width: getColumnWidthInPercents(187.02),
-      render(role) {
-        return getRoleTextByRoleId(role as StudyMember['role']);
+      $width: getColumnWidthInPercents(189 + 60),
+      render(name, { status }) {
+        return status === 'invited' ? (
+          <AwaitConfirmation>Awaiting signup...</AwaitConfirmation>
+        ) : (
+          (name as string)[0].toUpperCase() + (name as string).slice(1)
+        );
       },
     },
     {
+      dataKey: 'email',
+      label: 'Email',
+      $width: getColumnWidthInPercents(189 + 60),
+    },
+    {
+      dataKey: 'roles',
+      label: 'Role',
+      $width: getColumnWidthInPercents(160 + 60),
+      render: (roles) => getRoleLabels(roles as RoleType[]).roleLabels,
+    },
+    // TODO: not supported by API at the moment
+    /* {
+     *   dataKey: 'mgmtAccess',
+     *   label: 'Management Access',
+     *   $width: getColumnWidthInPercents(180),
+     *   render: (mgmtAccess) => ((mgmtAccess as boolean) ? 'Yes' : 'No'),
+     * }, */
+    {
       dataKey: 'status',
       label: 'Status',
-      $width: getColumnWidthInPercents(187.02 - editBtnExtraWidth),
+      ellipsis: true,
+      $width: getColumnWidthInPercents(160),
       render: (status) => (
         <StatusContainer>
           <StatusIndicator color={getStatusTypeByStatusId(status as StudyMember['status'])} />
@@ -173,34 +208,42 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
       ),
     },
     {
-      dataKey: 'id',
+      dataKey: 'action',
       $width: getColumnWidthInPercents(46 + editBtnExtraWidth),
-      render: (id) => (
-        <EditButton
-          fill="text"
-          rate="small"
-          width={28}
-          onClick={() => handleOpenEditMemberDrawer(id)}
-        >
-          EDIT
-        </EditButton>
-      ),
+      isEmpty: !allowEdit,
+      ellipsis: false,
+      render: (_, role) =>
+        allowEdit ? (
+          <EditButton
+            fill="text"
+            rate="x-small"
+            onClick={() => allowEdit && handleOpenEditMemberDrawer(role.id)}
+          >
+            EDIT
+          </EditButton>
+        ) : (
+          <div />
+        ),
     },
   ];
 
   const [sort, setSort] = useState<StudyMembersListSort>(defaultSorting);
-  const studyId = useSelectedStudyId();
 
   const membersList = useStudySettingsMembersList({
     fetchArgs: !!studyId && {
       studyId,
     },
+    refetchSilentlyOnMount: true,
   });
 
   const getRowKey = useCallback((row: StudyMember) => row.id, []);
 
   const usersList = useMemo(() => {
-    const users = (membersList.data?.users || []).map((u) => ({ ...u, isProcessing: false }));
+    const users = (membersList.data?.users || []).map((u) => ({
+      ...u,
+      isProcessing: false,
+      linesCount: getRoleLabels(u.roles).rolesCount,
+    }));
     return _orderBy(users, [sort.column], [sort.direction]);
   }, [membersList.data, sort.column, sort.direction]);
 
@@ -235,42 +278,42 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     setShowingInviteTooltip(false);
   };
 
-  const renderActions = () => (
-    <div>
-      <Tooltip
-        show={canShowInviteTooltip && isShowingInviteTooltip}
-        position="bl"
-        arrow
-        static
-        content={<TooltipContent onClose={handleTooltipClose} />}
-        styles={{
-          maxWidth: px(248),
-          transform: `translate(${px(-50)}, ${px(-8)})`,
-          pointerEvents: 'all',
-        }}
-      >
-        <InviteMemberButton
-          icon={<PlusIcon />}
-          width={164}
-          fill="text"
-          onClick={handleInviteMemberButtonClick}
-          rate="small"
-          aria-label="Invite member"
+  const renderActions = () =>
+    allowEdit && (
+      <div>
+        <Tooltip
+          show={canShowInviteTooltip && isShowingInviteTooltip}
+          position="bl"
+          arrow
+          static
+          content={<TooltipContent onClose={handleTooltipClose} />}
+          styles={{
+            maxWidth: px(248),
+            transform: `translate(${px(-50)}, ${px(-8)})`,
+            pointerEvents: 'all',
+          }}
         >
-          Invite member
-        </InviteMemberButton>
-      </Tooltip>
-    </div>
-  );
+          <InviteMemberButton
+            icon={<PlusIcon />}
+            width={164}
+            fill="text"
+            onClick={handleInviteMemberButtonClick}
+            rate="small"
+            aria-label="Invite member"
+          >
+            Invite member
+          </InviteMemberButton>
+        </Tooltip>
+      </div>
+    );
 
   const isEmpty = !usersList.length;
   const { isLoading } = membersList;
 
   return (
     <CardContainer
-      title="Members and access"
-      subtitle
-      action={!isLoading && renderActions()}
+      title="Members and Access"
+      action={!isLoading && allowInvite && renderActions()}
       loading={isLoading}
       empty={isEmpty && !isLoading && !!studyId}
       onReload={membersList.refetch}

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useEvent from 'react-use/lib/useEvent';
+import useKey from 'react-use/lib/useKey';
 import _noop from 'lodash/noop';
-
 import styled, { css, useTheme } from 'styled-components';
 
 import Portal from 'src/common/components/Portal';
@@ -14,6 +14,7 @@ import { SpecColorType } from 'src/styles/theme';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 import { px, typography, colors, animation } from 'src/styles';
 import { ExtendProps } from '../utils/types';
+import Tooltip from './Tooltip';
 
 const ITEM_BORDER_RADIUS = px(4);
 
@@ -25,7 +26,7 @@ const Container = styled.div<{ $disabled?: boolean }>`
   pointer-events: ${({ $disabled }) => $disabled && 'none'};
 `;
 
-const Icon = styled.div`
+export const Icon = styled.div`
   width: ${px(40)};
   height: ${px(40)};
   grid-area: left-icon;
@@ -34,13 +35,17 @@ const Icon = styled.div`
   justify-content: center;
 `;
 
-const Label = styled.div<{ textColor: SpecColorType }>`
+export const Label = styled.div<{ textColor: SpecColorType; disabled?: boolean }>`
   ${typography.bodySmallRegular};
-  color: ${({ textColor, theme }) => theme.colors[textColor]};
+  color: ${({ textColor, theme, disabled }) =>
+    disabled ? theme.colors.disabled : theme.colors[textColor]};
   grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
-const CheckmarkContainer = styled(Icon)`
+export const CheckmarkContainer = styled(Icon)`
   width: ${px(24)};
   height: ${px(24)};
   grid-area: right-icon;
@@ -107,6 +112,8 @@ export const ValueItem = styled(Item)<{
   $isOpen?: boolean;
   $position: MenuContainerPosition;
   $active?: boolean;
+  $disabled?: boolean;
+  error?: boolean;
 }>`
   border-top-width: ${px(1)};
   border-color: ${({ $isOpen, $active }) => ($isOpen || $active) && colors.primary} !important;
@@ -127,6 +134,24 @@ export const ValueItem = styled(Item)<{
       }
     `;
   }};
+
+  ${(p) =>
+    p.$disabled &&
+    css`
+      svg {
+        fill: ${colors.primaryDisabled};
+      }
+    `}
+
+  ${(p) =>
+    p.error &&
+    css`
+      background-color: ${colors.statusError10};
+      border-color: ${colors.statusError10} !important;
+      svg {
+        fill: ${colors.statusErrorText};
+      }
+    `}
 `;
 
 type Point = [number, number];
@@ -151,7 +176,7 @@ const getMenuContainerStyles = ({
   const style: React.CSSProperties = {};
 
   style.left = px(point[0]);
-  style.minWidth = px(width);
+  style.width = px(width);
 
   if (position === 'top') {
     style.bottom = px(window.innerHeight - point[1]);
@@ -166,7 +191,7 @@ const MENU_CONTAINER_BORDER_WIDTH = 1;
 const getMenuMaxHeight = (itemHeight: number, maxVisibleMenuItems: number) =>
   itemHeight * maxVisibleMenuItems + MENU_CONTAINER_BORDER_WIDTH;
 
-export const MenuContainer = styled(CustomScrollbar).attrs<MenuContainerProps>((props) => ({
+const MenuContainer = styled(CustomScrollbar).attrs<MenuContainerProps>((props) => ({
   style: getMenuContainerStyles(props),
 }))<MenuContainerProps>`
   overflow: auto;
@@ -203,8 +228,10 @@ type ClickableProps = Pick<React.HTMLAttributes<HTMLElement>, 'onClick'>;
 
 export interface DropdownItem<T> {
   icon?: JSX.Element;
+  tooltip?: string;
   label: string;
   key: T;
+  disabled?: boolean;
 }
 
 export type DropdownProps<T> = ExtendProps<
@@ -214,16 +241,22 @@ export type DropdownProps<T> = ExtendProps<
     activeKey?: T;
     onChange?: (key: T) => void;
     className?: string;
+    menuClassName?: string;
     direction?: MenuContainerPosition;
     menuItemComponent?: React.ComponentType<ClickableProps>;
     arrowIcon?: JSX.Element;
     placeholder?: string;
+    placeholderTextColor?: SpecColorType;
     backgroundType?: BackgroundType;
     menuItemHeight?: number;
     maxVisibleMenuItems?: number;
     loading?: boolean;
     textColor?: SpecColorType;
     disabled?: boolean;
+    checkIcon?: JSX.Element;
+    hideDisabledItems?: boolean;
+    error?: boolean;
+    labelComponent?: typeof Label;
   }
 >;
 
@@ -232,16 +265,22 @@ const Dropdown = <T extends string | number>({
   activeKey,
   onChange,
   className,
+  menuClassName,
   direction = 'auto',
   menuItemComponent,
   arrowIcon,
   placeholder = '',
+  placeholderTextColor = 'textSecondaryGray',
   backgroundType = 'regular',
   menuItemHeight = 56,
   maxVisibleMenuItems = 3,
   loading,
   textColor = 'textPrimary',
   disabled,
+  hideDisabledItems,
+  error,
+  checkIcon,
+  labelComponent = Label,
   ...restProps
 }: DropdownProps<T>): JSX.Element => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -323,6 +362,8 @@ const Dropdown = <T extends string | number>({
     true
   );
 
+  useKey('Escape', close, undefined, [close]);
+
   // TODO useEvent('resize', ...) works with delay - remove after review passed
   useEffect(() => {
     const onResize = () => {
@@ -337,6 +378,7 @@ const Dropdown = <T extends string | number>({
   }, [isOpen, close]);
 
   const ItemComponent = menuItemComponent || MenuItem;
+  const LabelComponent = labelComponent;
 
   const selectedItem = items?.find(searchItemPredicate);
 
@@ -355,15 +397,21 @@ const Dropdown = <T extends string | number>({
         $backgroundType={backgroundType}
         itemHeight={menuItemHeight}
         $active={loading}
-        data-testid="ValueItem"
+        data-testid="value-item"
+        $disabled={disabled}
+        error={error}
       >
         {selectedItem ? (
           <>
             {selectedItem.icon && <Icon>{selectedItem.icon}</Icon>}
-            <Label textColor={textColor}>{selectedItem.label}</Label>
+            <LabelComponent textColor={error ? 'statusErrorText' : textColor}>
+              {selectedItem.label}
+            </LabelComponent>
           </>
         ) : (
-          <Label textColor={textColor}>{placeholder}</Label>
+          <LabelComponent textColor={disabled ? 'disabled' : placeholderTextColor}>
+            {placeholder}
+          </LabelComponent>
         )}
         {loading ? (
           <Spinner size="xs" />
@@ -382,22 +430,47 @@ const Dropdown = <T extends string | number>({
           maxVisibleMenuItems={maxVisibleMenuItems}
           $backgroundType={backgroundType}
           data-testid="menu-container"
+          className={menuClassName}
         >
-          {items?.map(({ icon, label, key }) => (
-            <ItemComponent
-              key={key}
-              withIcon={!!icon}
-              onClick={() => onChange?.(key)}
-              $backgroundType={backgroundType}
-              selected={key === activeKey}
-              itemHeight={menuItemHeight}
-              data-testid="menu-item"
-            >
-              {icon && <Icon>{icon}</Icon>}
-              <Label textColor={textColor}>{label}</Label>
-              {key === activeKey && <Checkmark />}
-            </ItemComponent>
-          ))}
+          {items
+            ?.filter((i) => (hideDisabledItems ? !i.disabled : true))
+            .map(({ icon, label, key, tooltip, disabled: dis }) => {
+              let item = (
+                <ItemComponent
+                  key={key}
+                  withIcon={!!icon}
+                  onClick={() => !dis && onChange?.(key)}
+                  $backgroundType={backgroundType}
+                  selected={key === activeKey}
+                  itemHeight={menuItemHeight}
+                  data-testid="menu-item"
+                  data-value={key}
+                  data-disabled={dis}
+                >
+                  {icon && <Icon>{icon}</Icon>}
+                  <LabelComponent textColor={textColor} disabled={dis}>
+                    {label}
+                  </LabelComponent>
+                  {key === activeKey && (checkIcon || <Checkmark />)}
+                </ItemComponent>
+              );
+              if (tooltip) {
+                item = (
+                  <Tooltip
+                    key={key}
+                    content={tooltip}
+                    position="r"
+                    trigger="hover"
+                    arrow
+                    horizontalPaddings="l"
+                    triggerStyle={{ width: '100%' }}
+                  >
+                    {item}
+                  </Tooltip>
+                );
+              }
+              return item;
+            })}
         </MenuContainer>
       </Portal>
     </Container>

@@ -12,4 +12,8 @@ describe('chart utils', () => {
   it('[NEGATIVE] sortGenderLines empty input', () => {
     expect(sortGenderLines([])).toEqual([]);
   });
+
+  it('[NEGATIVE] sortGenderLines undefined input', () => {
+    expect(sortGenderLines(undefined as unknown as { name: string }[])).toEqual([]);
+  });
 });

@@ -13,6 +13,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
 
 .c17 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -141,9 +142,9 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
 }
 
 .c8:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c8::-webkit-input-placeholder {
@@ -214,11 +215,11 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
 
 .c10 {
   font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   font-weight: 400;
   font-style: normal;
-  color: #D14343;
+  color: #808080;
   padding-left: 1rem;
   height: 1.0625rem;
 }
@@ -265,15 +266,6 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
   -webkit-flex-shrink: 0;
   -ms-flex-negative: 0;
   flex-shrink: 0;
-}
-
-.c0 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  height: 100%;
-  width: 100%;
 }
 
 .c2 {
@@ -376,6 +368,15 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
   padding-top: 0.25rem;
 }
 
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
 @media (max-height:29.6875rem) {
   .c0 {
     overflow-y: scroll;
@@ -402,7 +403,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
       <div
         class="c3"
       >
-        Create a study
+        Create Study
       </div>
       <div
         class="c4"
@@ -411,7 +412,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
           class="c5"
           data-testid="input-description"
         >
-          Study Name
+          Study name
         </div>
         <div
           class="c6"
@@ -419,6 +420,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
           <input
             class="c7 c8"
             data-testid="create-study-name"
+            maxlength="30"
             placeholder="Name your study"
             tabindex="0"
             type="text"
@@ -430,7 +432,6 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
         </div>
         <div
           class="c10"
-          data-testid="input-error"
         >
            
         </div>
@@ -441,7 +442,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
         <div
           class="c12"
         >
-          Study Logo
+          Study logo
           <div
             class="c13"
           >
@@ -526,7 +527,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
       </div>
       <button
         class="c17"
-        data-testid="create-study-send"
+        data-testid="switch-select-role"
         disabled=""
         fill="solid"
         style="overflow: hidden; position: relative;"
@@ -535,7 +536,7 @@ exports[`CreateStudyScreen [NEGATIVE] should create study with partial data 1`] 
           class="c18"
           data-testid="content"
         >
-          Create Study
+          Continue
         </div>
         <div
           class="c19"
@@ -563,6 +564,7 @@ exports[`CreateStudyScreen should create study 1`] = `
 
 .c17 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -691,9 +693,9 @@ exports[`CreateStudyScreen should create study 1`] = `
 }
 
 .c8:disabled {
-  color: #DBDBDB;
-  border-color: rgba(219,219,219,0.2);
-  background-color: rgba(219,219,219,0.2);
+  color: rgba(0,0,0,0.38);
+  border-color: transparent;
+  background-color: #f8f8f8;
 }
 
 .c8::-webkit-input-placeholder {
@@ -764,11 +766,11 @@ exports[`CreateStudyScreen should create study 1`] = `
 
 .c10 {
   font-family: Inter,sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.3125rem;
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
   font-weight: 400;
   font-style: normal;
-  color: #D14343;
+  color: #808080;
   padding-left: 1rem;
   height: 1.0625rem;
 }
@@ -815,15 +817,6 @@ exports[`CreateStudyScreen should create study 1`] = `
   -webkit-flex-shrink: 0;
   -ms-flex-negative: 0;
   flex-shrink: 0;
-}
-
-.c0 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  height: 100%;
-  width: 100%;
 }
 
 .c2 {
@@ -926,6 +919,15 @@ exports[`CreateStudyScreen should create study 1`] = `
   padding-top: 0.25rem;
 }
 
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
 @media (max-height:29.6875rem) {
   .c0 {
     overflow-y: scroll;
@@ -952,7 +954,7 @@ exports[`CreateStudyScreen should create study 1`] = `
       <div
         class="c3"
       >
-        Create a study
+        Create Study
       </div>
       <div
         class="c4"
@@ -961,7 +963,7 @@ exports[`CreateStudyScreen should create study 1`] = `
           class="c5"
           data-testid="input-description"
         >
-          Study Name
+          Study name
         </div>
         <div
           class="c6"
@@ -969,6 +971,7 @@ exports[`CreateStudyScreen should create study 1`] = `
           <input
             class="c7 c8"
             data-testid="create-study-name"
+            maxlength="30"
             placeholder="Name your study"
             tabindex="0"
             type="text"
@@ -980,7 +983,6 @@ exports[`CreateStudyScreen should create study 1`] = `
         </div>
         <div
           class="c10"
-          data-testid="input-error"
         >
            
         </div>
@@ -991,7 +993,7 @@ exports[`CreateStudyScreen should create study 1`] = `
         <div
           class="c12"
         >
-          Study Logo
+          Study logo
           <div
             class="c13"
           >
@@ -1076,7 +1078,7 @@ exports[`CreateStudyScreen should create study 1`] = `
       </div>
       <button
         class="c17"
-        data-testid="create-study-send"
+        data-testid="switch-select-role"
         disabled=""
         fill="solid"
         style="overflow: hidden; position: relative;"
@@ -1085,7 +1087,7 @@ exports[`CreateStudyScreen should create study 1`] = `
           class="c18"
           data-testid="content"
         >
-          Create Study
+          Continue
         </div>
         <div
           class="c19"

@@ -4,13 +4,13 @@ import _max from 'lodash/max';
 
 import { px } from 'src/styles';
 
-export type SkeletonRectProps = React.SVGAttributes<SVGRectElement>;
+type SkeletonRectProps = React.SVGAttributes<SVGRectElement>;
 
 export const SkeletonRect: FC<SkeletonRectProps> = ({ ...props }) => (
   <rect rx={4} fill="#E9E9E9" {...props} />
 ); // TODO: unknown color
 
-export type SkeletonPathProps = React.SVGAttributes<SVGPathElement>;
+type SkeletonPathProps = React.SVGAttributes<SVGPathElement>;
 
 export const SkeletonPath: FC<SkeletonPathProps> = ({ ...props }) => (
   <path fill="#E9E9E9" {...props} />
@@ -68,7 +68,9 @@ const SkeletonLoading: FC<SkeletonLoadingProps> = ({
   const svgProps = useMemo(
     () => ({
       ...props,
-      ...(responsive ? { width: '100%' } : { width: px(width), height: px(height) }),
+      ...(responsive
+        ? { width: '100%', height: px(height) }
+        : { width: px(width), height: px(height) }),
     }),
     [height, props, responsive, width]
   );

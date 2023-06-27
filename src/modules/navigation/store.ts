@@ -3,28 +3,38 @@ import { matchPath } from 'react-router-dom';
 import { createBrowserHistory, createMemoryHistory, Location } from 'history';
 
 import { RootState } from 'src/modules/store/store';
+import { isInsideTest } from 'src/common/utils/testing';
 
 export enum Path {
   Root = '/',
 
   SignIn = '/signin',
-  AccountActivation = '/account/activation',
+
+  // user invited by other user via email
+  AccountActivation = '/account-activation',
+
+  // sign up by user
   AccountCreate = '/account/create',
   AccountConfirm = '/account/confirm',
   AccountVerification = '/email-verification',
+
+  // forgot password
   ForgotPassword = '/account/forgot',
   ForgotPasswordConfirm = '/account/forgot/confirm',
-  ResetPassword = '/account/forgot/reset',
+  ResetPassword = '/password-reset',
   ResetPasswordComplete = '/account/forgot/complete',
 
   CreateStudy = '/create-study',
 
   Overview = '/overview',
   OverviewSubject = '/overview/participants/:subjectId',
-  TrialManagement = '/trial-management',
-  TrialManagementSubject = '/trial-management/participants/:subjectId',
-  TrialManagementEditSurvey = '/trial-management/surveys/:surveyId/edit',
-  TrialManagementSurveyResults = '/trial-management/surveys/:surveyId/results',
+  StudyManagement = '/study-management',
+  StudyManagementSubject = '/study-management/participants/:subjectId',
+  StudyManagementEditSurvey = '/study-management/surveys/:surveyId/edit',
+  StudyManagementEditActivity = '/study-management/activity/:activityId/edit',
+  StudyManagementEditEducation = '/study-management/education/:educationId/edit',
+  StudyManagementSurveyResults = '/study-management/surveys/:surveyId/results',
+  StudyManagementActivityResults = '/study-management/activities/:activityId/results',
   UserAnalytics = '/user-analytics',
   DataCollection = '/data-collection',
   DataCollectionSubject = '/data-collection/participants/:subjectId',
@@ -32,7 +42,7 @@ export enum Path {
 }
 
 export const makeHistory = () =>
-  process.env.NODE_ENV !== 'test'
+  !isInsideTest
     ? createBrowserHistory({ basename: process.env.PUBLIC_PATH })
     : createMemoryHistory();
 
@@ -41,7 +51,7 @@ export const history = makeHistory();
 const sectionPaths = [
   Path.Overview,
   Path.OverviewSubject,
-  Path.TrialManagement,
+  Path.StudyManagement,
   Path.UserAnalytics,
   Path.DataCollection,
   Path.StudySettings,

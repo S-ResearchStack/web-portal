@@ -1,44 +1,41 @@
-import React, {
-  RefObject,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { RefObject, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { matchPath, Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import useEvent from 'react-use/lib/useEvent';
 import useMount from 'react-use/lib/useMount';
-import useToggle from 'react-use/lib/useToggle';
 import usePrevious from 'react-use/lib/usePrevious';
+import useToggle from 'react-use/lib/useToggle';
+import useUpdateEffect from 'react-use/lib/useUpdateEffect';
+
 import styled from 'styled-components';
 import { Location } from 'history';
 import _isNull from 'lodash/isNull';
 
-import { UserRole } from 'src/modules/auth/userRole';
+import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
+import { scrollToTop } from 'src/common/utils/scrollToTop';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { UserRole } from 'src/modules/auth/userRole';
+import DataInsights from 'src/modules/data-collection/DataInsights';
 import { Path } from 'src/modules/navigation/store';
-import StudySettings from 'src/modules/study-settings/StudySettings';
 import Overview from 'src/modules/overview/Overview';
 import OverviewSubject from 'src/modules/overview/overview-subject/OverviewSubject';
-import SurveyEditor from 'src/modules/trial-management/survey-editor/SurveyEditor';
-import SurveyPage from 'src/modules/trial-management/SurveyPage';
-import DataInsights from 'src/modules/data-collection/DataInsights';
 import { SnackbarContainer } from 'src/modules/snackbar';
-import { useAppDispatch, useAppSelector } from 'src/modules/store';
-import { fetchStudies, useSelectedStudyId } from 'src/modules/studies/studies.slice';
 import { hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
-import { colors } from 'src/styles';
-import { scrollToTop } from 'src/common/utils/scrollToTop';
-import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
-import StudyManagement from 'src/modules/trial-management/StudyManagement';
+import { useAppDispatch, useAppSelector } from 'src/modules/store';
 import Studies from 'src/modules/studies/Studies';
+import { fetchStudies, useSelectedStudyId } from 'src/modules/studies/studies.slice';
+import StudyManagement from 'src/modules/study-management';
+import EducationEditor from 'src/modules/study-management/user-management/education-management/education-editor/EducationEditor';
+import ActivityEditor from 'src/modules/study-management/user-management/task-management/activity/activity-editor/ActivityEditor';
+import ActivityPage from 'src/modules/study-management/user-management/task-management/activity/ActivityPage';
+import SurveyEditor from 'src/modules/study-management/user-management/task-management/survey/survey-editor/SurveyEditor';
+import SurveyPage from 'src/modules/study-management/user-management/task-management/survey/SurveyPage';
+import StudySettings from 'src/modules/study-settings/StudySettings';
+import { colors } from 'src/styles';
+import { SWITCH_STUDY_SEARCH_PARAM } from './constants';
+import EmptyTab from './EmptyTab';
 
 import { LayoutContentCtx } from './LayoutContentCtx';
 import Sidebar from './sidebar/Sidebar';
-import EmptyTab from './EmptyTab';
-import { SWITCH_STUDY_SEARCH_PARAM } from './constants';
 
 export const Layout = styled.div<{ isSwitchStudy?: boolean }>`
   width: 100%;
@@ -125,52 +122,52 @@ const useFetchBootData = (): UseFetchBootDataReturnType => {
 };
 
 const useScrollHistory = (paths: Path[], content: RefObject<HTMLElement>) => {
-  const pathMap = useRef<{ [key: string]: number }>({});
+  const pathMap = useRef<Record<string, number>>({});
   const location = useLocation();
-  const history = useHistory();
   const prevLocation = usePrevious<Location>(location);
-  const pathHistory = useRef<string[]>([location.pathname]);
+  const lastScrollRef = useRef(0);
+
+  useEvent(
+    'scroll',
+    () => {
+      lastScrollRef.current = content.current?.scrollTop ?? 0;
+    },
+    content.current
+  );
 
   useLayoutEffect(() => {
-    if (prevLocation?.pathname === location.pathname) {
-      return;
-    }
-
-    if (history.action === 'PUSH') {
-      const prevPath = pathHistory.current[pathHistory.current.length - 1];
-
+    const trySaveScroll = () => {
       paths.forEach((path) => {
-        const matched = matchPath(prevPath, { path });
+        if (!prevLocation) {
+          return;
+        }
 
-        if (matched && matched.isExact) {
-          pathMap.current[path] = content.current?.scrollTop || 0;
+        const matched = matchPath(prevLocation.pathname, { path });
+        if (matched?.isExact && prevLocation?.key) {
+          pathMap.current[prevLocation.key] = lastScrollRef.current;
         }
       });
 
-      if (content.current) {
-        content.current.scrollTop = 0;
-      }
+      lastScrollRef.current = 0;
+    };
 
-      pathHistory.current.push(location.pathname);
-    } else {
-      if (pathHistory.current.length < 2) {
+    const tryRestoreScroll = () => {
+      if (!content.current || prevLocation?.key === location.key) {
         return;
       }
-      pathHistory.current.pop();
 
-      const currentPath = pathHistory.current[pathHistory.current.length - 1];
+      if (location.key && typeof pathMap.current[location.key] === 'number') {
+        content.current.scrollTop = pathMap.current[location.key];
+        delete pathMap.current[location.key];
+      } else {
+        content.current.scrollTop = 0;
+      }
+    };
 
-      paths.forEach((path) => {
-        const matched = matchPath(currentPath, { path });
-
-        if (matched && matched.isExact && content.current) {
-          content.current.scrollTop = pathMap.current[path];
-          delete pathMap.current[path];
-        }
-      });
-    }
+    trySaveScroll();
+    tryRestoreScroll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [location, paths]);
 };
 
 const MainLayout = () => {
@@ -179,14 +176,17 @@ const MainLayout = () => {
   const studyId = useSelectedStudyId();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     dispatch(hideSnackbar());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, studyId]);
 
   useDisableElasticScroll(contentRef);
 
-  useScrollHistory([Path.Overview, Path.DataCollection, Path.TrialManagement], contentRef);
+  useScrollHistory(
+    [Path.Overview, Path.DataCollection, Path.StudyManagement, Path.StudySettings],
+    contentRef
+  );
 
   const { userRole } = useFetchBootData();
 
@@ -206,15 +206,6 @@ const MainLayout = () => {
       scrollToTop(contentRef.current as HTMLElement, toggleIsSwitchStudy);
     }
   };
-
-  const [showUserInStudy, setShowUserInStudy] = useState(isForceStudySwitched);
-
-  useEffect(() => {
-    if (showUserInStudy && !isSwitchStudy && !isSwitchStudyInTransition) {
-      setShowUserInStudy(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSwitchStudyInTransition, showUserInStudy]);
 
   const studiesContentRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -241,7 +232,7 @@ const MainLayout = () => {
     <LayoutContentCtx.Provider value={contentRef}>
       <Layout data-testid="main-layout" ref={layoutRef} isSwitchStudy={isSwitchStudy}>
         <StudiesContentWrapper ref={studiesContentRef}>
-          <Studies hideUser={!showUserInStudy} onStudySelectionFinished={toggleIsSwitchStudy} />
+          <Studies onStudySelectionFinished={toggleIsSwitchStudy} />
           {isSwitchStudy && <SnackbarContainer useSimpleGrid />}
         </StudiesContentWrapper>
         <MainContentWrapper>
@@ -249,12 +240,21 @@ const MainLayout = () => {
           {userRole && (
             <Content ref={contentRef}>
               <Switch>
-                <Route exact path={Path.Overview} component={Overview} />
+                <Route
+                  exact
+                  path={Path.Overview}
+                  render={() => (
+                    <Overview isSwitchStudy={isSwitchStudy || isSwitchStudyInTransition} />
+                  )}
+                />
                 <Route exact path={Path.OverviewSubject} component={OverviewSubject} />
-                <Route exact path={Path.TrialManagement} component={StudyManagement} />
-                <Route exact path={Path.TrialManagementEditSurvey} component={SurveyEditor} />
-                <Route exact path={Path.TrialManagementSubject} component={OverviewSubject} />
-                <Route exact path={Path.TrialManagementSurveyResults} component={SurveyPage} />
+                <Route exact path={Path.StudyManagement} component={StudyManagement} />
+                <Route exact path={Path.StudyManagementEditSurvey} component={SurveyEditor} />
+                <Route exact path={Path.StudyManagementSubject} component={OverviewSubject} />
+                <Route exact path={Path.StudyManagementSurveyResults} component={SurveyPage} />
+                <Route exact path={Path.StudyManagementActivityResults} component={ActivityPage} />
+                <Route exact path={Path.StudyManagementEditActivity} component={ActivityEditor} />
+                <Route exact path={Path.StudyManagementEditEducation} component={EducationEditor} />
                 <Route path={Path.UserAnalytics} component={EmptyTab} />
                 <Route exact path={Path.DataCollection} component={DataInsights} />
                 <Route exact path={Path.DataCollectionSubject} component={OverviewSubject} />

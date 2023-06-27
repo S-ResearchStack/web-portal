@@ -8,6 +8,7 @@ export const mockStudies: api.Study[] = [
       color: 'secondarySkyBlue',
     },
     isOpen: true,
+    createdAt: '2022-10-31T12:00:00',
   },
   {
     id: { value: '2' },
@@ -16,12 +17,14 @@ export const mockStudies: api.Study[] = [
       color: 'secondaryViolet',
     },
     isOpen: true,
+    createdAt: '2021-10-31T12:00:00',
   },
   {
     id: { value: '3' },
     name: 'Some deleted study',
     info: {},
     isOpen: false,
+    createdAt: '2022-03-01T12:00:00',
   },
 ];
 

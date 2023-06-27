@@ -12,6 +12,7 @@ const StaticTable = <T,>({
   disableActions,
   bodyHeight,
   withRipple = true,
+  renderOnHoverRowAction,
   ...props
 }: TableProps<T>): JSX.Element => (
   <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, rows, ...props }}>
@@ -26,6 +27,8 @@ const StaticTable = <T,>({
           disabled={disableActions}
           withRipple={withRipple}
           style={styles}
+          linesCount={row.linesCount}
+          getOnHoverRowAction={renderOnHoverRowAction}
         />
       ))
     }

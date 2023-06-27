@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import _range from 'lodash/range';
 
 import { colors, px } from 'src/styles';
 
@@ -22,8 +23,7 @@ const Row = styled.div`
 
 const Template: ComponentStory<typeof CustomScrollbar> = (args) => (
   <MaxHeightContainer {...args}>
-    {Array.from({ length: 20 }).map((_, idx) => (
-      // eslint-disable-next-line react/no-array-index-key
+    {_range(20).map((idx) => (
       <Row key={idx} />
     ))}
   </MaxHeightContainer>

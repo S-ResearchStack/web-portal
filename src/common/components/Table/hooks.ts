@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { replaceCharacter } from 'src/common/components/Table/utils';
 import { TooltipControls, TooltipPosition } from 'src/common/components/Tooltip';
 
-export interface UseCellTooltipsReturnValue {
+interface UseCellTooltipsReturnValue {
   isShowTooltip: boolean;
 
   setShowTooltip(show: boolean): void;

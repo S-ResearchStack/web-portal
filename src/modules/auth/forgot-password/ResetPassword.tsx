@@ -7,6 +7,7 @@ import { px } from 'src/styles';
 import ScreenCenteredCard from 'src/modules/auth/common/ScreenCenteredCard';
 import PasswordInputField from 'src/common/components/PasswordInputField';
 import Button from 'src/common/components/Button';
+import { SnackbarContainer } from 'src/modules/snackbar';
 
 import {
   PasswordRequirements,
@@ -39,19 +40,16 @@ const InputsWrapper = styled.div`
 `;
 
 const ResetPassword = () => {
-  const email = useSearchParam('email') || 'only-for-dev'; // TODO: replace 'only-for-dev' to '' (empty string)
-  const resetToken = useSearchParam('resetToken') || 'only-for-dev'; // TODO: replace 'only-for-dev' to '' (empty string)
+  const email = useSearchParam('email') || '';
+  const resetToken = useSearchParam('reset-token') || '';
 
   const [password, setPassword] = useState('');
 
-  // TODO: handle error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLoading, error, resetPassword } = useResetPassword();
+  const { isLoading, resetPassword } = useResetPassword();
 
-  const name = 'name'; // TODO: receive from a endpoint
-  const similarPrevious: undefined | boolean = !password ? undefined : !password.includes('pass'); // TODO: receive from a endpoint
+  // TODO: maybe later backend will provide user name
+  const name = email.split('@')[0] || '';
 
-  // TODO: maybe add validation for a similar password?
   const [isPasswordPassed, requirements] = useCheckPassword({ password, name });
 
   const isDisabled = !email || !resetToken || !password || !isPasswordPassed;
@@ -65,47 +63,56 @@ const ResetPassword = () => {
     resetPassword({ email, password, resetToken });
   }, [resetPassword, email, password, resetToken]);
 
-  useKey('Enter', handleClick);
+  useKey('Enter', handleClick, undefined, [handleClick]);
 
   return (
-    <ScreenWrapper mediaMaxHeightToScrollY={704} mediaMaxWidthToScrollX={732}>
-      <ScreenCenteredCard minWidth={800} width={55.556} ratio={557 / 800}>
-        <ScreenContentWrapper>
-          <Content>
-            <Header>Reset Password</Header>
-            <InputsWrapper>
-              <PasswordInputField
-                name="password"
-                error={password && !isPasswordPassed}
-                withoutErrorText
-                label="New password"
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Enter password"
-              />
-            </InputsWrapper>
-            <PasswordRequirements>
-              {requirements.map((requirement) => (
-                <RequirementItem
-                  key={requirement.rule}
-                  rule={requirement.rule}
-                  passed={!password ? undefined : requirement.passed}
-                  disabled={!password}
+    <>
+      <ScreenWrapper
+        mediaMaxHeightToScrollY={704}
+        mediaMaxWidthToScrollX={732}
+        data-testid="reset-password"
+      >
+        <ScreenCenteredCard minWidth={800} width={55.556} ratio={557 / 800}>
+          <ScreenContentWrapper>
+            <Content>
+              <Header>Reset Password</Header>
+              <InputsWrapper>
+                <PasswordInputField
+                  name="password"
+                  error={password && !isPasswordPassed}
+                  withoutErrorText
+                  label="New password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  placeholder="Enter password"
+                  data-testid="reset-rassword-screen-password-field"
                 />
-              ))}
-              <RequirementItem
-                rule="Must be different from previous used passwords"
-                passed={similarPrevious}
-                disabled={!password}
-              />
-            </PasswordRequirements>
-            <Button disabled={isDisabled} onClick={handleClick} fill="solid" $loading={isLoading}>
-              Reset password
-            </Button>
-          </Content>
-        </ScreenContentWrapper>
-      </ScreenCenteredCard>
-    </ScreenWrapper>
+              </InputsWrapper>
+              <PasswordRequirements>
+                {requirements.map((requirement) => (
+                  <RequirementItem
+                    key={requirement.rule}
+                    rule={requirement.rule}
+                    passed={!password ? undefined : requirement.passed}
+                    disabled={!password}
+                  />
+                ))}
+              </PasswordRequirements>
+              <Button
+                disabled={isDisabled}
+                onClick={handleClick}
+                fill="solid"
+                $loading={isLoading}
+                data-testid="reset-password-button"
+              >
+                Reset password
+              </Button>
+            </Content>
+          </ScreenContentWrapper>
+        </ScreenCenteredCard>
+      </ScreenWrapper>
+      <SnackbarContainer useSimpleGrid />
+    </>
   );
 };
 

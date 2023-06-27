@@ -10,7 +10,7 @@ import SelectedStudyAvatarXXL from 'src/assets/icons/study_avatar_selected_xxl.s
 import { SpecColorType } from 'src/styles/theme';
 import { animation, boxShadow, px } from 'src/styles';
 
-export type AvatarSize = 's' | 'm' | 'xxl';
+type AvatarSize = 's' | 'm' | 'xxl';
 
 const adjustSizes = ($selected = false) => ({
   s: 40,
@@ -18,7 +18,7 @@ const adjustSizes = ($selected = false) => ({
   xxl: $selected ? 147 : 142,
 });
 
-export type AvatarProps = {
+type AvatarProps = {
   size?: AvatarSize;
   color?: SpecColorType;
   faded?: boolean;
@@ -33,7 +33,7 @@ const hoveredStyle = css`
 
 const pressedStyle = css`
   ${hoveredStyle};
-  filter: drop-shadow(0 ${px(15)} ${px(20)} rgba(180, 180, 180, 0.3));
+  filter: drop-shadow(0 ${px(15)} ${px(20)} rgba(180, 180, 180, 0.3)); // TODO unknown color
 `;
 
 const StyledAvatar = styled.div<AvatarProps>`

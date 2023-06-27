@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import useKey from 'react-use/lib/useKey';
+
+import styled from 'styled-components';
 
 import Button from 'src/common/components/Button';
 import InputField from 'src/common/components/InputField';
@@ -10,7 +11,6 @@ import { colors, px, typography } from 'src/styles';
 import Link from 'src/common/components/Link';
 import { Path } from 'src/modules/navigation/store';
 import { useSignUp } from 'src/modules/auth/auth.slice';
-
 import ScreenCenteredCard from '../common/ScreenCenteredCard';
 import {
   PasswordRequirements,
@@ -119,6 +119,7 @@ const SignUp: React.FC = () => {
                 onChange={handleEmailChange}
                 placeholder="Enter email"
                 withoutErrorText
+                maxLength={256}
               />
               <InputField
                 data-testid="auth-signup-name"
@@ -129,6 +130,7 @@ const SignUp: React.FC = () => {
                 onChange={handleNameChange}
                 placeholder="Enter name"
                 withoutErrorText
+                maxLength={30}
               />
               <PasswordInputField
                 name="password"
@@ -139,6 +141,7 @@ const SignUp: React.FC = () => {
                 value={password}
                 onChange={handlePasswordChange}
                 placeholder="Enter password"
+                maxLength={256}
               />
             </InputsWrapper>
             <PasswordRequirements>

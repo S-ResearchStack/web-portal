@@ -7,13 +7,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import _isNumber from 'lodash/isNumber';
-import _throttle from 'lodash/throttle';
 import useEvent from 'react-use/lib/useEvent';
 import { useFirstMountState } from 'react-use/lib/useFirstMountState';
+
+import _isNumber from 'lodash/isNumber';
+import _throttle from 'lodash/throttle';
 import _isFunction from 'lodash/isFunction';
 import _sum from 'lodash/sum';
-
 import styled, { css } from 'styled-components';
 
 import { animation, colors, px, theme } from 'src/styles';
@@ -30,9 +30,9 @@ import Loader from './Loader';
 import { BaseTableProps, ColumnOptions, ColumnsSizes, SortParams } from './types';
 
 export const BASE_TABLE_BODY_HEIGHT = 347;
-const BASE_TABLE_CONTAINER_HEIGHT = 435;
+const BASE_TABLE_CONTAINER_HEIGHT = 439;
 
-export const TableContainer = styled.div`
+const TableContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -47,11 +47,11 @@ const TableScrollable = withCustomScrollBar(styled.div``)`
   height: 100%;
 `;
 
-export interface TableHeadProps {
+interface TableHeadProps {
   sticky?: boolean;
 }
 
-export const TableHead = styled(TableRowBase)<TableHeadProps>`
+const TableHead = styled(TableRowBase)<TableHeadProps>`
   background-color: ${colors.surface};
   ${({ sticky }) =>
     sticky &&
@@ -62,7 +62,7 @@ export const TableHead = styled(TableRowBase)<TableHeadProps>`
     `}
 `;
 
-export const TableBody = styled.div`
+const TableBody = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -71,7 +71,7 @@ export const TableBody = styled.div`
   min-height: calc(100% - ${px(ROW_HEIGHT)});
 `;
 
-export const TableFooter = styled.div`
+const TableFooter = styled.div`
   margin-top: ${px(20)};
   height: ${px(32)};
 `;
@@ -115,6 +115,7 @@ const BaseTable = forwardRef(
       disableActions,
       isLoading,
       rows,
+      renderOnHoverRowAction,
       ...props
     }: BaseTableProps<T>,
     ref: React.ForwardedRef<HTMLDivElement>
@@ -267,16 +268,18 @@ const BaseTable = forwardRef(
     const computedColumns = columns ?? [];
 
     return (
-      <TableContainer ref={containerRef} {...props}>
-        <TableScrollable ref={combineRefs([scrollableRef, ref])}>
+      <TableContainer data-testid="table" ref={containerRef} {...props}>
+        <TableScrollable
+          ref={combineRefs([scrollableRef, ref])}
+          scrollbarTrackColor={theme.colors.surface}
+        >
           <TableHead ref={headRef} sticky={stickyHeader}>
-            {computedColumns.map((column, columnIdx) => {
+            {computedColumns.map((column) => {
               const sorting = sort?.sortings?.find((s) => s?.column === column.dataKey);
               const isActive = !!sorting;
-              return (
+              return column.isEmpty ? null : (
                 <HeadCell<T>
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${String(column.dataKey)}-${columnIdx}`}
+                  key={String(column.dataKey)}
                   isActive={!!(sort && isActive)}
                   isFirstRender={isFirstRender}
                   column={column}

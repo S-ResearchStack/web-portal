@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import styled from 'styled-components';
 import _capitalize from 'lodash/capitalize';
 
@@ -35,6 +36,7 @@ const RadioLabel = styled.div<{ $canToggle: boolean; $reverse: boolean }>`
 `;
 
 export type ChartLegendItem = {
+  id: string;
   name: string;
   color: SpecColorType;
   checked: boolean;
@@ -64,13 +66,13 @@ const ChartLegend: FC<ChartLegendProps> = ({
 
   return (
     <Container mode={mode} {...restProps}>
-      {items?.map((item: ChartLegendItem, index: number) => {
+      {items?.map((item, index) => {
         const reverse = mode === 'space-between' && index !== 0;
 
         return (
           <ItemWrapper
             $isLast={index === items.length - 1}
-            key={item.name}
+            key={item.id}
             $opacity={item.opacity}
             mode={mode}
           >

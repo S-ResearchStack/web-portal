@@ -29,7 +29,7 @@ const Measure = styled.span`
   margin-top: ${px(12)};
 `;
 
-type OverviewSubjectCardProps = {
+export type OverviewSubjectCardProps = {
   values: [string, string][];
   cardTitle: string;
 };
@@ -37,9 +37,8 @@ type OverviewSubjectCardProps = {
 const OverviewSubjectCard = ({ values, cardTitle }: OverviewSubjectCardProps) => (
   <SubjectCard title={cardTitle} empty={!values.length}>
     <Content>
-      {values.map(([v, unit], idx) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <React.Fragment key={`${idx}-${unit}`}>
+      {values.map(([v, unit]) => (
+        <React.Fragment key={unit}>
           <Value>{v}</Value>
           <Measure>{unit}</Measure>
         </React.Fragment>

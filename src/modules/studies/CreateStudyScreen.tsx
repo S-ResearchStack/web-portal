@@ -1,23 +1,11 @@
-import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import useKey from 'react-use/lib/useKey';
+import React, { useCallback, useEffect, useState } from 'react';
+import CreateStudyCard from 'src/modules/studies/CreateStudyCard';
+import SelectRoleCard from 'src/modules/studies/SelectRoleCard';
 import styled from 'styled-components';
 
-import { Path } from 'src/modules/navigation/store';
-import { useAppDispatch } from 'src/modules/store';
-import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
-import { NEW_STUDY_QUERY_PARAM_NAME } from 'src/modules/study-settings/StudySettings';
-import Button from 'src/common/components/Button';
-import InputField from 'src/common/components/InputField';
-import StudyAvatar from 'src/common/components/StudyAvatar';
-import { createStudy } from 'src/modules/studies/studies.slice';
 import { SpecColorType } from 'src/styles/theme';
-import { colors, px, typography } from 'src/styles';
+import { px } from 'src/styles';
 import StudyLayout from 'src/modules/studies/StudyLayout';
-
-import ScreenCenteredCard from '../auth/common/ScreenCenteredCard';
-
-const PLACEHOLDER = 'Name your study';
 
 const MainWrapper = styled.div`
   display: flex;
@@ -31,274 +19,27 @@ const MainWrapper = styled.div`
   }
 `;
 
-const Content = styled.div`
-  height: ${px(412)};
-  width: ${px(448)};
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const Header = styled.div`
-  ${typography.headingLargeSemibold};
-  margin: 0 auto ${px(40)};
-`;
-
-const LogosWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  height: ${px(127)};
-  width: 100%;
-  margin: ${px(8)} 0 ${px(42)};
-`;
-
-const StyledTextHeading = styled.div`
-  ${typography.bodySmallRegular};
-  color: ${colors.textPrimaryDark};
-  height: ${px(42)};
-`;
-
-const StyledText = styled.div`
-  ${typography.bodySmallRegular};
-  color: ${colors.textSecondaryGray};
-  line-height: ${px(25)};
-`;
-
-const StyledLogos = styled.div`
-  position: relative;
-  width: 100%;
-  padding-top: ${px(2)};
-  height: ${px(72)};
-  display: flex;
-  justify-content: space-between;
-`;
-
-const AvatarWrapper = styled.div<{ $selected?: boolean }>`
-  width: ${px(72)};
-  height: ${px(72)};
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: ${({ $selected }) => !$selected && px(4)};
-`;
-
-type AvatarInfo = {
-  color: SpecColorType;
-  selected?: boolean;
-};
-
-type AvatarIdx = number;
-
-export const avatarColors: Array<AvatarInfo> = [
-  { color: 'secondarySkyblue' },
-  { color: 'secondaryViolet' },
-  { color: 'secondaryTangerine' },
-  { color: 'secondaryGreen' },
-  { color: 'secondaryRed' },
-];
-
 const CreateStudyScreen: React.FC = () => {
-  const [studyName, setStudyName] = useState<string>('');
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [selectedAvatarId, setSelectedAvatarId] = useState<AvatarIdx>(-1);
-  const [hoveredAvatarId, setHoveredAvatarId] = useState<AvatarIdx>(-1);
-  const [isStudyNameInputFocused, setIsStudyNameInputFocused] = useState<boolean>(false);
-  const history = useHistory();
-  const dispatch = useAppDispatch();
+  const [card, setCard] = useState<'createStudy' | 'selectRole'>('createStudy');
+  const [name, setName] = useState<string>('');
+  const [color, setColor] = useState<SpecColorType | undefined>(undefined);
 
-  // TODO add hotkeys
-
-  const isAllSet = studyName && selectedAvatarId > -1;
-
-  const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setStudyName(event.target.value);
+  const handleSetStudyParams = useCallback((studyName: string, avatarColor: SpecColorType) => {
+    setName(studyName);
+    setColor(avatarColor);
   }, []);
 
-  const handleClick = async () => {
-    if (isAllSet) {
-      try {
-        setLoading(true);
-        await dispatch(
-          createStudy({
-            name: studyName,
-            color: avatarColors[selectedAvatarId].color,
-          })
-        );
-
-        history.push(`${Path.StudySettings}?${NEW_STUDY_QUERY_PARAM_NAME}=true`);
-      } catch (e) {
-        applyDefaultApiErrorHandlers(e, dispatch);
-        setLoading(false);
-      }
+  useEffect(() => {
+    if (name && color && card === 'createStudy') {
+      setCard('selectRole');
     }
-  };
-
-  const handleFocus = useCallback(() => {
-    setIsStudyNameInputFocused(true);
-  }, []);
-
-  const handleBlur = useCallback(() => {
-    setIsStudyNameInputFocused(false);
-  }, []);
-
-  const handleSetSelected = useCallback((color: AvatarIdx) => {
-    setHoveredAvatarId(color);
-    setSelectedAvatarId(color);
-  }, []);
-
-  const studyAvatarsRef = useRef<HTMLDivElement>(null);
-  const studyNameRef = useRef<HTMLInputElement>(null);
-
-  const handleStudyAvatarsFocus = useCallback(() => setHoveredAvatarId(0), []);
-
-  const handleStudyAvatarsBlur = useCallback(() => setHoveredAvatarId(-1), []);
-
-  const handleAvatarMouseEnter = useCallback(
-    (avatarId: AvatarIdx) => setHoveredAvatarId(avatarId),
-    []
-  );
-
-  const handleAvatarMouseLeave = useCallback(
-    () => setHoveredAvatarId(selectedAvatarId),
-    [selectedAvatarId]
-  );
-
-  useKey(
-    'Tab',
-    (evt) => {
-      if (isLoading) {
-        return;
-      }
-      if (!document.activeElement || document.activeElement === document.body) {
-        evt.preventDefault();
-        if (evt.shiftKey) {
-          studyAvatarsRef.current?.focus();
-        } else {
-          studyNameRef.current?.focus();
-        }
-      }
-    },
-    { target: window },
-    [isLoading]
-  );
-
-  useKey(
-    'Enter',
-    (evt) => {
-      if (isLoading) {
-        return;
-      }
-      if (document.activeElement === studyAvatarsRef.current) {
-        evt.preventDefault();
-        setSelectedAvatarId(hoveredAvatarId);
-        studyAvatarsRef.current?.blur();
-        document.body.focus();
-      } else {
-        handleClick();
-      }
-    },
-    { target: window },
-    [hoveredAvatarId, isLoading, handleClick]
-  );
-
-  useKey(
-    'ArrowLeft',
-    (evt) => {
-      if (isLoading) {
-        return;
-      }
-      if (document.activeElement === studyAvatarsRef.current) {
-        evt.preventDefault();
-        const nextIdx = (hoveredAvatarId - 1 + avatarColors.length) % avatarColors.length;
-        setHoveredAvatarId(nextIdx);
-      }
-    },
-    { target: window },
-    [hoveredAvatarId, isLoading]
-  );
-
-  useKey(
-    'ArrowRight',
-    (evt) => {
-      if (isLoading) {
-        return;
-      }
-      if (document.activeElement === studyAvatarsRef.current) {
-        evt.preventDefault();
-        const nextIdx = (hoveredAvatarId + 1) % avatarColors.length;
-        setHoveredAvatarId(nextIdx);
-      }
-    },
-    { target: window },
-    [hoveredAvatarId, isLoading]
-  );
+  }, [name, color, card]);
 
   return (
     <StudyLayout>
       <MainWrapper data-testid="create-study">
-        <ScreenCenteredCard
-          width={55.556}
-          minWidth={666}
-          ratio={0.715}
-          onMainButtonClick={handleClick}
-        >
-          <Content>
-            <Header>Create a study</Header>
-            <InputField
-              data-testid="create-study-name"
-              ref={studyNameRef}
-              type="text"
-              label="Study Name"
-              value={studyName}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              tabIndex={0}
-              placeholder={isStudyNameInputFocused ? '' : PLACEHOLDER}
-              readOnly={isLoading}
-            />
-            <LogosWrapper>
-              <StyledTextHeading>
-                Study Logo
-                <StyledText>Select a logo to represent your study</StyledText>
-              </StyledTextHeading>
-              <StyledLogos
-                ref={studyAvatarsRef}
-                tabIndex={0}
-                onFocus={handleStudyAvatarsFocus}
-                onBlur={handleStudyAvatarsBlur}
-              >
-                {avatarColors.map((avatar, idx: AvatarIdx) => (
-                  <AvatarWrapper $selected={selectedAvatarId === idx} key={avatar.color}>
-                    <StudyAvatar
-                      data-testid="create-study-avatar"
-                      key={avatar.color}
-                      color={avatar.color}
-                      size="m"
-                      $selected={selectedAvatarId === -1 ? undefined : selectedAvatarId === idx}
-                      faded={selectedAvatarId === idx || hoveredAvatarId === idx}
-                      onMouseEnter={() => handleAvatarMouseEnter(idx)}
-                      onMouseLeave={handleAvatarMouseLeave}
-                      onClick={() => handleSetSelected(idx)}
-                    />
-                  </AvatarWrapper>
-                ))}
-              </StyledLogos>
-            </LogosWrapper>
-            <Button
-              data-testid="create-study-send"
-              disabled={!isAllSet}
-              onClick={handleClick}
-              $loading={isLoading}
-              fill="solid"
-            >
-              Create Study
-            </Button>
-          </Content>
-        </ScreenCenteredCard>
+        {card === 'createStudy' && <CreateStudyCard onClick={handleSetStudyParams} />}
+        {card === 'selectRole' && <SelectRoleCard color={color || 'primary'} name={name} />}
       </MainWrapper>
     </StudyLayout>
   );

@@ -135,21 +135,21 @@ exports[`LineChart should render 1`] = `
         viewBox="0, 0, 1000, 1000"
       >
         <g
-          class="c2 xAxis"
+          class="c2 xAxis undefined"
           fill="none"
           font-family="sans-serif"
           font-size="10"
           text-anchor="middle"
-          transform="translate(0, 978)"
+          transform="translate(0, 976)"
         >
           <g
             class="tick"
             opacity="1"
-            transform="translate(24.5,0)"
+            transform="translate(22.5,0)"
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -162,11 +162,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(217.3,0)"
+            transform="translate(215.70000000000002,0)"
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -179,11 +179,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(410.1,0)"
+            transform="translate(408.90000000000003,0)"
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -196,11 +196,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(602.9,0)"
+            transform="translate(602.0999999999999,0)"
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -213,11 +213,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(795.7,0)"
+            transform="translate(795.3000000000001,0)"
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -234,7 +234,7 @@ exports[`LineChart should render 1`] = `
           >
             <line
               stroke="currentColor"
-              y2="-973"
+              y2="-971"
             />
             <text
               dy="0em"
@@ -251,16 +251,16 @@ exports[`LineChart should render 1`] = `
           font-family="sans-serif"
           font-size="10"
           text-anchor="start"
-          transform="translate(24,0)"
+          transform="translate(22,0)"
         >
           <g
             class="tick"
             opacity="1"
-            transform="translate(0,978.5)"
+            transform="translate(0,976.5)"
           >
             <line
               stroke="currentColor"
-              x2="964"
+              x2="966"
             />
             <text
               dy="0.32em"
@@ -273,11 +273,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(0,735.25)"
+            transform="translate(0,733.75)"
           >
             <line
               stroke="currentColor"
-              x2="964"
+              x2="966"
             />
             <text
               dy="0.32em"
@@ -290,11 +290,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(0,492)"
+            transform="translate(0,491)"
           >
             <line
               stroke="currentColor"
-              x2="964"
+              x2="966"
             />
             <text
               dy="0.32em"
@@ -307,11 +307,11 @@ exports[`LineChart should render 1`] = `
           <g
             class="tick"
             opacity="1"
-            transform="translate(0,248.75)"
+            transform="translate(0,248.25)"
           >
             <line
               stroke="currentColor"
-              x2="964"
+              x2="966"
             />
             <text
               dy="0.32em"
@@ -328,7 +328,7 @@ exports[`LineChart should render 1`] = `
           >
             <line
               stroke="currentColor"
-              x2="964"
+              x2="966"
             />
             <text
               dy="0.32em"
@@ -341,7 +341,7 @@ exports[`LineChart should render 1`] = `
         </g>
         <path
           class="line"
-          d="M24,491.5L33.64,442.84999999999997"
+          d="M22,490.5L31.660000000000004,441.94999999999993"
           data-testid="line-test"
           fill="none"
           id="line-test"
@@ -351,7 +351,7 @@ exports[`LineChart should render 1`] = `
         />
         <path
           class="area"
-          d="M24,5L33.64,5L33.64,734.75L24,734.75Z"
+          d="M22,5L31.660000000000004,5L31.660000000000004,733.25L22,733.25Z"
           data-testid="area-test"
           fill="#4475E3"
           fill-opacity="0.1"
@@ -362,9 +362,9 @@ exports[`LineChart should render 1`] = `
         >
           <rect
             fill="transparent"
-            height="973"
-            transform="translate(24, 5)"
-            width="964"
+            height="971"
+            transform="translate(22, 5)"
+            width="966"
           />
         </g>
         <g
@@ -379,7 +379,7 @@ exports[`LineChart should render 1`] = `
             id="dot-test-0"
             pointer-events="all"
             r="4"
-            transform="translate(24,491.5)"
+            transform="translate(22,490.5)"
           />
         </g>
       </svg>

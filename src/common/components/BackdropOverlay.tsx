@@ -12,7 +12,7 @@ const BackdropContainer = styled.div<{ show?: boolean }>`
   z-index: ${({ show }) => (show ? 1000 : -1)};
 `;
 
-export const BackdropBase = styled.div`
+const BackdropBase = styled.div`
   position: fixed;
   left: 0;
   top: 0;
@@ -55,7 +55,7 @@ export interface BackdropOverlayProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>,
     Pick<FadeProps, NecessaryFadeProps> {
   open?: boolean;
-  loaderBackdrop?: boolean;
+  blur?: boolean;
 }
 
 const BACKDROP_ID = 'backdrop-portal';
@@ -64,7 +64,7 @@ const createId = (id?: string): string => (id ? `${BACKDROP_ID}-${id}` : BACKDRO
 
 const BackdropOverlay: FC<BackdropOverlayProps> = ({
   open,
-  loaderBackdrop,
+  blur,
   children,
   onEnter,
   onEntering,
@@ -89,7 +89,7 @@ const BackdropOverlay: FC<BackdropOverlayProps> = ({
   return (
     <Portal id={portalId} enabled>
       <BackdropContainer show={showContent} data-testid="backdrop-container">
-        <BackdropContent loaderBackdrop={loaderBackdrop} data-testid="backdrop-content">
+        <BackdropContent loaderBackdrop={blur} data-testid="backdrop-content">
           {children}
         </BackdropContent>
         <Fade
@@ -105,7 +105,7 @@ const BackdropOverlay: FC<BackdropOverlayProps> = ({
             setShowContent(false);
           }}
         >
-          <Backdrop {...props} loaderBackdrop={loaderBackdrop} data-testid="backdrop" />
+          <Backdrop {...props} loaderBackdrop={blur} data-testid="backdrop" />
         </Fade>
       </BackdropContainer>
     </Portal>

@@ -77,7 +77,6 @@ export const brushHandleCommonStyles = css`
 `;
 
 export const StyledSvg = styled.svg<{
-  focusWidth: number;
   $contextVisible: boolean;
 }>`
   .${X_AXIS_CLASS_NAME} {

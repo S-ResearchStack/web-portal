@@ -6,6 +6,8 @@ exports[`Indicator [NEGATIVE] should render with wrong props 1`] = `
   border-radius: 50%;
   height: 0.5rem;
   width: 0.5rem;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
 }
 
 <body>
@@ -26,6 +28,8 @@ exports[`Indicator [NEGATIVE] should render without props 1`] = `
   border-radius: 50%;
   height: 0.5rem;
   width: 0.5rem;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
 }
 
 <body>
@@ -45,6 +49,8 @@ exports[`Indicator test indicator render 1`] = `
   border-radius: 50%;
   height: 0.5rem;
   width: 0.5rem;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
 }
 
 <body>

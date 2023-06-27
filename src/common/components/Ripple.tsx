@@ -7,14 +7,14 @@ import { px } from 'src/styles';
 import { SpecColorType } from 'src/styles/theme';
 import combineRefs from 'src/common/utils/combineRefs';
 
-export const DEFAULT_RIPPLE_ANIMATION_DURATION = 600;
+const DEFAULT_RIPPLE_ANIMATION_DURATION = 600;
 
-export interface RipplePos {
+interface RipplePos {
   left: number;
   top: number;
 }
 
-export interface RippleProps extends React.HTMLAttributes<HTMLDivElement> {
+interface RippleProps extends React.HTMLAttributes<HTMLDivElement> {
   ref: React.RefObject<HTMLDivElement>;
   key: React.Key;
   isRippling: boolean;
@@ -45,10 +45,7 @@ export interface RippleTriggerProps<T> extends React.PropsWithChildren<object> {
 type HandleRippleInOpts = { force?: boolean };
 type HandleRippleOutOpts = { force?: boolean };
 
-export interface UseRippleReturn<
-  T,
-  P extends Partial<RippleTriggerProps<T>> | undefined = undefined
-> {
+interface UseRippleReturn<T, P extends Partial<RippleTriggerProps<T>> | undefined = undefined> {
   rippleTriggerProps: RippleTriggerProps<T>;
   addRippleTriggerProps: (props?: P) => P;
   rippleProps: RippleProps;

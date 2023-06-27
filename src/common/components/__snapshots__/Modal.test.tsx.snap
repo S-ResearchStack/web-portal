@@ -22,7 +22,7 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   z-index: 1000;
 }
 
-.c17 {
+.c16 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -30,7 +30,7 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   z-index: 1001;
 }
 
-.c14 {
+.c13 {
   position: absolute;
   will-change: opacity,transform;
   border-radius: 50%;
@@ -41,7 +41,7 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   pointer-events: none;
 }
 
-.c16 {
+.c15 {
   position: absolute;
   will-change: opacity,transform;
   border-radius: 50%;
@@ -51,8 +51,9 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   pointer-events: none;
 }
 
-.c12 {
+.c11 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -80,11 +81,11 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   background-color: transparent;
 }
 
-.c12:hover {
+.c11:hover {
   cursor: pointer;
 }
 
-.c12 > div {
+.c11 > div {
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -92,56 +93,57 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   font-style: normal;
 }
 
-.c12 > div svg {
+.c11 > div svg {
   margin-right: 0.25rem;
 }
 
-.c12 > div {
+.c11 > div {
   color: #4475E3;
 }
 
-.c12 > div svg {
+.c11 > div svg {
   fill: #4475E3;
 }
 
-.c12:hover:enabled > div {
+.c11:hover:enabled > div {
   color: #2F65E0;
 }
 
-.c12:hover:enabled > div svg {
+.c11:hover:enabled > div svg {
   fill: #2F65E0;
 }
 
-.c12:hover:enabled:active > div {
+.c11:hover:enabled:active > div {
   color: #2057D5;
 }
 
-.c12:hover:enabled:active > div svg {
+.c11:hover:enabled:active > div svg {
   fill: #2057D5;
 }
 
-.c12:disabled > div {
+.c11:disabled > div {
   color: #B3C6F1;
 }
 
-.c12:disabled > div svg {
+.c11:disabled > div svg {
   fill: #B3C6F1;
 }
 
-.c12:focus-visible {
+.c11:focus-visible {
   outline: 0.125rem solid #C7D6F7;
 }
 
-.c12:focus-visible > div {
+.c11:focus-visible > div {
   color: #4475E3;
 }
 
-.c12:focus-visible > div svg {
+.c11:focus-visible > div svg {
   fill: #4475E3;
 }
 
-.c15 {
+.c14 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -168,11 +170,11 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   background-color: #4475E3;
 }
 
-.c15:hover {
+.c14:hover {
   cursor: pointer;
 }
 
-.c15 > div {
+.c14 > div {
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -180,33 +182,33 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   font-style: normal;
 }
 
-.c15 > div svg {
+.c14 > div svg {
   margin-right: 0.25rem;
 }
 
-.c15 > div {
+.c14 > div {
   color: #FFFFFF;
 }
 
-.c15 > div svg {
+.c14 > div svg {
   fill: #FFFFFF;
 }
 
-.c15:hover:enabled {
+.c14:hover:enabled {
   background-color: #2F65E0;
 }
 
-.c15:disabled {
+.c14:disabled {
   background-color: #B3C6F1;
 }
 
-.c15:focus-visible:enabled {
+.c14:focus-visible:enabled {
   border: 0.125rem solid #FFFFFF;
   background-color: #4475E3;
   outline: 0.125rem solid #C7D6F7;
 }
 
-.c13 {
+.c12 {
   position: relative;
   z-index: 2;
   display: -webkit-box;
@@ -257,6 +259,13 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   -ms-flex: 1;
   flex: 1;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c3 {
@@ -274,11 +283,6 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   justify-content: center;
   width: 100%;
   height: 100%;
-}
-
-.c6 {
-  padding: 2rem;
-  width: 35.5rem;
 }
 
 .c8 {
@@ -302,15 +306,6 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
 }
 
 .c10 {
-  font-family: Inter,sans-serif;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: 400;
-  font-style: normal;
-  margin-bottom: 2.5rem;
-}
-
-.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -318,6 +313,12 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   -webkit-align-self: flex-end;
   -ms-flex-item-align: end;
   align-self: flex-end;
+  margin-top: 2.5rem;
+}
+
+.c6 {
+  padding: 2rem;
+  width: 35.5rem;
 }
 
 <body>
@@ -362,13 +363,9 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
                   />
                   <div
                     class="c10"
-                    data-testid="modal-description"
-                  />
-                  <div
-                    class="c11"
                   >
                     <button
-                      class="c12"
+                      class="c11"
                       color="primary"
                       data-testid="decline-button"
                       fill="text"
@@ -377,11 +374,11 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
                       width="164"
                     >
                       <div
-                        class="c13"
+                        class="c12"
                         data-testid="content"
                       />
                       <div
-                        class="c14"
+                        class="c13"
                         color="primaryLightPressed"
                         opacity="1,1"
                         scale="0"
@@ -389,7 +386,7 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
                       />
                     </button>
                     <button
-                      class="c15"
+                      class="c14"
                       data-testid="accept-button"
                       fill="solid"
                       style="overflow: hidden; position: relative;"
@@ -397,11 +394,11 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
                       width="164"
                     >
                       <div
-                        class="c13"
+                        class="c12"
                         data-testid="content"
                       />
                       <div
-                        class="c16"
+                        class="c15"
                         color="primaryPressed"
                         opacity="1,1"
                         scale="0"
@@ -420,7 +417,7 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
         style="opacity: 1; display: block;"
       >
         <div
-          class="c1 c17"
+          class="c1 c16"
           data-testid="backdrop"
         />
       </div>
@@ -482,6 +479,7 @@ exports[`Modal test modal render 1`] = `
 
 .c12 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -571,6 +569,7 @@ exports[`Modal test modal render 1`] = `
 
 .c15 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -686,6 +685,13 @@ exports[`Modal test modal render 1`] = `
   -ms-flex: 1;
   flex: 1;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c3 {
@@ -703,11 +709,6 @@ exports[`Modal test modal render 1`] = `
   justify-content: center;
   width: 100%;
   height: 100%;
-}
-
-.c6 {
-  padding: 2rem;
-  width: 35.5rem;
 }
 
 .c8 {
@@ -736,7 +737,6 @@ exports[`Modal test modal render 1`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
-  margin-bottom: 2.5rem;
 }
 
 .c11 {
@@ -747,6 +747,12 @@ exports[`Modal test modal render 1`] = `
   -webkit-align-self: flex-end;
   -ms-flex-item-align: end;
   align-self: flex-end;
+  margin-top: 2.5rem;
+}
+
+.c6 {
+  padding: 2rem;
+  width: 35.5rem;
 }
 
 <body>
@@ -919,6 +925,7 @@ exports[`Modal test modal render 2`] = `
 
 .c12 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1008,6 +1015,7 @@ exports[`Modal test modal render 2`] = `
 
 .c15 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -1123,6 +1131,13 @@ exports[`Modal test modal render 2`] = `
   -ms-flex: 1;
   flex: 1;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .c3 {
@@ -1140,11 +1155,6 @@ exports[`Modal test modal render 2`] = `
   justify-content: center;
   width: 100%;
   height: 100%;
-}
-
-.c6 {
-  padding: 2rem;
-  width: 35.5rem;
 }
 
 .c8 {
@@ -1173,7 +1183,6 @@ exports[`Modal test modal render 2`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
-  margin-bottom: 2.5rem;
 }
 
 .c11 {
@@ -1184,6 +1193,12 @@ exports[`Modal test modal render 2`] = `
   -webkit-align-self: flex-end;
   -ms-flex-item-align: end;
   align-self: flex-end;
+  margin-top: 2.5rem;
+}
+
+.c6 {
+  padding: 2rem;
+  width: 35.5rem;
 }
 
 <body>

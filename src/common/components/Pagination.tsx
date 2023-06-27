@@ -44,11 +44,11 @@ const Controls = styled.div`
 const ArrowButton = styled(Button).attrs({
   fill: 'text',
   rate: 'icon',
-  rippleOff: true,
 })`
   margin-left: ${px(16)};
   &:disabled {
     > div {
+      background-color: transparent;
       svg {
         fill: ${colors.disabled};
       }

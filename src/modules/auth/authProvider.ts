@@ -1,16 +1,17 @@
-import { AppDispatch } from 'src/modules/store';
-import { store } from 'src/modules/store/store';
+import { AppDispatch, store } from 'src/modules/store/store';
 import API from 'src/modules/api';
 
 import { signout } from './auth.slice.signout';
+import { updateTokens } from './auth.slice';
 
 API.setAuthProvider({
   getBearerToken() {
     return store.getState().auth.authToken;
   },
+  refreshBearerToken: async () => {
+    await (store.dispatch as AppDispatch)(updateTokens());
+  },
   onUnauthorizedError() {
-    // eslint-disable-next-line prefer-destructuring
-    const dispatch: AppDispatch = store.dispatch;
-    dispatch(signout());
+    signout();
   },
 });

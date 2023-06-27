@@ -1,6 +1,6 @@
-import { StudyMember } from './studySettings.slice';
+import type { StudyMember } from './studySettings.slice';
 
-export type IndicatorColor = 'success' | 'warning' | 'error' | 'info';
+type IndicatorColor = 'success' | 'warning' | 'error' | 'info';
 
 export const getStatusTextByStatusId = (id: StudyMember['status']): string => {
   switch (id) {
@@ -22,14 +22,6 @@ export const getStatusTypeByStatusId = (id: StudyMember['status']): IndicatorCol
   }
 };
 
-export const getRoleTextByRoleId = (id: StudyMember['role']): string => {
-  switch (id) {
-    case 'team-admin':
-      return 'Team Admin';
-    case 'project-owner':
-      return 'Project Owner';
-    case 'researcher':
-    default:
-      return 'Researcher';
-  }
-};
+export const NEW_STUDY_QUERY_PARAM_NAME = 'newStudy';
+
+export const MOCK_ACCOUNT_ID = 'admin-id';

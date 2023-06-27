@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
+import React from 'react';
+import { SIDEBAR_WIDTH } from 'src/modules/main-layout/sidebar/helper';
 import styled from 'styled-components';
 import { colors, px, typography } from 'src/styles';
 
-import { useAppDispatch, useAppSelector } from 'src/modules/store';
+import { useAppSelector } from 'src/modules/store';
 import { userNameSelector } from 'src/modules/auth/auth.slice';
-import { getRoleLabel, UserRole } from 'src/modules/auth/userRole';
+import { isTeamAdmin } from 'src/modules/auth/userRole';
 
 import ProfileIcon from 'src/assets/icons/user_avatar.svg';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import { UserMenu, UserMenuProps } from 'src/modules/main-layout/sidebar/Sidebar';
-import { SIDEBAR_WIDTH } from 'src/modules/main-layout/sidebar/helper';
 import { signout } from 'src/modules/auth/auth.slice.signout';
 
 const Layout = styled.div`
@@ -52,6 +52,7 @@ const UserBlock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  color: ${colors.onSurface};
 
   &:hover ${UserProfileMenuContainer} {
     display: block;
@@ -71,7 +72,6 @@ const UserName = styled.span`
 
 const Role = styled.span`
   ${typography.bodyMediumRegular};
-  color: ${colors.onSurface};
 `;
 
 const Delimiter = styled.span`
@@ -94,7 +94,7 @@ const UserProfileMenu = ({ onSignOut }: UserProfileMenuProps) => (
 
 interface UserProfileProps extends UserProfileMenuProps {
   userName?: string;
-  userRole?: UserRole;
+  userRole: string;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ userName, userRole, onSignOut }) => (
@@ -105,27 +105,26 @@ const UserProfile: React.FC<UserProfileProps> = ({ userName, userRole, onSignOut
       <UserInfo>
         <UserName>{userName}</UserName>
         <Delimiter />
-        <Role>{userRole && getRoleLabel(userRole)}</Role>
+        <Role>{userRole}</Role>
       </UserInfo>
     </UserContainer>
   </UserBlock>
 );
 
-export type StudyLayoutProps = React.PropsWithChildren<{ hideUser?: boolean }>;
+export type StudyLayoutProps = React.PropsWithChildren;
 
-const StudyLayout: React.FC<StudyLayoutProps> = ({ hideUser, children }) => {
+const StudyLayout: React.FC<StudyLayoutProps> = ({ children }) => {
   const userName = useAppSelector(userNameSelector);
-  const userRole = useAppSelector(userRoleSelector);
-  const dispatch = useAppDispatch();
+  const userRoles = useAppSelector(userRoleSelector)?.roles;
 
-  const handleSignOut = useCallback(() => dispatch(signout()), [dispatch]);
+  const teamLevelRole =
+    ((!userRoles || !userRoles.length) && '') ||
+    (isTeamAdmin(userRoles) ? 'Team Admin' : 'Team Member');
 
   return (
     <Layout>
       <Content>{children}</Content>
-      {!hideUser && (
-        <UserProfile userName={userName} userRole={userRole} onSignOut={handleSignOut} />
-      )}
+      <UserProfile userName={userName} userRole={teamLevelRole} onSignOut={signout} />
     </Layout>
   );
 };

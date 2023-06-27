@@ -150,17 +150,17 @@ export const updateContext = (
 };
 
 export const formatTimeAxisTick = (d: d3.NumberValue) => {
-  const utcD = DateTime.fromMillis(d.valueOf()).toUTC();
-  const minutes = utcD.toFormat('m');
+  const dt = DateTime.fromMillis(d.valueOf());
+  const minutes = dt.toFormat('m');
   const format = +minutes > 0 ? 'h:m a' : 'h a';
 
-  return utcD.toFormat(format).toLowerCase();
+  return dt.toFormat(format).toLowerCase();
 };
 
 export const formatTimeAxisWithNames = (d: d3.NumberValue) => {
-  const utcD = DateTime.fromMillis(d.valueOf()).toUTC();
+  const dt = DateTime.fromMillis(d.valueOf());
   const format = 'h a';
-  const time = utcD.toFormat(format);
+  const time = dt.toFormat(format);
 
   if (time.includes('3') || time.includes('9')) {
     return ' ';
@@ -179,8 +179,9 @@ export const formatTimeAxisWithNames = (d: d3.NumberValue) => {
 
 export type TooltipProps = {
   content: React.ReactNode;
-  point: [number, number];
+  point?: [number, number];
   position: TooltipPosition;
+  container?: HTMLElement;
 } | null;
 
 export const getEmptyStateData = (color: string) => ({
@@ -190,3 +191,12 @@ export const getEmptyStateData = (color: string) => ({
   count: 1,
   name: NO_RESPONSES_LABEL,
 });
+
+export const textEllipsis = (el: SVGTextContentElement, width: number) => {
+  let text = el.textContent || '';
+
+  while (text && el.getComputedTextLength() > width) {
+    text = text.slice(0, -1);
+    el.textContent = `${text}...`;
+  }
+};

@@ -38,6 +38,7 @@ export interface TooltipProps {
   arrow?: boolean;
   delay?: number;
   horizontalPaddings?: TooltipHorizontalPaddings;
+  centered?: boolean;
   onShow?: () => void;
   onHide?: () => void;
 }

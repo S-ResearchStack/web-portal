@@ -1,8 +1,10 @@
 import React, { forwardRef, useRef } from 'react';
 import BackdropOverlay from 'src/common/components/BackdropOverlay';
+
 import styled from 'styled-components';
 
 import { colors, px } from 'src/styles';
+import { withCustomScrollBar } from 'src/common/components/CustomScrollbar';
 import Slide, { SlideDirection, SlideProps } from 'src/common/components/animations/Slide';
 import combineRefs from 'src/common/utils/combineRefs';
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
@@ -20,14 +22,19 @@ interface DrawerProps
     Pick<SlideProps, NecessaryDrawerProps> {
   open: boolean;
   direction?: SlideDirection;
+  width?: number;
 }
 
-const DrawerBox = styled.div`
+const DrawerBox = withCustomScrollBar(styled.div<{ $width: number }>`
+  width: ${({ $width }) => px($width)};
+`)`
   height: 100%;
   z-index: 1001;
-  width: ${px(840)};
   background-color: ${colors.surface};
   overflow: auto;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 `;
 
 const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
@@ -43,6 +50,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
       onExit,
       onExiting,
       onExited,
+      width = 840,
     },
     ref
   ) => {
@@ -68,6 +76,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
             aria-modal={open}
             aria-hidden={!open}
             data-testid="drawer-box"
+            $width={width}
           >
             {children}
           </DrawerBox>

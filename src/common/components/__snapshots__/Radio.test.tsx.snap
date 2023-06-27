@@ -58,6 +58,7 @@ exports[`Radio [NEGATIVE] should prevent click while element is disabled 1`] = `
       <label
         class="c1"
         for="1"
+        kind="radio"
       >
         <div
           class="c2 c3"
@@ -136,6 +137,7 @@ exports[`Radio [NEGATIVE] should render with wrong props 1`] = `
       <label
         class="c1 c2"
         for="1"
+        kind="radio"
       >
         <div
           class="c3 c4"
@@ -298,6 +300,7 @@ exports[`Radio test radio click 1`] = `
       <label
         class="c1 c2"
         for="1"
+        kind="radio"
       >
         <div
           class="c3 c4"
@@ -373,6 +376,7 @@ exports[`Radio test radio disabled state 1`] = `
       <label
         class="c1"
         for="1"
+        kind="radio"
       >
         <div
           class="c2 c3"

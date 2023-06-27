@@ -18,29 +18,35 @@ type XScale =
   | d3.ScaleBand<string | number>;
 
 type Props = {
+  className?: string;
   xScale: XScale;
   tickSize: number;
-  yOffset: number;
-  ticks: number;
+  yOffset?: number;
+  xOffset?: number;
+  ticks?: number;
   yTickOffset?: number;
   xTickOffset?: number;
   removeDomain?: boolean;
   orientation?: 'top' | 'bottom';
   isScaleBand?: boolean;
+  tickValues?: Iterable<d3.NumberValue>;
   tickFormatFn?: (d: d3.NumberValue) => string;
   customCall?: (el: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) => void;
 };
 
 const XAxis: React.FC<Props> = ({
+  className,
   xScale,
   tickSize,
   yTickOffset,
   xTickOffset,
   yOffset,
+  xOffset,
   ticks,
   removeDomain,
   orientation = 'top',
   isScaleBand,
+  tickValues,
   tickFormatFn,
   customCall,
 }) => {
@@ -56,20 +62,20 @@ const XAxis: React.FC<Props> = ({
       return axisType(xScale as d3.ScaleBand<string>);
     }
 
-    return (
-      axisType(
-        xScale as d3.ScaleLinear<number, number, never> | d3.ScaleTime<number, number, never>
-      )
-        .tickSize(tickSize)
-        // TODO: what timezone we should use? should be in sync with tz used in slice
-        .tickFormat((d) => tickFormatFn?.(d) || `${d}`)
-        .ticks(ticks)
-    );
-  }, [axisType, isScaleBand, tickFormatFn, tickSize, ticks, xScale]);
+    const axis = axisType(
+      xScale as d3.ScaleLinear<number, number, never> | d3.ScaleTime<number, number, never>
+    )
+      .tickSize(tickSize)
+      // TODO: what timezone we should use? should be in sync with tz used in slice
+      .tickFormat((d) => tickFormatFn?.(d) || `${d}`)
+      .ticks(ticks);
+
+    return tickValues ? axis.tickValues(tickValues) : axis;
+  }, [axisType, isScaleBand, tickFormatFn, tickSize, tickValues, ticks, xScale]);
 
   const gX = (g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) =>
     g
-      .attr('transform', `translate(0, ${yOffset})`)
+      .attr('transform', `translate(${xOffset || 0}, ${yOffset || 0})`)
       .call(xAxis)
       .call((el) => {
         removeDomain && el.select('.domain').remove();
@@ -84,7 +90,7 @@ const XAxis: React.FC<Props> = ({
     }
   });
 
-  return <AxisGroup className={X_AXIS_CLASS_NAME} ref={xAxisRef} />;
+  return <AxisGroup className={`${X_AXIS_CLASS_NAME} ${className}`} ref={xAxisRef} />;
 };
 
 export default XAxis;

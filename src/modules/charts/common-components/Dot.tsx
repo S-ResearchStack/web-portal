@@ -38,14 +38,14 @@ const Dot: React.FC<Props> = ({
   onMouseEnter,
   onMouseLeave,
 }) => {
-  if (!data || !xScale(data.x) || !yScale(data.y)) {
-    return null;
-  }
-
   const clickOrMouseEnterEnabled = useMemo(
     () => (!!onClick || !!onMouseEnter) && !hoverDisabled && fillOpacity === 1,
     [fillOpacity, hoverDisabled, onClick, onMouseEnter]
   );
+
+  if (!data || !xScale(data.x) || !yScale(data.y)) {
+    return null;
+  }
 
   return (
     <circle

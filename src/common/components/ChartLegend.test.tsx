@@ -10,11 +10,13 @@ import ChartLegend, { ChartLegendItem, ChartLegendProps } from './ChartLegend';
 describe('ChartLegend', () => {
   const items: Array<ChartLegendItem> = [
     {
+      id: 'male',
       name: 'male',
       color: 'primary',
       checked: false,
     },
     {
+      id: 'female',
       name: 'female',
       color: 'secondaryGreen',
       checked: false,

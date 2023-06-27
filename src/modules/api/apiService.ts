@@ -3,6 +3,7 @@ import executeRequest, { RequestOptions, Response } from './executeRequest';
 type AuthProvider = {
   getBearerToken(): string | undefined;
   onUnauthorizedError(): void;
+  refreshBearerToken(): Promise<void>;
 };
 
 let authProvider: AuthProvider | undefined;
@@ -13,8 +14,13 @@ export const setAuthProvider = (ap: AuthProvider) => {
   authProvider = ap;
 };
 
+let waitTokenUpdateIfNeeded: Promise<void> | undefined;
+
+const HTTP_STATUS_UNAUTHORIZED = 401;
+
 export const request = async <TReq, TRes>(
   opts: Omit<RequestOptions<TReq>, 'url'> & {
+    skipTokenUpdate?: boolean;
     noAuth?: boolean;
     path: string;
   }
@@ -37,20 +43,41 @@ export const request = async <TReq, TRes>(
     };
   }
 
+  if (!opts.noAuth && waitTokenUpdateIfNeeded) {
+    await waitTokenUpdateIfNeeded;
+  }
+
   const { headers = {} } = opts;
   const bearerToken = authProvider?.getBearerToken();
   if (!opts.noAuth && bearerToken) {
     headers.Authorization = `Bearer ${bearerToken}`;
   }
 
-  const res = await executeRequest<TReq, TRes>({
+  let res = await executeRequest<TReq, TRes>({
     ...opts,
     url: `${baseUrl}${opts.path}`,
     headers,
   });
 
-  if (!opts.noAuth && res.status === 401) {
-    authProvider?.onUnauthorizedError();
+  if (!opts.noAuth && res.status === HTTP_STATUS_UNAUTHORIZED && authProvider) {
+    if (waitTokenUpdateIfNeeded) {
+      await waitTokenUpdateIfNeeded;
+    } else if (!opts.skipTokenUpdate) {
+      try {
+        waitTokenUpdateIfNeeded = authProvider.refreshBearerToken();
+        await waitTokenUpdateIfNeeded;
+      } catch {
+        authProvider.onUnauthorizedError();
+      } finally {
+        waitTokenUpdateIfNeeded = undefined;
+      }
+
+      res = await request<TReq, TRes>({ ...opts, skipTokenUpdate: true });
+    }
+
+    if (opts.skipTokenUpdate && res.status === HTTP_STATUS_UNAUTHORIZED) {
+      authProvider.onUnauthorizedError();
+    }
   }
 
   return res;

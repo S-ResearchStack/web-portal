@@ -391,16 +391,14 @@ const ScatterChart = ({ dots, lines, width, height, showTrendLine, hiddenDataLin
         updateYDomain={updateYDomain}
         setChartTooltipDisabled={setTooltipDisabled}
       />
-      {tooltipProps && !tooltipDisabled && (
-        <Tooltip
-          static
-          show
-          arrow
-          content={tooltipProps?.content}
-          point={tooltipProps?.point}
-          position={tooltipProps?.position}
-        />
-      )}
+      <Tooltip
+        static
+        show={!!tooltipProps && !tooltipDisabled}
+        arrow
+        content={tooltipProps?.content}
+        point={tooltipProps?.point}
+        position={tooltipProps?.position}
+      />
     </Container>
   );
 };

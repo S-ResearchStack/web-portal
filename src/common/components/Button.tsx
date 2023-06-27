@@ -6,7 +6,7 @@ import Ripple, { useRipple } from 'src/common/components/Ripple';
 import { px, typography } from 'src/styles';
 import Spinner from './Spinner';
 
-export const RIPPLE_ANIMATION_DURATION = 600;
+const RIPPLE_ANIMATION_DURATION = 600;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fill: 'solid' | 'text' | 'bordered';
@@ -14,7 +14,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   $loading?: boolean;
   width?: number;
   icon?: JSX.Element;
-  rate?: 'default' | 'small' | 'icon';
+  rate?: 'default' | 'x-small' | 'small' | 'icon';
   dashed?: boolean;
   rippleOff?: boolean;
 }
@@ -25,6 +25,7 @@ type ContentProps = {
 
 const StyledRippleButton = styled.button<ButtonProps>`
   position: relative;
+  z-index: 0;
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -51,6 +52,12 @@ const StyledRippleButton = styled.button<ButtonProps>`
           svg {
             margin-right: ${px(4)};
           }
+        }
+      `) ||
+    (rate === 'x-small' &&
+      css`
+        > div {
+          ${typography.bodyXSmallSemibold};
         }
       `) ||
     (rate === 'small' &&
@@ -87,7 +94,6 @@ const StyledRippleButton = styled.button<ButtonProps>`
           background-color: ${$loading ? theme.colors.primary : theme.colors.primaryDisabled};
         }
         :focus-visible:enabled {
-          // TODO check if enabled needed
           border: ${px(2)} solid ${theme.colors.primaryWhite};
           background-color: ${theme.colors.primary};
           outline: ${px(2)} solid ${theme.colors.primaryLightFocused};

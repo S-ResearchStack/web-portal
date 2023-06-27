@@ -6,6 +6,7 @@ import { px, animation } from 'src/styles';
 const TabsContainer = styled.div`
   display: flex;
   height: ${px(38)};
+  column-gap: ${px(32)};
 `;
 
 const Tab = styled.div<{ $active: boolean }>`
@@ -13,7 +14,7 @@ const Tab = styled.div<{ $active: boolean }>`
   ${({ theme, $active }) =>
     $active ? theme.typography.bodyXSmallSemibold : theme.typography.bodyXSmallRegular};
   color: ${({ theme }) => theme.colors.primary};
-  margin: ${px(8)} ${px(10)} 0 ${px(8)};
+  margin-top: ${px(10)};
   cursor: pointer;
 
   :after {

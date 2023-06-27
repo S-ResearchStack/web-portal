@@ -19,11 +19,8 @@ describe('convertHexToRGBA util', () => {
     expect(convertHexToRGBA('')).toBe('');
   });
 
-  it('[NEGATIVE] should throw with undefined color', () => {
+  it('[NEGATIVE] should throw with null / undefined color', () => {
     expect(() => convertHexToRGBA(undefined as unknown as string)).toThrow();
-  });
-
-  it('[NEGATIVE] should throw with null color', () => {
     expect(() => convertHexToRGBA(null as unknown as string)).toThrow();
   });
 

@@ -1,15 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CollapseSection [NEGATIVE] should render with wrong props 1`] = `
-.c1 {
-  margin-top: 3.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.c1[data-collapsed] + .c0 {
-  margin-top: 0;
-}
-
 .c3 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -24,6 +15,15 @@ exports[`CollapseSection [NEGATIVE] should render with wrong props 1`] = `
 
 .c3:hover {
   cursor: pointer;
+}
+
+.c1 {
+  margin-top: 3.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.c1[data-collapsed] + .c0 {
+  margin-top: 0;
 }
 
 .c2 {
@@ -80,15 +80,6 @@ exports[`CollapseSection [NEGATIVE] should render with wrong props 1`] = `
 `;
 
 exports[`CollapseSection [NEGATIVE] should render without props 1`] = `
-.c1 {
-  margin-top: 3.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.c1[data-collapsed] + .c0 {
-  margin-top: 0;
-}
-
 .c3 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -103,6 +94,15 @@ exports[`CollapseSection [NEGATIVE] should render without props 1`] = `
 
 .c3:hover {
   cursor: pointer;
+}
+
+.c1 {
+  margin-top: 3.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.c1[data-collapsed] + .c0 {
+  margin-top: 0;
 }
 
 .c2 {
@@ -159,15 +159,6 @@ exports[`CollapseSection [NEGATIVE] should render without props 1`] = `
 `;
 
 exports[`CollapseSection test collapse section render 1`] = `
-.c1 {
-  margin-top: 3.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.c1[data-collapsed] + .c0 {
-  margin-top: 0;
-}
-
 .c3 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -182,6 +173,15 @@ exports[`CollapseSection test collapse section render 1`] = `
 
 .c3:hover {
   cursor: pointer;
+}
+
+.c1 {
+  margin-top: 3.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.c1[data-collapsed] + .c0 {
+  margin-top: 0;
 }
 
 .c2 {

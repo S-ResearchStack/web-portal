@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -22,7 +22,7 @@ exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -40,11 +40,48 @@ exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -70,18 +107,18 @@ exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
           <div
             aria-hidden="false"
             aria-modal="1"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
           />
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 1; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>
@@ -91,7 +128,7 @@ exports[`Drawer [NEGATIVE] test drawer with wrong props 1`] = `
 `;
 
 exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -112,7 +149,7 @@ exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -130,11 +167,48 @@ exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -159,18 +233,18 @@ exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
         >
           <div
             aria-hidden="true"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
           />
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 0; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>
@@ -180,7 +254,7 @@ exports[`Drawer [NEGATIVE] test drawer without props 1`] = `
 `;
 
 exports[`Drawer test drawer section direction 1`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -201,7 +275,7 @@ exports[`Drawer test drawer section direction 1`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -219,11 +293,48 @@ exports[`Drawer test drawer section direction 1`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -249,7 +360,7 @@ exports[`Drawer test drawer section direction 1`] = `
           <div
             aria-hidden="false"
             aria-modal="true"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
           >
@@ -260,11 +371,11 @@ exports[`Drawer test drawer section direction 1`] = `
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 1; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>
@@ -274,7 +385,7 @@ exports[`Drawer test drawer section direction 1`] = `
 `;
 
 exports[`Drawer test drawer section direction 2`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -295,7 +406,7 @@ exports[`Drawer test drawer section direction 2`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -313,11 +424,48 @@ exports[`Drawer test drawer section direction 2`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -343,7 +491,7 @@ exports[`Drawer test drawer section direction 2`] = `
           <div
             aria-hidden="false"
             aria-modal="true"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
             style="webkit-overflow-scrolling: touch;"
@@ -355,11 +503,11 @@ exports[`Drawer test drawer section direction 2`] = `
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 1; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>
@@ -369,7 +517,7 @@ exports[`Drawer test drawer section direction 2`] = `
 `;
 
 exports[`Drawer test drawer section render 1`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -390,7 +538,7 @@ exports[`Drawer test drawer section render 1`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -408,11 +556,48 @@ exports[`Drawer test drawer section render 1`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -438,7 +623,7 @@ exports[`Drawer test drawer section render 1`] = `
           <div
             aria-hidden="true"
             aria-modal="false"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
           >
@@ -449,11 +634,11 @@ exports[`Drawer test drawer section render 1`] = `
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 0; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>
@@ -463,7 +648,7 @@ exports[`Drawer test drawer section render 1`] = `
 `;
 
 exports[`Drawer test drawer section render 2`] = `
-.c5 {
+.c7 {
   display: none;
   opacity: 0;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -484,7 +669,7 @@ exports[`Drawer test drawer section render 2`] = `
   z-index: 1000;
 }
 
-.c6 {
+.c8 {
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -502,11 +687,48 @@ exports[`Drawer test drawer section render 2`] = `
 }
 
 .c4 {
+  width: 52.5rem;
+}
+
+.c5 {
+  -webkit-scrollbar-width: thin;
+  -moz-scrollbar-width: thin;
+  -ms-scrollbar-width: thin;
+  scrollbar-width: thin;
+  -webkit-scrollbar-color: #4475E3 #F7F8FA;
+  -moz-scrollbar-color: #4475E3 #F7F8FA;
+  -ms-scrollbar-color: #4475E3 #F7F8FA;
+  scrollbar-color: #4475E3 #F7F8FA;
+}
+
+.c5::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.c5::-webkit-scrollbar-track {
+  background: #F7F8FA;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0;
+}
+
+.c5::-webkit-scrollbar-thumb {
+  background-color: #4475E3;
+  border-radius: 0.625rem;
+  border: 0rem solid #F7F8FA;
+  width: 0.25rem;
+  min-height: 0.25rem;
+}
+
+.c6 {
   height: 100%;
   z-index: 1001;
-  width: 52.5rem;
   background-color: #FFFFFF;
   overflow: auto;
+}
+
+.c6::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 <body>
@@ -532,7 +754,7 @@ exports[`Drawer test drawer section render 2`] = `
           <div
             aria-hidden="false"
             aria-modal="true"
-            class="c4"
+            class="c4 c5 c6"
             data-testid="drawer-box"
             role="alertdialog"
             style="webkit-overflow-scrolling: touch;"
@@ -544,11 +766,11 @@ exports[`Drawer test drawer section render 2`] = `
         </div>
       </div>
       <div
-        class="c5"
+        class="c7"
         style="opacity: 1; display: block;"
       >
         <div
-          class="c1 c6"
+          class="c1 c8"
           data-testid="backdrop"
         />
       </div>

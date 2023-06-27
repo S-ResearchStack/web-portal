@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import API from 'src/modules/api';
 import Random from 'src/common/Random';
 import createDataSlice from 'src/modules/store/createDataSlice';
+import { convertSqlUtcDateStringToTimestamp } from 'src/common/utils/datetime';
 import { getGenderColor } from './gender';
 
 export const getAverageParticipantHeartRateMock: typeof API.getAverageParticipantHeartRate = ({
@@ -72,7 +73,7 @@ function calculateTrendLine<T extends { x: number; y: number }>(values: T[]) {
 const avgRestingHrWithAgeSlice = createDataSlice({
   name: 'overview/avgRestingHrWithAge',
   fetchData: async ({ studyId }: { studyId: string }) => {
-    const startTime = DateTime.utc().minus({ days: 1 }).startOf('day');
+    const startTime = DateTime.now().minus({ days: 1 }).startOf('day');
     const endTime = startTime.plus({ days: 1 });
 
     const {
@@ -83,8 +84,8 @@ const avgRestingHrWithAgeSlice = createDataSlice({
       endTime: endTime.toISO(),
     });
 
-    const values = data
-      .filter((d) => Number.isFinite(d.averageHR))
+    const values = (data || [])
+      .filter((d) => Number.isFinite(d.averageHR) && d.lastSyncTime)
       .map((d) => {
         const gender = d.profiles?.find((p) => p.key === 'gender')?.value || '';
         return {
@@ -92,7 +93,7 @@ const avgRestingHrWithAgeSlice = createDataSlice({
           age: Number(d.profiles?.find((p) => p.key === 'age')?.value || '0'),
           value: d.averageHR || 0,
           color: getGenderColor(gender),
-          lastSync: DateTime.fromSQL(d.lastSyncTime || '').valueOf(),
+          lastSync: convertSqlUtcDateStringToTimestamp(d.lastSyncTime) as number,
         };
       });
 

@@ -15,7 +15,14 @@ describe('studySettings slice', () => {
     const store = createTestStore({
       studies: {
         isLoading: false,
-        studies: [{ id: 'test', name: 'test', color: 'primary' }],
+        studies: [
+          {
+            id: 'test',
+            name: 'test',
+            color: 'primary',
+            createdAt: 1652648400000,
+          },
+        ],
         selectedStudyId: 'test',
       },
       'studySettings/membersList': {
@@ -29,7 +36,6 @@ describe('studySettings slice', () => {
               email: 'test',
               name: 'test',
               status: 'active',
-              role: 'team-admin',
             },
           ],
         },
@@ -51,7 +57,13 @@ describe('studySettings slice', () => {
     dispatch(closeInviteEditMember());
     expect(getState().isOpen).toBeFalse();
 
-    dispatch(inviteStudyMember({ email: 'test@example.com', role: 'team-admin' }));
+    dispatch(
+      inviteStudyMember({
+        email: 'test@example.com',
+        roles: ['team-admin', 'data-scientist'],
+        mgmtAccess: false,
+      })
+    );
     expect(getState().isSending).toBeTrue();
 
     dispatch(removeStudyMember({ id: 'test' }));

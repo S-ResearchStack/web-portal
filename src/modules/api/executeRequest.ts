@@ -8,8 +8,11 @@ export type RequestOptions<TReq> = {
   query?: Record<string, unknown>;
   body?: TReq;
   headers?: Record<string, string>;
+  readResponseAsStream?: boolean;
   readResponseAsBlob?: boolean;
+  readResponseAsText?: boolean;
   mode?: RequestMode;
+  keepalive?: boolean;
 };
 
 export type Response<TRes> = {
@@ -21,6 +24,7 @@ export type Response<TRes> = {
 };
 
 export const FAILED_CONNECTION_ERROR_TEXT = 'Server connection failed. Please try again later.';
+export const GENERIC_SERVER_ERROR_TEXT = 'An unexpected error has occurred. Please try again.';
 
 export class FailedConnectionError extends Error {
   constructor(public originalError?: unknown) {
@@ -29,7 +33,16 @@ export class FailedConnectionError extends Error {
 }
 
 async function executeRequest<TReq, TRes>(opts: RequestOptions<TReq>): Promise<Response<TRes>> {
-  const { method = 'GET', headers = {}, query, mode, readResponseAsBlob } = opts;
+  const {
+    method = 'GET',
+    headers = {},
+    query,
+    mode,
+    readResponseAsStream,
+    readResponseAsBlob,
+    readResponseAsText,
+    keepalive,
+  } = opts;
   let { url } = opts;
   let body = opts.body as unknown as BodyInit;
 
@@ -54,12 +67,20 @@ async function executeRequest<TReq, TRes>(opts: RequestOptions<TReq>): Promise<R
   const getFailedError = (msg: string) => new Error(`${method} ${url} Failed - ${msg}`);
 
   try {
-    const res = await fetch(url, { mode, method, headers, body });
+    const res = await fetch(url, { mode, method, headers, body, keepalive });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let resBody: any;
     try {
-      resBody = readResponseAsBlob ? await res.blob() : await res.json();
+      if (readResponseAsStream) {
+        resBody = res.body;
+      } else if (readResponseAsBlob) {
+        resBody = await res.blob();
+      } else if (readResponseAsText) {
+        resBody = await res.text();
+      } else {
+        resBody = await res.json();
+      }
     } catch (e) {
       // No body
     }

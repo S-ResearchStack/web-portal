@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 
 import { animation, colors, px } from 'src/styles';
 
-export const lineLoaderAnimation = keyframes`
+const lineLoaderAnimation = keyframes`
   0% {
     width: 0;
     transform: translateX(0%);
@@ -26,7 +26,7 @@ export const lineLoaderAnimation = keyframes`
   }
 `;
 
-export const LineLoaderRunner = styled.div`
+const LineLoaderRunner = styled.div`
   height: ${px(2)};
   background: ${colors.primary};
 `;

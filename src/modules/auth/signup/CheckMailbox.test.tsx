@@ -4,10 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import userEvent from '@testing-library/user-event';
-
 import 'jest-styled-components';
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
 
 import theme from 'src/styles/theme';
 import { makeStore } from 'src/modules/store/store';

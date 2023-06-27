@@ -6,10 +6,6 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import '@testing-library/jest-dom/extend-expect';
 
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupRangeMock';
-
 import theme from 'src/styles/theme';
 import { store } from 'src/modules/store/store';
 import { history } from 'src/modules/navigation/store';

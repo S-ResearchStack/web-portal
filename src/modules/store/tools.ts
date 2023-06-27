@@ -6,6 +6,7 @@ export interface WithError<E = ErrorType> {
 
 export interface WithLoading<E = string> extends WithError<E> {
   isLoading?: boolean;
+  user?: { name?: string; email?: string };
 }
 
 export interface WithDeleting<E = string> extends WithError<E> {

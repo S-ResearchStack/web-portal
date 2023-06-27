@@ -1,8 +1,5 @@
 import React from 'react';
 import 'jest-styled-components';
-import 'src/__mocks__/setupUniqueIdMock';
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
 import '@testing-library/jest-dom/extend-expect';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

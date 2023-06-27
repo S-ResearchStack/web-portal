@@ -17,7 +17,6 @@ import {
   setTable,
   tablesLoadingSelector,
   TablesMap,
-  tablesProjectIdSelector,
   tablesSelector,
 } from 'src/modules/data-collection/dataCollection.slice';
 import { AppDispatch, store } from 'src/modules/store/store';
@@ -88,7 +87,6 @@ const state = {
   error,
   isDataLoading: true,
   isTablesLoading: true,
-  projectId,
 };
 
 describe('dataCollectionSlice', () => {
@@ -129,14 +127,12 @@ describe('dataCollectionSlice', () => {
       dataCollectionSlice.reducer(
         initialTableState,
         dataCollectionSlice.actions.tablesSuccess({
-          projectId,
           tableMap,
         })
       )
     ).toMatchObject({
       isTablesLoading: false,
       tables: tableMap,
-      projectId,
     });
 
     expect(
@@ -160,23 +156,19 @@ describe('dataCollectionSlice', () => {
       dataCollectionSlice.reducer(
         initialTableState,
         dataCollectionSlice.actions.tablesSuccess({
-          projectId,
           tableMap: null as unknown as TablesMap,
         })
       )
     ).toMatchObject({
       isTablesLoading: false,
       tables: null,
-      projectId,
     });
   });
 
   it('should set columns', () => {
     const initialTableState = dataCollectionSlice.reducer(undefined, { type: '' });
 
-    expect(initialTableState).toMatchObject({
-      tables: {},
-    });
+    expect(initialTableState).toMatchObject(initialState);
 
     expect(
       dataCollectionSlice.reducer(
@@ -291,10 +283,9 @@ describe('dataCollectionSlice', () => {
   it('should all selectors return a truth value', () => {
     expect(querySelector(store.getState())).toEqual(DEFAULT_QUERY_STATE);
 
-    dispatch(dataCollectionSlice.actions.tablesSuccess({ projectId, tableMap }));
+    dispatch(dataCollectionSlice.actions.tablesSuccess({ tableMap }));
     expect(tablesSelector(store.getState())).toEqual(tables);
     expect(tablesLoadingSelector(store.getState())).toBeFalsy();
-    expect(tablesProjectIdSelector(store.getState())).toMatch(projectId);
 
     dispatch(dataCollectionSlice.actions.queryResultSuccess(queryResult));
     expect(queryResultSelector(store.getState())).toEqual(queryResult);
@@ -308,9 +299,8 @@ describe('dataCollectionSlice', () => {
     dispatch(dataCollectionSlice.actions.clearData());
 
     expect(querySelector(store.getState())).toEqual(DEFAULT_QUERY_STATE);
-    expect(tablesSelector(store.getState())).toEqual({});
+    expect(tablesSelector(store.getState())).toEqual(initialState.tables);
     expect(tablesLoadingSelector(store.getState())).toBeFalsy();
-    expect(tablesProjectIdSelector(store.getState())).toBeUndefined();
     expect(queryResultSelector(store.getState())).toBeUndefined();
     expect(dataLoadingSelector(store.getState())).toBeFalsy();
     expect(errorSelector(store.getState())).toBeUndefined();
@@ -345,19 +335,17 @@ describe('actions', () => {
     });
 
     it('[NEGATIVE] should fetch tables with failure state', async () => {
-      const initialTables = tablesSelector(store.getState());
-
       await maskEndpointAsFailure('getTablesList', async () => {
         await dispatch(fetchTables(projectId));
       });
 
-      expect(tablesSelector(store.getState())).toBe(initialTables);
+      expect(tablesSelector(store.getState())).toEqual({});
     });
   });
 
   describe('fetchColumns', () => {
     it('should fetch columns', async () => {
-      expect(tablesSelector(store.getState())).toEqual({});
+      expect(tablesSelector(store.getState())).toEqual(initialState.tables);
 
       await dispatch(fetchColumns(projectId, 'table_0'));
 
@@ -383,13 +371,13 @@ describe('actions', () => {
     });
 
     it('[NEGATIVE] should fetch columns with failure state', async () => {
-      expect(tablesSelector(store.getState())).toEqual({});
+      expect(tablesSelector(store.getState())).toEqual(initialState.tables);
 
       await maskEndpointAsFailure('getTableColumns', async () => {
         await dispatch(fetchColumns(projectId, 'table_0'));
       });
 
-      expect(tablesSelector(store.getState())).toEqual({});
+      expect(tablesSelector(store.getState())).toEqual(initialState.tables);
     });
   });
 

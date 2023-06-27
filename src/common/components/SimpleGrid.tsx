@@ -1,21 +1,28 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import useEvent from 'react-use/lib/useEvent';
 import styled from 'styled-components';
+import _merge from 'lodash/merge';
 
 import { px } from 'src/styles';
 
-export const GRID_GAP = 24;
+const DESKTOP_GRID_GAP = 24;
+const LAPTOP_GRID_GAP = 16;
+const TABLET_GRID_GAP = 16;
+
+const DESKTOP_HORIZONTAL_MARGIN = 48;
+const LAPTOP_HORIZONTAL_MARGIN = 40;
+const TABLET_HORIZONTAL_MARGIN = 28;
 
 export const DESKTOP_WIDTH_BREAKPOINT = 1440;
 export const LAPTOP_WIDTH_BREAKPOINT = 1024;
 
-export const DESKTOP_COLUMNS_COUNT = 12;
-export const LAPTOP_COLUMNS_COUNT = 12;
-export const TABLET_COLUMNS_COUNT = 8;
+const DESKTOP_COLUMNS_COUNT = 12;
+const LAPTOP_COLUMNS_COUNT = 12;
+const TABLET_COLUMNS_COUNT = 10;
 
-export const DESKTOP_COLUMN_WIDTH = 68;
-export const LAPTOP_COLUMN_WIDTH = 48;
-export const TABLET_COLUMN_WIDTH = 52;
+const DESKTOP_COLUMN_WIDTH = 68;
+const LAPTOP_COLUMN_WIDTH = 48;
+const TABLET_COLUMN_WIDTH = 48;
 
 export const desktopMq = window.matchMedia(`(min-width: ${px(DESKTOP_WIDTH_BREAKPOINT)})`);
 export const laptopMq = window.matchMedia(`(min-width: ${px(LAPTOP_WIDTH_BREAKPOINT)})`);
@@ -26,7 +33,7 @@ export interface DeviceScreenMatches<T = boolean> {
   desktop: T;
 }
 
-export const matchDeviceScreen = (): DeviceScreenMatches => ({
+const matchDeviceScreen = (): DeviceScreenMatches => ({
   tablet: !desktopMq.matches && !laptopMq.matches,
   laptop: !desktopMq.matches && laptopMq.matches,
   desktop: desktopMq.matches,
@@ -49,31 +56,48 @@ export interface SimpleGridSchema {
   gridGap: number;
   gridWidth: number;
   matchedDevice: DeviceScreenMatches;
+  marginHorizontal: number;
 }
 
-export const calculateSimpleGrid = (matchedDevice: DeviceScreenMatches): SimpleGridSchema => {
-  const result: SimpleGridSchema = {
-    matchedDevice,
-    gridGap: GRID_GAP,
-    columnsCount: 0,
-    columnWidth: 0,
-    gridWidth: 0,
-  };
+export const createEmptyGridSchema = (schema?: Partial<SimpleGridSchema>): SimpleGridSchema => ({
+  matchedDevice: matchDeviceScreen(),
+  gridGap: 0,
+  columnsCount: 0,
+  columnWidth: 0,
+  gridWidth: 0,
+  marginHorizontal: 0,
+  ...schema,
+});
+
+const calculateSimpleGrid = (
+  matchedDevice: DeviceScreenMatches,
+  customSchema?: Partial<DeviceScreenMatches<Partial<SimpleGridSchema>>>
+): SimpleGridSchema => {
+  const schema = createEmptyGridSchema({ matchedDevice });
 
   if (matchedDevice.desktop) {
-    result.columnsCount = DESKTOP_COLUMNS_COUNT;
-    result.columnWidth = DESKTOP_COLUMN_WIDTH;
+    schema.gridGap = DESKTOP_GRID_GAP;
+    schema.columnsCount = DESKTOP_COLUMNS_COUNT;
+    schema.columnWidth = DESKTOP_COLUMN_WIDTH;
+    schema.marginHorizontal = DESKTOP_HORIZONTAL_MARGIN;
+    _merge(schema, customSchema?.desktop);
   } else if (matchedDevice.laptop) {
-    result.columnsCount = LAPTOP_COLUMNS_COUNT;
-    result.columnWidth = LAPTOP_COLUMN_WIDTH;
+    schema.gridGap = LAPTOP_GRID_GAP;
+    schema.columnsCount = LAPTOP_COLUMNS_COUNT;
+    schema.columnWidth = LAPTOP_COLUMN_WIDTH;
+    schema.marginHorizontal = LAPTOP_HORIZONTAL_MARGIN;
+    _merge(schema, customSchema?.laptop);
   } else {
-    result.columnsCount = TABLET_COLUMNS_COUNT;
-    result.columnWidth = TABLET_COLUMN_WIDTH;
+    schema.gridGap = TABLET_GRID_GAP;
+    schema.columnsCount = TABLET_COLUMNS_COUNT;
+    schema.columnWidth = TABLET_COLUMN_WIDTH;
+    schema.marginHorizontal = TABLET_HORIZONTAL_MARGIN;
+    _merge(schema, customSchema?.tablet);
   }
 
-  result.gridWidth = (result.columnWidth + GRID_GAP) * result.columnsCount - GRID_GAP;
+  schema.gridWidth = (schema.columnWidth + schema.gridGap) * schema.columnsCount - schema.gridGap;
 
-  return result;
+  return schema;
 };
 
 export const getValuesByMatchedDevice = <T,>(
@@ -85,36 +109,37 @@ export const getValuesByMatchedDevice = <T,>(
   return values.tablet;
 };
 
-export type ColumnsOptionValue = DeviceScreenMatches<number>;
+type ColumnsOptionValue = DeviceScreenMatches<number>;
 
-export interface ColumnsOption {
+interface ColumnsOption {
   columns?: ColumnsOptionValue;
 }
 
-export interface SimpleGridContainerProps extends Required<ColumnsOption>, React.PropsWithChildren {
+interface SimpleGridContainerProps extends Required<ColumnsOption>, React.PropsWithChildren {
   $width: number;
+  $gap: number;
   $minMargin: number;
   $verticalGap?: boolean;
 }
 
-export const SimpleGridContainer = styled.div<SimpleGridContainerProps>`
+const SimpleGridContainer = styled.div<SimpleGridContainerProps>`
   display: grid;
-  column-gap: ${px(GRID_GAP)};
-  row-gap: ${({ $verticalGap }) => ($verticalGap ? px(GRID_GAP) : undefined)};
+  column-gap: ${(p) => px(p.$gap)};
+  row-gap: ${({ $verticalGap, $gap }) => ($verticalGap ? px($gap) : undefined)};
   grid-template-columns: repeat(${({ columns }) => columns.tablet}, 1fr);
 
   /* padding is used instead margin to keep margin: auto behaviour */
   /* it is required on small screens to keep space between content and edge of screen */
-  width: 100%;
-  max-width: ${({ $width, $minMargin }) => px($width + $minMargin * 2)};
+  width: ${(p) => px(p.$width + p.$minMargin * 2)};
+  max-width: ${(p) => px(p.$width + p.$minMargin * 2)};
   margin: 0 auto;
   padding: 0 ${({ $minMargin }) => px($minMargin) || 0};
 
-  @media ${laptopMq.media} {
+  @media screen and ${laptopMq.media} {
     grid-template-columns: repeat(${({ columns }) => columns.laptop}, 1fr);
   }
 
-  @media ${desktopMq.media} {
+  @media screen and ${desktopMq.media} {
     grid-template-columns: repeat(${({ columns }) => columns.desktop}, 1fr);
   }
 
@@ -125,23 +150,30 @@ export const SimpleGridContainer = styled.div<SimpleGridContainerProps>`
   }
 `;
 
-export const useSimpleGrid = (): SimpleGridSchema => {
+interface UseSimpleGridParams {
+  customSchema?: Partial<DeviceScreenMatches<Partial<SimpleGridSchema>>>;
+}
+
+const useSimpleGrid = (params?: UseSimpleGridParams): SimpleGridSchema => {
   const deviceMatches = useMatchDeviceScreen();
-  const [schema, setSchema] = useState(() => calculateSimpleGrid(deviceMatches));
+  const [schema, setSchema] = useState(() =>
+    calculateSimpleGrid(deviceMatches, params?.customSchema)
+  );
 
   useLayoutEffect(() => {
-    setSchema(calculateSimpleGrid(deviceMatches));
-  }, [deviceMatches]);
+    setSchema(calculateSimpleGrid(deviceMatches, params?.customSchema));
+  }, [params?.customSchema, deviceMatches]);
 
   return schema;
 };
 
-export interface SimpleGridProps
+interface SimpleGridProps
   extends React.PropsWithChildren<ColumnsOption>,
     Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   onChange?: (options: SimpleGridSchema) => void;
   fullScreen?: boolean;
   verticalGap?: boolean;
+  customSchema?: UseSimpleGridParams['customSchema'];
 }
 
 const DEFAULT_COLUMNS_OPTION: ColumnsOptionValue = {
@@ -150,14 +182,33 @@ const DEFAULT_COLUMNS_OPTION: ColumnsOptionValue = {
   desktop: 1,
 };
 
+const SimpleGridCellContainer = styled.div<{ columns: [number, number] }>`
+  grid-column: ${(p) => `${p.columns[0]} / span ${p.columns[1] - p.columns[0] + 1}`};
+`;
+
+type SimpleGridCellProps = {
+  columns: DeviceScreenMatches<[number, number]>;
+  customSchema?: UseSimpleGridParams['customSchema'];
+} & React.PropsWithChildren;
+
+export const SimpleGridCell = ({ columns, children, customSchema }: SimpleGridCellProps) => {
+  const gridOptions = useSimpleGrid({ customSchema });
+
+  return (
+    <SimpleGridCellContainer columns={getValuesByMatchedDevice(columns, gridOptions.matchedDevice)}>
+      {children}
+    </SimpleGridCellContainer>
+  );
+};
 const SimpleGrid: FC<SimpleGridProps> = ({
   columns,
   onChange,
   fullScreen,
   verticalGap,
+  customSchema,
   ...props
 }) => {
-  const gridOptions = useSimpleGrid();
+  const gridOptions = useSimpleGrid({ customSchema });
   const columnsOption = {
     ...DEFAULT_COLUMNS_OPTION,
     ...columns,
@@ -170,8 +221,9 @@ const SimpleGrid: FC<SimpleGridProps> = ({
   return (
     <SimpleGridContainer
       {...props}
-      $minMargin={fullScreen ? 24 : 0}
+      $minMargin={fullScreen ? gridOptions.marginHorizontal : 0}
       $width={gridOptions.gridWidth}
+      $gap={gridOptions.gridGap}
       $verticalGap={verticalGap}
       columns={columnsOption}
     />

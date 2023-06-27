@@ -1,12 +1,11 @@
 import React from 'react';
-import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import { act, getByText, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import theme from 'src/styles/theme';
 import { ThemeProvider } from 'styled-components/';
-import Modal from './Modal';
+import Modal, { ModalProvider } from './Modal';
 
 describe('Modal', () => {
   it('test modal render', async () => {
@@ -15,15 +14,17 @@ describe('Modal', () => {
 
     const { baseElement, queryByTestId, rerender } = render(
       <ThemeProvider theme={theme}>
-        <Modal
-          open
-          title="Title"
-          description="Description"
-          declineLabel="Cancel"
-          acceptLabel="Accept"
-          onAccept={onAccept}
-          onDecline={onDecline}
-        />
+        <ModalProvider>
+          <Modal
+            open
+            title="Title"
+            description="Description"
+            declineLabel="Cancel"
+            acceptLabel="Accept"
+            onAccept={onAccept}
+            onDecline={onDecline}
+          />
+        </ModalProvider>
       </ThemeProvider>
     );
 
@@ -52,15 +53,17 @@ describe('Modal', () => {
 
     rerender(
       <ThemeProvider theme={theme}>
-        <Modal
-          open={false}
-          title="Title"
-          description="Description"
-          declineLabel="Cancel"
-          acceptLabel="Accept"
-          onAccept={onAccept}
-          onDecline={onDecline}
-        />
+        <ModalProvider>
+          <Modal
+            open={false}
+            title="Title"
+            description="Description"
+            declineLabel="Cancel"
+            acceptLabel="Accept"
+            onAccept={onAccept}
+            onDecline={onDecline}
+          />
+        </ModalProvider>
       </ThemeProvider>
     );
 
@@ -76,33 +79,35 @@ describe('Modal', () => {
     expect(description).not.toBeVisible();
   });
 
-  it('[NEGATIVE] should render with wrong props', () => {
+  it('[NEGATIVE] should render with wrong props', async () => {
     const onAccept = jest.fn();
     const onDecline = jest.fn();
 
-    const { baseElement, getByTestId } = render(
+    const { baseElement, getByTestId, queryByTestId } = render(
       <ThemeProvider theme={theme}>
-        <Modal
-          open
-          title={null as unknown as string}
-          description={null as unknown as string}
-          declineLabel={null as unknown as string}
-          acceptLabel={null as unknown as string}
-          onAccept={onAccept}
-          onDecline={onDecline}
-        />
+        <ModalProvider>
+          <Modal
+            open
+            title={null as unknown as string}
+            description={null as unknown as string}
+            declineLabel={null as unknown as string}
+            acceptLabel={null as unknown as string}
+            onAccept={onAccept}
+            onDecline={onDecline}
+          />
+        </ModalProvider>
       </ThemeProvider>
     );
 
     expect(baseElement).toMatchSnapshot();
 
     const title = getByTestId('modal-title');
-    const description = getByTestId('modal-description');
+    const description = await queryByTestId('modal-description');
     const acceptBtn = getByTestId('accept-button');
     const declineBtn = getByTestId('decline-button');
 
     expect(title).toBeInTheDocument();
-    expect(description).toBeInTheDocument();
+    expect(description).toBeNil();
     expect(acceptBtn).toBeInTheDocument();
     expect(declineBtn).toBeInTheDocument();
   });

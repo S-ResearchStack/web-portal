@@ -6,9 +6,6 @@ import { ConnectedRouter, getLocation } from 'connected-react-router';
 import { enableFetchMocks } from 'jest-fetch-mock';
 import 'jest-styled-components';
 
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-
 import theme from 'src/styles/theme';
 import { makeStore } from 'src/modules/store/store';
 import { makeHistory, Path } from 'src/modules/navigation/store';
@@ -30,8 +27,18 @@ describe('AccountCreated', () => {
     localStorage.setItem('API_URL', 'https://samsung.com/');
   });
 
+  let search = '';
+  const mockSearch = (s: string) => {
+    search = s;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      enumerable: true,
+      get: () => new URL(`http://test.com/?${search}`),
+    });
+  };
+
   it('should render', async () => {
-    history.location.search = '?email=examole.com&token=123';
+    mockSearch('email=example.com&reset-token=123');
 
     await act(async () => {
       render(
@@ -70,7 +77,7 @@ describe('AccountCreated', () => {
   });
 
   it('[NEGATIVE] should render without a token', async () => {
-    history.location.search = '';
+    mockSearch('');
 
     const { baseElement } = render(
       <ThemeProvider theme={theme}>

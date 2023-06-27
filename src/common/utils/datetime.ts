@@ -3,6 +3,7 @@ import { DateTime, Duration } from 'luxon';
 
 export type Timestamp = number;
 export type ISOTimestamp = string;
+export type SQLTimestamp = string;
 
 type TimeType = Timestamp | ISOTimestamp | DateTime | Date;
 
@@ -52,3 +53,11 @@ export const getAbsoluteTimeByTs = (ts: Timestamp): [string, string] => {
   if (tsDiff < day()) return ['Today', time];
   return [format(ts, 'LLL d'), time];
 };
+export const convertSqlUtcDateStringToTimestamp = (ts?: SQLTimestamp): Timestamp | undefined =>
+  ts ? DateTime.fromSQL(ts, { zone: 'utc' }).toMillis() : undefined;
+
+export const convertIsoUtcToMillis = (ts: ISOTimestamp): Timestamp =>
+  DateTime.fromISO(ts, { zone: 'utc' }).toMillis();
+
+export const convertMillisToIsoUtc = (ts: Timestamp): ISOTimestamp =>
+  DateTime.fromMillis(ts).toUTC().toISO({ includeOffset: false });

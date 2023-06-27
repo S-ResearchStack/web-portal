@@ -79,7 +79,7 @@ describe('browser utils', () => {
     const vendorSpy = jest.spyOn(window.navigator, 'vendor', 'get');
     const userAgent = jest.spyOn(window.navigator, 'userAgent', 'get');
 
-    vendorSpy.mockReturnValue('some uknown browser');
+    vendorSpy.mockReturnValue('some unknown browser');
     userAgent.mockReturnValue('some unknown browser');
     reloadBrowser();
 

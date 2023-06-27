@@ -39,7 +39,6 @@ exports[`DatePicker [NEGATIVE] test date picker render with broken parameters 1`
 
 .c0 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 <body>
@@ -52,7 +51,7 @@ exports[`DatePicker [NEGATIVE] test date picker render with broken parameters 1`
         class="c1 c2"
         data-testid="input-label"
       >
-        Select
+        Select date
       </div>
       <svg
         class=""
@@ -101,7 +100,6 @@ exports[`DatePicker test date picker render 1`] = `
 
 .c0 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 <body>
@@ -114,7 +112,7 @@ exports[`DatePicker test date picker render 1`] = `
         class="c1 c2"
         data-testid="input-label"
       >
-        Select
+        Select date
       </div>
       <svg
         class=""
@@ -132,7 +130,7 @@ exports[`DatePicker test date picker render 2`] = `
   -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
   animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
   z-index: 0;
-  background-color: #4475E3;
+  background-color: #ECF1FC;
   pointer-events: none;
 }
 
@@ -273,6 +271,11 @@ exports[`DatePicker test date picker render 2`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   border-radius: 0.125rem;
   color: #808080;
 }
@@ -288,6 +291,11 @@ exports[`DatePicker test date picker render 2`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   border-radius: 0.125rem;
   color: #FFFFFF;
   background-color: #4475E3;
@@ -298,6 +306,11 @@ exports[`DatePicker test date picker render 2`] = `
 }
 
 .c15 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -323,7 +336,6 @@ exports[`DatePicker test date picker render 2`] = `
 
 .c16 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 .c0 {
@@ -355,7 +367,6 @@ exports[`DatePicker test date picker render 2`] = `
 
 .c0 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 <body>
@@ -368,7 +379,7 @@ exports[`DatePicker test date picker render 2`] = `
         class="c1 c2"
         data-testid="input-label"
       >
-        Sat, Jan 01, 2022
+        Saturday, Jan 01, 2022
       </div>
       <svg
         class=""
@@ -393,7 +404,6 @@ exports[`DatePicker test date picker render 2`] = `
             </span>
             <div
               class="c8"
-              color="primary"
               opacity="1,1"
               scale="0"
               style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
@@ -415,7 +425,6 @@ exports[`DatePicker test date picker render 2`] = `
             </span>
             <div
               class="c8"
-              color="primary"
               opacity="1,1"
               scale="0"
               style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
@@ -462,211 +471,295 @@ exports[`DatePicker test date picker render 2`] = `
           </div>
           <div
             class="c11 c13"
+            data-date="1640563200000"
+            data-testid="calendar-popover-enabled-date"
           >
             27
           </div>
           <div
             class="c11 c13"
+            data-date="1640649600000"
+            data-testid="calendar-popover-enabled-date"
           >
             28
           </div>
           <div
             class="c11 c13"
+            data-date="1640736000000"
+            data-testid="calendar-popover-enabled-date"
           >
             29
           </div>
           <div
             class="c11 c13"
+            data-date="1640822400000"
+            data-testid="calendar-popover-enabled-date"
           >
             30
           </div>
           <div
             class="c11 c13"
+            data-date="1640908800000"
+            data-testid="calendar-popover-enabled-date"
           >
             31
           </div>
           <div
             class="c11 c14"
+            data-date="1640995200000"
+            data-testid="calendar-popover-enabled-date"
           >
             1
           </div>
           <div
             class="c11 c15"
+            data-date="1641081600000"
+            data-testid="calendar-popover-enabled-date"
           >
             2
           </div>
           <div
             class="c11 c15"
+            data-date="1641168000000"
+            data-testid="calendar-popover-enabled-date"
           >
             3
           </div>
           <div
             class="c11 c15"
+            data-date="1641254400000"
+            data-testid="calendar-popover-enabled-date"
           >
             4
           </div>
           <div
             class="c11 c15"
+            data-date="1641340800000"
+            data-testid="calendar-popover-enabled-date"
           >
             5
           </div>
           <div
             class="c11 c15"
+            data-date="1641427200000"
+            data-testid="calendar-popover-enabled-date"
           >
             6
           </div>
           <div
             class="c11 c15"
+            data-date="1641513600000"
+            data-testid="calendar-popover-enabled-date"
           >
             7
           </div>
           <div
             class="c11 c15"
+            data-date="1641600000000"
+            data-testid="calendar-popover-enabled-date"
           >
             8
           </div>
           <div
             class="c11 c15"
+            data-date="1641686400000"
+            data-testid="calendar-popover-enabled-date"
           >
             9
           </div>
           <div
             class="c11 c15"
+            data-date="1641772800000"
+            data-testid="calendar-popover-enabled-date"
           >
             10
           </div>
           <div
             class="c11 c15"
+            data-date="1641859200000"
+            data-testid="calendar-popover-enabled-date"
           >
             11
           </div>
           <div
             class="c11 c15"
+            data-date="1641945600000"
+            data-testid="calendar-popover-enabled-date"
           >
             12
           </div>
           <div
             class="c11 c15"
+            data-date="1642032000000"
+            data-testid="calendar-popover-enabled-date"
           >
             13
           </div>
           <div
             class="c11 c15"
+            data-date="1642118400000"
+            data-testid="calendar-popover-enabled-date"
           >
             14
           </div>
           <div
             class="c11 c15"
+            data-date="1642204800000"
+            data-testid="calendar-popover-enabled-date"
           >
             15
           </div>
           <div
             class="c11 c15"
+            data-date="1642291200000"
+            data-testid="calendar-popover-enabled-date"
           >
             16
           </div>
           <div
             class="c11 c15"
+            data-date="1642377600000"
+            data-testid="calendar-popover-enabled-date"
           >
             17
           </div>
           <div
             class="c11 c15"
+            data-date="1642464000000"
+            data-testid="calendar-popover-enabled-date"
           >
             18
           </div>
           <div
             class="c11 c15"
+            data-date="1642550400000"
+            data-testid="calendar-popover-enabled-date"
           >
             19
           </div>
           <div
             class="c11 c15"
+            data-date="1642636800000"
+            data-testid="calendar-popover-enabled-date"
           >
             20
           </div>
           <div
             class="c11 c15"
+            data-date="1642723200000"
+            data-testid="calendar-popover-enabled-date"
           >
             21
           </div>
           <div
             class="c11 c15"
+            data-date="1642809600000"
+            data-testid="calendar-popover-enabled-date"
           >
             22
           </div>
           <div
             class="c11 c15"
+            data-date="1642896000000"
+            data-testid="calendar-popover-enabled-date"
           >
             23
           </div>
           <div
             class="c11 c15"
+            data-date="1642982400000"
+            data-testid="calendar-popover-enabled-date"
           >
             24
           </div>
           <div
             class="c11 c15"
+            data-date="1643068800000"
+            data-testid="calendar-popover-enabled-date"
           >
             25
           </div>
           <div
             class="c11 c15"
+            data-date="1643155200000"
+            data-testid="calendar-popover-enabled-date"
           >
             26
           </div>
           <div
             class="c11 c15"
+            data-date="1643241600000"
+            data-testid="calendar-popover-enabled-date"
           >
             27
           </div>
           <div
             class="c11 c15"
+            data-date="1643328000000"
+            data-testid="calendar-popover-enabled-date"
           >
             28
           </div>
           <div
             class="c11 c15"
+            data-date="1643414400000"
+            data-testid="calendar-popover-enabled-date"
           >
             29
           </div>
           <div
             class="c11 c15"
+            data-date="1643500800000"
+            data-testid="calendar-popover-enabled-date"
           >
             30
           </div>
           <div
             class="c11 c15"
+            data-date="1643587200000"
+            data-testid="calendar-popover-enabled-date"
           >
             31
           </div>
           <div
             class="c11 c13"
+            data-date="1643673600000"
+            data-testid="calendar-popover-enabled-date"
           >
             1
           </div>
           <div
             class="c11 c13"
+            data-date="1643760000000"
+            data-testid="calendar-popover-enabled-date"
           >
             2
           </div>
           <div
             class="c11 c13"
+            data-date="1643846400000"
+            data-testid="calendar-popover-enabled-date"
           >
             3
           </div>
           <div
             class="c11 c13"
+            data-date="1643932800000"
+            data-testid="calendar-popover-enabled-date"
           >
             4
           </div>
           <div
             class="c11 c13"
+            data-date="1644019200000"
+            data-testid="calendar-popover-enabled-date"
           >
             5
           </div>
           <div
             class="c11 c13"
+            data-date="1644105600000"
+            data-testid="calendar-popover-enabled-date"
           >
             6
           </div>
@@ -685,7 +778,7 @@ exports[`DatePicker test date picker render 3`] = `
   -webkit-animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
   animation: bykygw 600ms cubic-bezier(0.4,0,0.2,1) forwards;
   z-index: 0;
-  background-color: #4475E3;
+  background-color: #ECF1FC;
   pointer-events: none;
 }
 
@@ -826,6 +919,11 @@ exports[`DatePicker test date picker render 3`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   border-radius: 0.125rem;
   color: #808080;
 }
@@ -841,6 +939,11 @@ exports[`DatePicker test date picker render 3`] = `
   line-height: 1.5rem;
   font-weight: 400;
   font-style: normal;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   border-radius: 0.125rem;
   color: #FFFFFF;
   background-color: #4475E3;
@@ -851,6 +954,11 @@ exports[`DatePicker test date picker render 3`] = `
 }
 
 .c15 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -876,7 +984,6 @@ exports[`DatePicker test date picker render 3`] = `
 
 .c16 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 .c0 {
@@ -908,7 +1015,6 @@ exports[`DatePicker test date picker render 3`] = `
 
 .c0 .c1 {
   margin-left: 0.9375rem;
-  color: #474747;
 }
 
 <body>
@@ -921,7 +1027,7 @@ exports[`DatePicker test date picker render 3`] = `
         class="c1 c2"
         data-testid="input-label"
       >
-        Sat, Jan 01, 2022
+        Saturday, Jan 01, 2022
       </div>
       <svg
         class=""
@@ -946,7 +1052,6 @@ exports[`DatePicker test date picker render 3`] = `
             </span>
             <div
               class="c8"
-              color="primary"
               opacity="1,1"
               scale="0"
               style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
@@ -968,7 +1073,6 @@ exports[`DatePicker test date picker render 3`] = `
             </span>
             <div
               class="c8"
-              color="primary"
               opacity="1,1"
               scale="0"
               style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
@@ -1015,211 +1119,295 @@ exports[`DatePicker test date picker render 3`] = `
           </div>
           <div
             class="c11 c13"
+            data-date="1640563200000"
+            data-testid="calendar-popover-enabled-date"
           >
             27
           </div>
           <div
             class="c11 c13"
+            data-date="1640649600000"
+            data-testid="calendar-popover-enabled-date"
           >
             28
           </div>
           <div
             class="c11 c13"
+            data-date="1640736000000"
+            data-testid="calendar-popover-enabled-date"
           >
             29
           </div>
           <div
             class="c11 c13"
+            data-date="1640822400000"
+            data-testid="calendar-popover-enabled-date"
           >
             30
           </div>
           <div
             class="c11 c13"
+            data-date="1640908800000"
+            data-testid="calendar-popover-enabled-date"
           >
             31
           </div>
           <div
             class="c11 c14"
+            data-date="1640995200000"
+            data-testid="calendar-popover-enabled-date"
           >
             1
           </div>
           <div
             class="c11 c15"
+            data-date="1641081600000"
+            data-testid="calendar-popover-enabled-date"
           >
             2
           </div>
           <div
             class="c11 c15"
+            data-date="1641168000000"
+            data-testid="calendar-popover-enabled-date"
           >
             3
           </div>
           <div
             class="c11 c15"
+            data-date="1641254400000"
+            data-testid="calendar-popover-enabled-date"
           >
             4
           </div>
           <div
             class="c11 c15"
+            data-date="1641340800000"
+            data-testid="calendar-popover-enabled-date"
           >
             5
           </div>
           <div
             class="c11 c15"
+            data-date="1641427200000"
+            data-testid="calendar-popover-enabled-date"
           >
             6
           </div>
           <div
             class="c11 c15"
+            data-date="1641513600000"
+            data-testid="calendar-popover-enabled-date"
           >
             7
           </div>
           <div
             class="c11 c15"
+            data-date="1641600000000"
+            data-testid="calendar-popover-enabled-date"
           >
             8
           </div>
           <div
             class="c11 c15"
+            data-date="1641686400000"
+            data-testid="calendar-popover-enabled-date"
           >
             9
           </div>
           <div
             class="c11 c15"
+            data-date="1641772800000"
+            data-testid="calendar-popover-enabled-date"
           >
             10
           </div>
           <div
             class="c11 c15"
+            data-date="1641859200000"
+            data-testid="calendar-popover-enabled-date"
           >
             11
           </div>
           <div
             class="c11 c15"
+            data-date="1641945600000"
+            data-testid="calendar-popover-enabled-date"
           >
             12
           </div>
           <div
             class="c11 c15"
+            data-date="1642032000000"
+            data-testid="calendar-popover-enabled-date"
           >
             13
           </div>
           <div
             class="c11 c15"
+            data-date="1642118400000"
+            data-testid="calendar-popover-enabled-date"
           >
             14
           </div>
           <div
             class="c11 c15"
+            data-date="1642204800000"
+            data-testid="calendar-popover-enabled-date"
           >
             15
           </div>
           <div
             class="c11 c15"
+            data-date="1642291200000"
+            data-testid="calendar-popover-enabled-date"
           >
             16
           </div>
           <div
             class="c11 c15"
+            data-date="1642377600000"
+            data-testid="calendar-popover-enabled-date"
           >
             17
           </div>
           <div
             class="c11 c15"
+            data-date="1642464000000"
+            data-testid="calendar-popover-enabled-date"
           >
             18
           </div>
           <div
             class="c11 c15"
+            data-date="1642550400000"
+            data-testid="calendar-popover-enabled-date"
           >
             19
           </div>
           <div
             class="c11 c15"
+            data-date="1642636800000"
+            data-testid="calendar-popover-enabled-date"
           >
             20
           </div>
           <div
             class="c11 c15"
+            data-date="1642723200000"
+            data-testid="calendar-popover-enabled-date"
           >
             21
           </div>
           <div
             class="c11 c15"
+            data-date="1642809600000"
+            data-testid="calendar-popover-enabled-date"
           >
             22
           </div>
           <div
             class="c11 c15"
+            data-date="1642896000000"
+            data-testid="calendar-popover-enabled-date"
           >
             23
           </div>
           <div
             class="c11 c15"
+            data-date="1642982400000"
+            data-testid="calendar-popover-enabled-date"
           >
             24
           </div>
           <div
             class="c11 c15"
+            data-date="1643068800000"
+            data-testid="calendar-popover-enabled-date"
           >
             25
           </div>
           <div
             class="c11 c15"
+            data-date="1643155200000"
+            data-testid="calendar-popover-enabled-date"
           >
             26
           </div>
           <div
             class="c11 c15"
+            data-date="1643241600000"
+            data-testid="calendar-popover-enabled-date"
           >
             27
           </div>
           <div
             class="c11 c15"
+            data-date="1643328000000"
+            data-testid="calendar-popover-enabled-date"
           >
             28
           </div>
           <div
             class="c11 c15"
+            data-date="1643414400000"
+            data-testid="calendar-popover-enabled-date"
           >
             29
           </div>
           <div
             class="c11 c15"
+            data-date="1643500800000"
+            data-testid="calendar-popover-enabled-date"
           >
             30
           </div>
           <div
             class="c11 c15"
+            data-date="1643587200000"
+            data-testid="calendar-popover-enabled-date"
           >
             31
           </div>
           <div
             class="c11 c13"
+            data-date="1643673600000"
+            data-testid="calendar-popover-enabled-date"
           >
             1
           </div>
           <div
             class="c11 c13"
+            data-date="1643760000000"
+            data-testid="calendar-popover-enabled-date"
           >
             2
           </div>
           <div
             class="c11 c13"
+            data-date="1643846400000"
+            data-testid="calendar-popover-enabled-date"
           >
             3
           </div>
           <div
             class="c11 c13"
+            data-date="1643932800000"
+            data-testid="calendar-popover-enabled-date"
           >
             4
           </div>
           <div
             class="c11 c13"
+            data-date="1644019200000"
+            data-testid="calendar-popover-enabled-date"
           >
             5
           </div>
           <div
             class="c11 c13"
+            data-date="1644105600000"
+            data-testid="calendar-popover-enabled-date"
           >
             6
           </div>

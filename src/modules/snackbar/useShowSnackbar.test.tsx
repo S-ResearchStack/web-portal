@@ -1,16 +1,14 @@
 import React from 'react';
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupRangeMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import { act, renderHook, screen } from '@testing-library/react';
 import { theme } from 'src/styles';
 import { ThemeProvider } from 'styled-components/';
 import { Provider } from 'react-redux';
+import delay from 'src/common/utils/waitFor';
 import { createTestStore } from '../store/testing';
 import useShowSnackbar from './useShowSnackbar';
-import SnackbarContainer from './SnackbarContainer';
+import SnackbarContainer, { TRANSITION_DURATION_MS } from './SnackbarContainer';
 
 describe('useShowSnackbar', () => {
   it('show snackbar', async () => {
@@ -34,6 +32,8 @@ describe('useShowSnackbar', () => {
     );
 
     expect(await screen.findByText('Test snackbar 1')).toBeInTheDocument();
+
+    await delay(TRANSITION_DURATION_MS);
 
     act(() =>
       hook.result.current({

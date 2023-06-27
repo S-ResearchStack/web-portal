@@ -9,7 +9,7 @@ import BaseTable from './BaseTable';
 import RowRenderer, { TableRow } from './RowRenderer';
 import { TableProps } from './types';
 
-export const TableVirtualRow = styled(TableRow)`
+const TableVirtualRow = styled(TableRow)`
   position: absolute !important;
   left: 0;
   right: 0;
@@ -22,6 +22,7 @@ const VirtualTable = <T,>({
   getRowKey,
   onSelectRow,
   disableActions,
+  renderOnHoverRowAction,
   ...props
 }: TableProps<T>): JSX.Element => {
   const parentRef = useRef<HTMLDivElement | undefined>();
@@ -55,6 +56,7 @@ const VirtualTable = <T,>({
             data={rows[rowIdx]}
             disabled={disableActions}
             onSelectRow={onSelectRow}
+            getOnHoverRowAction={renderOnHoverRowAction}
             style={{
               ...styles,
               height: px(size),

@@ -2,8 +2,10 @@ import jwtDecode from 'jwt-decode';
 
 export const STORAGE_TOKEN_KEY = 'auth_token';
 export const STORAGE_REFRESH_TOKEN_KEY = 'refresh_token';
+export const STORAGE_USER_NAME_KEY = 'user_name';
 
 type AuthTokenPayload = {
+  sub: string; // user account id
   email: string;
   roles: string[];
 };

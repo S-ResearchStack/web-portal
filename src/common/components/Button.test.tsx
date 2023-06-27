@@ -168,7 +168,7 @@ describe('Button', () => {
   it('[NEGATIVE] should render with wrong `fill` property', async () => {
     const { baseElement } = render(
       <ThemeProvider theme={theme}>
-        <Button fill={'unavaliable' as 'text'} data-testid="text-button" />
+        <Button fill={'unavailable' as 'text'} data-testid="text-button" />
       </ThemeProvider>
     );
 

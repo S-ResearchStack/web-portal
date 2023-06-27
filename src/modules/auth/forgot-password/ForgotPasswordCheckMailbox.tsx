@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 import { colors, px, typography } from 'src/styles';
@@ -11,7 +11,10 @@ import { usePasswordRecovery } from 'src/modules/auth/forgot-password/forgotPass
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useAppDispatch } from 'src/modules/store';
 import { showSnackbar } from 'src/modules/snackbar/snackbar.slice';
-import usePrevious from 'react-use/lib/usePrevious';
+
+const TestIdContainer = styled.div`
+  height: 100%;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -44,31 +47,26 @@ const ResendEmailOffer = styled.div`
 `;
 
 const ForgotPasswordCheckMailbox = () => {
-  const email = useSearchParam('email') || 'only-for-dev'; // TODO: replace 'only-for-dev' to '' (empty string)
+  const email = useSearchParam('email') || '';
   const dispatch = useAppDispatch();
 
-  const { isLoading, error, recoveryPassword } = usePasswordRecovery();
-  const prevIsLoading = usePrevious(isLoading);
+  const { sendPasswordRecoveryRequest } = usePasswordRecovery();
 
   const handleResend = useCallback(
     async (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       evt.stopPropagation();
 
-      await recoveryPassword({ email });
+      const isOk = await sendPasswordRecoveryRequest({ email });
+      if (isOk) {
+        dispatch(showSnackbar({ text: 'Email resent.' }));
+      }
     },
-    [email, recoveryPassword]
+    [dispatch, email, sendPasswordRecoveryRequest]
   );
 
-  // show toast when mail is resent
-  useEffect(() => {
-    if (!isLoading && prevIsLoading && !error) {
-      dispatch(showSnackbar({ text: 'Email resent.' }));
-    }
-  }, [dispatch, isLoading, prevIsLoading, error]);
-
   return (
-    <>
+    <TestIdContainer data-testid="forgot-password-check-mailbox">
       <Container>
         <ContentCard>
           <ResultMessage
@@ -85,7 +83,11 @@ const ForgotPasswordCheckMailbox = () => {
           >
             <ResendEmailOffer>
               Didn&apos;t get the email?
-              <Link to="/" onClick={handleResend}>
+              <Link
+                to="/"
+                onClick={handleResend}
+                data-testid="forgot-password-check-mailbox-resend"
+              >
                 Resend the email
               </Link>
             </ResendEmailOffer>
@@ -93,7 +95,7 @@ const ForgotPasswordCheckMailbox = () => {
         </ContentCard>
       </Container>
       <SnackbarContainer useSimpleGrid />
-    </>
+    </TestIdContainer>
   );
 };
 

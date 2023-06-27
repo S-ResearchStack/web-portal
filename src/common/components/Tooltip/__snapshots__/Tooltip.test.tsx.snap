@@ -53,7 +53,7 @@ exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 2`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -62,10 +62,11 @@ exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 2`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -121,7 +122,7 @@ exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 3`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -130,10 +131,11 @@ exports[`Tooltip [NEGATIVE] should imperative handle with wrong props 3`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -275,7 +277,7 @@ exports[`Tooltip [NEGATIVE] should tooltip change props with wrong values 3`] = 
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -284,10 +286,11 @@ exports[`Tooltip [NEGATIVE] should tooltip change props with wrong values 3`] = 
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -333,7 +336,7 @@ exports[`Tooltip [NEGATIVE] should tooltip static render with wrong props 1`] = 
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: none;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -342,10 +345,11 @@ exports[`Tooltip [NEGATIVE] should tooltip static render with wrong props 1`] = 
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -406,7 +410,7 @@ exports[`Tooltip Should tooltip render 2`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -415,10 +419,11 @@ exports[`Tooltip Should tooltip render 2`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -508,7 +513,7 @@ exports[`Tooltip should controlled open 2`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -517,10 +522,11 @@ exports[`Tooltip should controlled open 2`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -589,7 +595,7 @@ exports[`Tooltip should imperative handle 2`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -598,10 +604,11 @@ exports[`Tooltip should imperative handle 2`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -657,7 +664,7 @@ exports[`Tooltip should imperative handle 3`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -666,10 +673,11 @@ exports[`Tooltip should imperative handle 3`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -788,7 +796,7 @@ exports[`Tooltip should tooltip change props 3`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: block;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -797,10 +805,11 @@ exports[`Tooltip should tooltip change props 3`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -846,7 +855,7 @@ exports[`Tooltip should tooltip static render 1`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: none;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -855,10 +864,11 @@ exports[`Tooltip should tooltip static render 1`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -899,7 +909,7 @@ exports[`Tooltip should tooltip static render 2`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: none;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -908,10 +918,11 @@ exports[`Tooltip should tooltip static render 2`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {
@@ -952,7 +963,7 @@ exports[`Tooltip should tooltip static render 3`] = `
   font-weight: 600;
   font-style: normal;
   pointer-events: none;
-  display: none;
+  visibility: hidden;
   padding: 0.5rem 0.5rem;
   background-color: #2D2D2D;
   color: #FFFFFF !important;
@@ -961,10 +972,11 @@ exports[`Tooltip should tooltip static render 3`] = `
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
+  word-wrap: break-word;
 }
 
 .c1 * {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .c0 {

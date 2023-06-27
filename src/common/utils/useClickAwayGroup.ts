@@ -6,9 +6,8 @@ const useClickAwayGroup = (
 ): void => {
   const onClick = useCallback(
     (evt: MouseEvent) => {
-      const isClickAwayNeeded = !refs
-        .map((ref) => ref.current?.contains(evt.target as Node))
-        .some((v) => v);
+      const isClickAwayNeeded =
+        refs.length && !refs.map((ref) => ref.current?.contains(evt.target as Node)).some((v) => v);
 
       if (isClickAwayNeeded) {
         onClickAway(evt);

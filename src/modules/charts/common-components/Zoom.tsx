@@ -32,7 +32,10 @@ const gradientPoints = [
   { offset: '59%', isColored: true },
   { offset: '59%' },
   { offset: '100%' },
-];
+].map((p, idx) => ({
+  key: idx,
+  ...p,
+}));
 
 const ChartContainer = styled.div`
   position: relative;
@@ -502,7 +505,6 @@ const Zoom: React.FC<Props> = ({
       />
       <SvgContainer
         ref={svgRef}
-        focusWidth={getFocusWidth(width)}
         viewBox={`0, 0, ${width}, ${height}`}
         $contextVisible={showZoomControls}
       >
@@ -526,20 +528,18 @@ const Zoom: React.FC<Props> = ({
         </g>
         <defs key="defs">
           <linearGradient id="horizontalGradient" x1="0" x2="0" y1="0" y2="1">
-            {gradientPoints.map((point, index) => (
+            {gradientPoints.map((point) => (
               <stop
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
+                key={point.key}
                 offset={point.offset}
                 stopColor={point.isColored ? theme.colors.primary : 'transparent'}
               />
             ))}
           </linearGradient>
           <linearGradient id="verticalGradient">
-            {gradientPoints.map((point, index) => (
+            {gradientPoints.map((point) => (
               <stop
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
+                key={point.key}
                 offset={point.offset}
                 stopColor={point.isColored ? theme.colors.primary : 'transparent'}
               />

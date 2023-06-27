@@ -66,6 +66,7 @@ const ZoomControls = ({
   <ZoomControlsContainer>
     <IconWrapper
       key="zoomOut"
+      data-testid="zoom-out-button"
       disabled={zoomOutDisabled}
       active={zoomOutActive}
       onClick={() => !zoomOutDisabled && zoomOut()}
@@ -73,13 +74,14 @@ const ZoomControls = ({
       <ZoomOutIcon />
     </IconWrapper>
     <Tooltip
-      content={<ZoomHint>Draw a rectangle for a marquee zoom</ZoomHint>}
+      content={<ZoomHint>Draw a rectangle for a marquee zoom.</ZoomHint>}
       position="l"
       horizontalPaddings="l"
       trigger="hover"
     >
       <IconWrapper
         key="zoomIn"
+        data-testid="zoom-in-button"
         disabled={zoomInDisabled}
         active={zoomInActive}
         onClick={() => !zoomInDisabled && zoomIn()}

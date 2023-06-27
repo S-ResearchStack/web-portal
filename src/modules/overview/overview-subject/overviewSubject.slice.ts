@@ -2,18 +2,17 @@ import createDataSlice from 'src/modules/store/createDataSlice';
 import API from 'src/modules/api';
 import {
   healthDataOverviewListMock,
-  healthDataOverviewMock,
   transformHealthDataOverviewItemFromApi,
 } from 'src/modules/overview/participantsList.slice';
 
-const getHealthDataOverviewForUserMock: typeof API.getHealthDataOverviewForUser = ({ userId }) =>
-  API.mock.response({
-    healthDataOverviewOfUser:
-      healthDataOverviewListMock.find((u) => u.userId === userId) || healthDataOverviewMock(),
-  });
-
 API.mock.provideEndpoints({
-  getHealthDataOverviewForUser: getHealthDataOverviewForUserMock,
+  getHealthDataOverviewForUser({ userId }) {
+    const user = healthDataOverviewListMock.find((u) => u.userId === userId);
+    if (!user) {
+      return API.mock.failedResponse({ status: 404 });
+    }
+    return API.mock.response({ healthDataOverviewOfUser: user });
+  },
 });
 
 export type GetOverviewSubjectParams = { id: string; studyId: string };
@@ -26,7 +25,7 @@ export const overviewSubjectSlice = createDataSlice({
       userId: id,
     });
 
-    return transformHealthDataOverviewItemFromApi(data.healthDataOverviewOfUser);
+    return transformHealthDataOverviewItemFromApi(data.healthDataOverviewOfUser || {});
   },
 });
 

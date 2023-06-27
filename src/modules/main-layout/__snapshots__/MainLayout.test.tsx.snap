@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MainLayout should render 1`] = `
-.c10 {
+.c9 {
   position: absolute;
   will-change: opacity,transform;
   border-radius: 50%;
@@ -12,8 +12,9 @@ exports[`MainLayout should render 1`] = `
   pointer-events: none;
 }
 
-.c7 {
+.c6 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -40,7 +41,7 @@ exports[`MainLayout should render 1`] = `
   background-color: transparent;
 }
 
-.c7 > div {
+.c6 > div {
   font-family: Inter,sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -48,56 +49,57 @@ exports[`MainLayout should render 1`] = `
   font-style: normal;
 }
 
-.c7 > div svg {
+.c6 > div svg {
   margin-right: 0.25rem;
 }
 
-.c7 > div {
+.c6 > div {
   color: #4475E3;
 }
 
-.c7 > div svg {
+.c6 > div svg {
   fill: #4475E3;
 }
 
-.c7:hover:enabled > div {
+.c6:hover:enabled > div {
   color: #2F65E0;
 }
 
-.c7:hover:enabled > div svg {
+.c6:hover:enabled > div svg {
   fill: #2F65E0;
 }
 
-.c7:hover:enabled:active > div {
+.c6:hover:enabled:active > div {
   color: #2057D5;
 }
 
-.c7:hover:enabled:active > div svg {
+.c6:hover:enabled:active > div svg {
   fill: #2057D5;
 }
 
-.c7:disabled > div {
+.c6:disabled > div {
   color: #B3C6F1;
 }
 
-.c7:disabled > div svg {
+.c6:disabled > div svg {
   fill: #B3C6F1;
 }
 
-.c7:focus-visible {
+.c6:focus-visible {
   outline: 0.125rem solid #C7D6F7;
 }
 
-.c7:focus-visible > div {
+.c6:focus-visible > div {
   color: #4475E3;
 }
 
-.c7:focus-visible > div svg {
+.c6:focus-visible > div svg {
   fill: #4475E3;
 }
 
-.c25 {
+.c39 {
   position: relative;
+  z-index: 0;
   display: -webkit-box !important;
   display: -webkit-flex !important;
   display: -ms-flexbox !important;
@@ -125,72 +127,72 @@ exports[`MainLayout should render 1`] = `
   background-color: transparent;
 }
 
-.c25:hover {
+.c39:hover {
   cursor: pointer;
 }
 
-.c25 > div {
+.c39 > div {
   color: #4475E3;
 }
 
-.c25 > div svg {
+.c39 > div svg {
   fill: #4475E3;
 }
 
-.c25:hover:enabled > div {
+.c39:hover:enabled > div {
   color: #2F65E0;
 }
 
-.c25:hover:enabled > div svg {
+.c39:hover:enabled > div svg {
   fill: #2F65E0;
 }
 
-.c25:hover:enabled:active > div {
+.c39:hover:enabled:active > div {
   color: #2057D5;
 }
 
-.c25:hover:enabled:active > div svg {
+.c39:hover:enabled:active > div svg {
   fill: #2057D5;
 }
 
-.c25:disabled > div {
+.c39:disabled > div {
   color: #B3C6F1;
 }
 
-.c25:disabled > div svg {
+.c39:disabled > div svg {
   fill: #B3C6F1;
 }
 
-.c25:focus-visible {
+.c39:focus-visible {
   outline: 0.125rem solid #C7D6F7;
 }
 
-.c25:focus-visible > div {
+.c39:focus-visible > div {
   color: #4475E3;
 }
 
-.c25:focus-visible > div svg {
+.c39:focus-visible > div svg {
   fill: #4475E3;
 }
 
-.c25:hover:enabled {
+.c39:hover:enabled {
   background-color: #ECF1FC;
 }
 
-.c25:hover:enabled:active > div {
+.c39:hover:enabled:active > div {
   color: #2057D5;
 }
 
-.c25:hover:enabled:active > div svg {
+.c39:hover:enabled:active > div svg {
   fill: #2057D5;
 }
 
-.c25:focus-visible:enabled {
+.c39:focus-visible:enabled {
   background-color: #C7D6F7;
   outline: none;
 }
 
-.c9 {
+.c8 {
   position: relative;
   z-index: 2;
   display: -webkit-box;
@@ -210,12 +212,23 @@ exports[`MainLayout should render 1`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
-.c24 {
+.c38 {
   display: inline-block;
   position: static;
 }
 
-.c29 {
+.c47 {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: default;
+  -webkit-user-drag: none;
+}
+
+.c47:hover {
+  cursor: pointer;
+}
+
+.c43 {
   border-radius: 1.5625rem;
   height: 2.5rem;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -225,13 +238,13 @@ exports[`MainLayout should render 1`] = `
   opacity: 1;
 }
 
-.c29:hover {
+.c43:hover {
   opacity: 1;
   box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
   cursor: pointer;
 }
 
-.c29:hover:active {
+.c43:hover:active {
   opacity: 1;
   box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
   cursor: pointer;
@@ -239,7 +252,7 @@ exports[`MainLayout should render 1`] = `
   filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
 }
 
-.c19 {
+.c18 {
   border-radius: 4.125rem;
   height: 8.875rem;
   -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
@@ -249,13 +262,13 @@ exports[`MainLayout should render 1`] = `
   opacity: 1;
 }
 
-.c19:hover {
+.c18:hover {
   opacity: 1;
   box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
   cursor: pointer;
 }
 
-.c19:hover:active {
+.c18:hover:active {
   opacity: 1;
   box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
   cursor: pointer;
@@ -263,7 +276,8 @@ exports[`MainLayout should render 1`] = `
   filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
 }
 
-.c23 {
+.c37 {
+  position: relative;
   height: 100%;
   background-color: #FFFFFF;
   display: -webkit-box;
@@ -283,30 +297,29 @@ exports[`MainLayout should render 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  position: relative;
   border-right: 0.0625rem solid #F7F8FA;
   -webkit-transition: border 150ms cubic-bezier(0.45,0.05,0,1);
   transition: border 150ms cubic-bezier(0.45,0.05,0,1);
   padding-bottom: 0.875rem;
 }
 
-.c27 {
+.c41 {
   -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   opacity: 1;
 }
 
-.c41 {
+.c51 {
   -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   opacity: 0;
 }
 
-.c31 {
+.c45 {
   margin-right: 1rem;
 }
 
-.c26 {
+.c40 {
   position: absolute !important;
   z-index: 1100;
   background-color: #F6F8FE;
@@ -314,7 +327,7 @@ exports[`MainLayout should render 1`] = `
   left: -62.5rem;
 }
 
-.c28 {
+.c42 {
   width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -328,15 +341,15 @@ exports[`MainLayout should render 1`] = `
   margin-bottom: 2.375rem;
 }
 
-.c28:hover {
+.c42:hover {
   cursor: pointer;
 }
 
-.c28:hover .c30 {
+.c42:hover .c44 {
   box-shadow: 0 0.5rem 0.625rem 0.125rem 0 rgba(0,0,0,0.12);
 }
 
-.c32 {
+.c46 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -348,7 +361,7 @@ exports[`MainLayout should render 1`] = `
   color: #474747;
 }
 
-.c42 {
+.c52 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -360,7 +373,9 @@ exports[`MainLayout should render 1`] = `
   padding-left: 1rem;
   position: relative;
   overflow: hidden;
-  height: 3.9375rem;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
@@ -371,13 +386,14 @@ exports[`MainLayout should render 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #2D2D2D !important;
+  margin-bottom: 0.9375rem;
 }
 
-.c42 svg {
+.c52 svg {
   fill: #808080;
 }
 
-.c43 {
+.c53 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -390,7 +406,11 @@ exports[`MainLayout should render 1`] = `
   width: 100%;
 }
 
-.c34 {
+.c54 {
+  white-space: pre;
+}
+
+.c25 {
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
@@ -398,7 +418,21 @@ exports[`MainLayout should render 1`] = `
   position: relative;
 }
 
-.c38 {
+.c28 {
+  position: relative;
+  z-index: 1000;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.c49 {
   position: relative;
   z-index: 1000;
   display: -webkit-inline-box;
@@ -412,14 +446,14 @@ exports[`MainLayout should render 1`] = `
   margin-right: 0.5rem;
 }
 
-.c40 {
+.c30 {
   position: relative;
   z-index: 1000;
   margin: 0;
   display: block;
 }
 
-.c36 {
+.c26 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -433,28 +467,69 @@ exports[`MainLayout should render 1`] = `
   z-index: 0;
 }
 
-.c37 {
+.c27 {
+  padding: 1.5rem;
+  height: 3.5rem;
+  color: #808080 !important;
+}
+
+.c27 svg {
+  fill: #808080;
+}
+
+.c27:hover {
+  cursor: pointer;
+  background-color: #ECF1FC;
+  color: #4475E3 !important;
+}
+
+.c27:hover svg {
+  fill: #4475E3;
+}
+
+.c27::before {
+  content: '';
+  height: 3rem;
+  width: 0.5rem;
+  border-radius: 0.25rem 0rem 0rem 0.25rem;
+  position: absolute;
+  left: 16rem;
+  background-color: #4475E3;
+  color: #4475E3;
+  z-index: 100;
+  display: none;
+}
+
+.c27 > .c29 {
+  font-family: Inter,sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c48 {
   padding: 1rem;
   height: 2.5rem;
   margin-bottom: 0.5rem;
   color: #808080 !important;
 }
 
-.c37 svg {
+.c48 svg {
   fill: #808080;
 }
 
-.c37:hover {
+.c48:hover {
   cursor: pointer;
   background-color: #ECF1FC;
   color: #4475E3 !important;
 }
 
-.c37:hover svg {
+.c48:hover svg {
   fill: #4475E3;
 }
 
-.c37::before {
+.c48::before {
   content: '';
   height: 2rem;
   width: 0.25rem;
@@ -467,7 +542,7 @@ exports[`MainLayout should render 1`] = `
   display: none;
 }
 
-.c37 > .c39 {
+.c48 > .c29 {
   font-family: Inter,sans-serif;
   font-size: 0.75rem;
   line-height: 1.125rem;
@@ -475,17 +550,17 @@ exports[`MainLayout should render 1`] = `
   font-style: normal;
 }
 
-.c35 {
+.c50 {
   margin-top: auto;
 }
 
-.c35 .c33 {
+.c50 .c24 {
   opacity: 0;
   -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
 }
 
-.c35:hover .c33 {
+.c50:hover .c24 {
   opacity: 1;
 }
 
@@ -526,7 +601,94 @@ exports[`MainLayout should render 1`] = `
   justify-content: center;
 }
 
-.c6 {
+.c23 {
+  -webkit-transform: translate(-1.5rem,-0.5rem);
+  -ms-transform: translate(-1.5rem,-0.5rem);
+  transform: translate(-1.5rem,-0.5rem);
+  width: 16.5rem;
+  display: none;
+}
+
+.c31 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.c31 > svg {
+  fill: #4475E3;
+}
+
+.c21 {
+  position: absolute;
+  left: 3rem;
+  bottom: 2rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  color: #2D2D2D;
+}
+
+.c21:hover .c22 {
+  display: block;
+}
+
+.c32 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.c33 {
+  font-family: Inter,sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.625rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c35 {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c34 {
+  height: 1.25rem;
+  border-left: 0.0625rem solid #A1A1A1;
+}
+
+.c5 {
   width: 100%;
   height: 100%;
   background-color: #F7F8FA;
@@ -545,12 +707,12 @@ exports[`MainLayout should render 1`] = `
   overflow: auto;
 }
 
-.c8 {
+.c7 {
   margin-top: 5.9375rem;
   height: 0;
 }
 
-.c11 {
+.c10 {
   min-width: 70rem;
   max-width: 70rem;
   color: #474747;
@@ -572,7 +734,7 @@ exports[`MainLayout should render 1`] = `
   padding-top: 2.125rem;
 }
 
-.c12 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -582,10 +744,15 @@ exports[`MainLayout should render 1`] = `
   -webkit-justify-content: space-between;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   margin-bottom: 4.25rem;
+  padding-top: 0.3125rem;
 }
 
-.c14 {
+.c13 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -600,7 +767,7 @@ exports[`MainLayout should render 1`] = `
   align-items: center;
 }
 
-.c15 {
+.c14 {
   min-width: 70rem;
   max-width: 70rem;
   display: -webkit-box;
@@ -611,7 +778,7 @@ exports[`MainLayout should render 1`] = `
   margin-bottom: 1.875rem;
 }
 
-.c16 {
+.c15 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -633,7 +800,7 @@ exports[`MainLayout should render 1`] = `
   transition: transform 0.3s cubic-bezier(0.45,0.05,0,1);
 }
 
-.c17 {
+.c16 {
   min-width: 70rem;
   max-width: 70rem;
   display: -webkit-box;
@@ -653,18 +820,19 @@ exports[`MainLayout should render 1`] = `
   align-items: center;
   margin: auto;
   min-height: 27.25rem;
+  row-gap: 1rem;
 }
 
-.c13 {
+.c12 {
   font-family: Inter,sans-serif;
   font-size: 1.5rem;
   line-height: 2.0125rem;
   font-weight: 600;
   font-style: normal;
-  margin: 0.3125rem 0 0 2.5rem;
+  margin-left: 2.5rem;
 }
 
-.c18 {
+.c17 {
   position: relative;
   display: -webkit-box;
   display: -webkit-flex;
@@ -678,12 +846,12 @@ exports[`MainLayout should render 1`] = `
   -ms-flex-align: center;
   align-items: center;
   width: 9rem;
-  height: 13.125rem;
+  height: 14.1875rem;
   padding-top: 0.25rem;
   margin: 0 2.5rem 0.5rem;
 }
 
-.c20 {
+.c19 {
   font-family: Inter,sans-serif;
   font-size: 1.125rem;
   line-height: 1.6875rem;
@@ -692,22 +860,26 @@ exports[`MainLayout should render 1`] = `
   margin-top: 1.625rem;
   text-align: center;
   max-width: 9rem;
-  overflow-x: hidden;
+  display: block;
+  display: -webkit-box;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: break-spaces;
 }
 
-.c21 {
+.c20 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
   font-weight: 400;
   font-style: normal;
   color: #4475E3;
-}
-
-.c5 {
-  margin-bottom: 5.75rem;
 }
 
 .c0 {
@@ -738,7 +910,7 @@ exports[`MainLayout should render 1`] = `
   flex-direction: column;
 }
 
-.c22 {
+.c36 {
   position: relative;
   z-index: 1;
 }
@@ -757,27 +929,27 @@ exports[`MainLayout should render 1`] = `
         class="c4"
       >
         <div
-          class="c5"
+          class=""
         >
           <div
-            class="c6"
+            class="c5"
           >
             <button
               aria-label="Previous Study"
-              class="c7 c8"
+              class="c6 c7"
               disabled=""
               fill="text"
               style="overflow: hidden; position: relative;"
               width="80"
             >
               <div
-                class="c9"
+                class="c8"
                 data-testid="content"
               >
                 <svg />
               </div>
               <div
-                class="c10"
+                class="c9"
                 color="primaryLightPressed"
                 opacity="1,1"
                 scale="0"
@@ -785,34 +957,34 @@ exports[`MainLayout should render 1`] = `
               />
             </button>
             <div
-              class="c11"
+              class="c10"
             >
               <div
-                class="c12"
+                class="c11"
               >
                 <div
-                  class="c13"
+                  class="c12"
                 >
                   Study Collection
                 </div>
               </div>
               <div
-                class="c14"
+                class="c13"
               >
                 <div
-                  class="c15"
+                  class="c14"
                 >
                   <div
-                    class="c16"
+                    class="c15"
                   >
                     <div
-                      class="c17"
+                      class="c16"
                     >
                       <div
-                        class="c18"
+                        class="c17"
                       >
                         <div
-                          class="c19"
+                          class="c18"
                           color="secondarySkyBlue"
                         >
                           <svg
@@ -821,16 +993,16 @@ exports[`MainLayout should render 1`] = `
                           />
                         </div>
                         <div
-                          class="c20"
+                          class="c19"
                         >
                           SleepCare Study
                         </div>
                       </div>
                       <div
-                        class="c18"
+                        class="c17"
                       >
                         <div
-                          class="c19"
+                          class="c18"
                           color="secondaryViolet"
                         >
                           <svg
@@ -839,16 +1011,16 @@ exports[`MainLayout should render 1`] = `
                           />
                         </div>
                         <div
-                          class="c20"
+                          class="c19"
                         >
                           Heart Health Study
                         </div>
                       </div>
                       <div
-                        class="c18"
+                        class="c17"
                       >
                         <div
-                          class="c19"
+                          class="c18"
                           color="disabled"
                         >
                           <svg
@@ -857,7 +1029,7 @@ exports[`MainLayout should render 1`] = `
                           />
                         </div>
                         <div
-                          class="c20"
+                          class="c19"
                         >
                           Some deleted study
                         </div>
@@ -867,27 +1039,27 @@ exports[`MainLayout should render 1`] = `
                 </div>
               </div>
               <div
-                class="c21"
+                class="c20"
               >
                  
               </div>
             </div>
             <button
               aria-label="Next Study"
-              class="c7 c8"
+              class="c6 c7"
               disabled=""
               fill="text"
               style="overflow: hidden; position: relative;"
               width="80"
             >
               <div
-                class="c9"
+                class="c8"
                 data-testid="content"
               >
                 <svg />
               </div>
               <div
-                class="c10"
+                class="c9"
                 color="primaryLightPressed"
                 opacity="1,1"
                 scale="0"
@@ -897,34 +1069,88 @@ exports[`MainLayout should render 1`] = `
           </div>
         </div>
       </div>
+      <div
+        class="c21"
+      >
+        <div
+          class="c22 c23"
+        >
+          <div
+            class="c24 c25"
+          >
+            <div
+              class="c26 c27"
+              data-testid="user-profile-signout-action"
+            >
+              <div
+                class="c28"
+              >
+                <svg />
+              </div>
+              <p
+                class="c29 c30"
+              >
+                Sign out
+              </p>
+              <div
+                class="c9"
+                color="primaryLightPressed"
+                opacity="1,1"
+                scale="0"
+                style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="c31"
+        >
+          <svg />
+          <div
+            class="c32"
+          >
+            <span
+              class="c33"
+            />
+            <span
+              class="c34"
+            />
+            <span
+              class="c35"
+            >
+              Team Member
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div
-    class="c1 c22"
+    class="c1 c36"
   >
     <div
-      class="c23"
+      class="c37"
       id="sidebar"
       style="width: 12rem; padding-top: 1.625rem;"
     >
       <span
-        class="c24"
+        class="c38"
         data-testid="tooltip-container"
       />
       <button
         aria-label="Resize"
-        class="c25 c26"
+        class="c39 c40"
         fill="text"
         style="overflow: hidden; position: relative;"
       >
         <div
-          class="c9"
+          class="c8"
           data-testid="content"
         >
           <svg />
         </div>
         <div
-          class="c10"
+          class="c9"
           color="primaryLightPressed"
           opacity="1,1"
           scale="0"
@@ -932,10 +1158,10 @@ exports[`MainLayout should render 1`] = `
         />
       </button>
       <div
-        class="c27 c28"
+        class="c41 c42"
       >
         <div
-          class="c29 c30 c31"
+          class="c43 c44 c45"
           color="secondarySkyBlue"
         >
           <svg
@@ -944,36 +1170,141 @@ exports[`MainLayout should render 1`] = `
           />
         </div>
         <div
-          class="c32"
+          class="c46"
         >
           SleepCare Study
         </div>
       </div>
       <div
-        class="c33 c34"
-      />
-      <div
-        class="c35"
+        class="c24 c25"
       >
-        <div
-          class="c33 c34"
+        <a
+          class="c47"
+          href="/overview"
         >
           <div
-            class="c36 c37"
-            data-testid="user-profile-signout-action"
+            class="c26 c48"
           >
             <div
-              class="c38"
+              class="c49"
             >
               <svg />
             </div>
             <p
-              class="c39 c40"
+              class="c29 c30"
+            >
+              Overview
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/study-management"
+        >
+          <div
+            class="c26 c48"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Study Management
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/data-collection"
+        >
+          <div
+            class="c26 c48"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Data Insights
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/study-settings"
+        >
+          <div
+            class="c26 c48"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Study Settings
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        class="c50"
+      >
+        <div
+          class="c24 c25"
+        >
+          <div
+            class="c26 c48"
+            data-testid="user-profile-signout-action"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
             >
               Sign out
             </p>
             <div
-              class="c10"
+              class="c9"
               color="primaryLightPressed"
               opacity="1,1"
               scale="0"
@@ -982,12 +1313,14 @@ exports[`MainLayout should render 1`] = `
           </div>
         </div>
         <div
-          class="c41 c42"
+          class="c51 c52"
         >
           <div
-            class="c43"
+            class="c53"
           />
-          Unknown
+          <div
+            class="c54"
+          />
         </div>
       </div>
     </div>

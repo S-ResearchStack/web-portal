@@ -1,20 +1,21 @@
 import waitFor from 'src/common/utils/waitFor';
+import { isInsideTest } from 'src/common/utils/testing';
 
 import * as endpoints from './endpoints';
 import { Response } from './executeRequest';
 import { SqlResponse } from './models/sql';
 
-export type ApiEndpoints = typeof endpoints;
+type ApiEndpoints = typeof endpoints;
 
 const MOCK_OPTIONS = ['disabled', 'only_non_implemented', 'always'] as const;
 type MockOption = typeof MOCK_OPTIONS[number];
 
-let MOCK: MockOption = 'only_non_implemented'; // TODO: change to 'disabled' by default when all APIs available
+let MOCK: MockOption = 'disabled';
 {
   const mockEnvValue = (localStorage.getItem('MOCK_API') || process.env.MOCK_API) as
     | MockOption
     | undefined;
-  if (process.env.NODE_ENV === 'test') {
+  if (isInsideTest) {
     MOCK = 'always';
   } else if (mockEnvValue) {
     if (MOCK_OPTIONS.includes(mockEnvValue)) {
@@ -28,38 +29,9 @@ let MOCK: MockOption = 'only_non_implemented'; // TODO: change to 'disabled' by 
 
 const MOCK_REQUEST_DURATION = 1500;
 
-const implementedEndpoints: (keyof ApiEndpoints)[] = [
-  'signin',
-  'signUp',
-  'verifyEmail',
-  'resetPassword',
-  'getUsers',
-  'inviteUser',
-  'updateUserRole',
-  'removeUserRole',
-  'refreshToken',
-  'getStudies',
-  'createStudy',
-  'getHealthDataOverview',
-  'getHealthDataOverviewForUser',
-  'getUserProfilesCount',
-  'getParticipantHeartRates',
-  'getAverageParticipantHeartRate',
-  'getAverageStepCount',
-  'getTablesList',
-  'getTableColumns',
-  'executeDataQuery',
-  'createTask',
-  'getTasks',
-  'getTask',
-  'updateTask',
-  'getTaskItemResults',
-  'getTaskRespondedUsersCount',
-  'getTaskCompletionTime',
-  'resendVerification',
-];
+const nonImplementedEndpoints: (keyof ApiEndpoints)[] = [];
 
-export const mockedEndpoints: Partial<ApiEndpoints> = {};
+const mockedEndpoints: Partial<ApiEndpoints> = {};
 
 export const provideEndpoints = (mock: Partial<ApiEndpoints>) => {
   Object.assign(mockedEndpoints, mock);
@@ -69,7 +41,7 @@ export const createMockEndpointsProxy = <T extends ApiEndpoints>(target: T) =>
   new Proxy(target, {
     get(t, name) {
       const isEndpointMocked = name in mockedEndpoints;
-      const isEndpointImplemented = implementedEndpoints.includes(name as keyof ApiEndpoints);
+      const isEndpointImplemented = !nonImplementedEndpoints.includes(name as keyof ApiEndpoints);
 
       if (
         isEndpointMocked &&
@@ -82,7 +54,7 @@ export const createMockEndpointsProxy = <T extends ApiEndpoints>(target: T) =>
   });
 
 const waitIfNeeded = async () => {
-  if (process.env.NODE_ENV !== 'test') {
+  if (!isInsideTest) {
     await waitFor(MOCK_REQUEST_DURATION);
   }
 };

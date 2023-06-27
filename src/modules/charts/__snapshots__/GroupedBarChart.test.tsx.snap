@@ -70,7 +70,7 @@ exports[`GroupedBarChart should render 1`] = `
       width="1000"
     >
       <g
-        class="c1 xAxis"
+        class="c1 xAxis undefined"
         fill="none"
         font-family="sans-serif"
         font-size="10"

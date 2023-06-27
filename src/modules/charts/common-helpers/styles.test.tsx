@@ -42,9 +42,7 @@ describe('chart styles helpers', () => {
   it('should render StyledSvg', () => {
     const { baseElement } = render(
       <ThemeProvider theme={theme}>
-        <StyledSvg focusWidth={100} $contextVisible>
-          children
-        </StyledSvg>
+        <StyledSvg $contextVisible>children</StyledSvg>
       </ThemeProvider>
     );
     expect(baseElement).toBeInTheDocument();
@@ -54,9 +52,7 @@ describe('chart styles helpers', () => {
   it('[NEGATIVE] should render StyledSvg with invalid props', () => {
     const { baseElement } = render(
       <ThemeProvider theme={theme}>
-        <StyledSvg focusWidth={NaN} $contextVisible>
-          children
-        </StyledSvg>
+        <StyledSvg $contextVisible>children</StyledSvg>
       </ThemeProvider>
     );
     expect(baseElement).toBeInTheDocument();

@@ -1,7 +1,4 @@
 import React from 'react';
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupRangeMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import { act, render, screen } from '@testing-library/react';
@@ -27,14 +24,14 @@ describe('StudySettings', () => {
               email: 'test-email-1',
               name: 'test',
               status: 'active',
-              role: 'team-admin',
+              roles: ['principal-investigator'],
             },
             {
               id: 'test-user-2',
               email: 'test-email-2',
               name: 'test',
               status: 'active',
-              role: 'team-admin',
+              roles: ['data-scientist'],
             },
           ],
         },

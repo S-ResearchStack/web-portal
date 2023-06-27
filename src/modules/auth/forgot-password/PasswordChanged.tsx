@@ -46,7 +46,7 @@ const PasswordChanged = () => {
   }, [dispatch]);
 
   return (
-    <Container>
+    <Container data-testid="password-changed">
       <ContentCard>
         <ResultMessage
           picture={<SuccessImg />}
@@ -63,7 +63,7 @@ const PasswordChanged = () => {
           }
         >
           <NextStep>
-            <Button fill="solid" onClick={handleNext}>
+            <Button fill="solid" onClick={handleNext} data-testid="password-changed-next-button">
               Continue to Portal
             </Button>
           </NextStep>

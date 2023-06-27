@@ -14,7 +14,7 @@ const CheckedMobile = Checked;
 /* import CheckedMobile from 'src/assets/icons/checkbox_checked_mobile.svg'; */
 
 // When using a `type` instead of an `interface`, the linter gives an error in the component props
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+
 export interface CheckboxProps
   extends React.PropsWithChildren<React.InputHTMLAttributes<HTMLInputElement>> {
   isMobile?: boolean;

@@ -1,10 +1,11 @@
 import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { push } from 'connected-react-router';
 
 import styled from 'styled-components';
-import Link from 'src/common/components/Link';
 
 import { signin } from 'src/modules/auth/auth.slice';
 import { useAppDispatch } from 'src/modules/store';
+import Link from 'src/common/components/Link';
 import Button from 'src/common/components/Button';
 import Checkbox from 'src/common/components/CheckBox';
 import InputField from 'src/common/components/InputField';
@@ -13,7 +14,6 @@ import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHa
 import { colors, px, typography } from 'src/styles';
 import InfoIcon from 'src/assets/icons/info.svg';
 import { Path } from 'src/modules/navigation/store';
-
 import ScreenCenteredCard from '../common/ScreenCenteredCard';
 import { useEnterPress } from './hooks';
 import ScreenHeader from '../common/ScreenHeader';
@@ -113,6 +113,10 @@ const SignInScreen: React.FC = () => {
   const [rememberUser, setRememberUser] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
+  const handleForgotPassword = () => {
+    dispatch(push(Path.ForgotPassword));
+  };
+
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     if (error) {
@@ -169,7 +173,7 @@ const SignInScreen: React.FC = () => {
     >
       <ScreenCenteredCard
         width={55.556}
-        minWidth={683}
+        minWidth={773}
         ratio={(existedEmail ? 678 : 600) / 800}
         onMainButtonClick={handleClick}
       >
@@ -186,6 +190,7 @@ const SignInScreen: React.FC = () => {
             error={error}
             readOnly={isLoading}
             aria-label="Email"
+            placeholder="Enter your email"
           />
           <PasswordInputField
             name="password"
@@ -197,6 +202,7 @@ const SignInScreen: React.FC = () => {
             autoComplete="new-password"
             readOnly={isLoading}
             aria-label="Password"
+            placeholder="Enter password"
           />
           <ControlsWrapper>
             <Checkbox
@@ -206,7 +212,14 @@ const SignInScreen: React.FC = () => {
             >
               <div>Remember me</div>
             </Checkbox>
-            <StyledButton fill="text" width={120} rate="small" disabled>
+            <StyledButton
+              fill="text"
+              width={120}
+              rate="small"
+              onClick={handleForgotPassword}
+              rippleOff
+              placeholder="Enter email"
+            >
               Forgot Password?
             </StyledButton>
           </ControlsWrapper>

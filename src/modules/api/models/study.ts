@@ -1,22 +1,28 @@
+export type StudyId = {
+  value: string;
+};
+
 export type Study = {
-  id: {
-    value: string;
-  };
+  id: StudyId;
   name: string;
   info: {
     color?: string;
   };
   isOpen: boolean;
+  createdAt: string;
 };
 
 export type StudyListResponse = Study[];
 
 export type CreateStudyRequest = Pick<Study, 'name' | 'info'>;
 
-export type InviteUserRequest = {
+type UserInvitation = {
   email: string;
   roles: string[];
-}[];
+  mgmtAccess: boolean;
+};
+
+export type InviteUsersRequest = UserInvitation[];
 
 export type UserProfile = {
   name?: string;
@@ -32,6 +38,7 @@ export type GetUsersUserInfo = {
   email: string;
   roles: string[];
   profile?: UserProfile;
+  mgmtAccess: boolean;
 };
 
 export type GetUsersResponse = GetUsersUserInfo[];
@@ -44,4 +51,13 @@ export type UpdateUserRoleRequest = {
 export type RemoveUserRoleRequest = {
   accountId: string;
   roles: string[];
+};
+
+export type DropoutTimePeriod = 'allTime' | 'month' | 'week' | 'day';
+
+type DropoutPeriodData = Record<DropoutTimePeriod, { withdrawals: number; trend?: number }>;
+
+export type ParticipantDropoutData = {
+  periods: DropoutPeriodData;
+  enrolledAt: number;
 };

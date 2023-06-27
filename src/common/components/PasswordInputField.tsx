@@ -29,7 +29,7 @@ type EndExtraProps = {
   disabled?: boolean;
 };
 
-export const EndExtra = ({ selected, onClick, color, disabled }: EndExtraProps) => (
+const EndExtra = ({ selected, onClick, color, disabled }: EndExtraProps) => (
   <StyledEndExtraButton
     selected={selected}
     onClick={onClick}

@@ -50,7 +50,7 @@ describe('BackdropOverlay', () => {
 
     rerender(
       <ThemeProvider theme={theme}>
-        <BackdropOverlay data-testid="backdrop-overlay" open loaderBackdrop>
+        <BackdropOverlay data-testid="backdrop-overlay" open blur>
           <div />
         </BackdropOverlay>
       </ThemeProvider>

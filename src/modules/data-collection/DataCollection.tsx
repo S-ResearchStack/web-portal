@@ -1,10 +1,11 @@
 import React, { useMemo, useEffect, useCallback, useRef, useState, useLayoutEffect } from 'react';
 import useMeasureDirty from 'react-use/lib/useMeasureDirty';
+import useMount from 'react-use/lib/useMount';
 
 import styled from 'styled-components';
 
 import { BASE_CARD_PADDING, TitleContainer } from 'src/common/components/Card';
-import { SnackbarContainer, useShowSnackbar } from 'src/modules/snackbar';
+import { useShowSnackbar } from 'src/modules/snackbar';
 import ErrorIcon from 'src/assets/icons/error.svg';
 import ServiceScreen from 'src/common/components/ServiceScreen';
 import Table from 'src/common/components/Table';
@@ -37,7 +38,6 @@ import {
   fetchColumns,
   dataLoadingSelector,
   tablesLoadingSelector,
-  tablesProjectIdSelector,
 } from './dataCollection.slice';
 import SqlQueryEditor from './SqlQueryEditor/SqlQueryEditor';
 
@@ -106,18 +106,18 @@ const DataCollection = () => {
   const queryResult = useAppSelector(queryResultSelector);
   const isDataLoading = useAppSelector(dataLoadingSelector);
   const isTablesLoading = useAppSelector(tablesLoadingSelector);
-  const tablesProjectId = useAppSelector(tablesProjectIdSelector);
 
   const showSnackbar = useShowSnackbar();
 
   const dispatch = useAppDispatch();
 
+  useMount(() => dispatch(clear()));
+
   useEffect(() => {
-    if (!isTablesLoading && studyId && tablesProjectId !== studyId) {
-      dispatch(clear());
+    if (studyId && !tables && !isTablesLoading) {
       dispatch(fetchTables(studyId));
     }
-  }, [studyId, tablesProjectId, isTablesLoading, dispatch]);
+  }, [studyId, isTablesLoading, dispatch, tables]);
 
   const executeQuery = useCallback(() => {
     studyId && dispatch(dataFetchData(studyId, query));
@@ -134,7 +134,7 @@ const DataCollection = () => {
   const { queryParams } = queryResult || {};
   const { limit, offset, sortings } = queryParams || {};
 
-  const tablesColumnsMap = useMemo(() => new Map(Object.entries(tables)), [tables]);
+  const tablesColumnsMap = useMemo(() => new Map(Object.entries(tables || {})), [tables]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -148,7 +148,7 @@ const DataCollection = () => {
   const pageSize = limit || DEFAULT_PAGINATION_LIMIT;
 
   const tablesNames = useMemo(
-    () => Object.keys(tables).map((tId) => ({ label: tId, key: tId })),
+    () => Object.keys(tables || {}).map((tId) => ({ label: tId, key: tId })),
     [tables]
   );
 
@@ -295,7 +295,6 @@ const DataCollection = () => {
         }
       >
         {isDataLoading ? <ServiceScreenStyled type="loading" title="Loading..." /> : tableComponent}
-        <SnackbarContainer />
       </CardStyled>
     </Container>
   );

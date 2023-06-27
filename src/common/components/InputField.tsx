@@ -7,36 +7,44 @@ import { animation, colors, px, typography } from 'src/styles';
 
 export const RIGHT_PADDING = 8;
 
-export interface InputFieldBaseProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputFieldBaseProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | JSX.Element;
   helperText?: string;
   error?: React.ReactNode;
   withoutErrorText?: boolean;
   disabled?: boolean;
 }
-type InputFieldShellProps = React.PropsWithChildren<InputFieldBaseProps>;
+type InputFieldShellProps = {
+  fixedHeight?: boolean;
+  caption?: React.ReactNode;
+} & React.PropsWithChildren<InputFieldBaseProps>;
 
 type InputType = 'email' | 'password' | 'text' | 'date' | 'number';
+
+type EndExtraProps = { component: JSX.Element; extraWidth: number };
 
 export interface InputFieldProps
   extends InputFieldBaseProps,
     React.InputHTMLAttributes<HTMLInputElement> {
   type?: InputType;
-  endExtra?: { component: JSX.Element; extraWidth: number };
+  endExtra?: EndExtraProps;
   lighten?: boolean;
 }
 
-export const InputContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${px(8)};
 `;
 
-export const ExtraWrapper = styled.div<Pick<InputFieldProps, 'endExtra'>>`
+const ExtraWrapper = styled.div<Pick<InputFieldProps, 'endExtra' | 'disabled'>>`
   > svg {
     position: relative;
     bottom: ${browser.isSafari ? px(43) : px(41)};
     left: ${({ endExtra }) => `calc(100% - ${px((endExtra?.extraWidth || 0) + RIGHT_PADDING)})`};
+    path {
+      fill: ${({ disabled, theme }) => disabled && theme.colors.onDisabled};
+    }
   }
 `;
 
@@ -73,9 +81,9 @@ export const StyledTextField = styled.input<InputFieldProps>`
   }
 
   &:disabled {
-    color: ${colors.disabled};
-    border-color: ${colors.disabled20};
-    background-color: ${colors.disabled20};
+    color: rgba(0, 0, 0, 0.38); // TODO unknown color
+    border-color: transparent;
+    background-color: #f8f8f8; // TODO unknown color
   }
 
   &::placeholder {
@@ -105,8 +113,10 @@ export const StyledTextField = styled.input<InputFieldProps>`
   }
 `;
 
-export const InputWrapper = styled.div<Pick<InputFieldProps, 'endExtra' | 'error'>>`
-  max-height: ${px(56)};
+const InputWrapper = styled.div<
+  Pick<InputFieldShellProps, 'fixedHeight'> & Pick<InputFieldProps, 'endExtra' | 'error'>
+>`
+  max-height: ${(p) => (p.fixedHeight ? px(56) : 'auto')};
   &:hover {
     ${StyledTextField} {
       :enabled {
@@ -117,26 +127,37 @@ export const InputWrapper = styled.div<Pick<InputFieldProps, 'endExtra' | 'error
 `;
 
 interface BlockStatus {
-  disabled?: boolean;
+  $disabled?: boolean;
   error?: boolean;
 }
 
-export const Label = styled.div<BlockStatus>`
+const Label = styled.div<BlockStatus>`
   ${typography.bodyMediumSemibold};
-  color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimary)};
+  color: ${({ error, $disabled, theme }) =>
+    (error && theme.colors.statusErrorText) ||
+    ($disabled ? 'rgba(0, 0, 0, 0.38)' : theme.colors.textPrimary)}; // TODO unknown color
   height: ${px(18)};
 `;
 
-export const InputDescription = styled.div<BlockStatus>`
+const InputDescription = styled.div<BlockStatus>`
   ${typography.bodySmallRegular};
-  color: ${({ error }) => (error ? colors.statusErrorText : colors.textPrimary)};
+  color: ${({ error, $disabled, theme }) =>
+    (error && theme.colors.statusErrorText) ||
+    ($disabled ? 'rgba(0, 0, 0, 0.38)' : theme.colors.textPrimary)}; // TODO unknown color
   gap: ${px(8)};
   height: ${px(18)};
 `;
 
-export const InputErrorText = styled.div<{ withOffset?: boolean }>`
+const InputErrorText = styled.div<{ withOffset?: boolean }>`
   ${typography.bodySmallRegular};
   color: ${colors.statusErrorText};
+  padding-left: ${({ withOffset }) => withOffset && px(16)};
+  height: ${px(17)};
+`;
+
+const InputCaption = styled.div<{ withOffset?: boolean }>`
+  ${typography.labelRegular};
+  color: ${colors.textSecondaryGray};
   padding-left: ${({ withOffset }) => withOffset && px(16)};
   height: ${px(17)};
 `;
@@ -149,22 +170,29 @@ export const InputFieldShell: FC<InputFieldShellProps> = ({
   disabled,
   children,
   withoutErrorText,
+  fixedHeight = true,
+  caption,
 }) => (
   <InputContainer className={className}>
     {helperText && (
-      <Label data-testid="input-label" error={!!error} disabled={disabled}>
+      <Label data-testid="input-label" error={!!error} $disabled={disabled}>
         {label}
       </Label>
     )}
-    <InputDescription data-testid="input-description" error={!!error} disabled={disabled}>
+    <InputDescription data-testid="input-description" error={!!error} $disabled={disabled}>
       {helperText || label || <>&nbsp;</>}
     </InputDescription>
-    <InputWrapper error={error}>{children}</InputWrapper>
-    {!withoutErrorText && (
-      <InputErrorText data-testid="input-error" withOffset={!helperText}>
-        {error || <>&nbsp;</>}
-      </InputErrorText>
-    )}
+    <InputWrapper error={error} fixedHeight={fixedHeight}>
+      {children}
+    </InputWrapper>
+    {!withoutErrorText &&
+      (error ? (
+        <InputErrorText data-testid="input-error" withOffset={!helperText}>
+          {error}
+        </InputErrorText>
+      ) : (
+        <InputCaption withOffset={!helperText}>{caption || <>&nbsp;</>}</InputCaption>
+      ))}
   </InputContainer>
 );
 
@@ -200,7 +228,9 @@ const InputField = forwardRef(
         endExtra={endExtra}
         {...restProps}
       />
-      <ExtraWrapper endExtra={endExtra}>{endExtra?.component}</ExtraWrapper>
+      <ExtraWrapper disabled={disabled} endExtra={endExtra}>
+        {endExtra?.component}
+      </ExtraWrapper>
     </InputFieldShell>
   )
 );

@@ -73,13 +73,13 @@ describe('PasswordInputField', () => {
     expect(endExtra).toBeInTheDocument();
 
     expect(endExtra.getAttribute('color')).toBe('disabled');
-    expect(passwordInput).toHaveStyle(`color: ${theme.colors.disabled}`);
+    expect(passwordInput).toHaveStyle('color: rgba(0, 0, 0, 0.38)');
     expect(passwordInput).toHaveValue('');
 
     await userEvent.type(passwordInput, 'Samsung');
 
     expect(endExtra.getAttribute('color')).toBe('disabled');
-    expect(passwordInput).toHaveStyle(`color: ${theme.colors.disabled}`);
+    expect(passwordInput).toHaveStyle('color: rgba(0, 0, 0, 0.38)');
     expect(passwordInput).toHaveValue('');
   });
 
@@ -99,7 +99,7 @@ describe('PasswordInputField', () => {
 
     const input = screen.getByTestId('input');
     const label = queryByTestId('input-label');
-    const error = screen.getByTestId('input-error');
+    const error = queryByTestId('input-error');
     const description = screen.getByTestId('input-description');
 
     expect(input).toBeInTheDocument();
@@ -109,7 +109,6 @@ describe('PasswordInputField', () => {
     expect(description).toBeInTheDocument();
     expect(description).toHaveTextContent('');
 
-    expect(error).toBeInTheDocument();
-    expect(error).toHaveTextContent('');
+    expect(error).toBeNil();
   });
 });

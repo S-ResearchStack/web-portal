@@ -24,7 +24,7 @@ interface ServiceScreenPreparedProps {
   title?: React.ReactNode;
 }
 
-export interface ServiceScreenProps
+interface ServiceScreenProps
   extends React.PropsWithChildren<
     Omit<ServiceScreenPreparedProps, 'icon'> & Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>
   > {
@@ -35,7 +35,7 @@ export interface ServiceScreenProps
 
 const CONTAINER_PADDING = 32;
 
-export const Container = styled.div`
+const Container = styled.div`
   box-sizing: border-box;
   display: flex;
   align-items: center;

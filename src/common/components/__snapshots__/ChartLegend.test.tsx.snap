@@ -55,6 +55,7 @@ exports[`ChartLegend test chart legend if canToggle=false 1`] = `
   -webkit-box-align: flex-start;
   -ms-flex-align: flex-start;
   align-items: flex-start;
+  cursor: unset !important;
 }
 
 .c7 {
@@ -203,7 +204,8 @@ exports[`ChartLegend test chart legend if canToggle=false 1`] = `
         >
           <label
             class="c3 c4"
-            for="3"
+            for="1"
+            kind="filled"
           >
             <div
               class="c5 c6"
@@ -223,7 +225,7 @@ exports[`ChartLegend test chart legend if canToggle=false 1`] = `
           <input
             checked=""
             data-testid="male"
-            id="3"
+            id="1"
             readonly=""
             type="checkbox"
           />
@@ -241,7 +243,8 @@ exports[`ChartLegend test chart legend if canToggle=false 1`] = `
         >
           <label
             class="c3 c4"
-            for="4"
+            for="2"
+            kind="filled"
           >
             <div
               class="c5 c6"
@@ -261,7 +264,7 @@ exports[`ChartLegend test chart legend if canToggle=false 1`] = `
           <input
             checked=""
             data-testid="female"
-            id="4"
+            id="2"
             readonly=""
             type="checkbox"
           />
@@ -439,6 +442,7 @@ exports[`ChartLegend test chart legend render 1`] = `
           <label
             class="c3 c4"
             for="1"
+            kind="radio"
           >
             <div
               class="c5 c6"
@@ -474,6 +478,7 @@ exports[`ChartLegend test chart legend render 1`] = `
           <label
             class="c3 c4"
             for="2"
+            kind="radio"
           >
             <div
               class="c5 c6"

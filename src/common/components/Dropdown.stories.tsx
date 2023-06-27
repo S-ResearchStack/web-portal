@@ -6,6 +6,7 @@ import { px } from 'src/styles';
 import RadioIcon from 'src/assets/icons/radio_checked.svg';
 import CheckboxIcon from 'src/assets/icons/checkbox_checked.svg';
 import SliderIcon from 'src/assets/icons/slider.svg';
+import CalendarIcon from 'src/assets/icons/calendar.svg';
 
 import Dropdown from './Dropdown';
 
@@ -47,6 +48,7 @@ const Template: ComponentStory<typeof Dropdown> = () => {
             { label: 'Single-selection', key: 0, icon: <RadioIcon /> },
             { label: 'Multi-selection', key: 1, icon: <CheckboxIcon /> },
             { label: 'Slider scale', key: 2, icon: <SliderIcon /> },
+            { label: 'Date & Time', key: 4, icon: <CalendarIcon /> },
           ]}
           activeKey={activeDropdownWithIconKey}
           onChange={setActiveDropdownWithIconKey}

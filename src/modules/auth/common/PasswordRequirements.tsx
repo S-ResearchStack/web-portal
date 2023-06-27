@@ -11,6 +11,10 @@ export const PasswordRequirements = styled.div`
 
 const RequirementContainer = styled.div`
   height: ${px(40)};
+
+  * {
+    cursor: default;
+  }
 `;
 
 const RequirementText = styled.span<{ error: boolean }>`
@@ -18,7 +22,7 @@ const RequirementText = styled.span<{ error: boolean }>`
   color: ${({ error, theme }) => (error ? theme.colors.textDisabled : theme.colors.textPrimary)};
 `;
 
-export type PasswordRequirement = {
+type PasswordRequirement = {
   rule: string;
   passed?: boolean;
   validator: PasswordValidator;
@@ -52,7 +56,7 @@ const getRequirements = (userName: string) =>
     },
   ].filter((r) => !!r) as PasswordRequirement[];
 
-export const checkPassword = (password: string, userName: string): Array<PasswordRequirement> =>
+const checkPassword = (password: string, userName: string): Array<PasswordRequirement> =>
   getRequirements(userName).map((r) => ({
     ...r,
     passed: password.length ? (r.validator.validate(password) as boolean) : undefined,

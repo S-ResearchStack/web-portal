@@ -45,10 +45,13 @@ export type HealthDataOverview = {
   averageSleep?: number;
   lastSyncTime?: string;
   latestAverageHR?: number;
+  latestAverageRR?: number;
   latestAverageSystolicBP?: number;
   latestAverageDiastolicBP?: number;
   latestTotalStep?: number;
   profiles?: ProfileAttribute[];
+  latestAverageSPO2?: number;
+  latestAverageBG?: number;
 };
 
 export type HealthDataOverviewSortDirection = 'ASC' | 'DESC';
@@ -58,7 +61,11 @@ export type HealthDataOverviewSortColumn =
   | 'EMAIL'
   | 'AVG_HR'
   | 'TOTAL_STEPS'
-  | 'LAST_SYNCED';
+  | 'LAST_SYNCED'
+  | 'AVG_RR'
+  | 'AVG_SPO2'
+  | 'AVG_BG'
+  | 'AVG_BP';
 
 export interface HealthDataOverviewSort {
   column: HealthDataOverviewSortColumn;
@@ -72,15 +79,15 @@ export type HealthDataOverviewParams = {
 };
 
 export type HealthDataOverviewResponse = {
-  healthDataOverview: HealthDataOverview[];
+  healthDataOverview?: HealthDataOverview[];
 };
 
 export type HealthDataOverviewOfUserResponse = {
-  healthDataOverviewOfUser: HealthDataOverview;
+  healthDataOverviewOfUser?: HealthDataOverview;
 };
 
 export type CountTableRowsResponse = {
-  count: number;
+  count?: number;
 };
 
 type HeartRate = {
@@ -104,9 +111,17 @@ type RawHealthData = {
 };
 
 export type RawHealthDataResponse = {
-  rawHealthData: RawHealthData[];
+  rawHealthData?: RawHealthData[];
 };
 
 export type AverageHealthDataResponse = {
-  averageHealthData: AverageHealthData[];
+  averageHealthData?: AverageHealthData[];
+};
+
+export type ParticipantEnrollmentResponse = {
+  data: {
+    ts: string;
+    value: string;
+  }[];
+  comparisonPercentage?: number;
 };

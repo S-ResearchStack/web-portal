@@ -6,13 +6,13 @@ import styled, { css } from 'styled-components';
 import { colors, px } from 'src/styles';
 import { isDevShowFocus } from 'src/common/utils/dev';
 
-export const sizeSpec = {
+const sizeSpec = {
   s: 16,
   m: 24,
   l: 40,
 };
 
-export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: SpecColorType;
   $size?: 's' | 'm' | 'l';
   selected?: boolean;

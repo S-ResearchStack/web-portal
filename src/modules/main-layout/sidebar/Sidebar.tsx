@@ -19,14 +19,14 @@ import Tooltip from 'src/common/components/Tooltip/Tooltip';
 import Button from 'src/common/components/Button';
 import Ripple, { useRipple } from 'src/common/components/Ripple';
 import OverviewIcon from 'src/assets/icons/overview.svg';
-import TrialManagementIcon from 'src/assets/icons/trial_management.svg';
+import StudyManagementIcon from 'src/assets/icons/study_management.svg';
 import DataCollectionIcon from 'src/assets/icons/data_collection.svg';
 import StudySettingsIcon from 'src/assets/icons/study_settings.svg';
 import SignOutIcon from 'src/assets/icons/sign_out.svg';
 import UserAvatarIcon from 'src/assets/icons/user_avatar.svg';
 import ResizeIcon from 'src/assets/icons/resize.svg';
 import { px, typography, colors, animation, boxShadow } from 'src/styles';
-import { getRoleFunction, getRoleLabel } from 'src/modules/auth/userRole';
+import { getRoleLabels } from 'src/modules/auth/userRole';
 import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import SkeletonLoading, { SkeletonPath } from 'src/common/components/SkeletonLoading';
 
@@ -82,8 +82,8 @@ const menuItemsRegistry = {
   },
   studyManagement: {
     title: 'Study Management',
-    icon: <TrialManagementIcon />,
-    section: Path.TrialManagement,
+    icon: <StudyManagementIcon />,
+    section: Path.StudyManagement,
   },
   dataInsights: {
     title: 'Data Insights',
@@ -138,6 +138,7 @@ const Container = styled.div.attrs<ContainerProps>(({ $barWidth, desktopType }) 
     paddingTop: desktopType !== 'laptop' ? px(26) : px(8),
   },
 }))<ContainerProps>`
+  position: relative;
   height: 100%;
   background-color: ${colors.surface};
   display: flex;
@@ -145,7 +146,6 @@ const Container = styled.div.attrs<ContainerProps>(({ $barWidth, desktopType }) 
   justify-content: flex-start;
   ${typography.bodySmallRegular};
   color: ${colors.textSecondaryGray};
-  position: relative;
   border-right: ${px(1)} solid ${colors.background};
   transition: border 150ms ${animation.defaultTiming};
   padding-bottom: ${({ desktopType, minimized }) =>
@@ -219,7 +219,7 @@ const UserPanel = styled(FadeOutContainer)<Minimizable & { disabled?: boolean }>
   justify-content: ${({ minimized }) => minimized && 'center'};
   position: relative;
   overflow: hidden;
-  height: ${({ $barWidth }) => ($barWidth === SIDEBAR_WIDTH ? px(75) : px(63))};
+  height: fit-content;
   flex-direction: column;
   margin-top: ${({ desktopType }) => (desktopType === 'desktop' ? px(8) : px(4))};
   ${({ $barWidth }) =>
@@ -228,6 +228,7 @@ const UserPanel = styled(FadeOutContainer)<Minimizable & { disabled?: boolean }>
   svg {
     fill: ${({ disabled }) => (disabled ? colors.disabled : colors.textSecondaryGray)};
   }
+  margin-bottom: ${px(15)};
 `;
 
 const Username = styled.div<Minimizable & { $barWidth: number }>`
@@ -238,6 +239,10 @@ const Username = styled.div<Minimizable & { $barWidth: number }>`
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+`;
+
+const UserRole = styled.div`
+  white-space: pre;
 `;
 
 const Menu = styled.div`
@@ -422,7 +427,7 @@ export const UserMenu = ({
 const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
   const sectionPath = useSelector(sectionPathSelector);
   const username = useAppSelector(userNameSelector);
-  const userRole = useAppSelector(userRoleSelector);
+  const userRoles = useAppSelector(userRoleSelector)?.roles;
   const selectedStudy = useAppSelector(selectedStudySelector);
   const isStudyLoading = useAppSelector(isLoadingSelector);
   const { width: screenWidth } = useWindowSize();
@@ -472,11 +477,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     [screenWidth, isUserResize]
   );
 
-  const handleSignOut = () => {
-    dispatch(signout());
-  };
-
-  const userRoleLabel = userRole ? getRoleLabel(userRole) : 'Unknown';
+  const { roleLabels } = getRoleLabels(userRoles);
 
   const handleSetTooltipParams = (
     event: React.MouseEvent<HTMLElement | SVGSVGElement>,
@@ -507,24 +508,15 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     setTooltipTitle('');
   };
 
-  const menuItems = useMemo(() => {
-    const mr = menuItemsRegistry;
-    switch (userRole?.role && getRoleFunction(userRole.role)) {
-      case 'study_operator':
-        return [mr.overview, mr.studyManagement, mr.dataInsights, mr.studySettings];
-      case 'principal_investigator':
-        return [mr.overview, mr.dataInsights, mr.studyManagement, mr.studySettings];
+  const { overview, studyManagement, studySettings, dataInsights } = menuItemsRegistry;
 
-      default:
-        return [];
-    }
-  }, [userRole]);
+  const menuItems = [overview, studyManagement, dataInsights, studySettings];
 
   return (
     <Container
       $barWidth={barWidth}
       ref={ref}
-      isResizeVisible={resizeBtnVisible}
+      isResizeVisible={resizeBtnVisible && isUserResizeAllowed}
       desktopType={desktopType}
       minimized={minimized}
       id="sidebar"
@@ -533,7 +525,6 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     >
       <Tooltip
         position="r"
-        static
         show={minimized && !!selectedStudy && !!tooltipTitle}
         arrow
         content={tooltipTitle}
@@ -605,11 +596,11 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
           onClearTooltipParams={clearTooltipParams}
           onSetTooltipParams={(e) => handleSetTooltipParams(e, 'Sign out')}
           minimized={minimized}
-          onSignOut={handleSignOut}
+          onSignOut={signout}
           desktopType={desktopType}
         />
         <UserPanel
-          $visible={!!userRoleLabel && !!username}
+          $visible={!!roleLabels || !!username}
           minimized={minimized}
           $barWidth={barWidth}
           onMouseLeave={clearTooltipParams}
@@ -621,7 +612,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
           {minimized ? (
             <UserAvatarIcon onMouseEnter={(e) => handleSetTooltipParams(e, username || '')} />
           ) : (
-            userRoleLabel
+            <UserRole>{roleLabels}</UserRole>
           )}
         </UserPanel>
       </PanelWrapper>

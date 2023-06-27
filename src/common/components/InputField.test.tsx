@@ -52,8 +52,8 @@ describe('InputField', () => {
 
     expect(baseElement).toMatchSnapshot();
     expect(input).toHaveValue('disabled');
-    expect(input).toHaveStyle(`color: ${theme.colors.disabled}`);
-    expect(input).toHaveStyle(`background-color: ${theme.colors.disabled20}`);
+    expect(input).toHaveStyle('color: rgba(0, 0, 0, 0.38)');
+    expect(input).toHaveStyle('background-color: #f8f8f8');
   });
 
   it('[NEGATIVE] should prevent user input while field is disabled', async () => {
@@ -72,7 +72,7 @@ describe('InputField', () => {
     expect(input).toHaveValue('disabled');
   });
 
-  it('[NEGATIVE] should render with wrong props', () => {
+  it('[NEGATIVE] should render with wrong props', async () => {
     const { baseElement, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <InputField
@@ -88,15 +88,14 @@ describe('InputField', () => {
 
     const input = screen.getByTestId('input');
     const label = queryByTestId('input-label');
-    const error = screen.getByTestId('input-error');
+    const error = await queryByTestId('input-error');
     const description = screen.getByTestId('input-description');
 
     expect(input).toBeInTheDocument();
     expect(label).toBeNull();
     expect(description).toBeInTheDocument();
     expect(description).toHaveTextContent('');
-    expect(error).toBeInTheDocument();
-    expect(error).toHaveTextContent('');
+    expect(error).toBeNil();
   });
 
   it('[NEGATIVE] should render without props', () => {

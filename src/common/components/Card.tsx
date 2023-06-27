@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from 'react';
+import React, { ForwardedRef, forwardRef, isValidElement } from 'react';
 
 import styled, { css, keyframes } from 'styled-components';
 
@@ -10,15 +10,16 @@ export const BASE_CARD_PADDING = 24;
 
 type BaseCardProps = React.PropsWithChildren<Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>>;
 
-interface CardProps extends BaseCardProps, React.RefAttributes<HTMLDivElement> {
-  title?: string;
-  subtitle?: string | boolean;
+export interface CardProps extends BaseCardProps, React.RefAttributes<HTMLDivElement> {
+  title?: string | React.ReactNode;
+  subtitle?: string | boolean | React.ReactNode;
   action?: React.ReactNode;
   loading?: boolean;
   empty?: boolean;
   error?: boolean;
   contentChanging?: boolean;
   onReload?: () => void;
+  bottomAction?: boolean;
 }
 
 type CardContainerProps = React.PropsWithChildren<Pick<CardProps, 'loading'>>;
@@ -62,6 +63,8 @@ const Content = styled(({ loading, contentChanging, ...props }: ContentProps) =>
   opacity: ${({ loading, contentChanging }) => (loading || contentChanging ? 0 : 1)};
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
 `;
 
 const AppearanceDelayAnim = keyframes`
@@ -70,15 +73,23 @@ const AppearanceDelayAnim = keyframes`
   100% { opacity: 1; }
 `;
 
-export const TitleContainer = styled.div`
+export const TitleContainer = styled.div<{ hasSubtitle?: boolean }>`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
-const Title = styled.div<{ hasSubtitle: boolean }>`
+export const Title = styled.div<{ hasSubtitle: boolean; bottomAction?: boolean }>`
   display: flex;
   justify-content: space-between;
   height: ${({ hasSubtitle }) => (hasSubtitle ? px(21) : px(43))};
+
+  ${({ bottomAction }) =>
+    bottomAction &&
+    css`
+      flex-direction: column;
+      row-gap: ${px(5)};
+    `};
 `;
 
 const TitleText = styled.p`
@@ -97,13 +108,13 @@ const Subtitle = styled.div<{ subtitle?: string | boolean }>`
   margin-top: ${px(8)};
 `;
 
-const RefreshIconStyled = styled(RefreshAnimatedIcon)`
+export const RefreshIconStyled = styled(RefreshAnimatedIcon)`
   margin-left: ${px(9)};
   flex-shrink: 0;
   animation: ${AppearanceDelayAnim} 1.25s;
 `;
 
-const Action = styled(({ loading, ...props }) => <div {...props} />)`
+export const Action = styled(({ loading, ...props }) => <div {...props} />)`
   display: ${({ loading }) => (loading ? 'none' : 'flex')};
   overflow: visible;
   position: relative;
@@ -121,6 +132,7 @@ const Card = forwardRef(
       error,
       onReload,
       contentChanging,
+      bottomAction,
       ...props
     }: CardProps,
     ref: ForwardedRef<HTMLDivElement>
@@ -139,17 +151,24 @@ const Card = forwardRef(
     return (
       <CardContainer ref={ref} loading={loading} {...props}>
         {title && (
-          <TitleContainer>
-            <Title hasSubtitle={!!subtitle}>
-              <TitleText data-testid="title">{title}</TitleText>
-              {loading && <RefreshIconStyled data-testid="loader" />}
-              {action && !error && !empty && <Action loading={loading}>{action}</Action>}
-            </Title>
-            {subtitle && (
-              <Subtitle data-testid="subtitle" subtitle={subtitle}>
-                {subtitle}
-              </Subtitle>
+          <TitleContainer hasSubtitle={!!subtitle}>
+            {isValidElement(title) ? (
+              title
+            ) : (
+              <Title hasSubtitle={!!subtitle} bottomAction={bottomAction}>
+                <TitleText data-testid="title">{title}</TitleText>
+                {loading && <RefreshIconStyled data-testid="loader" />}
+                {action && !error && <Action loading={loading}>{action}</Action>}
+              </Title>
             )}
+            {subtitle &&
+              (isValidElement(subtitle) ? (
+                subtitle
+              ) : (
+                <Subtitle data-testid="subtitle" subtitle={subtitle as string | boolean}>
+                  {subtitle}
+                </Subtitle>
+              ))}
           </TitleContainer>
         )}
         <Content data-testid="card-content" loading={loading} contentChanging={contentChanging}>

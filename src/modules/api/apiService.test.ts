@@ -87,6 +87,7 @@ describe('request', () => {
   const provider = {
     getBearerToken: jest.fn(() => token),
     onUnauthorizedError: jest.fn(),
+    refreshBearerToken: jest.fn(),
   };
 
   it('should execute request with auth provider', async () => {

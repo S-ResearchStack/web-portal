@@ -4,24 +4,30 @@ import _isFunction from 'lodash/isFunction';
 import styled, { DefaultTheme, StyledComponent } from 'styled-components';
 
 import Ripple, { useRipple } from 'src/common/components/Ripple';
-import { COLUMN_GAP, ROW_HEIGHT } from 'src/common/components/Table/constants';
+import {
+  CELL_LINE_HEIGHT,
+  CELL_VERTICAL_PADDING,
+  COLUMN_GAP,
+} from 'src/common/components/Table/constants';
 import { animation, colors, px } from 'src/styles';
 import BodyCell, { BodyCellContainer } from './BodyCell';
 import { ColumnOptions, SortOptions, TableProps } from './types';
 import Loader from './Loader';
 
-export const TableRowBase = styled.div`
+export const TableRowBase = styled.div<{ linesCount?: number }>`
   position: relative;
   display: grid;
-  max-height: ${px(ROW_HEIGHT)};
-  min-height: ${px(ROW_HEIGHT)};
+  max-height: ${({ linesCount }) =>
+    px(CELL_VERTICAL_PADDING + CELL_LINE_HEIGHT * (linesCount || 1))};
+  min-height: ${({ linesCount }) =>
+    px(CELL_VERTICAL_PADDING + CELL_LINE_HEIGHT * (linesCount || 1))};
   column-gap: ${px(COLUMN_GAP)};
   box-shadow: inset 0 ${px(-1)} 0 ${colors.primaryLight};
 `;
 
-export type PropsWithProcessing<T = unknown> = T & { isProcessing?: boolean };
+export type PropsWithProcessing<T = unknown> = T & { isProcessing?: boolean; linesCount?: number };
 
-export interface RowRendererProps<T> extends React.HTMLAttributes<HTMLElement> {
+interface RowRendererProps<T> extends React.HTMLAttributes<HTMLElement> {
   component?:
     | ComponentType<React.HTMLAttributes<HTMLElement>>
     | StyledComponent<'div', DefaultTheme, React.HTMLAttributes<HTMLElement>>;
@@ -31,14 +37,30 @@ export interface RowRendererProps<T> extends React.HTMLAttributes<HTMLElement> {
   disabled?: boolean;
   withRipple?: boolean;
   sort?: SortOptions<T>;
+  linesCount?: number;
+  getOnHoverRowAction?: (r: T) => React.ReactNode;
 }
 
 type TableRowProps = React.PropsWithChildren<
   PropsWithProcessing<React.HTMLAttributes<HTMLDivElement>>
 >;
 
+const TableRowHoverActionContainer = styled.div`
+  height: ${px(24)};
+  width: ${px(24)};
+  position: absolute;
+  right: 0;
+  background-color: ${colors.background} !important;
+  opacity: 0;
+  z-index: 2;
+  top: ${px(5)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const TableRow = styled(TableRowBase)<
-  TableRowProps & { selectable: boolean; withRipple?: boolean }
+  TableRowProps & { selectable: boolean; withRipple?: boolean; linesCount?: number }
 >`
   flex: 1;
   overflow: ${({ withRipple }) => (withRipple ? 'hidden' : 'visible !important')};
@@ -57,6 +79,11 @@ export const TableRow = styled(TableRowBase)<
     background-color: ${({ isProcessing, theme, withRipple }) =>
       withRipple && !isProcessing && theme.colors.background};
     cursor: ${({ selectable }) => selectable && 'pointer'};
+
+    ${TableRowHoverActionContainer} {
+      transition: opacity 300ms ${animation.defaultTiming};
+      opacity: 1;
+    }
   }
 `;
 
@@ -69,6 +96,8 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
   disabled,
   withRipple,
   sort,
+  linesCount,
+  getOnHoverRowAction,
   ...props
 }: RowRendererProps<T>): JSX.Element => {
   const RowComponent = (component || TableRow) as React.ComponentType<
@@ -89,24 +118,32 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
     !disabled && onSelectRow?.(data);
   }, [disabled, onSelectRow, data]);
 
+  const { isProcessing, ...rawData } = data;
+
   return (
     <RowComponent
       {...addRippleTriggerProps(props)}
-      isProcessing={data.isProcessing}
+      isProcessing={isProcessing}
       onClick={handleClick}
       withRipple={withRipple}
       selectable={!!onSelectRow}
       data-testid="table-row"
+      linesCount={linesCount}
     >
-      {data.isProcessing && <Loader />}
+      {isProcessing && <Loader />}
       {columns.map((column, columnIdx) => (
-        <BodyCell key={getKey(column, columnIdx)} column={column}>
+        <BodyCell key={getKey(column, columnIdx)} column={column} linesCount={linesCount}>
           {_isFunction(column.render)
             ? column.render(data[column.dataKey], data)
             : data[column.dataKey]}
         </BodyCell>
       ))}
       {withRipple && <Ripple {...rippleProps} />}
+      {getOnHoverRowAction && (
+        <TableRowHoverActionContainer>
+          {getOnHoverRowAction(rawData as T)}
+        </TableRowHoverActionContainer>
+      )}
     </RowComponent>
   );
 };

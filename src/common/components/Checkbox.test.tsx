@@ -1,5 +1,4 @@
 import React from 'react';
-import 'src/__mocks__/setupUniqueIdMock';
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import userEvent from '@testing-library/user-event';

@@ -7,7 +7,7 @@ import { SpecColorType } from 'src/styles/theme';
 import { typography, px, colors } from 'src/styles';
 import { drawPieChartShape } from './pieChartShape';
 import { getTooltipContent } from './PieChart';
-import { TooltipProps, NO_RESPONSES_LABEL, getEmptyStateData } from './common-helpers';
+import { NO_RESPONSES_LABEL, getEmptyStateData } from './common-helpers';
 
 const SVG_VIEWPORT_SIZE = 100;
 const INNER_RADIUS_RATIO = (176 - 60) / 176; // where 176 is radius and 60 is sector height in reference design
@@ -90,44 +90,55 @@ const TOOLTIP_THRESHOLD = 100;
 const DonutChart = ({ data, totalPercents, width, height }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const theme = useTheme();
-  const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
+  const [currentHoveredShape, setCurrentHoveredShape] = useState<number>(-1);
 
   const outerRadius = SVG_VIEWPORT_SIZE / 2;
   const innerRadius = outerRadius * INNER_RADIUS_RATIO;
 
   const isEmptyState = useMemo(() => !data.length, [data.length]);
 
+  const filteredData = useMemo(() => data.filter((d) => d.value !== 0), [data]);
+
+  const tooltipContent = useMemo(() => {
+    const hoveredShapeData = filteredData[currentHoveredShape];
+    if (!hoveredShapeData) {
+      return undefined;
+    }
+
+    return getTooltipContent(hoveredShapeData);
+  }, [currentHoveredShape, filteredData]);
+
+  const tooltipContainer = useMemo(
+    () =>
+      currentHoveredShape < 0
+        ? undefined
+        : (d3
+            .select(svgRef.current)
+            .select(`#${getShapeId(currentHoveredShape)}`)
+            .node() as HTMLElement),
+    [currentHoveredShape]
+  );
+
+  const tooltipPosition = useMemo(() => {
+    if (!svgRef.current || !tooltipContainer) {
+      return 'r';
+    }
+
+    const labelRect = tooltipContainer?.getBoundingClientRect();
+    const svgRect = svgRef.current.getBoundingClientRect();
+
+    return svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
+  }, [tooltipContainer]);
+
   const onLabelMouseEnter = useCallback(
-    (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
-      const shapeData = data[index];
-
-      if (isEmptyState || !svgRef.current || !shapeData.name) {
-        return;
-      }
-
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const labelRect = (
-        d3
-          .select(svgRef.current)
-          .select(`#${getShapeId(index)}`)
-          .node() as Element
-      )?.getBoundingClientRect();
-
-      const position = svgRect && svgRect.right - labelRect.right < TOOLTIP_THRESHOLD ? 'l' : 'r';
-      const pointX = labelRect.left - svgRect.left + (position === 'r' ? labelRect.width : 0);
-      const pointY = labelRect.top - svgRect.top + labelRect.height / 2;
-
-      setTooltipProps({
-        content: getTooltipContent(shapeData),
-        point: [pointX, pointY],
-        position,
-      });
+    (_: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
+      setCurrentHoveredShape(index);
     },
-    [data, isEmptyState]
+    []
   );
 
   const onLabelMouseLeave = useCallback(() => {
-    setTooltipProps(null);
+    setCurrentHoveredShape(-1);
   }, []);
 
   useEffect(() => {
@@ -140,7 +151,10 @@ const DonutChart = ({ data, totalPercents, width, height }: Props) => {
           startAngleDegrees: START_ANGLE,
           data: isEmptyState
             ? [getEmptyStateData(theme.colors.background)]
-            : data.map(({ color, ...restData }) => ({ ...restData, color: theme.colors[color] })),
+            : filteredData.map(({ color, ...restData }) => ({
+                ...restData,
+                color: theme.colors[color],
+              })),
         },
         onLabelMouseEnter,
         onLabelMouseLeave
@@ -148,7 +162,15 @@ const DonutChart = ({ data, totalPercents, width, height }: Props) => {
 
       drawPieChartLabels(pieChartShape, onLabelMouseEnter, onLabelMouseLeave);
     }
-  }, [data, innerRadius, isEmptyState, onLabelMouseEnter, onLabelMouseLeave, outerRadius, theme]);
+  }, [
+    filteredData,
+    innerRadius,
+    isEmptyState,
+    onLabelMouseEnter,
+    onLabelMouseLeave,
+    outerRadius,
+    theme,
+  ]);
 
   return (
     <Container $width={width} $height={height}>
@@ -161,10 +183,10 @@ const DonutChart = ({ data, totalPercents, width, height }: Props) => {
       </LabelContainer>
       <Tooltip
         static
-        content={tooltipProps?.content}
-        point={tooltipProps?.point}
-        show={!!tooltipProps}
-        position={tooltipProps?.position}
+        content={tooltipContent}
+        container={tooltipContainer}
+        show={!!tooltipContent && !!tooltipContainer}
+        position={tooltipPosition}
         arrow
       />
     </Container>

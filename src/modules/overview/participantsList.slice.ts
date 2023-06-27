@@ -1,11 +1,12 @@
 import API from 'src/modules/api';
 import _range from 'lodash/range';
 import _sortBy from 'lodash/sortBy';
+import _round from 'lodash/round';
 
 import createDataSlice, { DataSliceState } from 'src/modules/store/createDataSlice';
 import { RootState, WithFilter, WithProcessing, WithSort } from 'src/modules/store';
 import * as api from 'src/modules/api/models';
-import { Timestamp } from 'src/common/utils/datetime';
+import { convertSqlUtcDateStringToTimestamp, Timestamp } from 'src/common/utils/datetime';
 import Random from 'src/common/Random';
 import { ProjectIdParams } from 'src/modules/api/endpoints';
 import { roundNumber } from 'src/common/utils/number';
@@ -19,11 +20,16 @@ export interface OverviewParticipantItem extends WithProcessing {
   id: OverviewParticipantItemId;
   email: string;
   avgBpm?: number;
+  avgRR?: number;
   avgSteps?: number;
-  lastSync: Timestamp;
-  localTime: Timestamp;
+  lastSync?: Timestamp;
+  localTime?: Timestamp;
   avgSleepMins?: number;
   avgBloodPressure?: string;
+  avgBloodPressureSys?: number;
+  avgBloodPressureDia?: number;
+  avgSpO2?: number;
+  avgBG?: number;
 }
 
 export type OverviewParticipantListSortColumn = keyof OverviewParticipantItem;
@@ -44,7 +50,7 @@ export interface GetParticipantListParams
   studyId: string;
 }
 
-export interface ParticipantsListData {
+interface ParticipantsListData {
   total: number;
   list: OverviewParticipantItem[];
 }
@@ -64,6 +70,11 @@ const sortColumnMap = [
   ['LAST_SYNCED', 'localTime'],
   ['AVG_HR', 'avgBpm'],
   ['TOTAL_STEPS', 'avgSteps'],
+  ['AVG_RR', 'avgRR'],
+  ['AVG_SPO2', 'avgSpO2'],
+  ['AVG_BG', 'avgBG'],
+  ['AVG_BP', 'avgBloodPressureSys'],
+  ['AVG_BP', 'avgBloodPressureDia'],
 ] as [api.HealthDataOverviewSortColumn, OverviewParticipantListSortColumn][];
 
 const sortColumnToApi = (c: OverviewParticipantListSortColumn) =>
@@ -82,9 +93,11 @@ const emailsMock = [
   'liz.lorina@email.com',
 ];
 
+export const getMockUserId = (idx = 1) => `00${idx + 1}-20220512-${idx % 2 ? 'a' : 'b'}`;
+
 export const healthDataOverviewMock = (idx = 1) =>
   ({
-    userId: `00${idx + 1}-20220512-${idx % 2 ? 'a' : 'b'}`,
+    userId: getMockUserId(idx),
     profiles: [
       {
         key: 'email',
@@ -92,12 +105,15 @@ export const healthDataOverviewMock = (idx = 1) =>
       },
     ],
     latestAverageHR: Random.shared.num(0, 1) > 0.1 ? Random.shared.num(60, 90) : undefined,
+    latestAverageRR: Random.shared.num(0, 1) > 0.1 ? Random.shared.num(60, 90) : undefined,
     latestAverageSystolicBP:
       Random.shared.num(0, 1) > 0.8 ? Random.shared.num(110, 140) : undefined,
     latestAverageDiastolicBP: Random.shared.num(0, 1) > 0.8 ? Random.shared.num(60, 80) : undefined,
     latestTotalStep: Random.shared.num(0, 1) > 0.1 ? Random.shared.int(1000, 20000) : undefined,
     lastSyncTime: new Date(Date.now() - Random.shared.int(1, 24 * 60 * 3) * 60 * 1000).toString(),
     averageSleep: Random.shared.num(300, 600),
+    latestAverageSPO2: Random.shared.num(0, 1) > 0.1 ? Random.shared.num(90, 100) : undefined,
+    latestAverageBG: Random.shared.num(70, 115),
   } as api.HealthDataOverview);
 
 export const healthDataOverviewListMock = _range(
@@ -113,12 +129,21 @@ export const getHealthDataOverviewMock: typeof API.getHealthDataOverview = ({
 }) => {
   let result: api.HealthDataOverview[] = [];
 
+  const latestAverageSystolicOrDiastolicBPComparator = (v: api.HealthDataOverview) =>
+    v.latestAverageSystolicBP === v.latestAverageDiastolicBP
+      ? v.latestAverageDiastolicBP
+      : v.latestAverageSystolicBP;
+
   const key = {
     ID: 'userId',
     EMAIL: (v: api.HealthDataOverview) => v.profiles?.find((p) => p.key === 'email')?.value,
     LAST_SYNCED: 'lastSyncTime',
     AVG_HR: 'latestAverageHR',
     TOTAL_STEPS: 'latestTotalStep',
+    AVG_RR: 'latestAverageRR',
+    AVG_SPO2: 'averageOxygenSaturation',
+    AVG_BG: 'latestAverageBG',
+    AVG_BP: latestAverageSystolicOrDiastolicBPComparator,
   }[sort.column];
 
   result = _sortBy(healthDataOverviewListMock, [key]);
@@ -156,10 +181,21 @@ export const transformHealthDataOverviewItemFromApi = (
   id: item.userId || '',
   email: item.profiles?.find((i) => i.key === 'email')?.value || '',
   avgBpm: roundNumber(item.latestAverageHR),
+  avgRR: roundNumber(item.latestAverageRR),
   avgSteps: item.latestTotalStep,
-  lastSync: new Date(item.lastSyncTime || 0).valueOf(),
-  localTime: new Date(item.lastSyncTime || 0).valueOf(),
+  lastSync: convertSqlUtcDateStringToTimestamp(item.lastSyncTime),
+  localTime: convertSqlUtcDateStringToTimestamp(item.lastSyncTime),
   avgSleepMins: item.averageSleep,
+  avgSpO2: item.latestAverageSPO2,
+  avgBG: Number.isFinite(item.latestAverageBG)
+    ? _round(item.latestAverageBG as number, 1)
+    : undefined,
+  avgBloodPressureSys: Number.isFinite(item.latestAverageSystolicBP)
+    ? Math.round(item.latestAverageSystolicBP as number)
+    : undefined,
+  avgBloodPressureDia: Number.isFinite(item.latestAverageDiastolicBP)
+    ? Math.round(item.latestAverageDiastolicBP as number)
+    : undefined,
   avgBloodPressure: (() => {
     const { latestAverageSystolicBP: sys, latestAverageDiastolicBP: dia } = item;
 
@@ -200,7 +236,7 @@ const slice = createDataSlice({
 
     return {
       total,
-      list: transformHealthDataOverviewListFromApi(healthData.data.healthDataOverview),
+      list: transformHealthDataOverviewListFromApi(healthData.data.healthDataOverview || []),
     };
   },
 });

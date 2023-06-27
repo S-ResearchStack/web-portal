@@ -6,7 +6,6 @@ import Tooltip from 'src/common/components/Tooltip';
 import { colors, px, theme, typography } from 'src/styles';
 import { XAxis, YAxis, Bar } from './common-components';
 import {
-  TooltipProps,
   TooltipContent,
   NO_RESPONSES_LABEL,
   MARGIN_FOCUS,
@@ -22,6 +21,8 @@ const Container = styled.div`
 `;
 
 const StyledSvg = styled.svg<StyledSvgProps>`
+  overflow: visible;
+
   .xAxis {
     .tick {
       line {
@@ -29,9 +30,19 @@ const StyledSvg = styled.svg<StyledSvgProps>`
         stroke-width: ${px(1)};
         opacity: ${({ $isHorizontal }) => ($isHorizontal ? 1 : 0)};
       }
-      text {
+
+      text,
+      foreignObject > div {
         ${typography.labelRegular};
         color: ${colors.textPrimary};
+      }
+
+      foreignObject > div {
+        text-align: center;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
       }
     }
   }
@@ -82,7 +93,6 @@ export type BarChartProps = {
 
 const MAX_VALUE = 100;
 const LABEL_MARGIN = 16;
-const TOOLTIP_MARGIN_TOP = 4;
 
 const getMargins = (isHorizontal = false) =>
   isHorizontal
@@ -92,7 +102,7 @@ const getMargins = (isHorizontal = false) =>
 const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
+  const [isSmallText, setIsSmallText] = useState(false);
 
   const margins = useMemo(() => getMargins(isHorizontal), [isHorizontal]);
 
@@ -132,84 +142,111 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
       .paddingInner(isHorizontal ? 0.34 : 0.37);
   }, [domainName, isHorizontal, xRange, yRange]);
 
-  const getPercentage = (d: DataItem) => (d.value / d.totalValue) * 100;
+  const getPercentage = (d: DataItem) => (d.totalValue ? (d.value / d.totalValue) * 100 : 0);
 
   const getBarKeyByIndex = (index: number) => `bar-${index}`;
 
-  const currentHoveredBar = useRef<number>(-1);
+  const [currentHoveredBar, setCurrentHoveredBar] = useState<number>(-1);
+
+  const tooltipContent = useMemo(() => {
+    if (currentHoveredBar < 0) {
+      return null;
+    }
+
+    const barData = data[currentHoveredBar];
+
+    if (!barData || !barData.totalValue) {
+      return null;
+    }
+
+    return (
+      <TooltipContent>
+        <TooltipNameBlock>{`${barData.name.toUpperCase()}:`}</TooltipNameBlock>
+        <TooltipDataBlock>{`${barData.value}/${barData.totalValue}`}</TooltipDataBlock>
+      </TooltipContent>
+    );
+  }, [currentHoveredBar, data]);
+
+  const tooltipPosition = useMemo(() => {
+    if (isHorizontal) {
+      return 't';
+    }
+
+    switch (currentHoveredBar) {
+      case 0:
+        return 'atl';
+      case data.length - 1:
+        return 'atr';
+      default:
+        return 't';
+    }
+  }, [currentHoveredBar, data.length, isHorizontal]);
 
   const onBarMouseEnter = useCallback(
     (_: React.MouseEvent<SVGPathElement, MouseEvent> | null, index: number) => {
-      currentHoveredBar.current = index;
-
-      if (!svgRef.current) {
-        return;
-      }
-
-      const barId = getBarKeyByIndex(index);
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const barRect = (
-        d3.select(svgRef.current).select(`#${barId}`).node() as Element
-      )?.getBoundingClientRect();
-
-      const barData = data[index];
-
-      const tooltipContent = (
-        <TooltipContent>
-          <TooltipNameBlock>{`${barData.name.toUpperCase()}:`}</TooltipNameBlock>
-          <TooltipDataBlock>{`${barData.value}/${barData.totalValue}`}</TooltipDataBlock>
-        </TooltipContent>
-      );
-
-      const getPosition = () => {
-        if (isHorizontal) {
-          return 't';
-        }
-
-        switch (index) {
-          case 0:
-            return 'atl';
-          case data.length - 1:
-            return 'atr';
-          default:
-            return 't';
-        }
-      };
-
-      const getPointX = () => {
-        const barCenter = barRect.left - svgRect.left + barRect.width / 2;
-        if (isHorizontal) {
-          return barCenter;
-        }
-
-        switch (index) {
-          case 0:
-            return barRect.left - svgRect.left;
-          case data.length - 1:
-            return barRect.left - svgRect.left + barRect.width;
-          default:
-            return barCenter;
-        }
-      };
-
-      setTooltipProps({
-        content: tooltipContent,
-        point: [getPointX(), barRect.top - svgRect.top + TOOLTIP_MARGIN_TOP],
-        position: getPosition(),
-      });
+      setCurrentHoveredBar(index);
     },
-    [data, isHorizontal]
+    []
   );
 
   const onBarMouseLeave = useCallback(() => {
-    setTooltipProps(null);
+    setCurrentHoveredBar(-1);
   }, []);
 
   const isEmptyState = useMemo(() => data.every((d) => d.totalValue === 0), [data]);
 
-  if (!data.length) {
-    return null;
-  }
+  const tooltipContainer = useMemo(
+    () =>
+      currentHoveredBar < 0
+        ? undefined
+        : (d3
+            .select(svgRef.current)
+            .select(`#${getBarKeyByIndex(currentHoveredBar)}`)
+            .node() as HTMLElement),
+    [currentHoveredBar]
+  );
+
+  const handleXAxisCustomCall = useCallback(
+    (el: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) => {
+      if (el.select('.tick').selectChildren('text').nodes().length && !isHorizontal) {
+        const barWidth = scaleBand.bandwidth();
+
+        const oldNodes = el.selectAll('.tick text').remove().nodes();
+
+        el.selectAll('.tick')
+          .append('foreignObject')
+          .append('xhtml:div')
+          .style('width', px(barWidth))
+          .style('height', px(30));
+
+        el.selectAll('.tick foreignObject')
+          .nodes()
+          .forEach((node, idx) => {
+            const n = node as SVGTextContentElement;
+            const oldN = oldNodes[idx] as SVGTextContentElement;
+
+            if (oldN) {
+              oldN.getAttributeNames().forEach((name) => {
+                n.setAttribute(name, oldN.getAttribute(name) || '');
+              });
+
+              n.setAttribute('width', px(barWidth));
+              n.setAttribute('height', px(30));
+              n.setAttribute('x', px(-barWidth / 2));
+            }
+          });
+
+        el.selectAll('.tick foreignObject div')
+          .nodes()
+          .forEach((node, idx) => {
+            (node as SVGTextContentElement).textContent = (
+              oldNodes[idx] as SVGTextContentElement
+            ).textContent;
+          });
+      }
+    },
+    [isHorizontal, scaleBand]
+  );
 
   return (
     <Container>
@@ -218,13 +255,14 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
           xScale={isHorizontal ? scaleLinear : scaleBand}
           removeDomain
           yOffset={height - margins.bottom}
-          yTickOffset={isHorizontal ? 20 : 12}
+          yTickOffset={isHorizontal ? 20 : 8}
           xTickOffset={!isHorizontal ? 1 : 0}
           ticks={5}
           tickSize={height - margins.top - margins.bottom}
           tickFormatFn={(d) => (isHorizontal ? `${d}%` : `${d}`)}
           orientation={isHorizontal ? 'top' : 'bottom'}
           isScaleBand={!isHorizontal}
+          customCall={handleXAxisCustomCall}
         />
         <YAxis
           yScale={isHorizontal ? scaleBand : scaleLinear}
@@ -246,41 +284,46 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
             textItems.attr('x', (d, i) => (isHorizontal ? -textWidth[i] - 8 : -8));
           }}
         />
-        {data.map((d, index) => (
-          <Bar
-            id={getBarKeyByIndex(index)}
-            key={getBarKeyByIndex(index)}
-            isHorizontal={isHorizontal}
-            rectProps={{
-              x: isHorizontal ? margins.left : scaleBand(d.name) || 0,
-              y: isHorizontal ? +(scaleBand(d.name) || 0) : scaleLinear(getPercentage(d)),
-              height: isHorizontal
-                ? scaleBand.bandwidth()
-                : scaleLinear(0) - scaleLinear(getPercentage(d)),
-              width: isHorizontal
-                ? scaleLinear(getPercentage(d)) - scaleLinear(0)
-                : scaleBand.bandwidth(),
-            }}
-            textProps={{
-              x: isHorizontal
-                ? scaleLinear(getPercentage(d)) -
-                  (getPercentage(d) > 10 ? scaleLinear(0) : 0) +
-                  LABEL_MARGIN
-                : +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2 + 1,
-              y: isHorizontal
-                ? +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2
-                : height -
-                  margins.bottom -
-                  (scaleLinear(0) - scaleLinear(getPercentage(d))) +
-                  (getPercentage(d) > 10 ? LABEL_MARGIN : -LABEL_MARGIN),
-              dy: isHorizontal ? '.35em' : '0', // vertical align middle
-              fill: getPercentage(d) > 10 ? theme.colors.primaryWhite : theme.colors.textPrimary,
-              text: `${getPercentage(d)}%`,
-            }}
-            onMouseEnter={(event) => onBarMouseEnter(event, index)}
-            onMouseLeave={onBarMouseLeave}
-          />
-        ))}
+        {!isEmptyState &&
+          data.map((d, index) => (
+            <Bar
+              id={getBarKeyByIndex(index)}
+              key={getBarKeyByIndex(index)}
+              isHorizontal={isHorizontal}
+              rectProps={{
+                x: isHorizontal ? margins.left : scaleBand(d.name) || 0,
+                y: isHorizontal ? +(scaleBand(d.name) || 0) : scaleLinear(getPercentage(d)),
+                height: isHorizontal
+                  ? scaleBand.bandwidth()
+                  : scaleLinear(0) - scaleLinear(getPercentage(d)),
+                width: isHorizontal
+                  ? scaleLinear(getPercentage(d)) - scaleLinear(0)
+                  : scaleBand.bandwidth(),
+              }}
+              maxHeight={isHorizontal ? scaleBand.bandwidth() : scaleLinear(0) - scaleLinear(100)}
+              maxY={isHorizontal ? +(scaleBand(d.name) || 0) : scaleLinear(100)}
+              textProps={{
+                x: isHorizontal
+                  ? scaleLinear(getPercentage(d)) -
+                    (getPercentage(d) > 10 ? scaleLinear(0) : 0) +
+                    LABEL_MARGIN
+                  : +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2,
+                y: isHorizontal
+                  ? +(scaleBand(d.name) || 0) + scaleBand.bandwidth() / 2
+                  : height -
+                    margins.bottom -
+                    (scaleLinear(0) - scaleLinear(getPercentage(d))) +
+                    (getPercentage(d) > 10 ? 20 : -8),
+                dy: isHorizontal ? '.35em' : '0', // vertical align middle
+                fill: getPercentage(d) > 10 ? theme.colors.primaryWhite : theme.colors.textPrimary,
+                text: `${Math.round(getPercentage(d))}%`,
+              }}
+              isSmallText={isSmallText}
+              onMouseEnter={(event) => onBarMouseEnter(event, index)}
+              onMouseLeave={onBarMouseLeave}
+              setIsSmallText={setIsSmallText}
+            />
+          ))}
         {isEmptyState && <rect x="0px" y="0px" width={width} height={height} fill="transparent" />}
         {isEmptyState && (
           <NoResponsesLabel
@@ -298,12 +341,12 @@ const BarChart = ({ width, height, data, isHorizontal = false }: BarChartProps) 
         )}
       </StyledSvg>
       <Tooltip
-        static
-        content={tooltipProps?.content}
-        point={tooltipProps?.point}
-        show={!!tooltipProps}
-        position={tooltipProps?.position}
+        content={tooltipContent}
+        container={tooltipContainer}
+        show={!!tooltipContent && !!tooltipContainer}
+        position={tooltipPosition}
         arrow
+        static
       />
     </Container>
   );

@@ -34,6 +34,14 @@ exports[`BarChart should render 1`] = `
   font-style: normal;
 }
 
+.c5.small-color {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
 .c5 value {
   fill: #F7F8FA;
   -webkit-dominant-baseline: middle;
@@ -45,19 +53,32 @@ exports[`BarChart should render 1`] = `
   position: relative;
 }
 
+.c1 {
+  overflow: visible;
+}
+
 .c1 .xAxis .tick line {
   stroke: #F0F0F0;
   stroke-width: 0.0625rem;
   opacity: 0;
 }
 
-.c1 .xAxis .tick text {
+.c1 .xAxis .tick text,
+.c1 .xAxis .tick foreignObject > div {
   font-family: Inter,sans-serif;
   font-size: 0.625rem;
   line-height: 0.9375rem;
   font-weight: 400;
   font-style: normal;
   color: #474747;
+}
+
+.c1 .xAxis .tick foreignObject > div {
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .c1 .yAxis .tick line {
@@ -87,7 +108,7 @@ exports[`BarChart should render 1`] = `
         width="1000"
       >
         <g
-          class="c2 xAxis"
+          class="c2 xAxis undefined"
           fill="none"
           font-family="sans-serif"
           font-size="10"
@@ -103,14 +124,18 @@ exports[`BarChart should render 1`] = `
               stroke="currentColor"
               y2="6"
             />
-            <text
+            <foreignobject
               dy="0.71em"
               fill="currentColor"
-              x="1"
-              y="12"
+              height="1.875rem"
+              width="37.681875rem"
+              x="-18.8409375rem"
+              y="8"
             >
-              test
-            </text>
+              <div
+                style="width: 37.681875rem; height: 1.875rem;"
+              />
+            </foreignobject>
           </g>
         </g>
         <g
@@ -232,21 +257,35 @@ exports[`BarChart should render 1`] = `
         </g>
         <g
           class="bar"
+          data-testid="bar-0"
         >
-          <rect
-            class="c4"
-            data-testid="bar-0"
-            height="97.29999999999995"
+          <g
             id="bar-0"
+          >
+            <rect
+              class="c4"
+              height="97.29999999999995"
+              width="602.91"
+              x="220.04500000000002"
+              y="879.7"
+            />
+            <text
+              class="c5"
+              dy="0"
+              fill="#474747"
+              transform="translate(0)"
+              x="521.5"
+              y="871.7"
+            >
+              10%
+            </text>
+          </g>
+          <rect
+            fill="transparent"
+            height="973"
             width="602.91"
             x="220.04500000000002"
-            y="879.7"
-          />
-          <text
-            class="c5"
-            dy="0"
-            x="522.5"
-            y="863.7"
+            y="4"
           />
         </g>
       </svg>

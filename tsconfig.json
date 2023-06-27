@@ -16,6 +16,7 @@
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "preserveConstEnums": true,
     "lib": ["dom", "esnext"]
   },
   "exclude": ["node_modules"]

@@ -6,6 +6,7 @@ export type ColumnsSizes = number[];
 export type ColumnLabel = string | number;
 export type SortDirectionOptions = 'asc' | 'desc';
 export type AlignOptions = 'left' | 'center' | 'right';
+export type TextEllipsis = boolean;
 export type ColumnWidthInPercentsCallback = (columnsCount: number) => number;
 
 export type SortParams<T> = {
@@ -27,6 +28,8 @@ export interface ColumnOptions<T> {
   label?: ColumnLabel;
   $width?: number | ColumnWidthInPercentsCallback;
   align?: AlignOptions;
+  ellipsis?: TextEllipsis;
+  isEmpty?: boolean;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
@@ -50,6 +53,7 @@ export interface BaseTableProps<T> {
   disableActions?: boolean;
   isLoading?: boolean;
   rows: PropsWithProcessing<T>[];
+  renderOnHoverRowAction?: (r: T) => React.ReactNode;
 }
 
 export interface TableProps<T> extends Omit<BaseTableProps<T>, 'children'> {

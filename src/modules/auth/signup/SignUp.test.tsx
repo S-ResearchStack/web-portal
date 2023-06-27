@@ -7,10 +7,6 @@ import { enableFetchMocks } from 'jest-fetch-mock';
 import 'jest-styled-components';
 import '@testing-library/jest-dom/extend-expect';
 
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupUniqueIdMock';
-
 import theme from 'src/styles/theme';
 import { makeStore } from 'src/modules/store/store';
 import { makeHistory, Path } from 'src/modules/navigation/store';

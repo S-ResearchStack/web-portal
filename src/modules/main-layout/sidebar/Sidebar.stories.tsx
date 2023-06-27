@@ -14,6 +14,7 @@ export default {
             id: 'test',
             name: 'Study Name',
             color: 'secondarySkyBlue',
+            createdAt: 1652648400000,
           },
         ],
         selectedStudyId: 'test',

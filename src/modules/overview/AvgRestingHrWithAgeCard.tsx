@@ -5,7 +5,7 @@ import _without from 'lodash/without';
 
 import { sortGenderLines } from 'src/modules/charts/utils';
 import ResponsiveContainer from 'src/common/components/ResponsiveContainer';
-import ScatterChart, { LineItem } from 'src/modules/charts/ScatterChart';
+import ScatterChart from 'src/modules/charts/ScatterChart';
 import { px } from 'src/styles';
 import { useSelectedStudyId } from 'src/modules/studies/studies.slice';
 
@@ -32,6 +32,7 @@ const AvgRestingHrWithAgeCard: React.FC = () => {
     fetchArgs: !!studyId && {
       studyId,
     },
+    refetchSilentlyOnMount: true,
   });
 
   const [hiddenDataLines, setHiddenDataLines] = useState<string[]>([ADD_TREND_LABEL]);
@@ -46,6 +47,15 @@ const AvgRestingHrWithAgeCard: React.FC = () => {
     [hiddenDataLines]
   );
 
+  const lines = useMemo(
+    () =>
+      sortGenderLines(_uniqBy(data.values, ({ name }) => name)).map((l) => ({
+        ...l,
+        id: l.name,
+      })),
+    [data.values]
+  );
+
   return (
     <OverviewCard
       title="Avg. resting HR with age"
@@ -57,7 +67,7 @@ const AvgRestingHrWithAgeCard: React.FC = () => {
     >
       <OverviewLegendWrapper
         onDataChange={setHiddenDataLines}
-        lines={sortGenderLines(_uniqBy(data.values, ({ name }) => name)) as LineItem[]}
+        lines={lines}
         hiddenDataLines={hiddenDataLines}
         canToggle
         addTrendItemName={ADD_TREND_LABEL}

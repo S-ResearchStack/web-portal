@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { typography, px, colors, theme } from 'src/styles';
 import Tooltip from 'src/common/components/Tooltip';
 import { XAxis, YAxis, Area } from './common-components';
-import { TooltipProps, NoResponsesLabel, NO_RESPONSES_LABEL } from './common-helpers';
+import { NoResponsesLabel, NO_RESPONSES_LABEL } from './common-helpers';
 
 const TooltipContent = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ const StackedBarChart = ({
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const [tooltipProps, setTooltipProps] = useState<TooltipProps>(null);
+  const [currentHoveredArea, setCurrentHoveredArea] = useState<number>(-1);
 
   const x = useMemo(
     () => d3.map(data, (d, index) => _sumBy(_slice(data, 0, index + 1), 'percentage')),
@@ -78,45 +78,60 @@ const StackedBarChart = ({
 
   const getAreaKeyByIndex = (index: number) => `area-${index}`;
 
+  const getAreaLabelKeyByIndex = (index: number) => `area-label-${index}`;
+
+  const tooltipPosition = useMemo(() => {
+    if (!svgRef.current || currentHoveredArea < 0) {
+      return 'l';
+    }
+
+    const svgRect = svgRef.current.getBoundingClientRect();
+    const areaId = getAreaKeyByIndex(currentHoveredArea);
+    const areaNode = d3.select(svgRef.current).select(`#${areaId}`).node() as HTMLElement;
+    const areaRect = areaNode?.getBoundingClientRect();
+
+    return (svgRect && (areaRect.left + 200 > svgRect.left + svgRect.width ? 'l' : 'r')) || 'l';
+  }, [currentHoveredArea]);
+
+  const tooltipContent = useMemo(() => {
+    const areaData = data[currentHoveredArea];
+
+    if (!areaData) {
+      return undefined;
+    }
+
+    return (
+      <TooltipContent>
+        <TooltipRowContent>
+          <TooltipNameBlock>SCALE VALUE:</TooltipNameBlock>
+          <TooltipDataBlock>{areaData.scaleValue}</TooltipDataBlock>
+        </TooltipRowContent>
+        <TooltipRowContent>
+          <TooltipNameBlock>PERCENTAGE:</TooltipNameBlock>
+          <TooltipDataBlock>{`${Math.round(areaData.percentage)}%`}</TooltipDataBlock>
+        </TooltipRowContent>
+      </TooltipContent>
+    );
+  }, [currentHoveredArea, data]);
+
+  const tooltipContainer = useMemo(
+    () =>
+      d3
+        .select(svgRef.current)
+        .select(`#${getAreaLabelKeyByIndex(currentHoveredArea)}`)
+        .node() as HTMLElement,
+    [currentHoveredArea]
+  );
+
   const onAreaMouseEnter = useCallback(
-    (event: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
-      if (!svgRef.current) {
-        return;
-      }
-
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const areaId = getAreaKeyByIndex(index);
-      const areaRect = (
-        d3.select(svgRef.current).select(`#${areaId}`).node() as Element
-      )?.getBoundingClientRect();
-
-      const tooltipContent = (
-        <TooltipContent>
-          <TooltipRowContent>
-            <TooltipNameBlock>SCALE VALUE:</TooltipNameBlock>
-            <TooltipDataBlock>{data[index].scaleValue}</TooltipDataBlock>
-          </TooltipRowContent>
-          <TooltipRowContent>
-            <TooltipNameBlock>PERCENTAGE:</TooltipNameBlock>
-            <TooltipDataBlock>{`${Math.round(data[index].percentage)}%`}</TooltipDataBlock>
-          </TooltipRowContent>
-        </TooltipContent>
-      );
-      const position =
-        (svgRect && (areaRect.left + 200 > svgRect.left + svgRect.width ? 'l' : 'r')) || 'l';
-      const pointX = areaRect.left - svgRect.left - 10 + areaRect.width / 2;
-
-      setTooltipProps({
-        content: tooltipContent,
-        point: [pointX, areaRect.top - svgRect.top + TOOLTIP_MARGIN_TOP],
-        position,
-      });
+    (_: React.MouseEvent<SVGPathElement, MouseEvent>, index: number) => {
+      setCurrentHoveredArea(index);
     },
-    [data]
+    []
   );
 
   const onAreaMouseLeave = useCallback(() => {
-    setTooltipProps(null);
+    setCurrentHoveredArea(-1);
   }, []);
 
   const isEmptyState = useMemo(() => data.every((d) => d.percentage === 0), [data]);
@@ -126,23 +141,36 @@ const StackedBarChart = ({
       <svg ref={svgRef} width={width} height={height}>
         <XAxis key="x-axis" xScale={xScale} removeDomain yOffset={height} ticks={0} tickSize={0} />
         <YAxis key="y-axis" yScale={yScale} xOffset={0} removeDomain ticks={0} tickSize={0} />
-        {data.map((d, index) => (
-          <Area
-            key={getAreaKeyByIndex(index)}
-            id={getAreaKeyByIndex(index)}
-            data={[
-              { x: x[index - 1] || 0, y0: 0, y1: 1 },
-              { x: x[index], y0: 0, y1: 1 },
-            ]}
-            xScale={xScale}
-            yScale={yScale}
-            color={color}
-            fillOpacity={(1 / (maxScale - minScale + 1)) * (index + 1)}
-            visible
-            onMouseEnter={(event) => onAreaMouseEnter(event, index)}
-            onMouseLeave={onAreaMouseLeave}
-          />
-        ))}
+        {!isEmptyState &&
+          data.map((d, index) => (
+            <Area
+              key={getAreaKeyByIndex(index)}
+              id={getAreaKeyByIndex(index)}
+              data={[
+                { x: x[index - 1] || 0, y0: 0, y1: 1 },
+                { x: x[index], y0: 0, y1: 1 },
+              ]}
+              xScale={xScale}
+              yScale={yScale}
+              color={color}
+              fillOpacity={(1 / (maxScale - minScale + 1)) * (index + 1)}
+              visible
+              onMouseEnter={(event) => onAreaMouseEnter(event, index)}
+              onMouseLeave={onAreaMouseLeave}
+            />
+          ))}
+        {!isEmptyState &&
+          data.map((d, index) => (
+            <rect
+              key={getAreaLabelKeyByIndex(index)}
+              id={getAreaLabelKeyByIndex(index)}
+              x={`${
+                xScale(x[index - 1] || 0) + (xScale(x[index]) - xScale(x[index - 1] || 0)) / 2
+              }px`}
+              y={`${TOOLTIP_MARGIN_TOP}px`}
+              fillOpacity={0}
+            />
+          ))}
         {isEmptyState && (
           <rect x="0px" y="0px" width={width} height={height} fill={theme.colors.background} />
         )}
@@ -161,11 +189,12 @@ const StackedBarChart = ({
       </svg>
       <Tooltip
         static
-        content={tooltipProps?.content}
-        point={tooltipProps?.point}
-        show={!!tooltipProps}
-        position={tooltipProps?.position}
+        content={tooltipContent}
+        container={tooltipContainer}
+        show={!!tooltipContent && !!tooltipContainer}
+        position={tooltipPosition}
         arrow
+        centered
       />
     </div>
   );

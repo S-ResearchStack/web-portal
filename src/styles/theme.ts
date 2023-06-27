@@ -4,8 +4,10 @@ import { px } from './utils';
 const colors = {
   // gray gradations
   black: '#000000',
+  black60: 'rgba(0, 0, 0, 0.6)',
   black40: 'rgba(0, 0, 0, 0.4)',
   black08: 'rgba(0, 0, 0, 0.08)',
+  black15: 'rgba(0, 0, 0, 0.15)',
 
   // light mode
   surface: '#FFFFFF',
@@ -19,6 +21,7 @@ const colors = {
   primaryHovered: '#2F65E0',
   primary05: '#F6F8FE',
   primary10: '#ECF1FC',
+  primary20: '#E3EAFB',
   primary30: '#C7D6F7',
   primaryDisabled: '#B3C6F1',
   primaryLightPressed: '#E3EAFB',
@@ -99,6 +102,7 @@ const typography = {
   // Inter typeface
   labelRegular: fontSpec(10, 15, 'regular', 'Inter'),
   labelSemibold: fontSpec(10, 15, 'semibold', 'Inter'),
+  smallLabelRegular: fontSpec(8, 10, 'regular', 'Inter'),
 
   bodyXSmallRegular: fontSpec(12, 18, 'regular', 'Inter'),
   bodyXSmallSemibold: fontSpec(12, 18, 'semibold', 'Inter'),
@@ -115,8 +119,22 @@ const typography = {
   headingXMediumRegular: fontSpec(18, 27, 'regular', 'Inter'),
   headingMedium: fontSpec(24, 32.2, 'semibold', 'Inter'),
   headingLargeSemibold: fontSpec(32, 42, 'semibold', 'Inter'),
+  heading2LargeSemibold: fontSpec(40, 52, 'semibold', 'Inter'),
   headingXLargeSemibold: fontSpec(48, 58, 'semibold', 'Inter'),
   headingXXLargeSemibold: fontSpec(60, 72, 'semibold', 'Inter'),
+
+  portalDisplayLarge: fontSpec(72, 86, 'semibold', 'Inter'),
+
+  sdkBodySmallRegular: fontSpec(14, '130%', 'regular', 'Inter'),
+  sdkBodyLargeRegular: fontSpec(18, 24, 'regular', 'Inter'),
+  sdkBodyLargeSemibold: fontSpec(18, 24, 'semibold', 'Inter'),
+  sdkHeadingMedium: fontSpec(20, 26, 'semibold', 'Inter'),
+  sdkBodyXXLRegular: fontSpec(32, 42, 'regular', 'Inter'),
+  sdkBodyXXLSemibold: fontSpec(32, '130%', 'semibold', 'Inter'),
+  sdkBodyMediumRegular: fontSpec(16, '130%', 'regular', 'Inter'),
+  sdkBodyMediumSemibold: fontSpec(16, '130%', 'semibold', 'Inter'),
+  sdkDisplayMedium: fontSpec(20, 26, 'semibold', 'Inter'),
+  sdkHeadingLarge: fontSpec(40, '130%', 'semibold', 'Inter'),
 
   // Fira Code typeface
   query14: fontSpec(14, '130%', 'upperregular', 'Fira Code'),
@@ -128,6 +146,7 @@ const boxShadow = {
   avatar: `0 ${px(8)} ${px(10)} ${px(2)} 0 rgba(0,0,0,0.12)`,
   studyAvatar: `0 ${px(15)} ${px(20)} rgba(180,180,180,0.3)`,
   previewScreen: `0 ${px(2)} ${px(4)} rgba(71,71,71,0.25)`,
+  skipLogicHeader: `box-shadow: ${px(3)} ${px(4)} ${px(15)} rgba(0, 0, 0, 0.05)`,
 };
 
 const animation = {

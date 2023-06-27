@@ -1,8 +1,10 @@
+/* eslint-disable import/first */
 import React from 'react';
 import 'jest-styled-components';
-import 'src/__mocks__/setupWindowMatchMediaMock';
-import 'src/__mocks__/setupResizeObserverMock';
-import 'src/__mocks__/setupRangeMock';
+import { TextEncoder, TextDecoder } from 'util';
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 
 import { ThemeProvider } from 'styled-components/';
 import { Provider } from 'react-redux';

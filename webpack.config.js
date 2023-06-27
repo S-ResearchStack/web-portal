@@ -9,6 +9,7 @@ const { DefinePlugin, ProvidePlugin } = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'build');
 
@@ -91,6 +92,7 @@ module.exports = (env, argv) => {
                       params: {
                         overrides: {
                           removeViewBox: false,
+                          cleanupIDs: false,
                         },
                       },
                     },
@@ -129,6 +131,7 @@ module.exports = (env, argv) => {
       minimizer: [new CssMinimizerPlugin()],
     },
     plugins: [
+      new NodePolyfillPlugin(),
       isDev && new ReactRefreshPlugin(),
       !isDev && new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
