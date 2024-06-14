@@ -14,15 +14,15 @@ The Health Stack also includes the following:
 -  A backend system consisting of services and a data engine available through application programming interface (API) endpoints
 -  A software development kit (SDK) for app development
 
-Refer to <a href="https://s-healthstack.io" target="_blank">https://s-healthstack.io</a> for documentation, or jump directly to:
-- The <a href="https://s-healthstack.io/installing-the-backend.html" target="_blank">backend system installation instructions</a>
-- The <a href="https://s-healthstack.io/installing-the-sdk.html" target="_blank">app SDK installation instructions</a>
-- The <a href="https://s-healthstack.io/installing-the-portal.html" target="_blank">web portal installation instructions</a>
-- The <a href="https://s-healthstack.io/tutorial.html" target="_blank">getting started tutorial</a>
+Refer to <a href="https://developer.samsung.com/health/stack" target="_blank">Samsung Developer Portal</a> for documentation, or jump directly to:
+- The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-backend.html" target="_blank">backend system installation instructions</a>
+- The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-sdk.html" target="_blank">app SDK installation instructions</a>
+- The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-portal.html" target="_blank">web portal installation instructions</a>
+- The <a href="https://developer.samsung.com/codelab/health/research-app.html" target="_blank">getting started tutorial</a>
 
 Follow these instructions to install, build, and verify the web portal.
 
-> This installation requires successful prior completion of the [backend system installation](install-backend.md).
+> This installation requires successful prior completion of the backend system installation.
 
 # I. (Optional) Create Development Environment
 
@@ -76,4 +76,4 @@ Follow these instructions to install, build, and verify the web portal.
 3. Follow the prompts to generate an account activation email.
 4. Open the email and complete the account creation and sign in process.
 
->  If you are the very first person to create an account, the system adds the `Team Admin` [team role](/role-based-access-control.md) to your account settings. Because this role has advanced access privileges to the Samsung Health Stack, we recommend that your system administrator creates the first account.
+>  If you are the very first person to create an account, the system adds the `Team Admin` [team role](https://developer.samsung.com/health/stack/portal-guide/study-management/role-based-access-control.html) to your account settings. Because this role has advanced access privileges to the Samsung Health Stack, we recommend that your system administrator creates the first account.
