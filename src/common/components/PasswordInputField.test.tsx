@@ -37,7 +37,7 @@ describe('PasswordInputField', () => {
     });
   });
 
-  it('test PasswordInputField error state', async () => {
+  it('[NEGATIVE] test PasswordInputField error state', async () => {
     const { baseElement, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <PasswordInputField error />
@@ -57,7 +57,7 @@ describe('PasswordInputField', () => {
     expect(passwordInput).toHaveStyle(`background-color: ${theme.colors.statusError10}`);
   });
 
-  it('test PasswordInputField disabled state', async () => {
+  it('[NEGATIVE] test PasswordInputField disabled state', async () => {
     const { baseElement, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <PasswordInputField disabled />

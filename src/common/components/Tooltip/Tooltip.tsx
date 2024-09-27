@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  ReactElement,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -224,7 +225,7 @@ const Tooltip = forwardRef(
       </TooltipTrigger>
     );
   }
-) as (props: TooltipComponentProps & { ref?: React.ForwardedRef<TooltipControls> }) => JSX.Element;
+) as (props: TooltipComponentProps & { ref?: React.ForwardedRef<TooltipControls> }) => ReactElement;
 
 const TooltipMemoized = React.memo(Tooltip, (prevProps, nextProps) =>
   _isEqual(prevProps, nextProps)

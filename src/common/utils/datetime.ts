@@ -61,3 +61,6 @@ export const convertIsoUtcToMillis = (ts: ISOTimestamp): Timestamp =>
 
 export const convertMillisToIsoUtc = (ts: Timestamp): ISOTimestamp =>
   DateTime.fromMillis(ts).toUTC().toISO({ includeOffset: false });
+
+export const parseDateFromApi = (date: string | undefined) => date ? Date.parse(date) : undefined;
+export const parseDateTimeToApi = (date: string, time: string) => `${DateTime.fromISO(date).toFormat('yyyy-LL-dd')}T${DateTime.fromISO(time).toFormat('T')}`;

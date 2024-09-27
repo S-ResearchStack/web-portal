@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 import { SpecColorType } from 'src/styles/theme';
 
 import styled from 'styled-components';
@@ -11,6 +11,7 @@ import InputField, { InputFieldProps, RIGHT_PADDING } from 'src/common/component
 import { px } from 'src/styles';
 
 const ICON_BUTTON_WIDTH = 24;
+const inputStyle = { paddingRight: px(ICON_BUTTON_WIDTH + 2 * RIGHT_PADDING) };
 
 const StyledEndExtraButton = styled(IconButton)`
   position: relative;
@@ -47,7 +48,7 @@ const PasswordInputField = ({
   error,
   disabled,
   ...rest
-}: Omit<InputFieldProps, 'type' | 'endExtra'>): JSX.Element => {
+}: Omit<InputFieldProps, 'type' | 'endExtra'>): ReactElement => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
   const toggleChecked = () => setIsPasswordVisible(!isPasswordVisible);
@@ -82,6 +83,7 @@ const PasswordInputField = ({
       helperText={helperText}
       error={error}
       disabled={disabled}
+      style={inputStyle}
       {...rest}
     />
   );

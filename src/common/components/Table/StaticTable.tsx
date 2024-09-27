@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import BaseTable from './BaseTable';
 import RowRenderer from './RowRenderer';
@@ -13,9 +13,11 @@ const StaticTable = <T,>({
   bodyHeight,
   withRipple = true,
   renderOnHoverRowAction,
+  disableHeader,
+  disableFooter,
   ...props
-}: TableProps<T>): JSX.Element => (
-  <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, rows, ...props }}>
+}: TableProps<T>): ReactElement => (
+  <BaseTable {...{ columns, getRowKey, disableActions, bodyHeight, rows, disableHeader, disableFooter, ...props }}>
     {({ sort, styles }) =>
       (rows ?? []).map((row) => (
         <RowRenderer
@@ -29,6 +31,7 @@ const StaticTable = <T,>({
           style={styles}
           linesCount={row.linesCount}
           getOnHoverRowAction={renderOnHoverRowAction}
+          vertical={disableHeader}
         />
       ))
     }

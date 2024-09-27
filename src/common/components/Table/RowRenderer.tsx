@@ -1,4 +1,4 @@
-import React, { ComponentType, useCallback } from 'react';
+import React, { ComponentType, ReactElement, useCallback } from 'react';
 import _isFunction from 'lodash/isFunction';
 
 import styled, { DefaultTheme, StyledComponent } from 'styled-components';
@@ -25,7 +25,7 @@ export const TableRowBase = styled.div<{ linesCount?: number }>`
   box-shadow: inset 0 ${px(-1)} 0 ${colors.primaryLight};
 `;
 
-export type PropsWithProcessing<T = unknown> = T & { isProcessing?: boolean; linesCount?: number };
+export type PropsWithProcessing<T = unknown> = T & { isProcessing?: boolean; linesCount?: number; key?: string; value?:string}
 
 interface RowRendererProps<T> extends React.HTMLAttributes<HTMLElement> {
   component?:
@@ -39,6 +39,7 @@ interface RowRendererProps<T> extends React.HTMLAttributes<HTMLElement> {
   sort?: SortOptions<T>;
   linesCount?: number;
   getOnHoverRowAction?: (r: T) => React.ReactNode;
+  vertical?: boolean;
 }
 
 type TableRowProps = React.PropsWithChildren<
@@ -86,7 +87,14 @@ export const TableRow = styled(TableRowBase)<
     }
   }
 `;
-
+const VerticalTableHeader = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  width: max-content;
+  height: 30px;
+  font-weight: 600;
+`
 const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
   component,
   columns,
@@ -98,8 +106,9 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
   sort,
   linesCount,
   getOnHoverRowAction,
+  vertical,
   ...props
-}: RowRendererProps<T>): JSX.Element => {
+}: RowRendererProps<T>): ReactElement => {
   const RowComponent = (component || TableRow) as React.ComponentType<
     TableRowProps & { selectable: boolean; withRipple?: boolean }
   >;
@@ -131,13 +140,26 @@ const RowRenderer = <T extends Record<keyof T, T[keyof T]>>({
       linesCount={linesCount}
     >
       {isProcessing && <Loader />}
-      {columns.map((column, columnIdx) => (
-        <BodyCell key={getKey(column, columnIdx)} column={column} linesCount={linesCount}>
-          {_isFunction(column.render)
-            ? column.render(data[column.dataKey], data)
-            : data[column.dataKey]}
-        </BodyCell>
-      ))}
+      {
+        vertical
+        ? (
+          <>
+            <VerticalTableHeader>
+              <>{data?.key}</>
+            </VerticalTableHeader>
+            <BodyCell column={{dataKey: data.key || ""}} linesCount={data?.linesCount || 1}>
+              {data?.value}
+            </BodyCell>
+          </>
+        )
+        : columns.map((column, columnIdx) => (
+          <BodyCell key={getKey(column, columnIdx)} column={column} linesCount={linesCount} >
+            {_isFunction(column.render)
+              ? column.render(data[column.dataKey], data)
+              : data[column.dataKey]}
+          </BodyCell>
+        ))
+      }
       {withRipple && <Ripple {...rippleProps} />}
       {getOnHoverRowAction && (
         <TableRowHoverActionContainer>

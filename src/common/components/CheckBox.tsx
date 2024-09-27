@@ -5,12 +5,14 @@ import _uniqueId from 'lodash/uniqueId';
 
 import Blank from 'src/assets/icons/checkbox_blank.svg';
 import Checked from 'src/assets/icons/checkbox_checked.svg';
+import CheckedMinus from 'src/assets/icons/checkbox_minus.svg';
 import BlankMobile from 'src/assets/icons/checkbox_blank_mobile.svg';
 import { animation, colors, px, typography } from 'src/styles';
 import { isDevShowFocus } from 'src/common/utils/dev';
 
 // TODO: fix icon
 const CheckedMobile = Checked;
+const CheckedMinusMobile = CheckedMinus;
 /* import CheckedMobile from 'src/assets/icons/checkbox_checked_mobile.svg'; */
 
 // When using a `type` instead of an `interface`, the linter gives an error in the component props
@@ -18,6 +20,7 @@ const CheckedMobile = Checked;
 export interface CheckboxProps
   extends React.PropsWithChildren<React.InputHTMLAttributes<HTMLInputElement>> {
   isMobile?: boolean;
+  isSelectSome?: boolean;
 }
 
 const Label = styled.label<{ withDescription: boolean }>`
@@ -44,7 +47,7 @@ const Child = styled.div<{ disabled?: boolean }>`
 
 const CheckboxContainer = styled.div<CheckboxProps>`
   display: inline-block;
-
+  height: fit-content;
   input {
     display: none;
   }
@@ -60,9 +63,9 @@ const CheckboxContainer = styled.div<CheckboxProps>`
     > :nth-child(1) {
       transition: stroke 300ms ${animation.defaultTiming}, fill 300ms ${animation.defaultTiming};
 
-      ${({ disabled, checked }) => {
+      ${({ disabled, checked, isSelectSome }) => {
         if (disabled) {
-          if (checked)
+          if (checked || isSelectSome)
             return css`
               fill: ${colors.disabled};
             `;
@@ -72,7 +75,7 @@ const CheckboxContainer = styled.div<CheckboxProps>`
           `;
         }
 
-        if (checked)
+        if (checked || isSelectSome)
           return css`
             fill: ${colors.primary};
           `;
@@ -91,9 +94,9 @@ const CheckboxContainer = styled.div<CheckboxProps>`
 
     ${Icon} > svg {
       > :nth-child(1) {
-        ${({ checked, disabled }) => {
+        ${({ checked, disabled, isSelectSome }) => {
           if (disabled) {
-            if (checked)
+            if (checked || isSelectSome)
               return css`
                 fill: ${colors.disabled};
               `;
@@ -102,7 +105,7 @@ const CheckboxContainer = styled.div<CheckboxProps>`
             `;
           }
 
-          if (checked)
+          if (checked || isSelectSome)
             return css`
               fill: ${colors.primaryHovered};
             `;
@@ -117,7 +120,8 @@ const CheckboxContainer = styled.div<CheckboxProps>`
 `;
 
 const Checkbox: React.FC<CheckboxProps> = ({
-  checked,
+  checked: isSelectAll,
+  isSelectSome,
   children,
   disabled,
   className,
@@ -127,12 +131,15 @@ const Checkbox: React.FC<CheckboxProps> = ({
   const id = useMemo(() => _uniqueId('checkbox_'), []);
 
   return (
-    <CheckboxContainer className={className || ''} checked={checked} disabled={disabled}>
+    <CheckboxContainer className={className || ''} checked={isSelectAll} isSelectSome={isSelectSome} disabled={disabled}>
       <Label htmlFor={id} withDescription={!!children}>
         <Icon>
-          {checked
+          {isSelectAll
             ? (isMobile && <CheckedMobile />) || <Checked />
-            : (isMobile && <BlankMobile />) || <Blank />}
+            : isSelectSome 
+                ? (isMobile && <CheckedMinusMobile />) || <CheckedMinus />
+                : (isMobile && <BlankMobile />) || <Blank />
+          }
         </Icon>
         {children && (
           <Child data-testid="checkbox-label" disabled={disabled}>
@@ -140,7 +147,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           </Child>
         )}
       </Label>
-      <input type="checkbox" disabled={disabled} id={id} checked={checked} {...rest} />
+      <input type="checkbox" disabled={disabled} id={id} checked={isSelectAll} {...rest} />
     </CheckboxContainer>
   );
 };

@@ -1,18 +1,16 @@
-FROM node:16-alpine AS build
+FROM node:18.19.0 AS build
 
 WORKDIR /app
 
 COPY . .
 
-ARG API_URL
-ARG MOCK_API
-ARG PUBLIC_PATH
+ENV YARN_ENABLE_IMMUTABLE_INSTALLS=false
 
-ENV API_URL=$API_URL
-ENV MOCK_API=$MOCK_API
-ENV PUBLIC_PATH=$PUBLIC_PATH
-
-RUN corepack enable && yarn install && yarn build
+RUN mkdir -p .git
+RUN yarn set version 3.2.1
+RUN corepack enable
+RUN yarn install
+RUN yarn build
 
 FROM nginx:alpine
 

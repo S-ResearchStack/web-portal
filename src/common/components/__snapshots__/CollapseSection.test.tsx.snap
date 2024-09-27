@@ -18,7 +18,7 @@ exports[`CollapseSection [NEGATIVE] should render with wrong props 1`] = `
 }
 
 .c1 {
-  margin-top: 3.75rem;
+  margin-top: 1.875rem;
   margin-bottom: 0.75rem;
 }
 
@@ -43,7 +43,7 @@ exports[`CollapseSection [NEGATIVE] should render with wrong props 1`] = `
 }
 
 .c4 {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 <body>
@@ -97,7 +97,7 @@ exports[`CollapseSection [NEGATIVE] should render without props 1`] = `
 }
 
 .c1 {
-  margin-top: 3.75rem;
+  margin-top: 1.875rem;
   margin-bottom: 0.75rem;
 }
 
@@ -122,7 +122,7 @@ exports[`CollapseSection [NEGATIVE] should render without props 1`] = `
 }
 
 .c4 {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 <body>
@@ -176,7 +176,7 @@ exports[`CollapseSection test collapse section render 1`] = `
 }
 
 .c1 {
-  margin-top: 3.75rem;
+  margin-top: 1.875rem;
   margin-bottom: 0.75rem;
 }
 
@@ -201,7 +201,7 @@ exports[`CollapseSection test collapse section render 1`] = `
 }
 
 .c4 {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 <body>

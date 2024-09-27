@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { PropsWithProcessing } from 'src/common/components/Table/RowRenderer';
 import { PaginationProps } from 'src/common/components/Pagination';
 
@@ -30,6 +30,7 @@ export interface ColumnOptions<T> {
   align?: AlignOptions;
   ellipsis?: TextEllipsis;
   isEmpty?: boolean;
+  disableSort?: boolean;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
@@ -48,12 +49,14 @@ export interface BaseTableProps<T> {
   children?: (props: {
     sort?: SortOptions<T>;
     styles: React.CSSProperties;
-  }) => JSX.Element | JSX.Element[];
+  }) => ReactElement | ReactElement[];
   bodyHeight?: number;
   disableActions?: boolean;
   isLoading?: boolean;
   rows: PropsWithProcessing<T>[];
   renderOnHoverRowAction?: (r: T) => React.ReactNode;
+  disableHeader?: boolean;
+  disableFooter?: boolean;
 }
 
 export interface TableProps<T> extends Omit<BaseTableProps<T>, 'children'> {

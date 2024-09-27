@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components/';
 import ServiceScreen from './ServiceScreen';
 
 describe('ServiceScreen', () => {
-  it('test error service screen render', async () => {
+  it('[NEGATIVE] test error service screen render', async () => {
     const onReload = jest.fn();
 
     const { baseElement, getByTestId, queryByTestId } = render(
@@ -29,7 +29,7 @@ describe('ServiceScreen', () => {
     expect(onReload).toHaveBeenCalledTimes(1);
   });
 
-  it('test empty service screen render', () => {
+  it('[NEGATIVE] test empty service screen render', () => {
     const { baseElement, getByTestId, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <ServiceScreen type="empty" data-testid="empty-screen" />

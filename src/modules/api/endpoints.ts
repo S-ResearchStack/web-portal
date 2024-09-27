@@ -1,131 +1,318 @@
-import { request } from './apiService';
-import executeRequest, { Response } from './executeRequest';
+import { PaginationParams } from "src/modules/api/models/pagination";
+import { isNumber } from "src/common/utils/typeCheck";
+import { StudyDataType } from "src/modules/study-data/studyData.enum";
+import { request, supersetRequest } from './apiService';
+import executeRequest from './executeRequest';
 import * as API from './models';
 import {
-  ActivityTaskType,
-  CreatePublicationSliceFetchArgs,
-  EducationListSliceFetchArgs,
-  GetStorageObjectDownloadUrlResponse,
-  GetTablesResponse,
-  LabVisitItemResponse,
-  LabVisitListResponse,
-  LabVisitSaveItemRequest,
+  GetStudyDataFileUploadUrlResponse,
 } from './models';
-import { SqlRequest, SqlResponse } from './models/sql';
-import { GraphQlRequest, GraphQlResponse } from './models/graphql';
-import { ParticipantEnrollmentPeriod } from '../overview/participantEnrollment.slice';
-import { LabVisitListFetchArgs } from '../study-management/participant-management/lab-visit/labVisit.slice';
-import {
-  LabVisitParticipantSuggestionItemRequest,
-  LabVisitParticipantSuggestionResponse,
-} from './models/labVisit';
+import { LabVisitListFetchArgs } from '../lab-visit/labVisit.slice';
+import { StudyRequirementObject } from "../studies/ParticipationRequirement.slice";
 
 export type ProjectIdParams = { projectId: string };
+export type StudyIdParams = { studyId: string };
+export type IdParams = { id: string };
+export type DashboardIdParams = { dashboardId: string };
 
-type SqlRequestParams = {
-  projectId: string;
-  sql: string | string[];
-};
-
-const baseSqlRequest = <R>({ projectId, sql }: SqlRequestParams) =>
-  request<SqlRequest, SqlResponse<R>>({
-    path: `/api/projects/${projectId}/sql`,
-    method: 'POST',
-    body: {
-      sql: (Array.isArray(sql) ? sql.join(' ') : sql).replaceAll(/ {2,}/g, ' '),
-    },
-  });
-
-type GraphQlRequestParams = {
-  projectId: string;
-  query: string;
-};
-
-const baseGraphQlRequest = <D>({ projectId, query }: GraphQlRequestParams) =>
-  request<GraphQlRequest, GraphQlResponse<D>>({
-    path: `/api/projects/${projectId}/graphql`,
-    method: 'POST',
-    body: {
-      query,
-      variables: {},
-    },
-  });
-
-const graphQlRequest = async <D>(params: GraphQlRequestParams): Promise<Response<D>> => {
-  const res = await baseGraphQlRequest<D>(params);
-
-  return {
-    ...res,
-    get data() {
-      return res?.data?.data;
-    },
-  };
-};
-
-export const signin = (body: API.SigninRequest) =>
-  request<API.SigninRequest, API.SigninResponse>({
-    path: '/account-service/signin',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
-
-export const signUp = (body: API.SignUpRequest) =>
-  request<API.SignUpRequest, void>({
-    path: '/account-service/signup',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
-
-export const verifyEmail = (body: API.VerifyEmailRequest) =>
-  request<API.VerifyEmailRequest, API.SigninResponse>({
-    path: '/account-service/user/email/verify',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
-
-export const resendVerification = (body: API.ResendVerificationEmailRequest) =>
-  request<API.ResendVerificationEmailRequest, void>({
-    path: '/account-service/verification',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
-
-export const resetPassword = (body: API.ResetPasswordRequest) =>
-  request<API.ResetPasswordRequest, API.SigninResponse>({
-    path: '/account-service/user/password/reset',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
-
-export const forgotPassword = (body: API.ForgotPasswordRequest) =>
-  request<API.ForgotPasswordRequest, void>({
-    path: '/account-service/user/password/forgot',
-    method: 'POST',
-    noAuth: true,
-    body,
-  });
+const getPaginationQuery = (params: PaginationParams): PaginationParams =>
+  (isNumber(params.page) && isNumber(params.size)) ? params : {}
 
 export const getStudies = () =>
-  request<void, API.StudyListResponse>({
-    path: '/api/projects',
+  request<void, API.StudiesResponse>({
+    path: '/studies',
+    method: 'GET'
   });
 
 export const createStudy = (body: API.CreateStudyRequest) =>
   request<API.CreateStudyRequest, void>({
-    path: '/api/projects',
+    path: '/studies',
     method: 'POST',
     body,
   });
 
-export const getUsers = ({ projectId }: { projectId?: string } = {}) =>
+export const getStudy = ({ studyId }: StudyIdParams) =>
+  request<void, API.GetStudyResponse>({
+    path: `/studies/${studyId}`,
+    method: 'GET',
+  });
+
+export const updateStudy = (studyId: string, body: API.UpdateStudyRequest) =>
+  request<API.UpdateStudyRequest, void>({
+    path: `/studies/${studyId}`,
+    method: 'PATCH',
+    body,
+  });
+
+export const setStudyRequirement = (studyId: string, requirement: StudyRequirementObject) =>
+  request({
+    path: `/studies/${studyId}/requirements`,
+    method: 'POST',
+    body: requirement,
+  })
+
+export const getDataTypes = () =>
+  request<void, API.DataTypeResponse>({
+    path: '/health-data/types',
+    method: 'GET'
+  })
+
+export const getStudyDashboard = ({ studyId }: StudyIdParams) =>
+  request<void, API.StudyDashboardResponse>({
+    path: `/studies/${studyId}/dashboards`,
+    method: 'GET'
+  })
+
+export const getStudyDataFolders = ({
+  studyId, parentId, page, size
+}: API.GetStudyDataRequest & PaginationParams) =>
+  request<void, API.StudyDataFoldersResponse>({
+    path: `/studies/${studyId}/study-data/${parentId}/children`,
+    method: `GET`,
+    query: {
+      studyDataType: StudyDataType.FOLDER,
+      ...getPaginationQuery({ page, size })
+    }
+  })
+
+export const getStudyDataFiles = ({
+  studyId, parentId, page, size
+}: API.GetStudyDataRequest & PaginationParams) =>
+  request<void, API.StudyDataFilesResponse>({
+    path: `/studies/${studyId}/study-data/${parentId}/children`,
+    method: `GET`,
+    query: {
+      studyDataType: StudyDataType.FILE,
+      ...getPaginationQuery({ page, size })
+    }
+  })
+
+export const getStudyDataCount = ({
+  studyId, parentId, studyDataType
+}: API.GetStudyDataRequest & { studyDataType: StudyDataType }) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/study-data/${parentId}/children/count`,
+    method: 'GET',
+    query: { studyDataType }
+  })
+
+export const getSubjectInfoList = ({
+  studyId,
+  includeTaskRecord,
+  page,
+  size
+}: API.GetSubjectInfoListRequest & PaginationParams) =>
+  request<void, API.SubjectInfoListResponse>({
+    path: `/studies/${studyId}/subjects`,
+    method: 'GET',
+    query: {
+      includeTaskRecord,
+      ...getPaginationQuery({ page, size })
+    }
+  });
+
+export const getSubjectInfoListCount = ({ studyId }: API.GetSubjectInfoListRequest) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/subjects/count`,
+    method: 'GET',
+  });
+
+export const getSessionInfoList = ({
+  studyId,
+  subjectNumber,
+  page,
+  size
+}: API.GetSessionInfoListRequest & PaginationParams) =>
+  request<void, API.SessionInfoListResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions`,
+    method: 'GET',
+    query: {
+      ...getPaginationQuery({ page, size })
+    }
+  });
+
+export const getSessionInfoListCount = ({ studyId, subjectNumber }: API.GetSessionInfoListRequest) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/count`,
+    method: 'GET',
+  });
+
+export const getSessionMetaInfo = ({ studyId, subjectNumber, sessionId }: API.GetSessionMetaInfoRequest) =>
+  request<void, string>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/${sessionId}/metainfo`,
+    method: 'GET',
+  });
+
+export const getTaskInfoList = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  page,
+  size
+}: API.GetTaskInfoListRequest & PaginationParams) =>
+  request<void, API.TaskInfoListResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/${sessionId}/tasks`,
+    method: 'GET',
+    query: {
+      ...getPaginationQuery({ page, size })
+    }
+  })
+
+export const getTaskInfoListCount = ({ studyId, subjectNumber, sessionId }: API.GetTaskInfoListRequest) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/${sessionId}/tasks/count`,
+    method: 'GET',
+  })
+
+export const getRawDataInfo = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  taskId,
+  page,
+  size
+}: API.GetRawDataInfoRequest & PaginationParams) =>
+  request<void, API.RawDataInfoResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/${sessionId}/tasks/${taskId}/rawData`,
+    method: 'GET',
+    query: {
+      ...getPaginationQuery({ page, size })
+    }
+  })
+
+export const getRawDataInfoCount = ({ studyId, subjectNumber, sessionId, taskId }: API.GetRawDataInfoRequest) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}/sessions/${sessionId}/tasks/${taskId}/rawData/count`,
+    method: 'GET',
+  })
+
+export const getStudyDataFileInfo = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  taskId,
+  fileName
+}: API.GetStudyDataFileInfoRequest) =>
+  request<void, API.StudyDataFileInfoResponse>({
+    path: `/studies/${studyId}/files/${fileName}`,
+    method: 'GET',
+    query: {
+      subjectNumber,
+      sessionId,
+      taskId
+    }
+  })
+
+export const getStudyDataFileInfoList = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  taskId,
+  page,
+  size
+}: API.GetStudyDataFileInfoListRequest & PaginationParams) =>
+  request<void, API.StudyDataFileInfoListResponse>({
+    path: `/studies/${studyId}/files`,
+    method: 'GET',
+    query: {
+      subjectNumber,
+      sessionId,
+      taskId,
+      page,
+      size
+    }
+  })
+
+export const getStudyDataFileInfoListCount = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  taskId
+}: API.GetStudyDataFileInfoListRequest) =>
+  request<void, API.StudyDataCountResponse>({
+    path: `/studies/${studyId}/files/count`,
+    method: 'GET',
+    query: {
+      subjectNumber,
+      sessionId,
+      taskId
+    }
+  })
+
+export const addStudyDataFileInfo = ({
+  studyId,
+  subjectNumber,
+  sessionId,
+  taskId,
+  fileType,
+  fileName,
+  publicAccess
+}: API.AddStudyDataFileInfoRequest) =>
+  request<void, void>({
+    path: `/studies/${studyId}/files`,
+    method: "POST",
+    query: {
+      subjectNumber,
+      sessionId,
+      taskId,
+      fileType,
+      fileName,
+      publicAccess
+    }
+  })
+
+export const setSubjectStatus = ({ studyId, subjectNumber, status }: API.SetSubjectStatusRequest) =>
+  request<void, void>({
+    path: `/studies/${studyId}/subjects/${subjectNumber}`,
+    method: 'PATCH',
+    query: { status }
+  })
+
+export const getFileDownloadUrls = ({ studyId, filePaths }: API.GetFileDownloadUrlsRequest) =>
+  request<string[], API.Url[]>({
+    path: `/studies/${studyId}/files/download-urls`,
+    method: 'POST',
+    body: filePaths
+  })
+
+export const getZippedFileDownloadUrls = ({ studyId, subjectNumbers }: API.GetZippedFileDownloadUrlsRequest) =>
+  request<string[], API.Url[]>({
+    path: `/studies/${studyId}/zipped-files/download-urls`,
+    method: 'POST',
+    body: subjectNumbers
+  })
+
+export const getBlobFile = (fileUrl: string) =>
+  executeRequest<void, File>({
+    url: fileUrl,
+    readResponseAsBlob: true
+  });
+
+export const registerUser = (body: API.RegisterUserRequest) =>
+  request<API.RegisterUserRequest, void>({
+    path: '/investigators',
+    method: 'POST',
+    body,
+  })
+
+export const getUser = () =>
+  request<void, API.GetUserResponse>({
+    path: '/investigators/me',
+    method: 'GET',
+  });
+
+export const inviteUser = (body: API.InviteUserRequest) =>
+  request<API.InviteUserRequest, void>({
+    path: '/investigators/invite',
+    method: 'POST',
+    body,
+  });
+
+export const getUsers = ({ studyId }: StudyIdParams) =>
   request<void, API.GetUsersResponse>({
-    path: '/account-service/users',
-    query: { projectId },
+    path: '/investigators',
+    method: 'GET',
+    query: { studyId },
   });
 
 export const inviteUsers = (body: API.InviteUsersRequest) =>
@@ -135,409 +322,391 @@ export const inviteUsers = (body: API.InviteUsersRequest) =>
     body,
   });
 
-export const updateUserRole = (body: API.UpdateUserRoleRequest) =>
+export const updateUserRole = (userId: string, body: API.UpdateUserRoleRequest) =>
   request<API.UpdateUserRoleRequest, void>({
-    path: '/account-service/user/roles',
-    method: 'PUT',
+    path: `/investigators/${userId}/roles`,
+    method: 'PATCH',
     body,
   });
 
-export const removeUserRole = (body: API.RemoveUserRoleRequest) =>
+export const removeUserRole = (userId: string, body: API.RemoveUserRoleRequest) =>
   request<API.RemoveUserRoleRequest, void>({
-    path: '/account-service/user/roles/remove',
+    path: `/investigators/${userId}/roles`,
+    method: 'DELETE',
+    body,
+  });
+
+export const getSurveys = ({ studyId }: StudyIdParams) =>
+  request<void, API.SurveyListResponse>({
+    path: `/studies/${studyId}/tasks`,
+    query: {
+      type: 'SURVEY',
+    },
+  });
+
+export const getActivities = (
+  { studyId }: StudyIdParams
+) =>
+  request<void, API.ActivityListResponse>({
+    path: `/studies/${studyId}/tasks`,
+    query: {
+      type: 'ACTIVITY',
+    },
+  });
+
+export const getSurvey = (
+  { studyId, id }: StudyIdParams & IdParams
+) =>
+  request<void, API.SurveyResponse>({
+    path: `/studies/${studyId}/tasks/${id}`,
+  });
+
+export const getActivity = (
+  { studyId, id }: StudyIdParams & IdParams
+) =>
+  request<void, API.ActivityResponse>({
+    path: `/studies/${studyId}/tasks/${id}`,
+  });
+
+export const createSurvey = (
+  { studyId }: StudyIdParams,
+  body: API.Survey
+) =>
+  request<API.Survey, void>({
+    path: `/studies/${studyId}/tasks`,
     method: 'POST',
     body,
   });
 
-export const refreshToken = (body: API.RefreshTokenBody) =>
-  request<API.RefreshTokenBody, API.RefreshTokenBody>({
-    path: '/account-service/token/refresh',
+export const createActivity = (
+  { studyId }: StudyIdParams,
+  body: API.Activity
+) =>
+  request<API.Activity, void>({
+    path: `/studies/${studyId}/tasks`,
+    method: 'POST',
+    body,
+  });
+
+export const updateSurvey = (
+  { studyId, id }: StudyIdParams & IdParams,
+  body: API.Survey
+) =>
+  request<API.Survey, void>({
+    path: `/studies/${studyId}/tasks/${id}`,
+    method: 'PATCH',
+    body,
+    keepalive: true,
+  });
+
+export const updateActivity = (
+  { studyId, id }: StudyIdParams & IdParams,
+  body: API.Activity
+) =>
+  request<API.Activity, void>({
+    path: `/studies/${studyId}/tasks/${id}`,
+    method: 'PATCH',
+    body,
+    keepalive: true,
+  });
+
+export const getEducations = ({ studyId }: StudyIdParams) =>
+  request<void, API.EducationalListResponse>({
+    method: 'GET',
+    path: `/studies/${studyId}/educational-contents`,
+  });
+
+export const createEducation = ({ studyId }: StudyIdParams, body: API.EducationalCreateRequest) =>
+  request<API.EducationalCreateRequest, API.EducationalCreateResponse>({
+    path: `/studies/${studyId}/educational-contents`,
+    method: 'POST',
+    body,
+  });
+
+export const getEducation = ({ studyId, educationId }: StudyIdParams & { educationId: string }) =>
+  request<void, API.EducationalResponse>({
+    path: `/studies/${studyId}/educational-contents/${educationId}`,
+    method: 'GET',
+  });
+
+export const updateEducation = (
+  { studyId, educationId }: StudyIdParams & { educationId: string },
+  body: API.EducationalUpdateRequest
+) =>
+  request<API.EducationalUpdateRequest, void>({
+    path: `/studies/${studyId}/educational-contents/${educationId}`,
+    method: 'PATCH',
+    body,
+  });
+
+export const deleteEducation = ({
+  studyId,
+  educationId,
+}: StudyIdParams & { educationId: string }) =>
+  request<void, void>({
+    method: 'DELETE',
+    path: `/studies/${studyId}/educational-contents/${educationId}`,
+  });
+
+export const getPaticipantSuggestions = ({ studyId }: StudyIdParams) =>
+  request<void, API.PaticipantSuggestionListResponse>({
+    path: `/studies/${studyId}/paticipants`,
+  });
+
+export const getResearcherSuggestions = ({ studyId }: StudyIdParams) =>
+  request<void, API.ResearcherSuggestionListResponse>({
+    path: `/studies/${studyId}/researchers`,
+  });
+
+export const getLabVisits = ({ studyId, sort, filter }: LabVisitListFetchArgs) =>
+  request<void, API.LabVisitListResponse>({
+    path: `/studies/${studyId}/in-lab-visits`,
+    query: {
+      page: filter.page,
+      size: filter.size,
+      sortBy: sort.column,
+      orderBy: sort.direction
+    }
+  });
+
+export const createLabVisit = ({ studyId }: StudyIdParams, body: API.LabVisitSaveItemRequest) =>
+  request<API.LabVisitSaveItemRequest, API.LabVisitItemResponse>({
+    method: 'POST',
+    path: `/studies/${studyId}/in-lab-visits`,
+    body,
+  });
+
+export const updateLabVisit = ({ studyId, visitId }: StudyIdParams & { visitId: number }, body: API.LabVisitSaveItemRequest) =>
+  request<API.LabVisitSaveItemRequest, API.LabVisitItemResponse>({
+    method: 'PATCH',
+    path: `/studies/${studyId}/in-lab-visits/${visitId}`,
+    body,
+  });
+
+export const getUploadUrl = ({ studyId }: StudyIdParams, query: API.GetUploadUrlParams) =>
+  request<void, API.GetStorageObjectUploadUrlResponse>({
+    method: 'GET',
+    path: `/studies/${studyId}/files/upload-url`,
+    query,
+  });
+
+export const uploadStorageObject = ({ signedUrl, blob }: { signedUrl: string; blob: File }, headers?: Record<string, string>) =>
+  executeRequest<File, void>({
+    url: signedUrl,
+    method: 'PUT',
+    body: blob,
+    headers,
+  });
+
+export const getDownloadStudyDataUrl = ({
+  studyId
+}: API.GetStudyDataRequest) =>
+  request<void, string>({
+    method: 'GET',
+    path: `/files/studies/${studyId}/download-url`
+  })
+
+export const getDownloadSubjectDataUrl = ({
+  studyId,
+  subjectNumber
+}: API.GetSubjectDataRequest) =>
+  request<void, string>({
+    method: 'GET',
+    path: `/files/studies/${studyId}/subjects/${subjectNumber}/download-url`
+  })
+
+export const getStudyDataFileUploadUrl = ({
+  studyId,
+  sessionId,
+  subjectNumber,
+  taskId,
+  fileName,
+  publicAccess
+}: API.GetStudyDataFileUploadUrlRequest) =>
+  request<void, GetStudyDataFileUploadUrlResponse>({
+    method: 'GET',
+    path: `/studies/${studyId}/files/upload-url`,
+    query: {
+      sessionId,
+      subjectNumber,
+      taskId,
+      fileName,
+      publicAccess
+    }
+  })
+
+// TODO: remove explicit login logic (add to access token refresh logic)
+export const loginSuperset = () =>
+  supersetRequest<API.LoginSupersetRequest, API.LoginSupersetResponse>({
+    method: 'POST',
+    path: `/api/v1/security/login`,
+    body: {
+      username: process.env.SUPERSET_ID,
+      password: process.env.SUPERSET_PASSWORD,
+      provider: "db",
+      refresh: false
+    }
+  });
+
+// TODO: remove access token parameter (auto refresh)
+export const getSupersetGuestToken = (accessToken: string, body: API.GetSupersetGuestTokenRequest) =>
+  supersetRequest<API.GetSupersetGuestTokenRequest, API.GetSupersetGuestTokenResponse>({
+    method: 'POST',
+    path: `/api/v1/security/guest_token/`,
+    bearerToken: accessToken,
+    body
+  });
+
+export const signin = (body: API.SigninRequest) =>
+  request<API.SigninRequest, API.SigninResponse>({
+    path: '/auth/signin',
     method: 'POST',
     noAuth: true,
     body,
   });
 
-export const getHealthDataOverview = ({
-  projectId,
-  limit,
-  offset,
-  sort,
-}: API.HealthDataOverviewParams & ProjectIdParams) =>
-  graphQlRequest<API.HealthDataOverviewResponse>({
-    projectId,
-    query: `{
-  healthDataOverview(orderByColumn: ${sort.column}, orderBySort: ${sort.direction}, offset: ${offset}, limit: ${limit}, includeAttributes: ["email"]) {
-    userId
-    profiles { key value }
-    latestAverageHR
-    latestAverageSystolicBP
-    latestAverageDiastolicBP
-    latestTotalStep
-    lastSyncTime
-    averageSleep
-    latestAverageSPO2
-    latestAverageBG
-    latestAverageRR
-  }
-}`,
-  });
-
-export const getHealthDataParticipantIds = ({
-  projectId,
-  limit,
-}: LabVisitParticipantSuggestionItemRequest & ProjectIdParams) =>
-  graphQlRequest<LabVisitParticipantSuggestionResponse>({
-    projectId,
-    query: `{
-  healthDataOverview(offset: 0, limit: ${limit}, includeAttributes: ["email"]) {
-    userId
-  }
-}`,
-  });
-
-export const getHealthDataOverviewForUser = ({
-  projectId,
-  userId,
-}: { userId: string } & ProjectIdParams) =>
-  graphQlRequest<API.HealthDataOverviewOfUserResponse>({
-    projectId,
-    query: `{
-  healthDataOverviewOfUser(userId: "${userId}") {
-    userId
-    latestAverageHR
-    latestAverageSystolicBP
-    latestAverageDiastolicBP
-    latestTotalStep
-    lastSyncTime
-    averageSleep
-    latestAverageSPO2
-    latestAverageBG
-    latestAverageRR
-  }
-}`,
-  });
-
-export const getUserProfilesCount = ({ projectId }: ProjectIdParams) =>
-  graphQlRequest<API.CountTableRowsResponse>({
-    projectId,
-    query: '{ count(tableName: "user_profiles") }',
-  });
-
-export const getParticipantHeartRates = ({
-  projectId,
-  startTime,
-  endTime,
-}: ProjectIdParams & API.GetParticipantHeartRateRequest) =>
-  graphQlRequest<API.RawHealthDataResponse>({
-    projectId,
-    query: `{
-  rawHealthData(from: "${startTime}", to: "${endTime}", includeAttributes: ["gender"]) {
-    userId
-    profiles { key value }
-    healthData { heartRates { time bpm } }
-  }
-}`,
-  });
-
-export const getAverageParticipantHeartRate = ({
-  projectId,
-  startTime,
-  endTime,
-}: ProjectIdParams & API.GetAverageParticipantHeartRateRequest) =>
-  graphQlRequest<API.AverageHealthDataResponse>({
-    projectId,
-    query: `{
-  averageHealthData(from: "${startTime}", to: "${endTime}", includeAttributes: ["gender", "age"]) {
-    userId
-    profiles { key value }
-    averageHR
-    lastSyncTime
-  }
-}`,
-  });
-
-export const getTasks = ({ projectId }: ProjectIdParams) =>
-  request<void, API.TaskListResponse>({
-    path: `/api/projects/${projectId}/tasks`,
-    query: {
-      type: 'SURVEY',
-    },
-  });
-
-export const getActivities = ({ projectId }: ProjectIdParams) =>
-  request<void, API.ActivityListResponse>({
-    path: `/api/projects/${projectId}/tasks`,
-    query: {
-      type: 'ACTIVITY',
-    },
-  });
-
-export const getTaskRespondedUsersCount = ({ projectId }: ProjectIdParams) =>
-  graphQlRequest<API.TaskResultsResponse>({
-    projectId,
-    query: `{
-  taskResults {
-    taskId
-    numberOfRespondedUser { count }
-  }
-}`,
-  });
-
-export const getTask = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  request<void, [API.Task]>({
-    path: `/api/projects/${projectId}/tasks/${id}`,
-    query: {
-      type: 'SURVEY',
-    },
-  });
-
-export const getActivityTask = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  request<void, [API.ActivityTask]>({
-    path: `/api/projects/${projectId}/tasks/${id}`,
-    query: {
-      type: 'ACTIVITY',
-    },
-  });
-
-export const getEducationPublication = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  request<void, [API.Publication]>({
-    path: `/api/projects/${projectId}/education/${id}`,
-  });
-
-export const createTask = ({ projectId }: ProjectIdParams) =>
-  request<{ type: 'SURVEY' }, API.CreateTaskResponse>({
+export const signup = (body: API.SignUpRequest) =>
+  request<API.SignUpRequest, void>({
+    path: '/auth/signup',
     method: 'POST',
-    path: `/api/projects/${projectId}/tasks`,
+    noAuth: true,
+    body,
+  });
+
+export const refreshToken = (body: API.RefreshTokenBody) =>
+  request<API.RefreshTokenBody, API.RefreshTokenBody>({
+    path: '/auth/refresh',
+    method: 'POST',
+    noAuth: true,
+    body,
+  });
+
+export const getGoogleToken = (code: string) =>
+  request<string, API.GoogleTokenResponse>({
+    path: '/auth/google/token',
+    method: "GET",
+    noAuth: true,
+    query: { code }
+  });
+
+export const refreshGoogleToken = (body: API.RefreshGoogleTokenBody) =>
+  request<API.RefreshGoogleTokenBody, API.RefreshGoogleTokenResponse>({
+    path: '/auth/google/token/refresh',
+    method: 'POST',
+    noAuth: true,
+    body,
+  });
+
+export const getListDatabase = ({ studyId }: StudyIdParams,) =>
+  request<void, string[]>({
+    method: 'GET',
+    path: `/studies/${studyId}/databases`,
+  });
+
+export const getListTable = (
+  { studyId, database }: StudyIdParams & API.GetListTableRequestParam
+) =>
+  request<void, string[]>({
+    method: 'GET',
+    path: `/studies/${studyId}/databases/${database}/tables`,
+  });
+
+export const executeChartDataQuery = (
+  { studyId }: StudyIdParams,
+  body: API.ChartSource
+) =>
+  request<API.DataQueryRequest, API.DataQueryResponse>({
+    method: 'POST',
+    path: `/studies/${studyId}/databases/${body.database}/query`,
     body: {
-      type: 'SURVEY',
+      query: body.query
     },
   });
 
-export const createActivityTask = ({ projectId }: ProjectIdParams & { type: ActivityTaskType }) =>
-  request<{ type: 'ACTIVITY' }, API.CreateTaskResponse>({
-    method: 'POST',
-    path: `/api/projects/${projectId}/tasks`,
-    body: {
-      type: 'ACTIVITY',
-    },
-  });
-
-export const updateTask = (
-  { projectId, id, revisionId }: ProjectIdParams & { id: string; revisionId: number },
-  body: API.TaskUpdate
+export const createDashboard = (
+  { studyId }: StudyIdParams,
+  body: API.AddDashboardRequest
 ) =>
-  request<API.TaskUpdate, void>({
-    path: `/api/projects/${projectId}/tasks/${id}`,
-    method: 'PATCH',
-    body,
-    query: {
-      revision_id: revisionId,
-    },
-    keepalive: true,
-  });
-
-export const updateActivityTask = (
-  { projectId, id, revisionId }: ProjectIdParams & { id: string; revisionId: number },
-  body: API.ActivityTaskUpdate
-) =>
-  request<API.ActivityTaskUpdate, void>({
-    path: `/api/projects/${projectId}/tasks/${id}`,
-    method: 'PATCH',
-    body,
-    query: {
-      revision_id: revisionId,
-    },
-    keepalive: true,
-  });
-
-export const updateEducationPublication = (
-  { projectId, id, revisionId }: ProjectIdParams & { id: string; revisionId: number },
-  body: API.Publication
-) =>
-  request<API.Publication, void>({
-    path: `/api/projects/${projectId}/education/${id}`,
-    method: 'PATCH',
-    body,
-    query: {
-      revision_id: revisionId,
-    },
-  });
-
-export const getSurveyTaskItemResults = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  graphQlRequest<API.SurveyResponseResponse>({
-    projectId,
-    query: `{
-  surveyResponse(taskId: "${id}", includeAttributes: ["age", "gender"]) {
-    itemName
-    userId
-    result
-    profiles { key value }
-  }
-}`,
-  });
-
-export const getActivityTaskItemResults = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  graphQlRequest<API.SurveyResponseResponse>({
-    projectId,
-    query: `{
-  surveyResponse(taskId: "${id}", includeAttributes: ["age", "gender"]) {
-    userId
-    result
-    profiles { key value }
-  }
-}`,
-  });
-
-export const getTaskCompletionTime = ({ projectId, id }: ProjectIdParams & { id: string }) =>
-  graphQlRequest<API.TaskResultsResponse>({
-    projectId,
-    query: `{
-  taskResults(taskId: "${id}") {
-    taskId
-    completionTime { averageInMS }
-  }
-}`,
-  });
-
-export const getTablesList = (projectId: string) =>
-  graphQlRequest<GetTablesResponse>({
-    projectId,
-    query: `{
-  tables { name }
-}`,
-  });
-
-export const getTableColumns = (projectId: string, tableId: string) =>
-  graphQlRequest<GetTablesResponse>({
-    projectId,
-    query: `{
-  tables(nameFilter: "${tableId}") { name columns { name type } }
-}`,
-  });
-
-export const executeDataQuery = (projectId: string, sql: string) =>
-  baseSqlRequest<unknown>({
-    projectId,
-    sql,
-  });
-
-export const getLabVisitsList = ({ projectId }: LabVisitListFetchArgs) =>
-  request<LabVisitListFetchArgs, LabVisitListResponse>({
-    path: `/api/projects/${projectId}/in-lab-visits`,
-  });
-
-export const getParticipantDropout = (id: API.StudyId) =>
-  request<API.StudyId, API.ParticipantDropoutData>({
-    path: `/api/studies/${id}/dropout`,
-    body: id,
-  });
-
-export const getParticipantEnrollment = (period?: ParticipantEnrollmentPeriod) =>
-  request<void, API.ParticipantEnrollmentResponse>({
-    path: '/participant-enrollment',
-    query: { period },
-  });
-
-export const createLabVisit = ({ projectId, ...body }: LabVisitSaveItemRequest & ProjectIdParams) =>
-  request<LabVisitSaveItemRequest, Required<LabVisitItemResponse>>({
+  request<API.AddDashboardRequest, API.AddDashboardResponse>({
     method: 'POST',
-    path: `/api/projects/${projectId}/in-lab-visits`,
+    path: `/studies/${studyId}/dashboards`,
     body,
   });
 
-export const updateLabVisit = ({ projectId, ...body }: LabVisitSaveItemRequest & ProjectIdParams) =>
-  request<LabVisitSaveItemRequest, Required<LabVisitItemResponse>>({
+export const updateDashboard = (
+  { studyId, id }: StudyIdParams & IdParams,
+  body: API.UpdateDashboardRequest
+) =>
+  request<API.UpdateDashboardRequest, void>({
     method: 'PATCH',
-    path: `/api/projects/${projectId}/in-lab-visits/${body.id}`,
+    path: `/studies/${studyId}/dashboards/${id}`,
     body,
   });
 
-export const getPublications = ({ projectId }: EducationListSliceFetchArgs) =>
-  request<void, API.EducationListResponse>({
-    method: 'GET',
-    path: `/api/education/${projectId}`,
-  });
-
-export const createPublication = ({ projectId, source }: CreatePublicationSliceFetchArgs) =>
-  request<API.CreatePublicationRequestBody, API.CreatePublicationResponse>({
-    method: 'POST',
-    path: `/api/education/${projectId}/publications`,
-    body: { source },
-  });
-
-export const getStorageObjects = ({
-  projectId,
-  path,
-}: API.GetStorageObjectsParams & ProjectIdParams) =>
-  request<void, API.GetStorageObjectsResponse>({
-    method: 'GET',
-    path: `/cloud-storage/projects/${projectId}/list`,
-    query: { path },
-  });
-
-export const getStorageObjectUploadUrl = ({
-  projectId,
-  objectName,
-}: API.GetStorageObjectUploadUrlParams & ProjectIdParams) =>
-  request<void, API.GetStorageObjectUploadUrlResponse>({
-    method: 'GET',
-    path: `/cloud-storage/projects/${projectId}/upload-url`,
-    query: {
-      object_name: objectName,
-    },
-    readResponseAsText: true,
-  });
-
-export const uploadStorageObject = ({ signedUrl, blob }: { signedUrl: string; blob: File }) =>
-  executeRequest<File, void>({
-    url: signedUrl,
-    method: 'PUT',
-    body: blob,
-  });
-
-export const deleteStorageObject = ({
-  projectId,
-  objectName,
-}: API.DeleteStorageObjectParams & ProjectIdParams) =>
+export const deleteDashboard = (
+  { studyId, id }: StudyIdParams & IdParams
+) =>
   request<void, void>({
     method: 'DELETE',
-    path: `/cloud-storage/projects/${projectId}/delete`,
-    query: { object_name: objectName },
+    path: `/studies/${studyId}/dashboards/${id}`,
   });
 
-export const downloadStorageObject = ({
-  projectId,
-  objectName,
-}: API.DownloadStoragetObjectParams & ProjectIdParams) =>
-  request<void, Blob>({
+export const getDashboard = (
+  { studyId, id }: StudyIdParams & IdParams
+) =>
+  request<void, API.ChartResponse>({
     method: 'GET',
-    path: `/cloud-storage/projects/${projectId}/download`,
-    query: { object_name: objectName },
-    readResponseAsBlob: true,
+    path: `/studies/${studyId}/dashboards/${id}`,
   });
 
-export const getStorageObjectDownloadUrl = ({
-  projectId,
-  objectName,
-  expiresAfterSeconds,
-}: API.GetStorageObjectDownloadUrlParams & ProjectIdParams) =>
-  request<void, GetStorageObjectDownloadUrlResponse>({
+export const getDashboardList = (
+  { studyId }: StudyIdParams
+) =>
+  request<void, API.DashboardListResponse>({
     method: 'GET',
-    path: `/cloud-storage/projects/${projectId}/download-url`,
-    query: {
-      object_name: objectName,
-      url_duration: expiresAfterSeconds,
-    },
-    readResponseAsText: true,
+    path: `/studies/${studyId}/dashboards`,
   });
 
-export const streamDownloadStorageObject = ({
-  projectId,
-  objectName,
-}: API.DownloadStoragetObjectParams & ProjectIdParams) =>
-  request<void, ReadableStream>({
+export const createChart = (
+  { studyId, dashboardId }: StudyIdParams & DashboardIdParams,
+  body: API.AddChartRequest
+) =>
+  request<API.AddChartRequest, API.AddChartResponse>({
+    method: 'POST',
+    path: `/studies/${studyId}/dashboards/${dashboardId}/charts`,
+    body,
+  });
+
+export const updateChart = (
+  { studyId, dashboardId, id }: StudyIdParams & DashboardIdParams & IdParams,
+  body: API.UpdateChartRequest
+) =>
+  request<API.UpdateChartRequest, void>({
+    method: 'PATCH',
+    path: `/studies/${studyId}/dashboards/${dashboardId}/charts/${id}`,
+    body,
+  });
+
+export const deleteChart = (
+  { studyId, dashboardId, id }: StudyIdParams & DashboardIdParams & IdParams
+) =>
+  request<void, void>({
+    method: 'DELETE',
+    path: `/studies/${studyId}/dashboards/${dashboardId}/charts/${id}`,
+  });
+
+export const getChart = (
+  { studyId, dashboardId, id }: StudyIdParams & DashboardIdParams & IdParams
+) =>
+  request<void, API.ChartResponse>({
     method: 'GET',
-    path: `/cloud-storage/projects/${projectId}/download`,
-    query: { object_name: objectName },
-    readResponseAsStream: true,
+    path: `/studies/${studyId}/dashboards/${dashboardId}/charts/${id}`,
+  });
+
+export const getChartList = (
+  { studyId, dashboardId }: StudyIdParams & DashboardIdParams
+) =>
+  request<void, API.ChartListResponse>({
+    method: 'GET',
+    path: `/studies/${studyId}/dashboards/${dashboardId}/charts`,
   });

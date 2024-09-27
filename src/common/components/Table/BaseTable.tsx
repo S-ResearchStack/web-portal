@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  ReactElement,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -116,10 +117,12 @@ const BaseTable = forwardRef(
       isLoading,
       rows,
       renderOnHoverRowAction,
+      disableHeader,
+      disableFooter,
       ...props
     }: BaseTableProps<T>,
     ref: React.ForwardedRef<HTMLDivElement>
-  ): JSX.Element => {
+  ): ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scrollableRef = useRef<HTMLDivElement>(null);
     const headRef = useRef<HTMLDivElement>(null);
@@ -273,7 +276,7 @@ const BaseTable = forwardRef(
           ref={combineRefs([scrollableRef, ref])}
           scrollbarTrackColor={theme.colors.surface}
         >
-          <TableHead ref={headRef} sticky={stickyHeader}>
+          {!disableHeader && <TableHead ref={headRef} sticky={stickyHeader}>
             {computedColumns.map((column) => {
               const sorting = sort?.sortings?.find((s) => s?.column === column.dataKey);
               const isActive = !!sorting;
@@ -290,7 +293,7 @@ const BaseTable = forwardRef(
               );
             })}
             {isLoading && <Loader />}
-          </TableHead>
+          </TableHead>}
           <ColumnSelectionContainer style={{ height: px((rows ?? []).length * ROW_HEIGHT) }}>
             <ColumnSelectionRow style={rowStyles}>
               {computedColumns.map((c) => (
@@ -310,14 +313,15 @@ const BaseTable = forwardRef(
             {children && children({ sort, styles: rowStyles })}
           </TableBody>
         </TableScrollable>
+        {!disableFooter && 
         <TableFooter>
           {pagination && <TablePagination {...pagination} disabled={disableActions} />}
-        </TableFooter>
+        </TableFooter>}
       </TableContainer>
     );
   }
 ) as <T>(
   props: BaseTableProps<T> & { ref?: React.ForwardedRef<HTMLDivElement | undefined> }
-) => JSX.Element;
+) => ReactElement;
 
 export default BaseTable;

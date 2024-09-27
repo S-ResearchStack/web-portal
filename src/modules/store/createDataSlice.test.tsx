@@ -170,7 +170,7 @@ describe('store', () => {
     });
   });
 
-  it('should make failure', () => {
+  it('[NEGATIVE] should make failure', () => {
     expect(
       slice.reducer(
         createEmptyState({

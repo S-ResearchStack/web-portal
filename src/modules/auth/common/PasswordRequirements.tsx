@@ -1,8 +1,9 @@
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
+import PasswordValidator from 'password-validator';
+
 import { px, typography } from 'src/styles';
 import Radio from 'src/common/components/Radio';
-import React, { useMemo } from 'react';
-import PasswordValidator from 'password-validator';
 
 export const PasswordRequirements = styled.div`
   margin-top: ${px(14)};
@@ -28,7 +29,7 @@ type PasswordRequirement = {
   validator: PasswordValidator;
 };
 
-const getRequirements = (userName: string) =>
+const getRequirements = (email: string) =>
   [
     {
       rule: 'Be at least 12 characters in length',
@@ -51,32 +52,32 @@ const getRequirements = (userName: string) =>
       validator: new PasswordValidator().not(/(.)\1{3,}/g),
     },
     {
-      rule: 'Does not contain username',
-      validator: new PasswordValidator().not(userName),
+      rule: 'Does not contain email',
+      validator: new PasswordValidator().not(email),
     },
   ].filter((r) => !!r) as PasswordRequirement[];
 
-const checkPassword = (password: string, userName: string): Array<PasswordRequirement> =>
-  getRequirements(userName).map((r) => ({
+const checkPassword = (email: string, password: string): Array<PasswordRequirement> =>
+  getRequirements(email).map((r) => ({
     ...r,
     passed: password.length ? (r.validator.validate(password) as boolean) : undefined,
   }));
 
 interface UseCheckPasswordParams {
+  email: string;
   password: string;
-  name: string;
 }
 
 export const useCheckPassword = ({
+  email,
   password,
-  name,
 }: UseCheckPasswordParams): [boolean, PasswordRequirement[]] =>
   useMemo(
     () => [
-      checkPassword(password, name).every((r) => r.passed === true),
-      checkPassword(password, name),
+      checkPassword(email, password).every((r) => r.passed === true),
+      checkPassword(email, password),
     ],
-    [password, name]
+    [email, password]
   );
 
 interface RequirementProps {

@@ -24,7 +24,7 @@ const InputContainer = styled.div<{ $disabled?: boolean; $highlight?: boolean }>
   background-color: ${colors.background};
   border-radius: ${px(4)};
   border-width: ${px(1)};
-  border-color: ${({ $highlight, theme }) => ($highlight ? theme.colors.primary : 'transparent')};
+  border-color: ${({ $highlight, theme }) => ($highlight ? theme.colors.primary : colors.black08)};
   border-style: solid;
 
   display: flex;

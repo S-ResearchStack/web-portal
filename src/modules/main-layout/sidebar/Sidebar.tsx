@@ -6,8 +6,7 @@ import styled, { css, DefaultTheme } from 'styled-components';
 
 import { Path, sectionPathSelector } from 'src/modules/navigation/store';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
-import { userNameSelector } from 'src/modules/auth/auth.slice';
-import { signout } from 'src/modules/auth/auth.slice.signout';
+import {signOut, userNameSelector} from 'src/modules/auth/auth.slice';
 import { selectedStudySelector, isLoadingSelector } from 'src/modules/studies/studies.slice';
 import {
   DESKTOP_WIDTH_BREAKPOINT,
@@ -18,16 +17,9 @@ import StudyAvatar from 'src/common/components/StudyAvatar';
 import Tooltip from 'src/common/components/Tooltip/Tooltip';
 import Button from 'src/common/components/Button';
 import Ripple, { useRipple } from 'src/common/components/Ripple';
-import OverviewIcon from 'src/assets/icons/overview.svg';
-import StudyManagementIcon from 'src/assets/icons/study_management.svg';
-import DataCollectionIcon from 'src/assets/icons/data_collection.svg';
-import StudySettingsIcon from 'src/assets/icons/study_settings.svg';
-import SignOutIcon from 'src/assets/icons/sign_out.svg';
-import UserAvatarIcon from 'src/assets/icons/user_avatar.svg';
-import ResizeIcon from 'src/assets/icons/resize.svg';
 import { px, typography, colors, animation, boxShadow } from 'src/styles';
 import { getRoleLabels } from 'src/modules/auth/userRole';
-import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { userRoleForStudySelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import SkeletonLoading, { SkeletonPath } from 'src/common/components/SkeletonLoading';
 
 import {
@@ -42,6 +34,19 @@ import {
   isSidebarForceCollapsedSelector,
   toggleSidebarCollapsed,
 } from './sidebar.slice';
+
+import ResizeIcon from 'src/assets/icons/resize.svg';
+import SignOutIcon from 'src/assets/icons/sign_out.svg';
+import UserAvatarIcon from 'src/assets/icons/user_avatar.svg';
+import OverviewIcon from 'src/assets/icons/sidebar/overview.svg';
+import DashboardIcon from 'src/assets/icons/sidebar/dashboard.svg';
+import TaskIcon from 'src/assets/icons/sidebar/task.svg';
+import SubjectIcon from 'src/assets/icons/sidebar/subject.svg';
+import StudyDataIcon from 'src/assets/icons/sidebar/study-data.svg';
+import EducationIcon from 'src/assets/icons/sidebar/education.svg';
+import InLabVisitIcon from 'src/assets/icons/sidebar/in-lab-visit.svg';
+import StudySettingsIcon from 'src/assets/icons/sidebar/study-settings.svg';
+import DataStatisticsIcon from 'src/assets/icons/sidebar/data-statistics.svg';
 
 type Props = {
   onStudyClick: () => void;
@@ -80,21 +85,41 @@ const menuItemsRegistry = {
     icon: <OverviewIcon />,
     section: Path.Overview,
   },
-  studyManagement: {
-    title: 'Study Management',
-    icon: <StudyManagementIcon />,
-    section: Path.StudyManagement,
+  dashboard: {
+    title: 'Dashboard',
+    icon: <DashboardIcon />,
+    section: Path.Dashboard,
   },
-  dataInsights: {
-    title: 'Data Insights',
-    icon: <DataCollectionIcon />,
-    section: Path.DataCollection,
+  taskManagement: {
+    title: 'Task',
+    icon: <TaskIcon />,
+    section: Path.TaskManagement,
+  },
+  subjectManagement: {
+    title: 'Subject',
+    icon: <SubjectIcon />,
+    section: Path.SubjectManagement,
+  },
+  studyData: {
+    title: 'Study Data',
+    icon: <StudyDataIcon />,
+    section: Path.StudyData
+  },
+  educationalManagement: {
+    title: 'Education',
+    icon: <EducationIcon />,
+    section: Path.EducationalManagement,
+  },
+  labVisitManagement: {
+    title: 'In Lab Visit',
+    icon: <InLabVisitIcon />,
+    section: Path.LabVisitManagement,
   },
   studySettings: {
     title: 'Study Settings',
     icon: <StudySettingsIcon />,
     section: Path.StudySettings,
-  },
+  }
 };
 
 const hideDisplayIfMinimized = (minimized = false) =>
@@ -360,8 +385,8 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
         height: ${desktopType === 'desktop' ? px(48) : px(32)};
         width: ${px(pipeWidth)};
         border-radius: ${desktopType === 'desktop'
-          ? `${px(4)} ${px(0)} ${px(0)} ${px(4)}`
-          : `${px(2)} ${px(0)} ${px(0)} ${px(2)}`};
+        ? `${px(4)} ${px(0)} ${px(0)} ${px(4)}`
+        : `${px(2)} ${px(0)} ${px(0)} ${px(2)}`};
         position: absolute;
         left: ${px(leftByBarWidth)};
         background-color: ${colors.primary};
@@ -378,15 +403,6 @@ const MenuItem = styled(BaseItem)<MenuItemProps>`
 `;
 
 const PanelWrapper = styled.div`
-  ${Menu} {
-    opacity: 0;
-    transition: opacity 0.3s ${animation.defaultTiming};
-  }
-  &:hover {
-    ${Menu} {
-      opacity: 1;
-    }
-  }
   margin-top: auto;
 `;
 
@@ -427,7 +443,7 @@ export const UserMenu = ({
 const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
   const sectionPath = useSelector(sectionPathSelector);
   const username = useAppSelector(userNameSelector);
-  const userRoles = useAppSelector(userRoleSelector)?.roles;
+  const userRoles = useAppSelector(userRoleForStudySelector)?.roles;
   const selectedStudy = useAppSelector(selectedStudySelector);
   const isStudyLoading = useAppSelector(isLoadingSelector);
   const { width: screenWidth } = useWindowSize();
@@ -508,9 +524,27 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
     setTooltipTitle('');
   };
 
-  const { overview, studyManagement, studySettings, dataInsights } = menuItemsRegistry;
+  const {
+    overview,
+    dashboard,
+    taskManagement,
+    subjectManagement,
+    studyData,
+    educationalManagement,
+    labVisitManagement,
+    studySettings
+  } = menuItemsRegistry;
 
-  const menuItems = [overview, studyManagement, dataInsights, studySettings];
+  const menuItems = [
+    overview,
+    dashboard,
+    taskManagement,
+    subjectManagement,
+    studyData,
+    educationalManagement,
+    labVisitManagement,
+    studySettings
+  ];
 
   return (
     <Container
@@ -533,6 +567,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
       />
       {desktopType !== 'laptop' && isUserResizeAllowed && (
         <ResizeButton
+          data-testid='resize-button'
           fill="text"
           rate="icon"
           icon={<ResizeIcon />}
@@ -596,7 +631,7 @@ const Sidebar: React.FC<Props> = ({ onStudyClick }) => {
           onClearTooltipParams={clearTooltipParams}
           onSetTooltipParams={(e) => handleSetTooltipParams(e, 'Sign out')}
           minimized={minimized}
-          onSignOut={signout}
+          onSignOut={signOut}
           desktopType={desktopType}
         />
         <UserPanel

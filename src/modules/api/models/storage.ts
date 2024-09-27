@@ -1,29 +1,40 @@
-export type StorageObjectInfo = {
-  name: string;
-  size: number;
+export type GetUploadUrlParams = {
+  filePath: string;
+  assetType?: string;
 };
-export type GetStorageObjectsResponse = StorageObjectInfo[];
-
-export type GetStorageObjectsParams = {
-  path: string;
-};
-
-export type GetStorageObjectUploadUrlParams = {
-  objectName: string;
-};
-export type GetStorageObjectUploadUrlResponse = string;
-
-export type DownloadStoragetObjectParams = {
-  objectName: string;
+export type GetStorageObjectUploadUrlResponse = {
+  presignedUrl: string;
+  headers?: Record<string, string>;
 };
 
-export type GetStorageObjectDownloadUrlParams = {
-  objectName: string;
-  expiresAfterSeconds?: number;
+export type LoginSupersetRequest = {
+  username: string,
+  password: string,
+  provider: string,
+  refresh: boolean
+}
+
+export type LoginSupersetResponse = {
+  access_token: string,
+  refresh_token: string
+}
+
+export type GetSupersetGuestTokenRequest = {
+  resources: [{
+    id: string,
+    type: string
+  }],
+  rls: [{
+    clause: string,
+    dataset?: number
+  }],
+  user: {
+    first_name?: string,
+    last_name?: string,
+    username?: string
+  },
 };
 
-export type GetStorageObjectDownloadUrlResponse = string;
-
-export type DeleteStorageObjectParams = {
-  objectName: string;
-};
+export type GetSupersetGuestTokenResponse = {
+  token: string
+}

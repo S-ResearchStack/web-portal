@@ -71,7 +71,6 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -160,7 +159,6 @@ exports[`Modal [NEGATIVE] should render with wrong props 1`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -497,7 +495,6 @@ exports[`Modal test modal render 1`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -586,7 +583,6 @@ exports[`Modal test modal render 1`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -943,7 +939,6 @@ exports[`Modal test modal render 2`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -1032,7 +1027,6 @@ exports[`Modal test modal render 2`] = `
   width: 10.25rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;

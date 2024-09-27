@@ -26,7 +26,7 @@ describe('Card', () => {
     expect(getByText(baseElement, 'Samsung')).toBeInTheDocument();
   });
 
-  it('test card error state', () => {
+  it('[NEGATIVE] test card error state', () => {
     const { baseElement, getByTestId, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <Card data-testid="card" title="title" subtitle="subtitle" error>
@@ -48,7 +48,7 @@ describe('Card', () => {
     expect(errorScreen).toBeInTheDocument();
   });
 
-  it('test card empty state', () => {
+  it('[NEGATIVE] test card empty state', () => {
     const { baseElement, getByTestId, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <Card data-testid="card" title="title" subtitle="subtitle" empty>

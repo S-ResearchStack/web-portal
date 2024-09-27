@@ -31,7 +31,7 @@ describe('Toggle', () => {
     expect(toggle).not.toBeChecked();
   });
 
-  it('test toggle disabled state', async () => {
+  it('[NEGATIVE] test toggle disabled state', async () => {
     const { baseElement, getByTestId } = render(
       <ThemeProvider theme={theme}>
         <Toggle data-testid="toggle" label="toggle" disabled />

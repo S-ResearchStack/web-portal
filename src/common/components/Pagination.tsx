@@ -13,11 +13,12 @@ import { colors, px, typography } from 'src/styles';
 export const PAGINATION_LIMITS = [10, 25, 50, 75];
 
 export interface PaginationProps {
+  disabled?: boolean;
+  offset?: number;
+  pageNumber?: number;
   totalCount: number;
   pageSize: number;
-  onPageChange: (offset: number, size: number) => void;
-  disabled?: boolean;
-  offset: number;
+  onPageChange: (offset: number, size: number, page: number) => void;
 }
 
 const Container = styled.div`
@@ -115,48 +116,47 @@ const Pagination: FC<PaginationProps> = ({
   onPageChange,
   disabled,
   offset,
+  pageNumber = 0,
   ...props
 }) => {
-  const isPrevDisabled = offset === 0;
-  const isNextDisabled = offset + pageSize >= totalCount;
+  const offsetValue = offset != undefined ? offset : pageNumber * pageSize;
+  const isPrevDisabled = offsetValue === 0;
+  const isNextDisabled = offsetValue + pageSize >= totalCount;
+  const sizes = useMemo(() => PAGINATION_LIMITS.map((i) => ({ label: i.toString(), key: i })), []);
+
+  const handleSizeChanged = useCallback(
+    (size: number) => !disabled && onPageChange(offsetValue, size, 0),
+    [onPageChange, disabled, offsetValue]
+  );
 
   const handlePageClick = useCallback(
-    (newOffset: number) => !disabled && onPageChange(newOffset, pageSize),
+    (newOffset: number, newPage: number) => !disabled && onPageChange(newOffset, pageSize, newPage),
     [pageSize, onPageChange, disabled]
   );
 
-  const handleSizeChanged = useCallback(
-    (size: number) => {
-      if (!disabled) {
-        onPageChange(offset, size);
-      }
-    },
-    [onPageChange, disabled, offset]
+  const goToFirst = useCallback(
+    () => handlePageClick(0, 0),
+    [handlePageClick]
   );
-
-  const sizes = useMemo(() => PAGINATION_LIMITS.map((i) => ({ label: i.toString(), key: i })), []);
-
-  const goToFirst = useCallback(() => handlePageClick(0), [handlePageClick]);
   const goToLast = useCallback(
-    () => handlePageClick(totalCount - pageSize),
+    () => handlePageClick(totalCount - pageSize, Math.ceil(totalCount / pageSize) - 1),
     [handlePageClick, totalCount, pageSize]
   );
 
   const goToPrev = useCallback(
-    () => handlePageClick(Math.max(offset - pageSize, 0)),
-    [handlePageClick, offset, pageSize]
+    () => handlePageClick(Math.max(offsetValue - pageSize, 0), pageNumber - 1),
+    [handlePageClick, offsetValue, pageSize, pageNumber]
   );
   const goToNext = useCallback(
-    () => handlePageClick(Math.min(offset + pageSize, totalCount)),
-    [handlePageClick, offset, pageSize, totalCount]
+    () => handlePageClick(Math.min(offsetValue + pageSize, totalCount), pageNumber + 1),
+    [handlePageClick, offsetValue, pageSize, totalCount, pageNumber]
   );
 
   return (
     <Container {...props} data-testid="pagination">
-      <Info data-testid="info" {...props}>{`${offset + 1}-${Math.min(
-        offset + pageSize + 1,
-        totalCount
-      )} of ${totalCount}`}</Info>
+      <Info data-testid="info" {...props}>
+        {`${offsetValue + 1}-${Math.min(offsetValue + pageSize, totalCount)} of ${totalCount}`}
+      </Info>
       <Controls {...props}>
         <DropDownContainer>
           <DropDownLabel>Rows per page</DropDownLabel>

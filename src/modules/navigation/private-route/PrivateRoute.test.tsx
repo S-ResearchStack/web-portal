@@ -1,13 +1,14 @@
-import React from 'react';
 import '@testing-library/jest-dom';
-import 'jest-styled-components';
 import { act, render, screen } from '@testing-library/react';
-import { history, Path } from 'src/modules/navigation/store';
-import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import 'jest-styled-components';
+import React from 'react';
+import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import PrivateRoute from './PrivateRoute';
+import { history, Path } from 'src/modules/navigation/store';
 import { createTestStore } from '../../store/testing';
+import TokenProtectedRoute from './TokenProtectedRoute';
+import UserProtectedRoute from './UserProtectedRoute';
 
 describe('PrivateRoute', () => {
   it('should handle authorized', async () => {
@@ -17,17 +18,15 @@ describe('PrivateRoute', () => {
       },
     });
 
-    await act(() => {
-      render(
-        <Provider store={store}>
-          <ConnectedRouter history={history}>
-            <PrivateRoute>Children</PrivateRoute>
-          </ConnectedRouter>
-        </Provider>
-      );
-    });
+    const { baseElement } = await render(
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <UserProtectedRoute path={Path.CreateStudy}>Children</UserProtectedRoute>
+        </ConnectedRouter>
+      </Provider>
+    );
 
-    expect(await screen.findByText('Children')).toBeInTheDocument();
+    expect(baseElement).toMatchSnapshot();
   });
 
   it('[NEGATIVE] should handle NOT authorized', async () => {
@@ -43,7 +42,7 @@ describe('PrivateRoute', () => {
           <ConnectedRouter history={history}>
             <Switch>
               <Route path={Path.Root}>Sign in</Route>
-              <PrivateRoute>Children</PrivateRoute>
+              <UserProtectedRoute>Children</UserProtectedRoute>
             </Switch>
           </ConnectedRouter>
         </Provider>
@@ -63,7 +62,7 @@ describe('PrivateRoute', () => {
           <ConnectedRouter history={history}>
             <Switch>
               <Route path={Path.Root}>Sign in</Route>
-              <PrivateRoute>Children</PrivateRoute>
+              <UserProtectedRoute>Children</UserProtectedRoute>
             </Switch>
           </ConnectedRouter>
         </Provider>
@@ -72,5 +71,27 @@ describe('PrivateRoute', () => {
 
     expect(screen.queryByText('Children')).toBeNull();
     expect(await screen.findByText('Sign in')).toBeInTheDocument();
+  });
+});
+
+describe('TokenProtectedRoute', () => {
+  it('should handle authorized', async () => {
+    const store = createTestStore({
+      auth: {
+        authToken: 'token',
+      },
+    });
+
+    await act(() => {
+      render(
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <TokenProtectedRoute>Children</TokenProtectedRoute>
+          </ConnectedRouter>
+        </Provider>
+      );
+    });
+
+    expect(await screen.findByText('Children')).toBeInTheDocument();
   });
 });

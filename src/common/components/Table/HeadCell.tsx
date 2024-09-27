@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 
 import styled, { css } from 'styled-components';
 
@@ -69,7 +69,7 @@ const HeadCell = <T,>({
   onColumnClick,
   isProcessing,
   isFirstRender,
-}: HeadCellProps<T>): JSX.Element => {
+}: HeadCellProps<T>): ReactElement => {
   const tooltipRef = useRef<TooltipControls>(null);
 
   const isSortedColumnCell = useMemo(
@@ -105,7 +105,7 @@ const HeadCell = <T,>({
     [isActive, isSortedColumnCell]
   );
 
-  const isSortable = !!sortParams && !!column.label;
+  const isSortable = !!sortParams && !!column.label && !column.disableSort;
 
   let buttonAriaLabel;
 
@@ -124,7 +124,7 @@ const HeadCell = <T,>({
       $width={column.$width}
       align={column.align}
       onClick={() => {
-        if (column.label) {
+        if (isSortable) {
           onColumnClick(column);
         }
       }}

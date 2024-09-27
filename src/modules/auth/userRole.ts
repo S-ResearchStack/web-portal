@@ -1,9 +1,10 @@
+// TODO: additional role types (System admin, System manager, Researcher ?)
+
 export type RoleType =
   | 'team-admin'
-  | 'principal-investigator'
-  | 'research-assistant'
-  | 'data-scientist'
-  | 'study-creator';
+  | 'studyAdmin'
+  | 'studyManager'
+  | 'studyResearcher'
 
 export type UserRole = {
   roles: RoleType[];
@@ -14,25 +15,30 @@ const globalRoleTypes: Readonly<RoleType[]> = ['team-admin'] as const;
 
 export const allowedRoleTypes: Readonly<RoleType[]> = [
   'team-admin',
-  'principal-investigator',
-  'research-assistant',
-  'data-scientist',
-  'study-creator',
+  'studyAdmin',
+  'studyManager',
+  'studyResearcher'
 ] as const;
 
 export const viewRoleTypes: Readonly<RoleType[]> = [
-  'principal-investigator',
-  'research-assistant',
-  'data-scientist',
+  'studyAdmin',
+  'studyManager',
+  'studyResearcher'
 ] as const;
 
 export const roleLabelsMap: Record<RoleType, string> = {
-  'team-admin': 'Team Admin',
-  'principal-investigator': 'Principal Investigator',
-  'research-assistant': 'Research Assistant',
-  'data-scientist': 'Data Scientist',
-  'study-creator': 'Study Creator',
+  'team-admin': 'System Admin',
+  'studyAdmin': 'Study Admin',
+  'studyManager': 'Study Manager',
+  'studyResearcher': 'Study Researcher'
 };
+
+export const rolePriorityMap: Record<RoleType, number> = {
+  'team-admin': -1,
+  'studyAdmin': 0,
+  'studyManager': 1,
+  'studyResearcher': 2
+}
 
 export const isValidRoleType = (rt: string): rt is RoleType =>
   allowedRoleTypes.includes(rt as RoleType);
@@ -41,17 +47,23 @@ export const isGlobalRoleType = (role: RoleType) => globalRoleTypes.includes(rol
 
 export const isTeamAdmin = (rt: RoleType[] | undefined) => !!rt?.includes('team-admin');
 
-export const isDataScientist = (rt: RoleType[] | undefined) =>
-  rt?.length === 1 && rt[0] === 'data-scientist';
-
-export const isStudyCreator = (rt: RoleType[] | undefined) => !!rt?.includes('study-creator');
+// TODO: disable multiple roles
+export const isStudyAdmin =  (rt: RoleType[] | undefined) => !!rt?.includes('studyAdmin');
+export const isStudyManager = (rt: RoleType[] | undefined) => !!rt?.includes('studyManager');
+export const isDataScientist = (rt: RoleType[] | undefined) => !!rt?.includes('studyResearcher');
 
 export const userRolesListFromApi = (roleStr: string[]) => {
   const result: UserRole[] = [];
   let isUserAdmin = false;
 
+  // TODO: reconfigure after backend implementation
+  if(!roleStr) {
+    result.push({ projectId: undefined, roles: ['team-admin' as RoleType] })
+    return result
+  }
+
   [...roleStr].forEach((r) => {
-    const [projectId, role] = (r.includes(':') ? r : `:${r}`).split(':') as [
+    const [projectId, role] = (r.includes('_') ? r : `_${r}`).split('_') as [
       string | undefined,
       RoleType
     ];
@@ -134,8 +146,9 @@ export const getAccessByRole = (
   roles: RoleType[] | undefined,
   mgmtAccess: boolean
 ): Record<MembersAccessActions, boolean> => {
-  const fullAccessRoles = ['team-admin', 'study-creator', 'principal-investigator'];
+  const fullAccessRoles = ['team-admin', 'studyAdmin', 'studyManager'];
   const isFullAccessRole = roles?.some((r) => fullAccessRoles.includes(r));
+
   if (!roles || !roles.length) {
     console.warn(`Invalid user role`);
     return {
@@ -164,13 +177,12 @@ export const getAccessByRole = (
 export const getViewRoleByPriority = (roles: RoleType[]) => {
   let currentRole = '';
   const viewRoles = roles.filter((r) => viewRoleTypes.includes(r));
-
-  if (viewRoles.includes('principal-investigator')) {
-    currentRole = 'principal-investigator';
-  } else if (viewRoles.includes('research-assistant')) {
-    currentRole = 'research-assistant';
+  if(isStudyAdmin(viewRoles)) {
+    currentRole = 'studyAdmin'
+  } else if (isStudyManager(viewRoles)) {
+    currentRole = 'studyManager'
   } else if (isDataScientist(viewRoles)) {
-    currentRole = 'data-scientist';
+    currentRole = 'studyResearcher'
   }
 
   return currentRole;

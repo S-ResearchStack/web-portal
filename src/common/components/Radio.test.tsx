@@ -24,7 +24,7 @@ describe('Radio', () => {
     expect(radio).toBeChecked();
   });
 
-  it('test radio disabled state', async () => {
+  it('[NEGATIVE] test radio disabled state', async () => {
     const { baseElement, getByTestId } = render(
       <ThemeProvider theme={theme}>
         <Radio data-testid="radio" kind="radio" disabled />

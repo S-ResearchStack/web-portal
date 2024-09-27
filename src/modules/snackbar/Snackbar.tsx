@@ -82,7 +82,7 @@ const Snackbar = ({
     <Content>
       {showErrorIcon && !showSuccessIcon && <ColoredErrorIcon />}
       {showSuccessIcon && !showErrorIcon && <ColoredSuccessIcon />}
-      <Text>{text}</Text>
+      <Text data-testid='snackbar-text'>{text}</Text>
     </Content>
     <Content>
       {actionLabel && <ActionButton onClick={onAction}>{actionLabel}</ActionButton>}

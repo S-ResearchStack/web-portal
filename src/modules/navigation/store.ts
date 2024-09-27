@@ -8,37 +8,37 @@ import { isInsideTest } from 'src/common/utils/testing';
 export enum Path {
   Root = '/',
 
+  Registration = '/registration',
   SignIn = '/signin',
-
-  // user invited by other user via email
-  AccountActivation = '/account-activation',
-
-  // sign up by user
   AccountCreate = '/account/create',
-  AccountConfirm = '/account/confirm',
-  AccountVerification = '/email-verification',
-
-  // forgot password
-  ForgotPassword = '/account/forgot',
-  ForgotPasswordConfirm = '/account/forgot/confirm',
-  ResetPassword = '/password-reset',
-  ResetPasswordComplete = '/account/forgot/complete',
 
   CreateStudy = '/create-study',
 
-  Overview = '/overview',
-  OverviewSubject = '/overview/participants/:subjectId',
+  OverviewSubject = '/overview/participants/:subjectNumber',
   StudyManagement = '/study-management',
-  StudyManagementSubject = '/study-management/participants/:subjectId',
+  StudyManagementSubject = '/study-management/participants/:subjectNumber',
   StudyManagementEditSurvey = '/study-management/surveys/:surveyId/edit',
-  StudyManagementEditActivity = '/study-management/activity/:activityId/edit',
-  StudyManagementEditEducation = '/study-management/education/:educationId/edit',
   StudyManagementSurveyResults = '/study-management/surveys/:surveyId/results',
   StudyManagementActivityResults = '/study-management/activities/:activityId/results',
-  UserAnalytics = '/user-analytics',
-  DataCollection = '/data-collection',
-  DataCollectionSubject = '/data-collection/participants/:subjectId',
+
+  Overview = '/overview',
+  SubjectManagement = '/subject-management',
+  StudyData = '/study-data',
   StudySettings = '/study-settings',
+  LabVisitManagement = '/lab-visit',
+
+  Dashboard = '/dashboard',
+  CreateChart = '/dashboard/:dashboardId/chart/create',
+  EditChart = '/dashboard/:dashboardId/chart/:chartId/edit',
+
+  TaskManagement = '/task-management',
+  CreateSurvey = '/task-management/survey/create',
+  CreateActivity = '/task-management/activity/:activityType/create',
+  EditActivity = '/task-management/activity/:activityId/edit',
+
+  EducationalManagement = '/educational-management',
+  CreateEducational = '/educational-management/:educationType/create',
+  EditEducational = '/educational-management/:educationId/edit',
 }
 
 export const makeHistory = () =>
@@ -50,11 +50,13 @@ export const history = makeHistory();
 
 const sectionPaths = [
   Path.Overview,
-  Path.OverviewSubject,
-  Path.StudyManagement,
-  Path.UserAnalytics,
-  Path.DataCollection,
-  Path.StudySettings,
+  Path.Dashboard,
+  Path.TaskManagement,
+  Path.SubjectManagement,
+  Path.StudyData,
+  Path.EducationalManagement,
+  Path.LabVisitManagement,
+  Path.StudySettings
 ] as const;
 
 export const sectionPathSelector = createSelector(

@@ -15,6 +15,7 @@ const Tab = styled.div<{ $active: boolean }>`
     $active ? theme.typography.bodyXSmallSemibold : theme.typography.bodyXSmallRegular};
   color: ${({ theme }) => theme.colors.primary};
   margin-top: ${px(10)};
+  padding-bottom: ${px(10)};
   cursor: pointer;
 
   :after {

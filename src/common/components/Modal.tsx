@@ -89,7 +89,7 @@ export const ModalProvider = ({ children }: React.PropsWithChildren) => {
 };
 
 type ClickableProps = Pick<React.HTMLAttributes<HTMLElement>, 'onClick'>;
-type ModalSize = 'default' | 'large';
+type ModalSize = 'default' | 'large' | 'xlarge';
 
 export interface ModalProps extends Omit<BackdropOverlayProps, 'title'> {
   title: React.ReactNode;
@@ -148,16 +148,30 @@ const StyledCard = styled(Card)<{ size?: ModalSize } & CardProps>`
   padding: ${px(32)};
   width: ${px(568)};
 
-  ${(p) =>
-    p.size === 'large' &&
-    css`
-      padding: ${px(40)};
-      width: ${px(973)};
+  ${(p) => {
+    switch (p.size) {
+      case 'large':
+        return css`
+          padding: ${px(40)};
+          width: ${px(973)};
 
-      ${Description} {
-        margin-top: ${px(-8)};
-      }
-    `}
+          ${Description} {
+            margin-top: ${px(-8)};
+          }
+        `;
+      case 'xlarge':
+        return css`
+          padding: ${px(40)};
+          width: ${px(1280)};
+
+          ${Description} {
+            margin-top: ${px(-8)};
+          }
+        `;
+      default:
+        return;
+    }
+  }}
 `;
 
 const Modal: FC<ModalProps> = ({

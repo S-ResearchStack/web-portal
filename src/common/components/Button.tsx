@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useMemo } from 'react';
+import React, { ForwardedRef, forwardRef, ReactElement, useMemo } from 'react';
 
 import styled, { css } from 'styled-components';
 
@@ -13,14 +13,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   double?: 'left' | 'right';
   $loading?: boolean;
   width?: number;
-  icon?: JSX.Element;
+  icon?: ReactElement;
   rate?: 'default' | 'x-small' | 'small' | 'icon';
   dashed?: boolean;
   rippleOff?: boolean;
 }
 
 type ContentProps = {
-  icon?: JSX.Element;
+  icon?: ReactElement;
 };
 
 const StyledRippleButton = styled.button<ButtonProps>`
@@ -35,7 +35,6 @@ const StyledRippleButton = styled.button<ButtonProps>`
   width: ${({ width }) => (width ? px(width) : '100%')};
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   transition-duration: ${({ fill, $loading }) => (fill !== 'text' && !$loading ? '400ms' : 0)};
   transition-property: background-color;
 

@@ -1,14 +1,38 @@
-import {
-  deleteStorageObject,
-  downloadObject,
-  getObjectDownloadUrl,
-  getObjectUrl,
-  listObjects,
-  mockStorageObjects,
-  uploadObject,
-} from './utils';
+import { mockStorageObjects,  uploadObject } from './utils';
+import API from 'src/modules/api';
 
 const studyId = 'test_study';
+
+const setPresignedUrlEmpty = () => {
+  API.mock.provideEndpoints({
+    getUploadUrl() {
+      return API.mock.response({
+        presignedUrl: '',
+      });
+    },
+  });
+};
+
+const getStorageObjectUploadUrlError = () => {
+  API.mock.provideEndpoints({
+    getUploadUrl() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
+
+const uploadStorageObjectError = () => {
+  API.mock.provideEndpoints({
+    getUploadUrl() {
+      return API.mock.response({
+        presignedUrl: 'https://mock/presignedUrl',
+      });
+    },
+    uploadStorageObject() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
 
 describe('object storage utils', () => {
   beforeEach(() => {
@@ -24,131 +48,39 @@ describe('object storage utils', () => {
         name: 'upload',
         blob: new File([new Blob()], 'f'),
       })
-    ).resolves.toBeUndefined();
+    ).resolves.toBe('upload');
   });
 
-  it('should return object url if object exists', async () => {
-    mockStorageObjects.push({
-      name: 'test',
-      blob: new Blob(),
-    });
-    const url = await getObjectUrl({
-      studyId,
-      name: 'test',
-    });
-
-    expect(typeof url).toEqual('string');
-    expect(url.length).toBeGreaterThan(0);
-  });
-
-  it('[NEGATIVE] should throw error on get object url if object does not exist', async () => {
+  it('[NEGATIVE] upload object but receive empty presignUrl', async () => {
+    setPresignedUrlEmpty();
     await expect(
-      getObjectUrl({
+      uploadObject({
         studyId,
-        name: 'not_exist',
+        name: 'name',
+        blob: new File([new Blob()], 'f'),
       })
-    ).rejects.toThrow();
+    ).rejects.toThrow('Failed to get upload url for name');
   });
 
-  it('should download object', async () => {
-    mockStorageObjects.push({
-      name: 'test',
-      blob: new Blob(),
-    });
+  it('[NEGATIVE] upload object but fail to get upload url', async () => {
+    getStorageObjectUploadUrlError();
     await expect(
-      downloadObject({
+      uploadObject({
         studyId,
-        name: 'test',
+        name: 'name',
+        blob: new File([new Blob()], 'f'),
       })
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow('Status code 400');
   });
 
-  it('[NEGATIVE] should throw error on download object if object does not exist', async () => {
+  it('[NEGATIVE] return error if upload object fail', async () => {
+    uploadStorageObjectError();
     await expect(
-      downloadObject({
+      uploadObject({
         studyId,
-        name: 'test',
+        name: 'name',
+        blob: new File([new Blob()], 'f'),
       })
-    ).rejects.toThrow();
-  });
-
-  it('should list object', async () => {
-    mockStorageObjects.push({
-      name: 'p1/test',
-      blob: new Blob(),
-    });
-    mockStorageObjects.push({
-      name: 'p1/test2',
-      blob: new Blob(),
-    });
-
-    await expect(
-      listObjects({
-        studyId,
-        path: 'p1',
-      })
-    ).resolves.toEqual([
-      {
-        name: 'p1/test',
-        sizeBytes: expect.any(Number),
-      },
-      {
-        name: 'p1/test2',
-        sizeBytes: expect.any(Number),
-      },
-    ]);
-  });
-
-  it('[NEGATIVE] should return empty list of no objects', async () => {
-    await expect(
-      listObjects({
-        studyId,
-        path: 'p1',
-      })
-    ).resolves.toEqual([]);
-  });
-
-  it('should get object download url', async () => {
-    mockStorageObjects.push({
-      name: 'test',
-      blob: new Blob(),
-    });
-    const url = await getObjectDownloadUrl({
-      studyId,
-      name: 'test',
-    });
-    expect(typeof url).toEqual('string');
-    expect(url.length).toBeGreaterThan(0);
-  });
-
-  it('[NEGATIVE] should throw error on get object download url if object does not exist', async () => {
-    await expect(
-      getObjectDownloadUrl({
-        studyId,
-        name: 'test',
-      })
-    ).rejects.toThrow();
-  });
-
-  it('should delete object', async () => {
-    mockStorageObjects.push({
-      name: 'test',
-      blob: new Blob(),
-    });
-    await expect(
-      deleteStorageObject({
-        studyId,
-        name: 'test',
-      })
-    ).resolves.toBeUndefined();
-  });
-
-  it('[NEGATIVE] should throw error on delete object if object does not exist', async () => {
-    await expect(
-      deleteStorageObject({
-        studyId,
-        name: 'test',
-      })
-    ).rejects.toThrow();
+    ).rejects.toThrow('Failed to get upload file');
   });
 });

@@ -1,10 +1,12 @@
 import { AppDispatch, store } from 'src/modules/store/store';
 import API from 'src/modules/api';
 
-import { signout } from './auth.slice.signout';
-import { updateTokens } from './auth.slice';
+import {signOut, updateTokens} from './auth.slice';
 
 API.setAuthProvider({
+  getTokenType() {
+    return store.getState().auth.jwtType;
+  },
   getBearerToken() {
     return store.getState().auth.authToken;
   },
@@ -12,6 +14,6 @@ API.setAuthProvider({
     await (store.dispatch as AppDispatch)(updateTokens());
   },
   onUnauthorizedError() {
-    signout();
+    signOut();
   },
 });

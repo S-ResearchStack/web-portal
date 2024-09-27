@@ -25,6 +25,7 @@ import SkeletonLoading, { SkeletonRect, SkeletonPath } from 'src/common/componen
 import ResultMessage from 'src/modules/auth/common/ResultMessage';
 import EmptyStateImg from 'src/assets/illustrations/empty_state.svg';
 import { SWITCH_STUDY_SEARCH_PARAM } from 'src/modules/main-layout/constants';
+import { useTranslation } from '../localization/useTranslation';
 
 const MAX_STUDIES_PER_SCREEN = 10;
 const componentWidth = css`
@@ -151,10 +152,9 @@ const EmptyContainer = styled.div`
 
 export type SwitchStudyProps = {
   onStudySelectionFinished?: () => void;
-  canCreate: boolean;
 };
 
-const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFinished }) => {
+const SwitchStudy: React.FC<SwitchStudyProps> = ({ onStudySelectionFinished }) => {
   const isLoading = useAppSelector(studiesIsLoadingSelector);
   const studies = useAppSelector(studiesSelector);
   const selectedStudy = useAppSelector(selectedStudySelector);
@@ -235,7 +235,7 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
       )),
     []
   );
-
+  const {t} = useTranslation()
   return (
     <Container>
       <ActionButton
@@ -249,12 +249,10 @@ const SwitchStudy: React.FC<SwitchStudyProps> = ({ canCreate, onStudySelectionFi
       />
       <Content>
         <Header>
-          <Title>Study Collection</Title>
-          {canCreate && (
-            <Button fill="text" width={246} icon={<Plus />} onClick={createStudy} rippleOff>
-              Create new study
-            </Button>
-          )}
+          <Title>{t("TITLE_STUDY_COLLECTION")}</Title>
+          <Button fill="text" width={246} icon={<Plus />} onClick={createStudy} rippleOff>
+            {t("TITLE_CREATE_STUDY")}
+          </Button>
         </Header>
         {/* eslint-disable-next-line no-nested-ternary */}
         {studyPages.length ? (

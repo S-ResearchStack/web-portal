@@ -182,20 +182,26 @@ const DEFAULT_COLUMNS_OPTION: ColumnsOptionValue = {
   desktop: 1,
 };
 
-const SimpleGridCellContainer = styled.div<{ columns: [number, number] }>`
+const SimpleGridCellContainer = styled.div<{ columns: [number, number], rows?: [number, number] }>`
   grid-column: ${(p) => `${p.columns[0]} / span ${p.columns[1] - p.columns[0] + 1}`};
+  grid-row: ${(p) => p.rows ? `${p.rows[0]} / span ${p.rows[1] - p.rows[0]}` :  `1 / span 1`};
 `;
 
 type SimpleGridCellProps = {
   columns: DeviceScreenMatches<[number, number]>;
+  rows?: DeviceScreenMatches<[number, number]>;
   customSchema?: UseSimpleGridParams['customSchema'];
 } & React.PropsWithChildren;
 
-export const SimpleGridCell = ({ columns, children, customSchema }: SimpleGridCellProps) => {
+export const SimpleGridCell = ({ columns, rows, children, customSchema }: SimpleGridCellProps) => {
   const gridOptions = useSimpleGrid({ customSchema });
 
   return (
-    <SimpleGridCellContainer columns={getValuesByMatchedDevice(columns, gridOptions.matchedDevice)}>
+    <SimpleGridCellContainer
+      role="container"
+      columns={getValuesByMatchedDevice(columns, gridOptions.matchedDevice)}
+      rows={rows && getValuesByMatchedDevice(rows, gridOptions.matchedDevice)}
+    >
       {children}
     </SimpleGridCellContainer>
   );
@@ -219,7 +225,7 @@ const SimpleGrid: FC<SimpleGridProps> = ({
   }, [onChange, gridOptions]);
 
   return (
-    <SimpleGridContainer
+    <SimpleGridContainer role='container'
       {...props}
       $minMargin={fullScreen ? gridOptions.marginHorizontal : 0}
       $width={gridOptions.gridWidth}

@@ -1,4 +1,4 @@
-import { ERROR_BASE_URL, request, setAuthProvider } from 'src/modules/api/apiService';
+import { ERROR_BASE_URL, request, supersetRequest, setAuthProvider } from 'src/modules/api/apiService';
 
 const responseData = {
   test: 'test',
@@ -82,9 +82,11 @@ describe('request', () => {
     }
   });
 
+  const jwtType = 'super-tokens';
   const token = 'test-auth-token';
 
   const provider = {
+    getTokenType: jest.fn(() => jwtType),
     getBearerToken: jest.fn(() => token),
     onUnauthorizedError: jest.fn(),
     refreshBearerToken: jest.fn(),
@@ -132,9 +134,11 @@ describe('request', () => {
   it('[NEGATIVE] should execute failure request without `API_URL`', async () => {
     expect.assertions(3);
     const spy = jest.spyOn(console, 'error').mockImplementation();
+    const ORIG_ENV = process.env
 
     try {
       localStorage.removeItem('API_URL');
+      process.env = { ...ORIG_ENV, API_URL: '' };
 
       const response = await request({
         body: responseData,
@@ -161,11 +165,107 @@ describe('request', () => {
       expect(console.error).toHaveBeenCalledWith(new Error(ERROR_BASE_URL));
     }
 
+    process.env = { ...ORIG_ENV };
     spy.mockRestore();
   });
 
   it('[NEGATIVE] should execute request with broken response data', async () => {
     const response = await request({
+      body: responseData,
+      headers: {},
+      method: 'GET',
+      path: '/broken-data',
+      query: responseData,
+    });
+
+    expect(response.data).toBeNull();
+  });
+});
+
+describe('supersetRequest', () => {
+  beforeEach(() => {
+    localStorage.setItem('SUPERSET_URL', 'https://samsung.com/');
+  });
+
+  it('should execute request', async () => {
+    const { data } = await supersetRequest({
+      body: responseData,
+      headers: {},
+      method: 'GET',
+      path: '/test',
+      query: responseData,
+    });
+
+    expect(data).toEqual(responseData);
+  });
+
+  it('[NEGATIVE] should execute failure request', async () => {
+    expect.assertions(2);
+    try {
+      const response = await supersetRequest({
+        body: responseData,
+        headers: {},
+        method: 'GET',
+        path: '/error',
+        query: responseData,
+      });
+
+      try {
+        response.data;
+      } catch (e) {
+        expect(String(e)).toMatch('500');
+      }
+
+      try {
+        response.checkError();
+      } catch (e) {
+        expect(String(e)).toMatch('500');
+      }
+    } catch {
+      // do nothing
+    }
+  });
+
+  it('[NEGATIVE] should execute failure request without `SUPERSET_URL`', async () => {
+    expect.assertions(3);
+    const spy = jest.spyOn(console, 'error').mockImplementation();
+    const ORIG_ENV = process.env
+
+    try {
+      localStorage.removeItem('SUPERSET_URL');
+      process.env = { ...ORIG_ENV, SUPERSET_URL: '' };
+
+      const response = await supersetRequest({
+        body: responseData,
+        headers: {},
+        method: 'GET',
+        path: '/test',
+        query: responseData,
+      });
+
+      try {
+        response.data;
+      } catch (e) {
+        expect(String(e)).toMatch(ERROR_BASE_URL);
+      }
+
+      try {
+        response.checkError();
+      } catch (e) {
+        expect(String(e)).toMatch(ERROR_BASE_URL);
+      }
+    } catch (e) {
+      // do nothing
+    } finally {
+      expect(console.error).toHaveBeenCalledWith(new Error(ERROR_BASE_URL));
+    }
+
+    process.env = { ...ORIG_ENV };
+    spy.mockRestore();
+  });
+
+  it('[NEGATIVE] should execute request with broken response data', async () => {
+    const response = await supersetRequest({
       body: responseData,
       headers: {},
       method: 'GET',

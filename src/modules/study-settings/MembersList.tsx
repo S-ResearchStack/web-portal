@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, ReactElement, useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -12,8 +12,8 @@ import Indicator from 'src/common/components/Indicator';
 import { SIDEBAR_MINIMIZED_WIDTH } from 'src/modules/main-layout/sidebar/helper';
 import Tooltip from 'src/common/components/Tooltip';
 import ServiceScreen from 'src/common/components/ServiceScreen';
-import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
-import { getRoleLabels, getAccessByRole, RoleType } from 'src/modules/auth/userRole';
+import { userRoleForStudySelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { getRoleLabels, getAccessByRole, RoleType, rolePriorityMap } from 'src/modules/auth/userRole';
 import { getStatusTextByStatusId, getStatusTypeByStatusId } from 'src/modules/study-settings/utils';
 import { BASE_TABLE_BODY_HEIGHT } from 'src/common/components/Table/BaseTable';
 import PlusIcon from 'src/assets/icons/plus_small.svg';
@@ -21,6 +21,7 @@ import CloseIcon from 'src/assets/icons/cross.svg';
 import { useMatchDeviceScreen } from 'src/common/components/SimpleGrid';
 import { colors, px, typography } from 'src/styles';
 
+import { userEmailSelector } from "src/modules/auth/auth.slice";
 import {
   openInviteEditMember,
   StudyMember,
@@ -142,10 +143,10 @@ const defaultSorting: StudyMembersListSort = {
 const MembersList: FC<StudySettingsMembersListProps> = ({
   shouldShowInviteTooltip,
   canShowInviteTooltip,
-}): JSX.Element => {
+}): ReactElement => {
   const dispatch = useAppDispatch();
   const studyId = useSelectedStudyId();
-  const userRoles = useSelector(userRoleSelector)?.roles;
+  const userRoles = useSelector(userRoleForStudySelector)?.roles;
 
   // TODO: not supported by API currently
   const hasMgmtAccess = false;
@@ -163,6 +164,10 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
     if (device.laptop) return 20;
     return 40;
   }, [device]);
+
+  const userEmail = useSelector(userEmailSelector);
+  const userRole = useSelector(userRoleForStudySelector)?.roles[0];
+  const userRolePriority = userRole ? rolePriorityMap[userRole] : -1;
 
   const columns: ColumnOptions<MemberListColumnType>[] = [
     {
@@ -212,12 +217,12 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
       $width: getColumnWidthInPercents(46 + editBtnExtraWidth),
       isEmpty: !allowEdit,
       ellipsis: false,
-      render: (_, role) =>
-        allowEdit ? (
+      render: (_, member) =>
+        member.email !== userEmail && rolePriorityMap[member.roles?.at(0) ?? 'team-admin'] > userRolePriority && allowEdit ? (
           <EditButton
             fill="text"
             rate="x-small"
-            onClick={() => allowEdit && handleOpenEditMemberDrawer(role.id)}
+            onClick={() => allowEdit && handleOpenEditMemberDrawer(member.id)}
           >
             EDIT
           </EditButton>
@@ -239,12 +244,17 @@ const MembersList: FC<StudySettingsMembersListProps> = ({
   const getRowKey = useCallback((row: StudyMember) => row.id, []);
 
   const usersList = useMemo(() => {
-    const users = (membersList.data?.users || []).map((u) => ({
+    const users = (membersList.data || []).map((u) => ({
       ...u,
       isProcessing: false,
       linesCount: getRoleLabels(u.roles).rolesCount,
-    }));
-    return _orderBy(users, [sort.column], [sort.direction]);
+    }))
+
+    const currentUsers = users.filter(u => u.email === userEmail);
+    const otherUsers = users.filter(u => u.email !== userEmail);
+    const ordered = _orderBy(otherUsers, [sort.column], [sort.direction])
+
+    return [...currentUsers, ...ordered];
   }, [membersList.data, sort.column, sort.direction]);
 
   const renderTable = () => {

@@ -31,7 +31,14 @@ declare module '*.svg?url' {
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'production' | 'development' | 'test' | 'none';
-    API_URL: string | undefined;
+    API_URL: string;
+    SUPERSET_URL: string;
+    // TODO: need to move to aws parameter store
+    SUPERSET_ID: string;
+    SUPERSET_PASSWORD: string;
+    GOOGLE_CLIENT_ID: string;
+    AUTHENTICATION_MODE: string;
+    GOOGLE_OAUTH_URL: string;
     PUBLIC_PATH: string | undefined;
     MOCK_API: string;
     VERSION: string;
@@ -46,3 +53,6 @@ declare module 'smoothscroll-polyfill' {
 }
 
 declare module 'css-spring';
+
+declare module "*.jpg";
+declare module "*.png";

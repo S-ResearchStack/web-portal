@@ -2,24 +2,35 @@ import { SQLTimestamp } from 'src/common/utils/datetime';
 
 export type LabVisitItemResponse = {
   id: number;
-  userId: string;
-  startTime?: SQLTimestamp;
-  endTime?: SQLTimestamp;
-  checkedInBy?: string;
-  notes?: string;
-  filesPath?: string;
+  subjectNumber: string;
+  startTime: SQLTimestamp;
+  endTime: SQLTimestamp;
+  picId: string;
+  note: string;
+  filePaths: string[];
+  createdBy: string;
+  modifiedBy?: string;
 };
 
-export type LabVisitListResponse = LabVisitItemResponse[];
+export type LabVisitListResponse = {
+  totalCount: number;
+  page: number;
+  size: number;
+  sortBy: string;
+  orderBy: 'asc' | 'desc';
+  list: LabVisitItemResponse[];
+};
 
 export type LabVisitSaveItemRequest = Partial<LabVisitItemResponse>;
 
-export type LabVisitParticipantSuggestionItemRequest = {
-  limit: number;
+type PaticipantSuggestionResponse = {
+  id: string;
+  email: string;
 };
+export type PaticipantSuggestionListResponse = PaticipantSuggestionResponse[];
 
-export type LabVisitParticipantSuggestionItemResponse = { userId?: string };
-
-export type LabVisitParticipantSuggestionResponse = {
-  healthDataOverview?: LabVisitParticipantSuggestionItemResponse[];
+type ResearcherSuggestionResponse = {
+  id: string;
+  name: string;
 };
+export type ResearcherSuggestionListResponse = ResearcherSuggestionResponse[];

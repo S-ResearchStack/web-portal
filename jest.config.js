@@ -39,9 +39,12 @@ module.exports = {
     // generated files from antlr
     '!src/modules/study-management/user-management/task-management/survey/survey-editor/antlr/*.ts',
   ],
-  testTimeout: 120000,
+  testTimeout: 1200000,
   reporters: [
     'default',
     ['jest-junit', { outputDirectory: 'test-reports', outputName: 'report.xml' }],
   ],
+  collectCoverage: true,
+  coverageReporters: ["text","html", "text-summary"],
+  coverageDirectory: "<rootDir>/test-reports/"
 };

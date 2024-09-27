@@ -26,7 +26,7 @@ describe('InputField', () => {
     expect(input).toHaveValue('');
   });
 
-  it('test InputField error state', () => {
+  it('[NEGATIVE] test InputField error state', () => {
     const { baseElement } = render(
       <ThemeProvider theme={theme}>
         <InputField error />
@@ -41,7 +41,7 @@ describe('InputField', () => {
     expect(input).toHaveStyle(`caret-color: ${theme.colors.statusErrorText}`);
   });
 
-  it('test InputField disabled state', async () => {
+  it('[NEGATIVE] test InputField disabled state', async () => {
     const { baseElement } = render(
       <ThemeProvider theme={theme}>
         <InputField disabled value="disabled" />
