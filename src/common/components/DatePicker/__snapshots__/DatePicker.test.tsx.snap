@@ -16,7 +16,7 @@ exports[`DatePicker [NEGATIVE] test date picker render with broken parameters 1`
   background-color: #F7F8FA;
   border-radius: 0.25rem;
   border-width: 0.0625rem;
-  border-color: transparent;
+  border-color: rgba(0,0,0,0.08);
   border-style: solid;
   display: -webkit-box;
   display: -webkit-flex;
@@ -77,7 +77,7 @@ exports[`DatePicker test date picker render 1`] = `
   background-color: #F7F8FA;
   border-radius: 0.25rem;
   border-width: 0.0625rem;
-  border-color: transparent;
+  border-color: rgba(0,0,0,0.08);
   border-style: solid;
   display: -webkit-box;
   display: -webkit-flex;

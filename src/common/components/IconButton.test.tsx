@@ -28,7 +28,7 @@ describe('IconButton', () => {
     expect(icon).toHaveStyle(`fill: ${theme.colors.primary}`);
   });
 
-  it('test iconButton disabled state', async () => {
+  it('[NEGATIVE] test iconButton disabled state', async () => {
     const { baseElement, getByTestId, queryByTestId } = render(
       <ThemeProvider theme={theme}>
         <IconButton $size="m" color="primary" data-testid="iconButton" icon={Edit} disabled />

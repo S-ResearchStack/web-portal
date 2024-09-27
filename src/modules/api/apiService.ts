@@ -1,6 +1,8 @@
+import { HTTP_STATUS_UNAUTHORIZED } from './code';
 import executeRequest, { RequestOptions, Response } from './executeRequest';
 
 type AuthProvider = {
+  getTokenType(): string | undefined;
   getBearerToken(): string | undefined;
   onUnauthorizedError(): void;
   refreshBearerToken(): Promise<void>;
@@ -15,8 +17,6 @@ export const setAuthProvider = (ap: AuthProvider) => {
 };
 
 let waitTokenUpdateIfNeeded: Promise<void> | undefined;
-
-const HTTP_STATUS_UNAUTHORIZED = 401;
 
 export const request = async <TReq, TRes>(
   opts: Omit<RequestOptions<TReq>, 'url'> & {
@@ -48,8 +48,10 @@ export const request = async <TReq, TRes>(
   }
 
   const { headers = {} } = opts;
+  const jwtType = authProvider?.getTokenType();
   const bearerToken = authProvider?.getBearerToken();
-  if (!opts.noAuth && bearerToken) {
+  if (!opts.noAuth && jwtType && bearerToken) {
+    headers['jwt-issuer'] = jwtType;
     headers.Authorization = `Bearer ${bearerToken}`;
   }
 
@@ -79,6 +81,45 @@ export const request = async <TReq, TRes>(
       authProvider.onUnauthorizedError();
     }
   }
+
+  return res;
+};
+
+export const supersetRequest = async <TReq, TRes>(
+  opts: Omit<RequestOptions<TReq>, 'url'> & {
+    path: string;
+    bearerToken?: string;
+  }
+): Promise<Response<TRes>> => {
+  const baseUrl = (localStorage.getItem('SUPERSET_URL') || process.env.SUPERSET_URL)
+
+  if (!baseUrl) {
+    const err = new Error(ERROR_BASE_URL);
+    console.error(err);
+    return {
+      status: -1,
+      error: err.message,
+      headers: new Headers(),
+      get data(): never {
+        throw err;
+      },
+      checkError() {
+        throw err;
+      },
+    };
+  }
+
+  const { headers = {} } = opts;
+
+  if (opts.bearerToken) {
+    headers.Authorization = `Bearer ${opts.bearerToken}`;
+  }
+
+  const res = await executeRequest<TReq, TRes>({
+    ...opts,
+    url: `${baseUrl}${opts.path}`,
+    headers,
+  });
 
   return res;
 };

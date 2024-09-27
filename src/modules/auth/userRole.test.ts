@@ -1,12 +1,19 @@
-import { getAccessByRole, getViewRoleByPriority, isStudyCreator, isTeamAdmin } from './userRole';
+import {
+  getAccessByRole,
+  getRoleLabels,
+  getRolesForStudy,
+  getViewRoleByPriority,
+  isTeamAdmin,
+  RoleType,
+  userRolesListFromApi,
+} from './userRole';
 
 describe('userRole', () => {
   describe('isTeamAdmin', () => {
     it('should detect if has team-admin role', () => {
-      expect(isTeamAdmin(['principal-investigator', 'team-admin'])).toBeTrue();
       expect(isTeamAdmin(['team-admin'])).toBeTrue();
-      expect(isTeamAdmin(['study-creator'])).toBeFalse();
-      expect(isTeamAdmin(['study-creator', 'data-scientist'])).toBeFalse();
+      expect(isTeamAdmin(['studyManager'])).toBeFalse();
+      expect(isTeamAdmin(['studyResearcher'])).toBeFalse();
     });
 
     it('[NEGATIVE] should return false if no roles', () => {
@@ -15,47 +22,27 @@ describe('userRole', () => {
     });
   });
 
-  describe('isStudyCreator', () => {
-    it('should detect if has study-creator role', () => {
-      expect(isStudyCreator(['principal-investigator', 'study-creator'])).toBeTrue();
-      expect(isStudyCreator(['study-creator'])).toBeTrue();
-      expect(isStudyCreator(['team-admin'])).toBeFalse();
-      expect(isStudyCreator(['team-admin', 'data-scientist'])).toBeFalse();
-    });
-
-    it('[NEGATIVE] should return false if no roles', () => {
-      expect(isStudyCreator([])).toBeFalse();
-      expect(isStudyCreator(undefined)).toBeFalse();
-    });
-  });
-
   describe('getAccessByRole', () => {
     it('should handle permissions based on role', () => {
-      expect(getAccessByRole(['research-assistant', 'team-admin'], true)).toEqual({
+      expect(getAccessByRole(['team-admin'], true)).toEqual({
         allowEdit: true,
         allowRemoveMember: true,
         allowMgmtAccess: true,
         allowInvite: true,
       });
-      expect(getAccessByRole(['study-creator'], true)).toEqual({
+      expect(getAccessByRole(['studyAdmin'], true)).toEqual({
         allowEdit: true,
         allowRemoveMember: true,
         allowMgmtAccess: true,
         allowInvite: true,
       });
-      expect(getAccessByRole(['principal-investigator'], true)).toEqual({
+      expect(getAccessByRole(['studyManager'], true)).toEqual({
         allowEdit: true,
         allowRemoveMember: true,
         allowMgmtAccess: true,
         allowInvite: true,
       });
-      expect(getAccessByRole(['research-assistant'], false)).toEqual({
-        allowEdit: false,
-        allowRemoveMember: false,
-        allowMgmtAccess: false,
-        allowInvite: false,
-      });
-      expect(getAccessByRole(['data-scientist'], false)).toEqual({
+      expect(getAccessByRole(['studyResearcher'], false)).toEqual({
         allowEdit: false,
         allowRemoveMember: false,
         allowMgmtAccess: false,
@@ -81,17 +68,30 @@ describe('userRole', () => {
 
   describe('getViewRoleByPriority', () => {
     it('should choose role based on priority', () => {
-      expect(
-        getViewRoleByPriority(['study-creator', 'principal-investigator', 'research-assistant'])
-      ).toEqual('principal-investigator');
-      expect(getViewRoleByPriority(['study-creator', 'team-admin', 'research-assistant'])).toEqual(
-        'research-assistant'
-      );
-      expect(getViewRoleByPriority(['study-creator', 'data-scientist'])).toEqual('data-scientist');
+      expect(getViewRoleByPriority(['studyAdmin'])).toEqual('studyAdmin');
+      expect(getViewRoleByPriority(['studyManager'])).toEqual('studyManager');
+      expect(getViewRoleByPriority(['studyResearcher'])).toEqual('studyResearcher');
     });
     it('[NEGATIVE] should return empty label if no view roles', () => {
       expect(getViewRoleByPriority([])).toEqual('');
       expect(getViewRoleByPriority(['team-admin'])).toEqual('');
+    });
+  });
+  describe('getRolesAndRolesLabels', () => {
+    it('should get labels for roles', () => {
+      const roles = ['team-admin', 'studyAdmin'] as RoleType[];
+      expect(getRoleLabels(roles)).toEqual({
+        roleLabels: 'Study Admin',
+        rolesCount: 1,
+      });
+    });
+    it('[NEGATIVE] getRolesForStudy if role is team-admin and projectId is not provided', () => {
+      const userRolesFromApi = ['team-admin'];
+
+      expect(getRolesForStudy(userRolesListFromApi(userRolesFromApi), undefined)).toEqual({
+        roles: ['team-admin'],
+        projectId: undefined,
+      });
     });
   });
 });

@@ -20,6 +20,7 @@ exports[`Tabs [NEGATIVE] should render with wrong props 1`] = `
   font-style: normal;
   color: #4475E3;
   margin-top: 0.625rem;
+  padding-bottom: 0.625rem;
   cursor: pointer;
 }
 
@@ -96,6 +97,7 @@ exports[`Tabs test tabs render 1`] = `
   font-style: normal;
   color: #4475E3;
   margin-top: 0.625rem;
+  padding-bottom: 0.625rem;
   cursor: pointer;
 }
 
@@ -142,6 +144,7 @@ exports[`Tabs test tabs render 1`] = `
   font-style: normal;
   color: #4475E3;
   margin-top: 0.625rem;
+  padding-bottom: 0.625rem;
   cursor: pointer;
 }
 

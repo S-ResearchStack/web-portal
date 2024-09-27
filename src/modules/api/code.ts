@@ -1,0 +1,3 @@
+export const HTTP_CODE_NOT_FOUND = 404;
+export const HTTP_CODE_CONFLICT = 409;
+export const HTTP_STATUS_UNAUTHORIZED = 401;

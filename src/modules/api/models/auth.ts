@@ -8,17 +8,36 @@ export type SigninRequest = {
 export type SigninResponse = {
   id: string;
   email: string;
-  jwt: string;
-  roles: string[];
+  accessToken: string;
   refreshToken: string;
-  profile: UserProfile;
 };
 
 export type SignUpRequest = {
   email: string;
   password: string;
-  profile: UserProfile;
 };
+
+export type RegisterUserRequest = {
+  firstName: string;
+  lastName: string;
+  company: string;
+  team: string;
+  officePhoneNumber: string;
+  mobilePhoneNumber: string;
+}
+
+export type GetUserResponse = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  team: string;
+  email: string;
+  officePhoneNumber: string;
+  mobilePhoneNumber: string;
+  roles?: string[];
+  name?: string;
+}
 
 export type VerifyEmailRequest = {
   token: string;
@@ -41,4 +60,21 @@ export type ForgotPasswordRequest = {
 export type RefreshTokenBody = {
   jwt: string;
   refreshToken: string;
+};
+
+export type GoogleTokenResponse = {
+  access_token: string;
+  refresh_token: string;
+  id_token: string;
+  expires_in: number;
+};
+
+export type RefreshGoogleTokenBody = {
+  refreshToken: string;
+};
+
+export type RefreshGoogleTokenResponse = {
+  access_token: string;
+  id_token: string;
+  expires_in: number;
 };

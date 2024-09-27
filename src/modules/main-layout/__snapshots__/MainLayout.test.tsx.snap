@@ -1,6 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MainLayout should render 1`] = `
+.c63 {
+  display: grid;
+  -webkit-column-gap: 1rem;
+  column-gap: 1rem;
+  row-gap: 1rem;
+  grid-template-columns: repeat(1,1fr);
+  width: 39rem;
+  max-width: 39rem;
+  margin: 0 auto;
+  padding: 0 0rem;
+}
+
+.c63 > * {
+  min-width: 0;
+}
+
+.c64 {
+  grid-column: 1 / span 1;
+  grid-row: 1 / span 1;
+}
+
+.c70 {
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+}
+
+.c78 {
+  grid-column: 1 / span 1;
+  grid-row: 3 / span 1;
+}
+
+.c82 {
+  grid-column: 1 / span 1;
+  grid-row: 4 / span 1;
+}
+
+.c83 {
+  grid-column: 1 / span 1;
+  grid-row: 5 / span 1;
+}
+
 .c9 {
   position: absolute;
   will-change: opacity,transform;
@@ -31,7 +72,6 @@ exports[`MainLayout should render 1`] = `
   width: 5rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -97,6 +137,94 @@ exports[`MainLayout should render 1`] = `
   fill: #4475E3;
 }
 
+.c13 {
+  position: relative;
+  z-index: 0;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  width: 15.375rem;
+  white-space: nowrap;
+  padding: 0;
+  -webkit-transition-duration: 0;
+  transition-duration: 0;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  height: 3rem;
+  border: none;
+  background-color: transparent;
+}
+
+.c13:hover {
+  cursor: pointer;
+}
+
+.c13 > div {
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.c13 > div svg {
+  margin-right: 0.25rem;
+}
+
+.c13 > div {
+  color: #4475E3;
+}
+
+.c13 > div svg {
+  fill: #4475E3;
+}
+
+.c13:hover:enabled > div {
+  color: #2F65E0;
+}
+
+.c13:hover:enabled > div svg {
+  fill: #2F65E0;
+}
+
+.c13:hover:enabled:active > div {
+  color: #2057D5;
+}
+
+.c13:hover:enabled:active > div svg {
+  fill: #2057D5;
+}
+
+.c13:disabled > div {
+  color: #B3C6F1;
+}
+
+.c13:disabled > div svg {
+  fill: #B3C6F1;
+}
+
+.c13:focus-visible {
+  outline: 0.125rem solid #C7D6F7;
+}
+
+.c13:focus-visible > div {
+  color: #4475E3;
+}
+
+.c13:focus-visible > div svg {
+  fill: #4475E3;
+}
+
 .c39 {
   position: relative;
   z-index: 0;
@@ -116,7 +244,6 @@ exports[`MainLayout should render 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -212,9 +339,51 @@ exports[`MainLayout should render 1`] = `
   transform: translate3d(0,0,0.0625rem);
 }
 
-.c38 {
-  display: inline-block;
-  position: static;
+.c65 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  padding: 1.5rem 1.5rem 1rem;
+  overflow: visible;
+  position: relative;
+}
+
+.c65 > * {
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
+.c66 {
+  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
+  opacity: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c84 {
+  position: relative;
+  height: 0;
+  width: 100%;
+  pointer-events: none;
 }
 
 .c47 {
@@ -226,6 +395,30 @@ exports[`MainLayout should render 1`] = `
 
 .c47:hover {
   cursor: pointer;
+}
+
+.c19 {
+  border-radius: 4.125rem;
+  height: 8.875rem;
+  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+  position: relative;
+  background-color: transparent !important;
+  opacity: 1;
+}
+
+.c19:hover {
+  opacity: 1;
+  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
+  cursor: pointer;
+}
+
+.c19:hover:active {
+  opacity: 1;
+  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
+  cursor: pointer;
+  -webkit-filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
+  filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
 }
 
 .c43 {
@@ -252,28 +445,14 @@ exports[`MainLayout should render 1`] = `
   filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
 }
 
-.c18 {
-  border-radius: 4.125rem;
-  height: 8.875rem;
-  -webkit-transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
-  transition: opacity 300ms cubic-bezier(0.45,0.05,0,1);
+.c38 {
+  display: inline-block;
+  position: static;
+}
+
+.c75 {
+  display: inline-block;
   position: relative;
-  background-color: transparent !important;
-  opacity: 1;
-}
-
-.c18:hover {
-  opacity: 1;
-  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
-  cursor: pointer;
-}
-
-.c18:hover:active {
-  opacity: 1;
-  box-shadow: 0 0.9375rem 1.25rem rgba(180,180,180,0.3);
-  cursor: pointer;
-  -webkit-filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
-  filter: drop-shadow(0 0.9375rem 1.25rem rgba(180,180,180,0.3));
 }
 
 .c37 {
@@ -309,7 +488,7 @@ exports[`MainLayout should render 1`] = `
   opacity: 1;
 }
 
-.c51 {
+.c52 {
   -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
   opacity: 0;
@@ -361,7 +540,7 @@ exports[`MainLayout should render 1`] = `
   color: #474747;
 }
 
-.c52 {
+.c53 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -389,11 +568,11 @@ exports[`MainLayout should render 1`] = `
   margin-bottom: 0.9375rem;
 }
 
-.c52 svg {
+.c53 svg {
   fill: #808080;
 }
 
-.c53 {
+.c54 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
@@ -406,7 +585,7 @@ exports[`MainLayout should render 1`] = `
   width: 100%;
 }
 
-.c54 {
+.c55 {
   white-space: pre;
 }
 
@@ -508,15 +687,57 @@ exports[`MainLayout should render 1`] = `
   font-style: normal;
 }
 
-.c48 {
+.c50 {
   padding: 1rem;
   height: 2.5rem;
   margin-bottom: 0.5rem;
   color: #808080 !important;
 }
 
-.c48 svg {
+.c50 svg {
   fill: #808080;
+}
+
+.c50:hover {
+  cursor: pointer;
+  background-color: #ECF1FC;
+  color: #4475E3 !important;
+}
+
+.c50:hover svg {
+  fill: #4475E3;
+}
+
+.c50::before {
+  content: '';
+  height: 2rem;
+  width: 0.25rem;
+  border-radius: 0.125rem 0rem 0rem 0.125rem;
+  position: absolute;
+  left: 11.75rem;
+  background-color: #4475E3;
+  color: #4475E3;
+  z-index: 100;
+  display: none;
+}
+
+.c50 > .c29 {
+  font-family: Inter,sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.c48 {
+  padding: 1rem;
+  height: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #4475E3 !important;
+}
+
+.c48 svg {
+  fill: #4475E3;
 }
 
 .c48:hover {
@@ -539,29 +760,19 @@ exports[`MainLayout should render 1`] = `
   background-color: #4475E3;
   color: #4475E3;
   z-index: 100;
-  display: none;
+  display: block;
 }
 
 .c48 > .c29 {
   font-family: Inter,sans-serif;
   font-size: 0.75rem;
   line-height: 1.125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
 }
 
-.c50 {
+.c51 {
   margin-top: auto;
-}
-
-.c50 .c24 {
-  opacity: 0;
-  -webkit-transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
-  transition: opacity 0.3s cubic-bezier(0.45,0.05,0,1);
-}
-
-.c50:hover .c24 {
-  opacity: 1;
 }
 
 .c3 {
@@ -601,7 +812,7 @@ exports[`MainLayout should render 1`] = `
   justify-content: center;
 }
 
-.c23 {
+.c24 {
   -webkit-transform: translate(-1.5rem,-0.5rem);
   -ms-transform: translate(-1.5rem,-0.5rem);
   transform: translate(-1.5rem,-0.5rem);
@@ -629,7 +840,7 @@ exports[`MainLayout should render 1`] = `
   fill: #4475E3;
 }
 
-.c21 {
+.c22 {
   position: absolute;
   left: 3rem;
   bottom: 2rem;
@@ -647,7 +858,7 @@ exports[`MainLayout should render 1`] = `
   color: #2D2D2D;
 }
 
-.c21:hover .c22 {
+.c22:hover .c23 {
   display: block;
 }
 
@@ -752,7 +963,7 @@ exports[`MainLayout should render 1`] = `
   padding-top: 0.3125rem;
 }
 
-.c13 {
+.c14 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -767,7 +978,7 @@ exports[`MainLayout should render 1`] = `
   align-items: center;
 }
 
-.c14 {
+.c15 {
   min-width: 70rem;
   max-width: 70rem;
   display: -webkit-box;
@@ -778,7 +989,7 @@ exports[`MainLayout should render 1`] = `
   margin-bottom: 1.875rem;
 }
 
-.c15 {
+.c16 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -800,7 +1011,7 @@ exports[`MainLayout should render 1`] = `
   transition: transform 0.3s cubic-bezier(0.45,0.05,0,1);
 }
 
-.c16 {
+.c17 {
   min-width: 70rem;
   max-width: 70rem;
   display: -webkit-box;
@@ -832,7 +1043,7 @@ exports[`MainLayout should render 1`] = `
   margin-left: 2.5rem;
 }
 
-.c17 {
+.c18 {
   position: relative;
   display: -webkit-box;
   display: -webkit-flex;
@@ -851,7 +1062,7 @@ exports[`MainLayout should render 1`] = `
   margin: 0 2.5rem 0.5rem;
 }
 
-.c19 {
+.c20 {
   font-family: Inter,sans-serif;
   font-size: 1.125rem;
   line-height: 1.6875rem;
@@ -873,13 +1084,170 @@ exports[`MainLayout should render 1`] = `
   white-space: break-spaces;
 }
 
-.c20 {
+.c21 {
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
   font-weight: 400;
   font-style: normal;
   color: #4475E3;
+}
+
+.c61 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.c61:hover {
+  cursor: pointer;
+}
+
+.c59 {
+  margin-top: 1.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.c59[data-collapsed] + .c58 {
+  margin-top: 0;
+}
+
+.c60 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  min-height: 1.5rem;
+}
+
+.c62 {
+  margin-top: 1rem;
+}
+
+.c67 {
+  position: relative;
+}
+
+.c68 {
+  height: 12.75rem;
+  margin: -1.5rem;
+  width: calc(100% + 3rem);
+  object-fit: cover;
+}
+
+.c69 {
+  margin-top: 4.375rem;
+  margin-bottom: 1.5rem;
+}
+
+.c69 h3 {
+  margin-bottom: 0.4375rem;
+}
+
+.c69 span {
+  color: rgba(0,0,0,0.6);
+  font-size: 0.875rem;
+}
+
+.c71 {
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0.125rem 0rem rgba(0,0,0,0.15);
+  background-color: #FFFFFF;
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+.c72 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-align-content: center;
+  -ms-flex-line-pack: center;
+  align-content: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.c73 svg {
+  margin-left: 0.25rem;
+  margin-bottom: -0.25rem;
+}
+
+.c74 {
+  font-family: Inter,sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.4375rem;
+  font-weight: 600;
+  font-style: normal;
+  color: #474747;
+  display: inline-block;
+  margin: 0;
+}
+
+.c76 {
+  padding-top: 1.5rem;
+}
+
+.c77 {
+  font-weight: 600;
+  font-size: 2.8125rem;
+  color: #474747;
+}
+
+.c79 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-column-gap: 10px;
+  column-gap: 10px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+
+.c80 {
+  width: 10px;
+  height: 10px;
+  border-radius: 100rem;
+  background-color: #DBDBDB;
+}
+
+.c81 {
+  font-weight: 600;
+  font-size: 2.8125rem;
+  color: #474747;
+}
+
+.c57 {
+  margin: 0 50px;
 }
 
 .c0 {
@@ -913,6 +1281,27 @@ exports[`MainLayout should render 1`] = `
 .c36 {
   position: relative;
   z-index: 1;
+}
+
+.c56 {
+  min-height: unset;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+@media screen and (min-width:64rem) {
+  .c63 {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+@media screen and (min-width:90rem) {
+  .c63 {
+    grid-template-columns: repeat(4,1fr);
+  }
 }
 
 <div
@@ -967,71 +1356,48 @@ exports[`MainLayout should render 1`] = `
                 >
                   Study Collection
                 </div>
-              </div>
-              <div
-                class="c13"
-              >
-                <div
-                  class="c14"
+                <button
+                  class="c13"
+                  fill="text"
+                  width="246"
                 >
                   <div
-                    class="c15"
+                    class="c8"
+                    data-testid="content"
+                  >
+                    <svg />
+                    Create Study
+                  </div>
+                </button>
+              </div>
+              <div
+                class="c14"
+              >
+                <div
+                  class="c15"
+                >
+                  <div
+                    class="c16"
                   >
                     <div
-                      class="c16"
+                      class="c17"
                     >
                       <div
-                        class="c17"
+                        class="c18"
                       >
                         <div
-                          class="c18"
-                          color="secondarySkyBlue"
+                          class="c19"
+                          color="black"
                         >
                           <svg
                             data-testid="avatar-icon"
-                            fill="#00B0D7"
+                            fill="#000000"
                           />
                         </div>
                         <div
-                          class="c19"
+                          class="c20"
                         >
-                          SleepCare Study
-                        </div>
-                      </div>
-                      <div
-                        class="c17"
-                      >
-                        <div
-                          class="c18"
-                          color="secondaryViolet"
-                        >
-                          <svg
-                            data-testid="avatar-icon"
-                            fill="#944ED7"
-                          />
-                        </div>
-                        <div
-                          class="c19"
-                        >
-                          Heart Health Study
-                        </div>
-                      </div>
-                      <div
-                        class="c17"
-                      >
-                        <div
-                          class="c18"
-                          color="disabled"
-                        >
-                          <svg
-                            data-testid="avatar-icon"
-                            fill="#DBDBDB"
-                          />
-                        </div>
-                        <div
-                          class="c19"
-                        >
-                          Some deleted study
+                          test
                         </div>
                       </div>
                     </div>
@@ -1039,7 +1405,7 @@ exports[`MainLayout should render 1`] = `
                 </div>
               </div>
               <div
-                class="c20"
+                class="c21"
               >
                  
               </div>
@@ -1070,13 +1436,13 @@ exports[`MainLayout should render 1`] = `
         </div>
       </div>
       <div
-        class="c21"
+        class="c22"
       >
         <div
-          class="c22 c23"
+          class="c23 c24"
         >
           <div
-            class="c24 c25"
+            class="c25"
           >
             <div
               class="c26 c27"
@@ -1140,6 +1506,7 @@ exports[`MainLayout should render 1`] = `
       <button
         aria-label="Resize"
         class="c39 c40"
+        data-testid="resize-button"
         fill="text"
         style="overflow: hidden; position: relative;"
       >
@@ -1162,21 +1529,21 @@ exports[`MainLayout should render 1`] = `
       >
         <div
           class="c43 c44 c45"
-          color="secondarySkyBlue"
+          color="black"
         >
           <svg
             data-testid="avatar-icon"
-            fill="#00B0D7"
+            fill="#000000"
           />
         </div>
         <div
           class="c46"
         >
-          SleepCare Study
+          test
         </div>
       </div>
       <div
-        class="c24 c25"
+        class="c25"
       >
         <a
           class="c47"
@@ -1206,10 +1573,10 @@ exports[`MainLayout should render 1`] = `
         </a>
         <a
           class="c47"
-          href="/study-management"
+          href="/dashboard"
         >
           <div
-            class="c26 c48"
+            class="c26 c50"
           >
             <div
               class="c49"
@@ -1219,7 +1586,7 @@ exports[`MainLayout should render 1`] = `
             <p
               class="c29 c30"
             >
-              Study Management
+              Dashboard
             </p>
             <div
               class="c9"
@@ -1232,10 +1599,10 @@ exports[`MainLayout should render 1`] = `
         </a>
         <a
           class="c47"
-          href="/data-collection"
+          href="/task-management"
         >
           <div
-            class="c26 c48"
+            class="c26 c50"
           >
             <div
               class="c49"
@@ -1245,7 +1612,111 @@ exports[`MainLayout should render 1`] = `
             <p
               class="c29 c30"
             >
-              Data Insights
+              Task
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/subject-management"
+        >
+          <div
+            class="c26 c50"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Subject
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/study-data"
+        >
+          <div
+            class="c26 c50"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Study Data
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/educational-management"
+        >
+          <div
+            class="c26 c50"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Education
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+        <a
+          class="c47"
+          href="/lab-visit"
+        >
+          <div
+            class="c26 c50"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              In Lab Visit
             </p>
             <div
               class="c9"
@@ -1261,7 +1732,7 @@ exports[`MainLayout should render 1`] = `
           href="/study-settings"
         >
           <div
-            class="c26 c48"
+            class="c26 c50"
           >
             <div
               class="c49"
@@ -1282,15 +1753,41 @@ exports[`MainLayout should render 1`] = `
             />
           </div>
         </a>
-      </div>
-      <div
-        class="c50"
-      >
-        <div
-          class="c24 c25"
+        <a
+          class="c47"
+          href="/data-statistics"
         >
           <div
-            class="c26 c48"
+            class="c26 c50"
+          >
+            <div
+              class="c49"
+            >
+              <svg />
+            </div>
+            <p
+              class="c29 c30"
+            >
+              Data Statistics
+            </p>
+            <div
+              class="c9"
+              color="primaryLightPressed"
+              opacity="1,1"
+              scale="0"
+              style="display: none; width: 0rem; height: 0rem; top: 0rem; left: 0rem;"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        class="c51"
+      >
+        <div
+          class="c25"
+        >
+          <div
+            class="c26 c50"
             data-testid="user-profile-signout-action"
           >
             <div
@@ -1313,16 +1810,260 @@ exports[`MainLayout should render 1`] = `
           </div>
         </div>
         <div
-          class="c51 c52"
+          class="c52 c53"
         >
-          <div
-            class="c53"
-          />
           <div
             class="c54"
           />
+          <div
+            class="c55"
+          />
         </div>
       </div>
+    </div>
+    <div
+      class="c56"
+      style="webkit-overflow-scrolling: touch;"
+    >
+      <div
+        class="c57"
+        data-testid="overview"
+      >
+        <div
+          class="c58 c59"
+        >
+          <div
+            class="c60"
+          >
+            <div
+              class="c61"
+              data-testid="collapse-button"
+            >
+              <div
+                class=""
+                data-testid="collapse-title"
+              >
+                Study Overview
+              </div>
+              <div
+                class=""
+              >
+                <svg />
+              </div>
+            </div>
+          </div>
+          <div
+            class="c62"
+            data-testid="collapse-body"
+          >
+            <div
+              class="c63"
+              role="container"
+            >
+              <div
+                class="c64"
+                role="container"
+              >
+                <div
+                  class="c65"
+                  style="height: 50rem;"
+                >
+                  <div
+                    class="c66"
+                    data-testid="card-content"
+                  >
+                    <div
+                      class="c67"
+                    >
+                      <img
+                        alt="study image"
+                        class="c68"
+                        src=""
+                      />
+                    </div>
+                    <div
+                      class="c69"
+                    >
+                      <h3>
+                        -
+                      </h3>
+                      <span>
+                        -
+                      </span>
+                    </div>
+                    <div
+                      class=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="c70"
+                role="container"
+              >
+                <div
+                  class="c71"
+                >
+                  <div
+                    class="c72"
+                  >
+                    <div
+                      class="c73"
+                    >
+                      <p
+                        class="c74"
+                      >
+                        Total duration
+                      </p>
+                      <span
+                        class="c75"
+                        data-testid="tooltip-container"
+                      >
+                        <svg />
+                      </span>
+                    </div>
+                    <div
+                      class=""
+                    />
+                  </div>
+                  <div
+                    class="c76"
+                  >
+                    <span
+                      class="c77"
+                    >
+                      -
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="c78"
+                role="container"
+              >
+                <div
+                  class="c71"
+                >
+                  <div
+                    class="c72"
+                  >
+                    <div
+                      class="c73"
+                    >
+                      <p
+                        class="c74"
+                      >
+                        Stage
+                      </p>
+                    </div>
+                    <div
+                      class=""
+                    />
+                  </div>
+                  <div
+                    class="c76"
+                  >
+                    <div
+                      class="c79"
+                    >
+                      <div
+                        class="c80"
+                        color="#DBDBDB"
+                      />
+                      <span
+                        class="c81"
+                      >
+                        -
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="c82"
+                role="container"
+              >
+                <div
+                  class="c71"
+                >
+                  <div
+                    class="c72"
+                  >
+                    <div
+                      class="c73"
+                    >
+                      <p
+                        class="c74"
+                      >
+                        Investigator
+                      </p>
+                    </div>
+                    <div
+                      class=""
+                    >
+                      <a
+                        class="c47"
+                        href="/study-settings"
+                      >
+                        View detail
+                      </a>
+                    </div>
+                  </div>
+                  <div
+                    class="c76"
+                  >
+                    <div
+                      class=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="c83"
+                role="container"
+              >
+                <div
+                  class="c71"
+                >
+                  <div
+                    class="c72"
+                  >
+                    <div
+                      class="c73"
+                    >
+                      <p
+                        class="c74"
+                      >
+                        Subject
+                      </p>
+                    </div>
+                    <div
+                      class=""
+                    >
+                      <a
+                        class="c47"
+                        href="/subject-management"
+                      >
+                        View detail
+                      </a>
+                    </div>
+                  </div>
+                  <div
+                    class="c76"
+                  >
+                    <div
+                      class=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="c84"
+      />
     </div>
   </div>
 </div>

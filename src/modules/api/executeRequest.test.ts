@@ -39,6 +39,7 @@ describe('executeRequest', () => {
 
   it('[NEGATIVE] Should execute failure request', async () => {
     expect.assertions(1);
+    const spy = jest.spyOn(console, 'error').mockImplementation();
 
     try {
       const response = await executeRequest({
@@ -49,10 +50,13 @@ describe('executeRequest', () => {
     } catch (e) {
       expect(String(e)).toMatch('500');
     }
+
+    spy.mockRestore();
   });
 
   it('[NEGATIVE] Should execute failure request with manual check error', async () => {
     expect.assertions(1);
+    const spy = jest.spyOn(console, 'error').mockImplementation();
 
     try {
       const response = await executeRequest({
@@ -63,6 +67,8 @@ describe('executeRequest', () => {
     } catch (e) {
       expect(String(e)).toMatch('500');
     }
+
+    spy.mockRestore();
   });
 
   it('[NEGATIVE] Should execute successfully request with broken response data', async () => {

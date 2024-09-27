@@ -42,6 +42,9 @@ exports[`Checkbox [NEGATIVE] should render with wrong props 1`] = `
 
 .c0 {
   display: inline-block;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .c0 input {
@@ -123,6 +126,9 @@ exports[`Checkbox [NEGATIVE] should render without props 1`] = `
 
 .c0 {
   display: inline-block;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .c0 input {
@@ -200,6 +206,9 @@ exports[`Checkbox test checkbox disabled state 1`] = `
 
 .c0 {
   display: inline-block;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .c0 input {
@@ -274,6 +283,9 @@ exports[`Checkbox test radio click 1`] = `
 
 .c0 {
   display: inline-block;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .c0 input {

@@ -19,18 +19,25 @@ import reducer, {
   selectedStudySelector,
   createStudy,
   Study,
+  StudyObject,
   useSelectedStudyId,
   fetchStudiesStarted,
   fetchStudiesFinished,
   studiesSlice,
   reset,
   selectedStudyIdSelector,
+  durationUnitFirstKey,
+  durationUnitSecondKey,
+  ParticipationApprovalType,
+  periodUnitKey,
+  StudyScope,
+  IRBDecision,
 } from './studies.slice';
 
 const TEST_ERR_TEXT_MESSAGE = 'test-error';
 
 const authToken =
-  'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdLCJzdWIiOiIxMjMifQ==';
+  'test token';
 
 // eslint-disable-next-line prefer-destructuring
 const dispatch: AppDispatch = store.dispatch;
@@ -43,35 +50,64 @@ describe('transformStudyFromApi', () => {
 
   it('should transform data', () => {
     const fromWithColor: api.Study = {
-      id: { value: '1' },
-      name: 'SleepCare Study',
-      info: {
-        color: 'secondarySkyBlue',
+      id: '1',
+      participationCode: 'secret',
+      studyInfoResponse: {
+        name: 'SleepCare Study',
+        description: 'test study description',
+        participationApprovalType: 'AUTO',
+        scope: 'PUBLIC',
+        stage: 'STARTED_OPEN',
+        logoUrl: 'secondarySkyBlue',
+        organization: 'SV',
+        imageUrl: '',
+        period: '10 day(s)',
+        duration: '10 minute(s)/day',
       },
-      isOpen: true,
-      createdAt: '2022-10-31T09:00:00',
+      irbInfoResponse: {
+        decisionType: 'APPROVED',
+        decidedAt: '2024-04-07T05:35:02.620569',
+        expiredAt: '2024-04-07T05:35:02.620569'
+      },
+      createdAt: '2023-04-07T05:35:02.620569'
     };
 
     const fromWithoutColor: api.Study = {
-      id: { value: '1' },
-      name: 'SleepCare Study',
-      info: {},
-      isOpen: true,
-      createdAt: '2022-10-31T09:00:00',
+      id: '1',
+      participationCode: 'secret',
+      studyInfoResponse: {
+        name: 'SleepCare Study',
+        description: 'test study description',
+        participationApprovalType: 'AUTO',
+        scope: 'PUBLIC',
+        stage: 'STARTED_OPEN',
+        logoUrl: '',
+        imageUrl: '',
+        organization: "",
+        duration: "",
+        period: "",
+        requirements: []
+      },
+      irbInfoResponse: {
+        decisionType: 'APPROVED',
+        decidedAt: '2024-04-07T05:35:02.620569',
+        expiredAt: '2024-04-07T05:35:02.620569'
+      },
+      createdAt: '2023-04-07T05:35:02.620569'
     };
 
     const toWithColor: Study = {
-      id: fromWithColor.id.value,
-      name: fromWithColor.name,
-      color: fromWithColor.info.color as SpecColorType,
-      createdAt: DateTime.fromISO(fromWithColor.createdAt, { zone: 'utc' }).toMillis(),
+      id: fromWithColor.id,
+      name: fromWithColor.studyInfoResponse.name,
+      color: fromWithColor.studyInfoResponse.logoUrl as SpecColorType,
+      createdAt: DateTime.fromISO(fromWithColor.createdAt ?? DateTime.now().toISODate(), { zone: 'utc' }).toMillis(),
     };
 
     const toWithoutColor: Study = {
-      id: fromWithoutColor.id.value,
-      name: fromWithoutColor.name,
-      color: 'disabled',
-      createdAt: DateTime.fromISO(fromWithoutColor.createdAt, { zone: 'utc' }).toMillis(),
+      id: fromWithoutColor.id,
+      name: fromWithoutColor.studyInfoResponse.name,
+      color: 'secondarySkyBlue',
+      createdAt: DateTime.fromISO(fromWithoutColor.createdAt ?? DateTime.now().toISODate(), { zone: 'utc' }).toMillis(),
     };
 
     expect(transformStudyFromApi(fromWithColor)).toEqual(toWithColor);
@@ -81,9 +117,9 @@ describe('transformStudyFromApi', () => {
   it('[NEGATIVE] should transform wrong data', () => {
     expect(transformStudyFromApi({} as unknown as api.Study)).toEqual(
       expect.objectContaining({
-        id: '',
+        id: undefined,
         name: undefined,
-        color: 'disabled',
+        color: 'secondarySkyBlue',
         createdAt: expect.any(Number),
       })
     );
@@ -274,32 +310,57 @@ describe('store', () => {
 
   it('should create study', async () => {
     dispatch(
-      authSlice.actions.authSuccess({ authToken, refreshToken: authToken, userName: 'User Name' })
+      authSlice.actions.authSuccess({ jwtType: '', authToken, refreshToken: authToken })
     );
 
-    const study: Omit<Study, 'id' | 'createdAt'> = {
-      name: 'test-study-name',
-      color: 'primary',
+    const study: Omit<StudyObject, 'createdAt'> = {
+      studyName: "test",
+      studyID: "test123",
+      participationCode: "secret",
+      description: "",
+      participationApprovalType: ParticipationApprovalType.AUTOMATIC,
+      studyScope: StudyScope.PUBLIC,
+      stage: "CREATED",
+      studyLogo: "",
+      studyImage: "",
+      orgName: "SRV",
+      duration: { amount: 10, durationUnitFirst: durationUnitFirstKey.MINUTE, durationUnitSecond: durationUnitSecondKey.DAY },
+      period: { amount: 1, periodUnit: periodUnitKey.DAY },
+      studyRequirements: "Anyone can participate in",
+      irbDecision: IRBDecision.APPROVED,
     };
 
-    await dispatch(createStudy(study, ['principal-investigator']));
+    await dispatch(createStudy(study));
 
-    expect(selectedStudySelector(store.getState())).toMatchObject(study);
+    expect(selectedStudySelector(store.getState())).toEqual(expect.objectContaining({
+      id: study.studyID,
+    }));
 
     dispatch(authSlice.actions.clearAuth());
   });
 
   it('[NEGATIVE] should catch an error when trying to create a study', async () => {
-    const study: Omit<Study, 'id'> = {
-      name: 'test-study-name',
-      color: 'primary',
-      createdAt: 1652648400000,
+    const study: Omit<StudyObject, 'createdAt'> = {
+      studyName: "test",
+      studyID: "test123",
+      participationCode: "secret",
+      description: "",
+      participationApprovalType: ParticipationApprovalType.AUTOMATIC,
+      studyScope: StudyScope.PUBLIC,
+      stage: "CREATED",
+      studyLogo: "",
+      studyImage: "",
+      orgName: "SRV",
+      duration: { amount: 10, durationUnitFirst: durationUnitFirstKey.MINUTE, durationUnitSecond: durationUnitSecondKey.DAY },
+      period: { amount: 1, periodUnit: periodUnitKey.DAY },
+      studyRequirements: "Anyone can participate in",
+      irbDecision: IRBDecision.APPROVED,
     };
 
     await maskEndpointAsFailure(
       'getStudies',
       async () => {
-        await dispatch(createStudy(study, ['principal-investigator']));
+        await dispatch(createStudy(study));
       },
       { message: 'error' }
     );

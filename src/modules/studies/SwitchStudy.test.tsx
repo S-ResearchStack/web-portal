@@ -31,7 +31,7 @@ describe('SwitchStudy', () => {
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           <ConnectedRouter history={history}>
-            <SwitchStudy canCreate />
+            <SwitchStudy />
           </ConnectedRouter>
         </Provider>
       </ThemeProvider>
@@ -41,7 +41,7 @@ describe('SwitchStudy', () => {
 
     await userEvent.click(screen.getByLabelText('Next Study'));
     await userEvent.click(screen.getByLabelText('Previous Study'));
-    await userEvent.click(screen.getByText('Create new study'));
+    await userEvent.click(screen.getByText('Create Study'));
 
     await userEvent.hover(screen.getAllByTestId('avatar-icon')[0]);
     await userEvent.unhover(screen.getAllByTestId('avatar-icon')[0]);
@@ -56,7 +56,7 @@ describe('SwitchStudy', () => {
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           <ConnectedRouter history={history}>
-            <SwitchStudy canCreate />
+            <SwitchStudy />
           </ConnectedRouter>
         </Provider>
       </ThemeProvider>

@@ -1,7 +1,7 @@
 import React, { FormEvent, useCallback, useContext, useRef, useState } from 'react';
 import useDebounce from 'react-use/lib/useDebounce';
 import useUpdateEffect from 'react-use/lib/useUpdateEffect';
-import { CountContext } from 'src/modules/study-management/common/LimitsCounter';
+import { CountContext } from 'src/modules/common/LimitsCounter';
 import { isInsideTest } from 'src/common/utils/testing';
 
 export const LOCAL_STATE_DELAY = isInsideTest ? 1 : 500;

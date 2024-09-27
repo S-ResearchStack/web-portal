@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactElement } from 'react';
 import useMeasure from 'react-use/lib/useMeasure';
 import styled from 'styled-components';
 
@@ -67,7 +67,7 @@ const ServiceScreen: FC<ServiceScreenProps> = ({
   children,
   onReload,
   ...props
-}): JSX.Element => {
+}): ReactElement => {
   const [containerRef, { width, height }] = useMeasure<HTMLDivElement>();
 
   const isCompact =

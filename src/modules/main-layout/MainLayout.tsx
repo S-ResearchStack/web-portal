@@ -1,5 +1,5 @@
-import React, { RefObject, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
-import { matchPath, Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import React, { RefObject, useCallback, useLayoutEffect, useRef } from 'react';
+import { matchPath, Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import useEvent from 'react-use/lib/useEvent';
 import useMount from 'react-use/lib/useMount';
 import usePrevious from 'react-use/lib/usePrevious';
@@ -8,34 +8,33 @@ import useUpdateEffect from 'react-use/lib/useUpdateEffect';
 
 import styled from 'styled-components';
 import { Location } from 'history';
-import _isNull from 'lodash/isNull';
 
+import { colors } from 'src/styles';
+import {STORAGE_SHOW_STUDIES} from "src/modules/auth/utils";
 import useDisableElasticScroll from 'src/common/useDisableElasticScroll';
 import { scrollToTop } from 'src/common/utils/scrollToTop';
-import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
+import { userRoleForStudySelector } from 'src/modules/auth/auth.slice.userRoleSelector';
 import { UserRole } from 'src/modules/auth/userRole';
-import DataInsights from 'src/modules/data-collection/DataInsights';
 import { Path } from 'src/modules/navigation/store';
-import Overview from 'src/modules/overview/Overview';
-import OverviewSubject from 'src/modules/overview/overview-subject/OverviewSubject';
 import { SnackbarContainer } from 'src/modules/snackbar';
 import { hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
 import { useAppDispatch, useAppSelector } from 'src/modules/store';
-import Studies from 'src/modules/studies/Studies';
 import { fetchStudies, useSelectedStudyId } from 'src/modules/studies/studies.slice';
-import StudyManagement from 'src/modules/study-management';
-import EducationEditor from 'src/modules/study-management/user-management/education-management/education-editor/EducationEditor';
-import ActivityEditor from 'src/modules/study-management/user-management/task-management/activity/activity-editor/ActivityEditor';
-import ActivityPage from 'src/modules/study-management/user-management/task-management/activity/ActivityPage';
-import SurveyEditor from 'src/modules/study-management/user-management/task-management/survey/survey-editor/SurveyEditor';
-import SurveyPage from 'src/modules/study-management/user-management/task-management/survey/SurveyPage';
-import StudySettings from 'src/modules/study-settings/StudySettings';
-import { colors } from 'src/styles';
-import { SWITCH_STUDY_SEARCH_PARAM } from './constants';
-import EmptyTab from './EmptyTab';
-
 import { LayoutContentCtx } from './LayoutContentCtx';
 import Sidebar from './sidebar/Sidebar';
+import Studies from 'src/modules/studies/Studies';
+import Overview from 'src/modules/overview/Overview';
+import Dashboard from 'src/modules/dashboard/Dashboard';
+import TaskManagement from 'src/modules/task-management/TaskManagement';
+import StudyManagement from 'src/modules/subject/StudyManagement';
+import StudyData from "src/modules/study-data/StudyData";
+import EducationManagement from '../education-management/EducationManagement';
+import LabVisitManagement from '../lab-visit';
+import StudySettings from 'src/modules/study-settings/StudySettings';
+import ChartEditor from 'src/modules/dashboard/chart-editor/ChartEditor';
+import SurveyEditor from 'src/modules/task-management/survey/survey-editor/SurveyEditor';
+import ActivityEditor from 'src/modules/task-management/activity/activity-editor/ActivityEditor';
+import EducationEditor from 'src/modules/education-management/education-editor/EducationEditor';
 
 export const Layout = styled.div<{ isSwitchStudy?: boolean }>`
   width: 100%;
@@ -69,9 +68,9 @@ export const Content = styled.div`
   position: relative;
 `;
 
-const useSwitchStudy = (initialState: boolean) => {
+const useSwitchStudy = () => {
   const layoutRef = useRef<HTMLDivElement>(null);
-  const [isSwitchStudy, toggleIsSwitchStudy] = useToggle(initialState);
+  const [isSwitchStudy, toggleIsSwitchStudy] = useToggle(!!sessionStorage.getItem(STORAGE_SHOW_STUDIES));
   const [isSwitchStudyInTransition, toggleIsSwitchStudyInTransition] = useToggle(false);
 
   const isSelfElement = useCallback((evt: Event) => evt.currentTarget === evt.target, []);
@@ -100,9 +99,17 @@ const useSwitchStudy = (initialState: boolean) => {
 
   return {
     layoutRef,
+    // isSwitchStudy: !!sessionStorage.getItem(STORAGE_SHOW_STUDIES),
     isSwitchStudy,
     isSwitchStudyInTransition,
-    toggleIsSwitchStudy,
+    toggleIsSwitchStudy: () => {
+      toggleIsSwitchStudy()
+      if(sessionStorage.getItem(STORAGE_SHOW_STUDIES)) {
+        sessionStorage.removeItem(STORAGE_SHOW_STUDIES)
+      } else {
+        sessionStorage.setItem(STORAGE_SHOW_STUDIES, 'true')
+      }
+    }
   };
 };
 
@@ -111,7 +118,7 @@ interface UseFetchBootDataReturnType {
 }
 
 const useFetchBootData = (): UseFetchBootDataReturnType => {
-  const userRole = useAppSelector(userRoleSelector);
+  const userRole = useAppSelector(userRoleForStudySelector);
   const dispatch = useAppDispatch();
 
   useMount(() => {
@@ -178,34 +185,36 @@ const MainLayout = () => {
 
   useUpdateEffect(() => {
     dispatch(hideSnackbar());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, studyId]);
 
   useDisableElasticScroll(contentRef);
 
   useScrollHistory(
-    [Path.Overview, Path.DataCollection, Path.StudyManagement, Path.StudySettings],
+    [
+      Path.Overview,
+      Path.Dashboard,
+      Path.TaskManagement,
+      Path.SubjectManagement,
+      Path.StudyData,
+      Path.EducationalManagement,
+      Path.LabVisitManagement,
+      Path.StudySettings
+    ],
     contentRef
   );
 
   const { userRole } = useFetchBootData();
 
-  const history = useHistory();
-  const isForceStudySwitched = useMemo(
-    () => !_isNull(new URLSearchParams(history.location.search).get(SWITCH_STUDY_SEARCH_PARAM)),
-    [history.location.search]
-  );
-
   const { layoutRef, isSwitchStudy, toggleIsSwitchStudy, isSwitchStudyInTransition } =
-    useSwitchStudy(isForceStudySwitched);
+    useSwitchStudy();
 
   const onStudyClick = () => {
-    if (isSwitchStudy) {
+     if (isSwitchStudy) {
       toggleIsSwitchStudy();
-    } else {
+     } else {
       scrollToTop(contentRef.current as HTMLElement, toggleIsSwitchStudy);
     }
-  };
+  }
 
   const studiesContentRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -237,7 +246,7 @@ const MainLayout = () => {
         </StudiesContentWrapper>
         <MainContentWrapper>
           <Sidebar onStudyClick={onStudyClick} />
-          {userRole && (
+          {(
             <Content ref={contentRef}>
               <Switch>
                 <Route
@@ -247,23 +256,32 @@ const MainLayout = () => {
                     <Overview isSwitchStudy={isSwitchStudy || isSwitchStudyInTransition} />
                   )}
                 />
-                <Route exact path={Path.OverviewSubject} component={OverviewSubject} />
-                <Route exact path={Path.StudyManagement} component={StudyManagement} />
-                <Route exact path={Path.StudyManagementEditSurvey} component={SurveyEditor} />
-                <Route exact path={Path.StudyManagementSubject} component={OverviewSubject} />
-                <Route exact path={Path.StudyManagementSurveyResults} component={SurveyPage} />
-                <Route exact path={Path.StudyManagementActivityResults} component={ActivityPage} />
-                <Route exact path={Path.StudyManagementEditActivity} component={ActivityEditor} />
-                <Route exact path={Path.StudyManagementEditEducation} component={EducationEditor} />
-                <Route path={Path.UserAnalytics} component={EmptyTab} />
-                <Route exact path={Path.DataCollection} component={DataInsights} />
-                <Route exact path={Path.DataCollectionSubject} component={OverviewSubject} />
+
+                <Route exact path={Path.Dashboard} component={Dashboard} />
+                <Route exact path={Path.CreateChart} component={ChartEditor} />
+                <Route exact path={Path.EditChart} component={ChartEditor} />
+
+                <Route exact path={Path.TaskManagement} component={TaskManagement} />
+                <Route exact path={Path.CreateSurvey} component={SurveyEditor} />
+                <Route exact path={Path.CreateActivity} component={ActivityEditor} />
+
+                <Route exact path={Path.SubjectManagement} component={StudyManagement} />
+
+                <Route exact path={Path.StudyData} component={StudyData} />
+
+                <Route exact path={Path.EducationalManagement} component={EducationManagement} />
+                <Route exact path={Path.CreateEducational} component={EducationEditor} />
+                <Route exact path={Path.EditEducational} component={EducationEditor} />
+
+                <Route exact path={Path.LabVisitManagement} component={LabVisitManagement} />
+
                 <Route exact path={Path.StudySettings}>
                   <StudySettings
                     isSwitchStudy={isSwitchStudy}
                     isSwitchStudyInTransition={isSwitchStudyInTransition}
                   />
                 </Route>
+
                 <Redirect to={Path.Overview} />
               </Switch>
               {!isSwitchStudy && <SnackbarContainer useSimpleGrid />}

@@ -31,7 +31,6 @@ exports[`Pagination [NEGATIVE] should render with wrong props 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -164,7 +163,7 @@ exports[`Pagination [NEGATIVE] should render with wrong props 1`] = `
   align-items: center;
   gap: 0.25rem;
   background-color: #FFFFFF;
-  border: 0.0625rem solid transparent;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-top-width: 0;
   -webkit-transition: all 300ms cubic-bezier(0.45,0.05,0,1);
   transition: all 300ms cubic-bezier(0.45,0.05,0,1);
@@ -312,7 +311,7 @@ exports[`Pagination [NEGATIVE] should render with wrong props 1`] = `
         class="c1"
         data-testid="info"
       >
-        0--1 of -1
+        0--2 of -1
       </div>
       <div
         class="c2"
@@ -462,7 +461,6 @@ exports[`Pagination test pagination render 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -595,7 +593,7 @@ exports[`Pagination test pagination render 1`] = `
   align-items: center;
   gap: 0.25rem;
   background-color: #FFFFFF;
-  border: 0.0625rem solid transparent;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-top-width: 0;
   -webkit-transition: all 300ms cubic-bezier(0.45,0.05,0,1);
   transition: all 300ms cubic-bezier(0.45,0.05,0,1);
@@ -743,7 +741,7 @@ exports[`Pagination test pagination render 1`] = `
         class="c1"
         data-testid="info"
       >
-        41-51 of 1000
+        41-50 of 1000
       </div>
       <div
         class="c2"

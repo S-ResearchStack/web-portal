@@ -31,7 +31,6 @@ exports[`SwitchStudy should render 1`] = `
   width: 5rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -116,7 +115,6 @@ exports[`SwitchStudy should render 1`] = `
   width: 15.375rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -205,7 +203,6 @@ exports[`SwitchStudy should render 1`] = `
   width: 5rem;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -561,7 +558,7 @@ exports[`SwitchStudy should render 1`] = `
               data-testid="content"
             >
               <svg />
-              Create new study
+              Create Study
             </div>
           </button>
         </div>

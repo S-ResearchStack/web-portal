@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { px, typography } from 'src/styles';
 
 interface ResultMessageProps extends React.PropsWithChildren<unknown> {
-  picture: JSX.Element;
-  title: JSX.Element | string;
-  description: JSX.Element | string;
+  picture: ReactElement;
+  title: ReactElement | string;
+  description: ReactElement | string;
   moreSpace?: boolean;
   compactTitleMargin?: boolean;
 }

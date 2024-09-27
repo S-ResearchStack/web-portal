@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, ReactElement, useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 import spring, { toString as springToString } from 'css-spring';
 import _uniqueId from 'lodash/uniqueId';
@@ -17,7 +17,7 @@ const checkedAnimation = keyframes`
 `;
 
 interface ToggleProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: JSX.Element | string;
+  label?: ReactElement | string;
 }
 
 const ANIMATION_FN = 'cubic-bezier(0, 0, 0.58, 1)';

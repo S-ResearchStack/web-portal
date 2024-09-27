@@ -180,7 +180,7 @@ exports[`Card [NEGATIVE] should render wrong properties 1`] = `
 </body>
 `;
 
-exports[`Card test card empty state 1`] = `
+exports[`Card [NEGATIVE] test card empty state 1`] = `
 .c6 {
   box-sizing: border-box;
   display: -webkit-box;
@@ -362,7 +362,7 @@ exports[`Card test card empty state 1`] = `
 </body>
 `;
 
-exports[`Card test card error state 1`] = `
+exports[`Card [NEGATIVE] test card error state 1`] = `
 .c6 {
   box-sizing: border-box;
   display: -webkit-box;

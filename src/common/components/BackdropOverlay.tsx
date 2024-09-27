@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, ReactElement, useMemo, useState } from 'react';
 
 import styled, { css } from 'styled-components';
 
@@ -74,7 +74,7 @@ const BackdropOverlay: FC<BackdropOverlayProps> = ({
   onExited,
   id,
   ...props
-}): JSX.Element => {
+}): ReactElement => {
   const [showContent, setShowContent] = useState(open);
 
   const fadeProps = {

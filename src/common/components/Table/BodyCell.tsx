@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import styled from 'styled-components';
 
 import Tooltip, { TooltipControls } from 'src/common/components/Tooltip';
@@ -44,7 +44,7 @@ export const BodyCellContainer = styled.div<BodyCellContainerProps>`
   }
 `;
 
-const BodyCell = <T,>({ column, children, linesCount }: TableCellProps<T>): JSX.Element => {
+const BodyCell = <T,>({ column, children, linesCount }: TableCellProps<T>): ReactElement => {
   const tooltipRef = useRef<TooltipControls>(null);
   const { isShowTooltip, handleMouseEnter, handleMouseLeave, currentPos, tooltipStyles } =
     useCellTooltip(tooltipRef);

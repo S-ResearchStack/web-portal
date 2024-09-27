@@ -9,6 +9,12 @@ const colors = {
   black08: 'rgba(0, 0, 0, 0.08)',
   black15: 'rgba(0, 0, 0, 0.15)',
 
+  // blue gradations
+  blue: "#b0c4f1",
+  blue40: 'rgba(176, 196, 241, 0.4)',
+  blue15: 'rgba(176, 196, 241, 0.15)',
+  blue8: 'rgba(176, 196, 241, 0.08)',
+
   // light mode
   surface: '#FFFFFF',
   background: '#F7F8FA',
@@ -17,6 +23,7 @@ const colors = {
   backgroundSurface: '#FFFFFF',
   backgroundOnSurface: '#2D2D2D',
   primary: '#4475E3',
+  primaryShadow: '#4475E361',
   primaryLight: '#ECF1FC',
   primaryHovered: '#2F65E0',
   primary05: '#F6F8FE',
@@ -33,6 +40,7 @@ const colors = {
   onDisabled: '#A1A1A1',
 
   textPrimaryBlue: '#4475E3',
+  textPrimaryBlue10: 'rgba(68, 117, 227, 0.2)',
   textPrimaryDark: '#474747',
   textSecondaryGray: '#808080',
   textDisabled: '#838383',
@@ -73,6 +81,8 @@ const colors = {
   secondaryRed: '#FA5F4F',
   secondaryRedHovered: '#CC4E40',
   secondaryRed10: '#FFEFED',
+
+  transparent: 'rgba(0, 0, 0, 0)'
 };
 
 export type SpecColorType = keyof typeof colors;

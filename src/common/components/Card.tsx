@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, isValidElement } from 'react';
+import React, { ForwardedRef, forwardRef, isValidElement, ReactElement } from 'react';
 
 import styled, { css, keyframes } from 'styled-components';
 
@@ -20,6 +20,7 @@ export interface CardProps extends BaseCardProps, React.RefAttributes<HTMLDivEle
   contentChanging?: boolean;
   onReload?: () => void;
   bottomAction?: boolean;
+  height?: string;
 }
 
 type CardContainerProps = React.PropsWithChildren<Pick<CardProps, 'loading'>>;
@@ -133,10 +134,11 @@ const Card = forwardRef(
       onReload,
       contentChanging,
       bottomAction,
+      height,
       ...props
     }: CardProps,
     ref: ForwardedRef<HTMLDivElement>
-  ): JSX.Element => {
+  ): ReactElement  => {
     const renderContent = () => {
       if (error) {
         return <ServiceScreen onReload={onReload} type="error" data-testid="error-screen" />;
@@ -149,7 +151,7 @@ const Card = forwardRef(
     };
 
     return (
-      <CardContainer ref={ref} loading={loading} {...props}>
+      <CardContainer ref={ref} loading={loading} style={{height: height || 'fit-content'}} {...props}>
         {title && (
           <TitleContainer hasSubtitle={!!subtitle}>
             {isValidElement(title) ? (

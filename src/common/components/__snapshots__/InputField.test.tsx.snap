@@ -10,6 +10,7 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -34,8 +35,8 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
   width: 100%;
   margin: 0;
   padding: 1rem;
-  background-color: #F7F8FA;
-  border: 0.0625rem solid #F7F8FA;
+  background-color: #FFFFFF;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -96,7 +97,7 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
   border: 0.0625rem solid rgba(219,219,219,0.2);
   -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: #F7F8FA !important;
+  background-color: #FFFFFF !important;
   background-image: unset !important;
   -webkit-text-fill-color: #838383;
 }
@@ -117,11 +118,23 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: rgba(0,0,0,0.38);
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -131,8 +144,8 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  padding-left: 1rem;
   height: 1.0625rem;
+  margin-top: -5px;
 }
 
 <body>
@@ -140,12 +153,12 @@ exports[`InputField [NEGATIVE] should prevent user input while field is disabled
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >
@@ -180,6 +193,7 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -200,8 +214,8 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
   width: 100%;
   margin: 0;
   padding: 1rem;
-  background-color: #F7F8FA;
-  border: 0.0625rem solid #F7F8FA;
+  background-color: #FFFFFF;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -262,7 +276,7 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
   border: 0.0625rem solid #4475E3;
   -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: #F7F8FA !important;
+  background-color: #FFFFFF !important;
   background-image: unset !important;
   -webkit-text-fill-color: #838383;
 }
@@ -283,11 +297,23 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: #474747;
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -297,8 +323,8 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  padding-left: 1rem;
   height: 1.0625rem;
+  margin-top: -5px;
 }
 
 <body>
@@ -306,12 +332,12 @@ exports[`InputField [NEGATIVE] should render with wrong props 1`] = `
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >
@@ -345,6 +371,7 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -365,8 +392,8 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
   width: 100%;
   margin: 0;
   padding: 1rem;
-  background-color: #F7F8FA;
-  border: 0.0625rem solid #F7F8FA;
+  background-color: #FFFFFF;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -427,7 +454,7 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
   border: 0.0625rem solid #4475E3;
   -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: #F7F8FA !important;
+  background-color: #FFFFFF !important;
   background-image: unset !important;
   -webkit-text-fill-color: #838383;
 }
@@ -448,11 +475,23 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: #474747;
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -462,8 +501,8 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  padding-left: 1rem;
   height: 1.0625rem;
+  margin-top: -5px;
 }
 
 <body>
@@ -471,12 +510,12 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >
@@ -498,7 +537,7 @@ exports[`InputField [NEGATIVE] should render without props 1`] = `
 </body>
 `;
 
-exports[`InputField test InputField disabled state 1`] = `
+exports[`InputField [NEGATIVE] test InputField disabled state 1`] = `
 .c0 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -508,6 +547,7 @@ exports[`InputField test InputField disabled state 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -532,8 +572,8 @@ exports[`InputField test InputField disabled state 1`] = `
   width: 100%;
   margin: 0;
   padding: 1rem;
-  background-color: #F7F8FA;
-  border: 0.0625rem solid #F7F8FA;
+  background-color: #FFFFFF;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -594,7 +634,7 @@ exports[`InputField test InputField disabled state 1`] = `
   border: 0.0625rem solid rgba(219,219,219,0.2);
   -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: #F7F8FA !important;
+  background-color: #FFFFFF !important;
   background-image: unset !important;
   -webkit-text-fill-color: #838383;
 }
@@ -615,11 +655,23 @@ exports[`InputField test InputField disabled state 1`] = `
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: rgba(0,0,0,0.38);
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -629,8 +681,8 @@ exports[`InputField test InputField disabled state 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  padding-left: 1rem;
   height: 1.0625rem;
+  margin-top: -5px;
 }
 
 <body>
@@ -638,12 +690,12 @@ exports[`InputField test InputField disabled state 1`] = `
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >
@@ -668,7 +720,7 @@ exports[`InputField test InputField disabled state 1`] = `
 </body>
 `;
 
-exports[`InputField test InputField error state 1`] = `
+exports[`InputField [NEGATIVE] test InputField error state 1`] = `
 .c0 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -678,6 +730,7 @@ exports[`InputField test InputField error state 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -699,7 +752,7 @@ exports[`InputField test InputField error state 1`] = `
   margin: 0;
   padding: 1rem;
   background-color: #FFEBEB;
-  border: 0.0625rem solid #FFEBEB;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -781,11 +834,23 @@ exports[`InputField test InputField error state 1`] = `
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: #D14343;
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -797,6 +862,7 @@ exports[`InputField test InputField error state 1`] = `
   color: #D14343;
   padding-left: 1rem;
   height: 1.0625rem;
+  margin-bottom: 10px;
 }
 
 <body>
@@ -804,12 +870,12 @@ exports[`InputField test InputField error state 1`] = `
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >
@@ -840,6 +906,7 @@ exports[`InputField type and clear InputField test 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 5px;
 }
 
 .c5 > svg {
@@ -860,8 +927,8 @@ exports[`InputField type and clear InputField test 1`] = `
   width: 100%;
   margin: 0;
   padding: 1rem;
-  background-color: #F7F8FA;
-  border: 0.0625rem solid #F7F8FA;
+  background-color: #FFFFFF;
+  border: 0.0625rem solid rgba(0,0,0,0.08);
   border-radius: 0.25rem;
   -webkit-transition: border 300ms cubic-bezier(0.45,0.05,0,1);
   transition: border 300ms cubic-bezier(0.45,0.05,0,1);
@@ -922,7 +989,7 @@ exports[`InputField type and clear InputField test 1`] = `
   border: 0.0625rem solid #4475E3;
   -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: #F7F8FA !important;
+  background-color: #FFFFFF !important;
   background-image: unset !important;
   -webkit-text-fill-color: #838383;
 }
@@ -943,11 +1010,23 @@ exports[`InputField type and clear InputField test 1`] = `
   font-family: Inter,sans-serif;
   font-size: 0.875rem;
   line-height: 1.3125rem;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   color: #474747;
   gap: 0.5rem;
   height: 1.125rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: static;
+}
+
+.c1::before {
+  content: '';
+  position: absolute;
+  color: red;
+  top: -2px;
+  right: -10px;
 }
 
 .c6 {
@@ -957,8 +1036,8 @@ exports[`InputField type and clear InputField test 1`] = `
   font-weight: 400;
   font-style: normal;
   color: #808080;
-  padding-left: 1rem;
   height: 1.0625rem;
+  margin-top: -5px;
 }
 
 <body>
@@ -966,12 +1045,12 @@ exports[`InputField type and clear InputField test 1`] = `
     <div
       class="c0"
     >
-      <div
+      <span
         class="c1"
         data-testid="input-description"
       >
          
-      </div>
+      </span>
       <div
         class="c2"
       >

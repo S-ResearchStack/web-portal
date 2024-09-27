@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { ReactElement, useCallback, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 import styled from 'styled-components';
 
@@ -24,7 +24,7 @@ const VirtualTable = <T,>({
   disableActions,
   renderOnHoverRowAction,
   ...props
-}: TableProps<T>): JSX.Element => {
+}: TableProps<T>): ReactElement => {
   const parentRef = useRef<HTMLDivElement | undefined>();
 
   const estimateSize = useCallback(() => ROW_HEIGHT, []);

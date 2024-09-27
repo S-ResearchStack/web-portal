@@ -8,6 +8,7 @@ import {
   format,
   getRelativeTimeByTs,
   getAbsoluteTimeByTs,
+  parseDateFromApi,
 } from 'src/common/utils/datetime';
 
 beforeAll(() => {
@@ -143,5 +144,18 @@ describe('getAbsoluteTimeByTs', () => {
       'Today',
       'Invalid DateTime',
     ]);
+  });
+});
+
+describe('parseDateFromApi', () => {
+  it('should parse date', () => {
+    expect(parseDateFromApi('2022-10-31 12:00:00')).toBe(
+      new Date(2022, 9, 31, 12, 0, 0, 0).valueOf()
+    );
+  });
+
+  it('[NEGATIVE] should parse wrong date', () => {
+    expect(parseDateFromApi(undefined)).toBeUndefined();
+    expect(parseDateFromApi('')).toBeUndefined();
   });
 });

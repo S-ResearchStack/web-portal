@@ -7,7 +7,7 @@ import { ExtendProps } from 'src/common/utils/types';
 import { px } from 'src/styles';
 
 const Container = styled.div`
-  margin-top: ${px(60)};
+  margin-top: ${px(30)};
   &[data-collapsed] + & {
     margin-top: 0;
   }
@@ -22,7 +22,7 @@ const Header = styled.div`
 `;
 
 const Body = styled.div<{ $isCollapsed: boolean }>`
-  margin-top: ${px(32)};
+  margin-top: ${px(16)};
   display: ${({ $isCollapsed }) => ($isCollapsed ? 'none' : undefined)};
 `;
 

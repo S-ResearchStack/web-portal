@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import useEvent from 'react-use/lib/useEvent';
 import useKey from 'react-use/lib/useKey';
 import _noop from 'lodash/noop';
@@ -85,7 +85,7 @@ const Item = styled.div<{
 
   background-color: ${({ $backgroundType }) =>
     $backgroundType === 'light' ? colors.backgroundOnPrimary : colors.background};
-  border: ${px(1)} solid transparent;
+  border: ${px(1)} solid ${colors.black08};
   border-top-width: 0;
 
   transition: all 300ms ${animation.defaultTiming};
@@ -227,7 +227,7 @@ const MenuContainer = styled(CustomScrollbar).attrs<MenuContainerProps>((props) 
 type ClickableProps = Pick<React.HTMLAttributes<HTMLElement>, 'onClick'>;
 
 export interface DropdownItem<T> {
-  icon?: JSX.Element;
+  icon?: ReactElement;
   tooltip?: string;
   label: string;
   key: T;
@@ -244,7 +244,7 @@ export type DropdownProps<T> = ExtendProps<
     menuClassName?: string;
     direction?: MenuContainerPosition;
     menuItemComponent?: React.ComponentType<ClickableProps>;
-    arrowIcon?: JSX.Element;
+    arrowIcon?: ReactElement;
     placeholder?: string;
     placeholderTextColor?: SpecColorType;
     backgroundType?: BackgroundType;
@@ -253,7 +253,7 @@ export type DropdownProps<T> = ExtendProps<
     loading?: boolean;
     textColor?: SpecColorType;
     disabled?: boolean;
-    checkIcon?: JSX.Element;
+    checkIcon?: ReactElement;
     hideDisabledItems?: boolean;
     error?: boolean;
     labelComponent?: typeof Label;
@@ -282,7 +282,7 @@ const Dropdown = <T extends string | number>({
   checkIcon,
   labelComponent = Label,
   ...restProps
-}: DropdownProps<T>): JSX.Element => {
+}: DropdownProps<T>): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const canSetScrollRef = useRef(true);

@@ -1,63 +1,185 @@
-import { getLocation } from 'connected-react-router';
-import { matchPath } from 'react-router-dom';
 import React from 'react';
-import { Provider } from 'react-redux';
-import { act, renderHook, waitFor } from '@testing-library/react';
 import { enableFetchMocks } from 'jest-fetch-mock';
-
+import { matchPath } from 'react-router-dom';
+import { getLocation } from 'connected-react-router';
 import {
-  decodeAuthToken,
   STORAGE_TOKEN_KEY,
   STORAGE_REFRESH_TOKEN_KEY,
+  STORAGE_ALREADY_BEEN_AUTH_KEY,
+  STORAGE_JWT_TYPE,
+  STORAGE_REMEMBER_USER,
+  STORAGE_USER_KEY,
 } from 'src/modules/auth/utils';
-import { STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY } from 'src/modules/overview/studyProgress.slice';
-import { signout } from 'src/modules/auth/auth.slice.signout';
+import { STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY } from 'src/modules/overview/StudyOverview.slice';
 import {
-  activateAccount,
   authSlice,
-  getStateFromAuthToken,
-  isAuthorizedSelector,
-  loadInitialStateFromStorage,
-  resendVerificationEmail,
-  signin,
-  SUCCESS_CONFIRMATION_MESSAGE,
+  handleGoogleSignIn,
+  isTokenExistSelector,
+  loadInitialAuthStateFromStorage,
+  registerUser,
+  signOut,
+  userEmailSelector,
   userNameSelector,
-  useSignUp,
-  useVerifyEmail,
+  userRoleSelector,
+  useSignIn,
 } from 'src/modules/auth/auth.slice';
 import {
   allowedRoleTypes,
+  getRoleLabels,
   getRolesForStudy,
+  RoleType,
   userRolesListFromApi,
 } from 'src/modules/auth/userRole';
 import { AppDispatch, makeStore } from 'src/modules/store/store';
 import { makeHistory, Path } from 'src/modules/navigation/store';
-import { currentSnackbarSelector, hideSnackbar } from 'src/modules/snackbar/snackbar.slice';
-import { authTokenPayloadSelector } from 'src/modules/auth/auth.slice.authTokenPayloadSelector';
-import { userRoleSelector } from 'src/modules/auth/auth.slice.userRoleSelector';
-import { maskEndpointAsFailure } from 'src/modules/api/mock';
-import { GENERIC_SERVER_ERROR_TEXT } from '../api/executeRequest';
-import { MOCK_ACCOUNT_ID } from '../study-settings/utils';
+import API, {
+  GetUserResponse,
+  GoogleTokenResponse,
+  RegisterUserRequest,
+  SigninResponse,
+} from 'src/modules/api';
+import { Response } from '../api/executeRequest';
+import { HTTP_CODE_CONFLICT, HTTP_CODE_NOT_FOUND } from '../api/code';
+import { act, renderHook } from '@testing-library/react';
+import { Provider } from 'react-redux';
 
-// eslint-disable-next-line prefer-destructuring
-const authToken =
-  'e30=.eyJlbWFpbCI6InVzZXJuYW1lQHNhbXN1bmcuY29tIiwicm9sZXMiOlsidGVhbS1hZG1pbiJdLCJzdWIiOiJhZG1pbi1pZCJ9';
-const wrongPassword = 'wrongpwd';
-const refreshToken = `refresh.${authToken}`;
-const userInfo = {
-  email: 'username@samsung.com',
-  testPassword: 'any',
-  roles: ['team-admin'],
+const code = 'code';
+const authToken = 'id_token';
+const refreshToken = `refresh_token`;
+const projectId = 'testStudy';
+const jwtType = 'jwt_issuer';
+const rememberUser = true;
+const accessToken = 'accessToken';
+
+const email = 'email@email.com';
+const password = 'Samsung123456@';
+
+const userInfo: GetUserResponse = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  company: 'company',
+  team: 'team',
+  email: 'email@email.com',
+  officePhoneNumber: '000',
+  mobilePhoneNumber: '000',
+  roles: [`${projectId}_studyManager`],
 };
-const projectId = 'project-id';
-const userName = 'Samuel';
+
+const userRoles = [
+  {
+    projectId,
+    roles: ['studyManager'],
+  },
+];
 
 let history: ReturnType<typeof makeHistory>;
 let store: ReturnType<typeof makeStore>;
 let dispatch: AppDispatch;
 
+const originalWindowLocation = window.location;
+
+const setAuthToken = () => {
+  API.mock.provideEndpoints({
+    getGoogleToken() {
+      return API.mock.response({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        id_token: authToken,
+        expires_in: 0,
+      } as GoogleTokenResponse);
+    },
+  });
+};
+
+const setUser = () => {
+  API.mock.provideEndpoints({
+    getUser() {
+      return API.mock.response(userInfo);
+    },
+  });
+};
+
+const setAuth = () => {
+  setAuthToken();
+  setUser();
+};
+
+const setAuthTokenError = () => {
+  API.mock.provideEndpoints({
+    getGoogleToken() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
+
+const setUserError = () => {
+  API.mock.provideEndpoints({
+    getUser() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
+
+const setUserNotFound = () => {
+  API.mock.provideEndpoints({
+    getUser() {
+      return API.mock.failedResponse({ status: HTTP_CODE_NOT_FOUND });
+    },
+  });
+};
+
+const setRegistration = () => {
+  jest.fn().mockResolvedValueOnce({
+    status: 200,
+    checkError: () => {},
+  } as Response<void>);
+  setUser();
+};
+
+const setRegistrationError = () => {
+  API.mock.provideEndpoints({
+    registerUser() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
+
+const setRegistrationConflict = () => {
+  API.mock.provideEndpoints({
+    registerUser() {
+      return API.mock.failedResponse({ status: HTTP_CODE_CONFLICT });
+    },
+  });
+};
+
+const setSignInByEmailPassword = () => {
+  API.mock.provideEndpoints({
+    signin() {
+      return API.mock.response({
+        id: 'testid',
+        email: email,
+        accessToken: authToken,
+        refreshToken: refreshToken,
+      } as SigninResponse);
+    },
+  });
+};
+
+const setSignInByEmailPasswordError = () => {
+  API.mock.provideEndpoints({
+    signin() {
+      return API.mock.failedResponse({ status: 400 });
+    },
+  });
+};
+
 beforeAll(() => {
   enableFetchMocks();
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: { reload: jest.fn() },
+  });
 });
 
 beforeEach(() => {
@@ -66,41 +188,52 @@ beforeEach(() => {
   dispatch = store.dispatch;
 });
 
-describe('decodeAuthToken', () => {
-  it('should return truth value', () => {
-    expect(decodeAuthToken(authToken)).toEqual({
-      email: userInfo.email,
-      roles: userInfo.roles,
-      sub: MOCK_ACCOUNT_ID,
-    });
-  });
-
-  it('[NEGATIVE] should call with broken parameters', () => {
-    expect.assertions(1);
-    try {
-      decodeAuthToken('authToken');
-    } catch (e) {
-      expect(String(e)).toMatch(/InvalidTokenError/);
-    }
+afterAll(() => {
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: originalWindowLocation,
   });
 });
+
+const setUpHook = <T extends () => ReturnType<T>>(useHook: () => ReturnType<T>) =>
+  renderHook(() => useHook(), {
+    wrapper: ({ children }: React.PropsWithChildren) => (
+      <Provider store={store}>{children}</Provider>
+    ),
+  });
+
+const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
+  'reset' in hook.result.current && hook.result.current.reset();
+  hook.unmount();
+};
 
 describe('loadInitialStateFromStorage', () => {
   it('should return truth value', () => {
     localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
     localStorage.setItem(STORAGE_REFRESH_TOKEN_KEY, refreshToken);
-    expect(loadInitialStateFromStorage()).toEqual({ authToken, refreshToken });
+    localStorage.setItem(STORAGE_JWT_TYPE, jwtType);
+    localStorage.setItem(STORAGE_REMEMBER_USER, !rememberUser ? 'false' : 'true');
+    expect(loadInitialAuthStateFromStorage()).toEqual({
+      authToken,
+      jwtType,
+      refreshToken,
+      rememberUser,
+    });
 
     localStorage.removeItem(STORAGE_TOKEN_KEY);
     localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_JWT_TYPE);
   });
 
   it('[NEGATIVE] should return failure value', () => {
     localStorage.removeItem(STORAGE_TOKEN_KEY);
     localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
-    expect(loadInitialStateFromStorage()).toEqual({
+    localStorage.removeItem(STORAGE_JWT_TYPE);
+    expect(loadInitialAuthStateFromStorage()).toEqual({
       authToken: undefined,
       refreshToken: undefined,
+      jwtType: undefined,
+      rememberUser: rememberUser,
     });
   });
 });
@@ -108,18 +241,12 @@ describe('loadInitialStateFromStorage', () => {
 describe('rolesListFromApi', () => {
   it('should return truth value', () => {
     const userRolesFromApi = [...allowedRoleTypes].map((r) =>
-      r !== 'team-admin' ? `${projectId}:${r}` : r
+      r !== 'team-admin' ? `${projectId}_${r}` : r
     );
 
-    expect(getRolesForStudy(userRolesListFromApi(userRolesFromApi), 'project-id')).toEqual({
-      roles: [
-        'principal-investigator',
-        'research-assistant',
-        'data-scientist',
-        'study-creator',
-        'team-admin',
-      ],
-      projectId: 'project-id',
+    expect(getRolesForStudy(userRolesListFromApi(userRolesFromApi), projectId)).toEqual({
+      roles: ['studyAdmin', 'studyManager', 'studyResearcher', 'team-admin'],
+      projectId,
     });
   });
 
@@ -142,53 +269,34 @@ describe('rolesListFromApi', () => {
   });
 });
 
-describe('getStateFromAuthToken', () => {
-  it('should return truth value', () => {
-    expect({ ...getStateFromAuthToken(authToken), refreshToken }).toEqual({
-      authToken,
-      refreshToken,
-      userRoles: userRolesListFromApi(userInfo.roles),
-    });
-  });
-
-  it('[NEGATIVE] should return value with broken parameters', () => {
-    expect({ ...getStateFromAuthToken('authToken'), refreshToken: 'refreshToken' }).toEqual({
-      refreshToken: 'refreshToken',
-    });
-  });
-});
-
 describe('store', () => {
   beforeEach(() => {
     dispatch(authSlice.actions.clearAuth());
     localStorage.removeItem(STORAGE_TOKEN_KEY);
     localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_ALREADY_BEEN_AUTH_KEY);
   });
 
   it('should create empty state', () => {
     expect(authSlice.reducer(undefined, { type: '' })).toEqual({
       authToken: undefined,
       refreshToken: undefined,
+      jwtType: undefined,
+      rememberUser: rememberUser,
     });
   });
 
   it('should create filled state', () => {
     localStorage.setItem(STORAGE_TOKEN_KEY, authToken);
     localStorage.setItem(STORAGE_REFRESH_TOKEN_KEY, refreshToken);
+    localStorage.setItem(STORAGE_JWT_TYPE, jwtType);
+    localStorage.setItem(STORAGE_REMEMBER_USER, !rememberUser ? 'false' : 'true');
 
-    expect(authSlice.reducer(loadInitialStateFromStorage(), { type: '' })).toEqual({
+    expect(authSlice.reducer(loadInitialAuthStateFromStorage(), { type: '' })).toEqual({
       authToken,
       refreshToken,
-    });
-  });
-
-  it('[NEGATIVE] should create filled state with broken auth token', () => {
-    localStorage.setItem(STORAGE_TOKEN_KEY, 'authToken');
-    localStorage.setItem(STORAGE_REFRESH_TOKEN_KEY, 'refreshToken');
-
-    expect(authSlice.reducer(loadInitialStateFromStorage(), { type: '' })).toEqual({
-      authToken: 'authToken',
-      refreshToken: 'refreshToken',
+      jwtType,
+      rememberUser,
     });
   });
 
@@ -196,9 +304,9 @@ describe('store', () => {
     expect(
       authSlice.reducer(
         undefined,
-        authSlice.actions.authSuccess({ authToken, refreshToken, userName })
+        authSlice.actions.authSuccess({ jwtType: '', authToken, refreshToken })
       )
-    ).toEqual({ ...getStateFromAuthToken(authToken), refreshToken, userName });
+    ).toEqual({ authToken, refreshToken, jwtType: '', rememberUser });
   });
 
   it('[NEGATIVE] should apply success state with broken parameters', () => {
@@ -206,15 +314,16 @@ describe('store', () => {
       authSlice.reducer(
         undefined,
         authSlice.actions.authSuccess({
-          authToken: 'authToken',
-          refreshToken: 'refreshToken',
-          userName: '',
+          jwtType: '',
+          authToken,
+          refreshToken,
         })
       )
     ).toEqual({
-      authToken: getStateFromAuthToken('authToken'),
-      refreshToken: 'refreshToken',
-      userName: '',
+      authToken,
+      refreshToken,
+      jwtType: '',
+      rememberUser,
     });
   });
 
@@ -230,355 +339,310 @@ describe('store', () => {
   });
 
   it('should check authorized state', () => {
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    dispatch(authSlice.actions.authSuccess({ authToken, refreshToken, userName }));
-    expect(isAuthorizedSelector(store.getState())).toBeTruthy();
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
+    dispatch(authSlice.actions.authSuccess({ jwtType: '', authToken, refreshToken }));
+    expect(isTokenExistSelector(store.getState())).toBeTruthy();
   });
 
-  it('[NEGATIVE] should check authorized state with broken token', () => {
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    dispatch(
-      authSlice.actions.authSuccess({
-        authToken: 'authToken',
-        refreshToken: 'refreshToken',
-        userName: '',
-      })
-    );
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-  });
+  it('should make sign in', async () => {
+    setAuth();
 
-  it('should make sign in without remember', async () => {
-    await dispatch(
-      signin({
-        email: userInfo.email,
-        password: userInfo.testPassword,
-      })
-    );
+    await dispatch(handleGoogleSignIn(code));
 
-    expect(isAuthorizedSelector(store.getState())).toBeTruthy();
-    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
-    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
-    expect(
-      matchPath(getLocation(store.getState()).pathname, {
-        path: Path.Root,
-        exact: true,
-      })
-    ).not.toBeNull();
-  });
-
-  it('[NEGATIVE] should make sign in without remember and with broken parameters', async () => {
-    expect.assertions(3);
-    try {
-      await dispatch(
-        signin({
-          email: 'userInfo.email',
-          password: wrongPassword,
-        })
-      );
-    } catch (e) {
-      expect(String(e)).toMatch(/Status\scode\s401/);
-      expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
-      expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
-    }
-  });
-
-  it('should make sign in with remember', async () => {
-    await dispatch(
-      signin({
-        email: userInfo.email,
-        password: userInfo.testPassword,
-        rememberUser: true,
-      })
-    );
-
-    expect(isAuthorizedSelector(store.getState())).toBeTruthy();
+    expect(isTokenExistSelector(store.getState())).toBeTruthy();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBe(authToken);
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBe(refreshToken);
+    expect(localStorage.getItem(STORAGE_ALREADY_BEEN_AUTH_KEY)).toBe('true');
   });
 
-  it('[NEGATIVE] should make sign in with remember and with broken parameters', async () => {
-    expect.assertions(3);
-    try {
-      await dispatch(
-        signin({
-          email: 'userInfo.email',
-          password: wrongPassword,
-          rememberUser: true,
-        })
-      );
-    } catch (e) {
-      expect(String(e)).toMatch(/Status\scode\s401/);
-      expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
-      expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
-    }
+  it('[NEGATIVE] sign in with broken parameters', async () => {
+    setAuthTokenError();
+
+    await dispatch(handleGoogleSignIn(code));
+
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
+    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(STORAGE_ALREADY_BEEN_AUTH_KEY)).toBeNull();
   });
 
-  it('should make sign in with failure state', async () => {
-    const pendedSignInAction = dispatch(
-      signin({
-        email: 'invalid@email.com',
-        password: userInfo.testPassword,
-        rememberUser: true,
-      })
-    );
+  it('[NEGATIVE] sign in with wrong tokens', async () => {
+    setAuthToken();
+    setUserError();
 
-    await expect(pendedSignInAction).rejects.toThrow('Status code 401');
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
+    await dispatch(handleGoogleSignIn(code));
+
+    // expect(isTokenExistSelector(store.getState())).toBeTruthy();
+    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeTruthy();
+    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeTruthy();
+    expect(localStorage.getItem(STORAGE_ALREADY_BEEN_AUTH_KEY)).toBeTruthy();
   });
 
   it('should make sign out', async () => {
-    await dispatch(
-      signin({
-        email: userInfo.email,
-        password: userInfo.testPassword,
-        rememberUser: true,
-      })
-    );
+    setAuth();
 
-    expect(isAuthorizedSelector(store.getState())).toBeTruthy();
+    await dispatch(handleGoogleSignIn(code));
+
+    // expect(isTokenExistSelector(store.getState())).toBeTruthy();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBe(authToken);
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBe(refreshToken);
 
-    signout();
+    signOut();
 
     expect(localStorage.getItem(STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
   });
 
-  it('[NEGATIVE] should make sign out without auth token', async () => {
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
+  it('[NEGATIVE] sign out without auth token', async () => {
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
 
-    signout();
+    signOut();
 
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
     expect(localStorage.getItem(STORAGE_STUDY_PROGRESS_LAST_SEEN_STATUS_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
     expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
   });
+});
 
-  it('should activate account', async () => {
-    await dispatch(
-      activateAccount({
-        name: userInfo.email.split('@')[0],
-        password: userInfo.testPassword,
-        resetToken: 'reset-token',
-      })
+describe('user information', () => {
+  it('should select user email, name and role after sign in', async () => {
+    setAuth();
+
+    await dispatch(handleGoogleSignIn(code));
+
+    expect(userEmailSelector(store.getState())).toEqual(userInfo.email);
+    expect(userNameSelector(store.getState())).toEqual(
+      `${userInfo.firstName} ${userInfo.lastName}`
     );
-
-    expect(isAuthorizedSelector(store.getState())).toBeTruthy();
+    expect(userRoleSelector(store.getState())).toEqual(userRoles);
   });
 
-  it('[NEGATIVE] should activate account with failure', async () => {
-    await dispatch(
-      activateAccount({
-        name: userInfo.email.split('@')[0],
-        password: userInfo.testPassword,
-        resetToken: '',
-      })
-    );
-
-    expect(isAuthorizedSelector(store.getState())).toBeFalsy();
-    expect(currentSnackbarSelector(store.getState()).text).toMatch(GENERIC_SERVER_ERROR_TEXT);
-
-    dispatch(hideSnackbar());
-  });
-
-  it('should select payload of authorize token', async () => {
-    await dispatch(
-      signin({
-        email: userInfo.email,
-        password: userInfo.testPassword,
-      })
-    );
-
-    expect(authTokenPayloadSelector(store.getState())).toEqual({
-      email: userInfo.email,
-      roles: [{ roles: ['team-admin'], projectId: undefined }],
-    });
-  });
-
-  it('[NEGATIVE] should select payload of authorize token with missing token', async () => {
-    expect(authTokenPayloadSelector(store.getState())).toEqual({});
-  });
-
-  it('should select user name and role', async () => {
-    await dispatch(
-      signin({
-        email: userInfo.email,
-        password: userInfo.testPassword,
-      })
-    );
-
-    expect(userNameSelector(store.getState())).toEqual(userName);
-    expect(userRoleSelector(store.getState())).toEqual({
-      roles: ['team-admin'],
-      projectId: undefined,
-    });
-  });
-
-  it('[NEGATIVE] should select user name and role with missing token', async () => {
+  it('[NEGATIVE] select user email, name and role with missing token after sign in', async () => {
+    expect(userEmailSelector(store.getState())).toBeUndefined();
     expect(userNameSelector(store.getState())).toBeUndefined();
     expect(userRoleSelector(store.getState())).toBeUndefined();
   });
+
+  it('should select user email, name and role after registration', async () => {
+    setRegistration();
+
+    await dispatch(
+      registerUser({
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        company: userInfo.company,
+        team: userInfo.team,
+        officePhoneNumber: userInfo.officePhoneNumber,
+        mobilePhoneNumber: userInfo.mobilePhoneNumber,
+      })
+    );
+
+    expect(userEmailSelector(store.getState())).toEqual(userInfo.email);
+    expect(userNameSelector(store.getState())).toEqual(
+      `${userInfo.firstName} ${userInfo.lastName}`
+    );
+    expect(userRoleSelector(store.getState())).toEqual(userRoles);
+  });
+
+  it('[NEGATIVE] should select user email, name and role with broken parameters after registration', async () => {
+    setRegistrationError();
+
+    await dispatch(
+      registerUser({
+        firstName: '',
+        lastName: '',
+        company: '',
+        team: '',
+        officePhoneNumber: '',
+        mobilePhoneNumber: '',
+      })
+    );
+
+    expect(userEmailSelector(store.getState())).toBeUndefined();
+    expect(userNameSelector(store.getState())).toBeUndefined();
+    expect(userRoleSelector(store.getState())).toBeUndefined();
+  });
+
+  it('[NEGAVTIVE] should redirect to Registration screen if getUser return 404', async () => {
+    setAuthToken();
+    setUserNotFound();
+
+    await dispatch(handleGoogleSignIn(code));
+
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.Registration,
+        exact: true,
+      })
+    );
+  });
+
+  it('[NEGATIVE] should redirect to sign in if registration is conflict', async () => {
+    setRegistrationConflict();
+
+    await dispatch(
+      registerUser({
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        company: userInfo.company,
+        team: userInfo.team,
+        officePhoneNumber: userInfo.officePhoneNumber,
+        mobilePhoneNumber: userInfo.mobilePhoneNumber,
+      } as RegisterUserRequest)
+    );
+
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.SignIn,
+        exact: true,
+      })
+    );
+  });
 });
 
-describe('useSignUp', () => {
-  const setUpHook = () =>
-    renderHook(() => useSignUp(), {
-      wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
-        <Provider store={store}>{children}</Provider>
-      ),
-    });
-
-  const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
-    hook.unmount();
-  };
-
-  let hook: ReturnType<typeof setUpHook>;
-
+describe('signInWithEmailPassword', () => {
   beforeEach(() => {
-    localStorage.setItem('API_URL', 'https://samsung.com/');
+    dispatch(authSlice.actions.clearAuth());
+    localStorage.removeItem(STORAGE_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_ALREADY_BEEN_AUTH_KEY);
   });
+  let hook: ReturnType<typeof setUpHook>;
 
   afterEach(() => {
     act(() => unSetHook(hook));
   });
+  it('should sign in with email and password successfully', async () => {
+    setSignInByEmailPassword();
+    setRegistration();
 
-  it('should send a credentials', async () => {
-    hook = setUpHook();
-
-    expect(hook.result.current.isLoading).toBeFalsy();
-    expect(hook.result.current.error).toBeUndefined();
-
-    act(() => {
-      hook.result.current.signUp({
-        email: 'example@samsung.com',
-        password: userInfo.testPassword,
-        profile: {
-          name: 'UserName',
-        },
-      });
-    });
-
-    expect(hook.result.current).toMatchObject({
-      isLoading: true,
-    });
-
-    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
-    await waitFor(() => expect(hook.result.current.error).toBeFalsy());
-
-    expect(hook.result.current.error).toBeUndefined();
-  });
-
-  it('[NEGATIVE] should send credentials with an error', async () => {
-    hook = setUpHook();
-
-    expect(hook.result.current.isLoading).toBeFalsy();
-    expect(hook.result.current.error).toBeUndefined();
+    hook = setUpHook(() => useSignIn());
 
     await act(async () => {
-      await maskEndpointAsFailure('signUp', async () => {
-        await hook.result.current.signUp({
-          email: 'example@samsung.com',
-          password: userInfo.testPassword,
-          profile: {
-            name: 'UserName',
-          },
-        });
-      });
+      await hook.result.current.signIn({ email, password, rememberUser });
     });
 
-    expect(hook.result.current.isLoading).toBeFalsy();
-    expect(hook.result.current.error).not.toBeUndefined();
+    expect(isTokenExistSelector(store.getState())).toBeTruthy();
+    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBe(authToken);
+    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBe(refreshToken);
+    expect(localStorage.getItem(STORAGE_ALREADY_BEEN_AUTH_KEY)).toBe('true');
+
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.Overview,
+        exact: true,
+      })
+    );
+  });
+
+  it('[NEGATIVE] sign in error return fail response', async () => {
+    setSignInByEmailPasswordError();
+    hook = setUpHook(() => useSignIn());
+
+    await act(async () => {
+      await hook.result.current.signIn({ email, password, rememberUser });
+    });
+    const errorText = 'Incorrect email or password, please try again.';
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
+    expect(hook.result.current.error).toMatch(errorText);
+  });
+
+  it('should redirect to Registration screen if user did not register', async () => {
+    setSignInByEmailPassword();
+    setUserNotFound();
+
+    hook = setUpHook(() => useSignIn());
+
+    await act(async () => {
+      await hook.result.current.signIn({ email, password, rememberUser });
+    });
+
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.Registration,
+        exact: true,
+      })
+    );
+  });
+
+  it('[NEGATIVE] sign in but fail to get user information', async () => {
+    setSignInByEmailPassword();
+    setUserError();
+
+    hook = setUpHook(() => useSignIn());
+
+    await act(async () => {
+      await hook.result.current.signIn({ email, password, rememberUser });
+    });
+
+    const errorText = 'Incorrect email or password, please try again.';
+    expect(hook.result.current.error).toMatch(errorText);
   });
 });
 
-describe('useVerifyEmail', () => {
-  const setUpHook = (args: { token: string }) =>
-    renderHook(
-      (etchArgs: { token: string }) =>
-        useVerifyEmail({
-          fetchArgs: etchArgs || args,
-        }),
-      {
-        wrapper: ({ children }: React.PropsWithChildren<unknown>) => (
-          <Provider store={store}>{children}</Provider>
-        ),
-      }
-    );
-
-  const unSetHook = (hook: ReturnType<typeof setUpHook>) => {
-    hook.unmount();
-  };
-
-  let hook: ReturnType<typeof setUpHook>;
-
+describe('signInWithGoogle', () => {
   beforeEach(() => {
-    localStorage.setItem('API_URL', 'https://samsung.com/');
+    dispatch(authSlice.actions.clearAuth());
+    localStorage.removeItem(STORAGE_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_ALREADY_BEEN_AUTH_KEY);
   });
+  let hook: ReturnType<typeof setUpHook>;
 
   afterEach(() => {
     act(() => unSetHook(hook));
   });
-
-  it('should verify email', async () => {
-    hook = setUpHook({
-      token: 'token',
-    });
-
-    expect(hook.result.current).toMatchObject({
-      isLoading: true,
-    });
-
-    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
-
-    expect(hook.result.current.error).toBeUndefined();
-  });
-
-  it('[NEGATIVE] should verify email with an error', async () => {
-    hook = setUpHook({
-      token: 'token',
-    });
+  it('should sign in with google successfully', async () => {
+    setAuthToken();
+    setUser();
+    hook = setUpHook(() => useSignIn());
 
     await act(async () => {
-      await maskEndpointAsFailure('verifyEmail', async () => {
-        await hook.result.current.fetch({
-          token: 'token1',
-        });
-      });
+      await hook.result.current.signInWithGoogle({ code, rememberUser });
     });
 
-    await waitFor(() => expect(hook.result.current.isLoading).toBeFalsy());
+    expect(isTokenExistSelector(store.getState())).toBeTruthy();
+    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBe(authToken);
+    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBe(refreshToken);
+    expect(localStorage.getItem(STORAGE_ALREADY_BEEN_AUTH_KEY)).toBe('true');
 
-    expect(hook.result.current.error).not.toBeUndefined();
-  });
-});
-
-describe('resendVerificationEmail', () => {
-  it('should send request', async () => {
-    await dispatch(resendVerificationEmail({ email: 'example@samsung.com' }));
-
-    expect(currentSnackbarSelector(store.getState())).toMatchObject({
-      text: SUCCESS_CONFIRMATION_MESSAGE,
-    });
-  });
-
-  it('[NEGATIVE] should send a request and catch an error', async () => {
-    const failureMessage = 'failed';
-
-    await maskEndpointAsFailure(
-      'resendVerification',
-      async () => {
-        await dispatch(resendVerificationEmail({ email: 'example@samsung.com' }));
-      },
-      { message: failureMessage }
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.Overview,
+        exact: true,
+      })
     );
+  });
+  it('[NEGATIVE] should redirect to Registration if not found user information', async () => {
+    setAuthToken();
+    setUserNotFound();
+    hook = setUpHook(() => useSignIn());
 
-    expect(currentSnackbarSelector(store.getState())).toMatchObject({
-      text: GENERIC_SERVER_ERROR_TEXT,
+    await act(async () => {
+      await hook.result.current.signInWithGoogle({ code, rememberUser });
     });
+
+    expect(
+      matchPath(getLocation(store.getState()).pathname, {
+        path: Path.Registration,
+        exact: true,
+      })
+    );
+  });
+  it('[NEGATIVE] sign in with google return fail response', async () => {
+    setAuthTokenError();
+    hook = setUpHook(() => useSignIn());
+
+    await act(async () => {
+      await hook.result.current.signInWithGoogle({ code, rememberUser });
+    });
+
+    expect(isTokenExistSelector(store.getState())).toBeFalsy();
+    expect(localStorage.getItem(STORAGE_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(STORAGE_REFRESH_TOKEN_KEY)).toBeNull();
   });
 });

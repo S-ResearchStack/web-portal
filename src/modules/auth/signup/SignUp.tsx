@@ -1,25 +1,145 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import useKey from 'react-use/lib/useKey';
-
 import styled from 'styled-components';
 
+import { Path } from 'src/modules/navigation/store';
+import { colors, px, typography } from 'src/styles';
+import { validateEmail } from 'src/common/utils/email';
+import { useSignUp } from 'src/modules/auth/auth.slice';
+import { SnackbarContainer } from 'src/modules/snackbar';
 import Button from 'src/common/components/Button';
 import InputField from 'src/common/components/InputField';
 import PasswordInputField from 'src/common/components/PasswordInputField';
-import { SnackbarContainer } from 'src/modules/snackbar';
-import { colors, px, typography } from 'src/styles';
 import Link from 'src/common/components/Link';
-import { Path } from 'src/modules/navigation/store';
-import { useSignUp } from 'src/modules/auth/auth.slice';
+import ScreenHeader from '../common/ScreenHeader';
+import ScreenWrapper from '../common/ScreenWrapper';
 import ScreenCenteredCard from '../common/ScreenCenteredCard';
+import ScreenContentWrapper from '../common/ScreenContentWrapper';
 import {
   PasswordRequirements,
   RequirementItem,
   useCheckPassword,
 } from '../common/PasswordRequirements';
-import ScreenHeader from '../common/ScreenHeader';
-import ScreenWrapper from '../common/ScreenWrapper';
-import ScreenContentWrapper from '../common/ScreenContentWrapper';
+
+const SignUp: React.FC = () => {
+  const [disabled, setDisabled] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { isLoading, error, resetError, signUp } = useSignUp();
+  const [passwordPassed, requirements] = useCheckPassword({
+    email: email.split('@')[0] || '',
+    password
+  });
+  const emailPassed = useMemo(() => validateEmail(email), [email]);
+
+  const handleEmailChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setEmail(event.target.value);
+      if (error) {
+        resetError();
+      }
+    },
+    [error]
+  );
+
+  const handlePasswordChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value);
+      if (error) {
+        resetError();
+      }
+    },
+    [error]
+  );
+
+  const handleClick = async () => {
+    if (disabled) {
+      return;
+    }
+
+    await signUp({
+      email,
+      password,
+    });
+  };
+
+  useKey('Enter', handleClick);
+
+  useEffect(() => {
+    setDisabled(!email || !password || !emailPassed || !passwordPassed);
+  }, [email, password, emailPassed, passwordPassed]);
+
+  return (
+    <ScreenWrapper
+      data-testid="auth-signup"
+      mediaMaxHeightToScrollY={704}
+      mediaMaxWidthToScrollX={732}
+    >
+      <ScreenCenteredCard minWidth={733} width={55.556} ratio={0.96125}>
+        <ScreenContentWrapper>
+          <Content>
+            <Header>Create account</Header>
+            <InputsWrapper>
+              <InputField
+                name="email"
+                type="email"
+                label="Email"
+                placeholder="Enter email"
+                data-testid="auth-signup-email"
+                withoutErrorText
+                maxLength={256}
+                value={email}
+                error={email && !emailPassed}
+                onChange={handleEmailChange}
+              />
+              <PasswordInputField
+                name="password"
+                label="Password"
+                placeholder="Enter password"
+                data-testid="auth-signup-password"
+                withoutErrorText
+                maxLength={256}
+                value={password}
+                error={password && !passwordPassed}
+                onChange={handlePasswordChange}
+              />
+            </InputsWrapper>
+            <PasswordRequirements>
+              {requirements.map((requirement) => (
+                <RequirementItem
+                  key={requirement.rule}
+                  rule={requirement.rule}
+                  passed={!password ? undefined : requirement.passed}
+                  disabled={!password}
+                />
+              ))}
+            </PasswordRequirements>
+            <Button
+              fill="solid"
+              data-testid="auth-signup-create"
+              disabled={disabled}
+              $loading={isLoading}
+              onClick={handleClick}
+            >
+              Create Account
+            </Button>
+            <SignInOffer>
+              Already have an account?
+              <Link to={Path.SignIn}>Sign in</Link>
+            </SignInOffer>
+            <ErrorText data-testid="signup-screen-error">
+              {error}
+            </ErrorText>
+          </Content>
+          <SnackbarContainer useSimpleGrid />
+        </ScreenContentWrapper>
+      </ScreenCenteredCard>
+    </ScreenWrapper>
+  );
+};
+
+export default SignUp;
 
 const Content = styled.div`
   width: ${px(448)};
@@ -55,124 +175,11 @@ const SignInOffer = styled.div`
   }
 `;
 
-const SignUp: React.FC = () => {
-  const [password, setPassword] = useState('');
-  const [disabled, setDisabled] = useState(true);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-
-  const [isPassed, requirements] = useCheckPassword({ name, password });
-
-  const handlePasswordChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value),
-    []
-  );
-  const handleNameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setName(event.target.value),
-    []
-  );
-  const handleEmailChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value),
-    []
-  );
-
-  const { isLoading, signUp } = useSignUp();
-
-  const handleClick = async () => {
-    if (disabled) {
-      return;
-    }
-
-    await signUp({
-      email,
-      password,
-      profile: {
-        status: 'active', // FIXME: needed?
-        name,
-      },
-    });
-  };
-
-  useKey('Enter', handleClick);
-
-  useEffect(() => {
-    setDisabled(!password || !isPassed || !name || !email);
-  }, [password, isPassed, name, email]);
-
-  return (
-    <ScreenWrapper
-      data-testid="auth-signup"
-      mediaMaxHeightToScrollY={704}
-      mediaMaxWidthToScrollX={732}
-    >
-      <ScreenCenteredCard minWidth={733} width={55.556} ratio={0.96125}>
-        <ScreenContentWrapper>
-          <Content>
-            <Header>Create account</Header>
-            <InputsWrapper>
-              <InputField
-                data-testid="auth-signup-email"
-                name="email"
-                type="email"
-                label="Email"
-                value={email}
-                onChange={handleEmailChange}
-                placeholder="Enter email"
-                withoutErrorText
-                maxLength={256}
-              />
-              <InputField
-                data-testid="auth-signup-name"
-                name="name"
-                type="text"
-                label="Name"
-                value={name}
-                onChange={handleNameChange}
-                placeholder="Enter name"
-                withoutErrorText
-                maxLength={30}
-              />
-              <PasswordInputField
-                name="password"
-                data-testid="auth-signup-password"
-                error={password && !isPassed}
-                withoutErrorText
-                label="Password"
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Enter password"
-                maxLength={256}
-              />
-            </InputsWrapper>
-            <PasswordRequirements>
-              {requirements.map((requirement) => (
-                <RequirementItem
-                  key={requirement.rule}
-                  rule={requirement.rule}
-                  passed={!password ? undefined : requirement.passed}
-                  disabled={!password}
-                />
-              ))}
-            </PasswordRequirements>
-            <Button
-              data-testid="auth-signup-create"
-              disabled={disabled}
-              onClick={handleClick}
-              fill="solid"
-              $loading={isLoading}
-            >
-              Create Account
-            </Button>
-            <SignInOffer>
-              Already have an account?
-              <Link to={Path.SignIn}>Sign in</Link>
-            </SignInOffer>
-          </Content>
-          <SnackbarContainer />
-        </ScreenContentWrapper>
-      </ScreenCenteredCard>
-    </ScreenWrapper>
-  );
-};
-
-export default SignUp;
+const ErrorText = styled.div`
+  ${typography.bodySmallRegular};
+  color: ${colors.statusErrorText};
+  height: ${px(40)};
+  width: 100%;
+  text-align: center;
+  padding-top: ${px(20)};
+`;

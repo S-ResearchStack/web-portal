@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import useEffectOnce from 'react-use/lib/useEffectOnce';
 import { useHistory } from 'react-router-dom';
@@ -19,7 +19,7 @@ interface StudySettingsProps {
 const StudySettings: FC<StudySettingsProps> = ({
   isSwitchStudy,
   isSwitchStudyInTransition,
-}): JSX.Element => {
+}): ReactElement => {
   const isNewStudy = useSearchParam(NEW_STUDY_QUERY_PARAM_NAME) === 'true';
   const showSnackbar = useShowSnackbar();
   const history = useHistory();
@@ -33,8 +33,8 @@ const StudySettings: FC<StudySettingsProps> = ({
   });
 
   return (
-    <SimpleGrid data-testid="study-settings" fullScreen>
-      <CollapseSection title="Study Settings" onCollapsedChange={setCollapsed}>
+    <SimpleGrid data-testid="settings" fullScreen>
+      <CollapseSection title="Settings" onCollapsedChange={setCollapsed}>
         <MembersList
           shouldShowInviteTooltip={isNewStudy}
           canShowInviteTooltip={!isSwitchStudy && !isSwitchStudyInTransition && !isCollapsed}

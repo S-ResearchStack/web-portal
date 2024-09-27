@@ -9,6 +9,9 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import StudySettings from 'src/modules/study-settings/StudySettings';
 import { createTestStore } from '../store/testing';
+import { mockProjectId, mockUserInfoList } from "src/modules/study-settings/studySettings.slice.mock";
+import { transformUserInfoFromApi } from "src/modules/study-settings/studySettings.mapper";
+import userEvent from '@testing-library/user-event';
 
 describe('StudySettings', () => {
   it('should render', async () => {
@@ -17,24 +20,7 @@ describe('StudySettings', () => {
         isLoading: false,
         fetchArgs: null,
         prevFetchArgs: null,
-        data: {
-          users: [
-            {
-              id: 'test-user-1',
-              email: 'test-email-1',
-              name: 'test',
-              status: 'active',
-              roles: ['principal-investigator'],
-            },
-            {
-              id: 'test-user-2',
-              email: 'test-email-2',
-              name: 'test',
-              status: 'active',
-              roles: ['data-scientist'],
-            },
-          ],
-        },
+        data: mockUserInfoList.map(u => transformUserInfoFromApi(u, mockProjectId)),
       },
     });
 
@@ -50,7 +36,64 @@ describe('StudySettings', () => {
       );
     });
 
-    expect(await screen.findByTestId('study-settings')).toBeInTheDocument();
+    expect(await screen.findByTestId('settings')).toBeInTheDocument();
+  });
+
+  it('should render using the admin role', async () => {
+    const store = createTestStore({
+      'user': {
+        id: "user-id",
+        firstName: "F",
+        lastName: "L",
+        company: "company",
+        team: "team",
+        email: "email@email.com",
+        officePhoneNumber: "001",
+        mobilePhoneNumber: "002",
+        roles: [
+          {
+            projectId: 'test-study',
+            roles: ['studyAdmin'],
+          }
+        ]
+      },
+      'studies': {
+        isLoading: false,
+        studies: [
+          {
+            id: 'test-study',
+            name: 'test',
+            color: 'primary',
+            createdAt: 1652648400000,
+          },
+        ],
+        selectedStudyId: 'test-study',
+      },
+      'studySettings/membersList': {
+        isLoading: false,
+        fetchArgs: null,
+        prevFetchArgs: null,
+        data: mockUserInfoList.map(u => transformUserInfoFromApi(u, mockProjectId)),
+      },
+    });
+
+    await act(() => {
+      render(
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <ConnectedRouter history={history}>
+              <StudySettings isSwitchStudy isSwitchStudyInTransition />
+            </ConnectedRouter>
+          </Provider>
+        </ThemeProvider>
+      );
+    });
+
+    expect(await screen.findByTestId('settings')).toBeInTheDocument();
+
+    const invite = await screen.getAllByText('Invite member');
+    await userEvent.click(invite?.[0]);
+    expect(await screen.findByTestId('slide')).toBeInTheDocument();
   });
 
   it('[NEGATIVE] should render with empty store', async () => {
@@ -67,6 +110,6 @@ describe('StudySettings', () => {
       );
     });
 
-    expect(await screen.findByTestId('study-settings')).toBeInTheDocument();
+    expect(await screen.findByTestId('settings')).toBeInTheDocument();
   });
 });

@@ -102,6 +102,10 @@ module.exports = (env, argv) => {
             },
           ],
         },
+        {
+          test: /\.(png|jpe?g|gif)$/i,
+          type: 'asset/resource',
+        },
       ],
     },
     resolve: {
@@ -143,6 +147,9 @@ module.exports = (env, argv) => {
         transformEnvDefine({
           NODE_ENV: argv.mode,
           API_URL,
+          GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+          AUTHENTICATION_MODE: process.env.AUTHENTICATION_MODE,
+          GOOGLE_OAUTH_URL: process.env.GOOGLE_OAUTH_URL || "https://accounts.google.com/gsi/client",
           PUBLIC_PATH,
           MOCK_API: process.env.MOCK_API,
           VERSION: require('./package.json').version,

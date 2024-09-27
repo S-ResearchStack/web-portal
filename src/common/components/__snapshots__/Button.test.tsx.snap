@@ -31,7 +31,6 @@ exports[`Button [NEGATIVE] should render with wrong \`fill\` property 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -136,7 +135,6 @@ exports[`Button [NEGATIVE] should render with wrong \`loading\` property 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -258,7 +256,6 @@ exports[`Button [NEGATIVE] should render without children 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -403,7 +400,6 @@ exports[`Button test bordered button 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -536,7 +532,6 @@ exports[`Button test bordered button 2`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -672,7 +667,6 @@ exports[`Button test bordered button 3`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -774,7 +768,6 @@ exports[`Button test solid button 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -898,7 +891,6 @@ exports[`Button test solid button 2`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
@@ -1025,7 +1017,6 @@ exports[`Button test solid button 3`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -1125,7 +1116,6 @@ exports[`Button test text button 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -1272,7 +1262,6 @@ exports[`Button test text button 2`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;
@@ -1422,7 +1411,6 @@ exports[`Button test text button 3`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 0;
   transition-duration: 0;
   -webkit-transition-property: background-color;

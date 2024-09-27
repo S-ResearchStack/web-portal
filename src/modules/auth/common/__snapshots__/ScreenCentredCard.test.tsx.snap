@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScreenCentredCard [NEGATIVE] should render without props 1`] = `
+<body>
+  <div>
+    <div>
+      test
+    </div>
+  </div>
+</body>
+`;
+
+exports[`ScreenCentredCard should render 1`] = `
+<body>
+  <div>
+    <div>
+      test
+    </div>
+  </div>
+</body>
+`;

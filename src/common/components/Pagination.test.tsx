@@ -47,20 +47,20 @@ describe('Pagination', () => {
     expect(nextButton).not.toBeDisabled();
     expect(lastButton).not.toBeDisabled();
     expect(info).toHaveTextContent(
-      `${CURRENT_OFFSET + 1}-${CURRENT_OFFSET + PAGE_SIZE + 1} of ${TOTAL}`
+      `${CURRENT_OFFSET + 1}-${CURRENT_OFFSET + PAGE_SIZE} of ${TOTAL}`
     );
 
     await userEvent.click(nextButton);
-    expect(onPageChange).toHaveBeenLastCalledWith(50, 10);
+    expect(onPageChange).toHaveBeenLastCalledWith(50, 10, 1);
 
     await userEvent.click(prevButton);
-    expect(onPageChange).toHaveBeenLastCalledWith(30, 10);
+    expect(onPageChange).toHaveBeenLastCalledWith(30, 10, -1);
 
     await userEvent.click(firstButton);
-    expect(onPageChange).toHaveBeenLastCalledWith(0, 10);
+    expect(onPageChange).toHaveBeenLastCalledWith(0, 10, 0);
 
     await userEvent.click(lastButton);
-    expect(onPageChange).toHaveBeenLastCalledWith(990, 10);
+    expect(onPageChange).toHaveBeenLastCalledWith(990, 10, 99);
   });
 
   it('[NEGATIVE] should render with wrong props', async () => {

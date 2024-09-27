@@ -13,9 +13,19 @@ export const downloadFileByUrl = async (fileUrl: string, fileName: string): Prom
   downloadFile(fileName, blob);
 };
 
-export const humanFileSize = (size: number, fractionDigits = 2, delimiter = '') => {
+const sizeList = ['B', 'KB', 'MB', 'GB', 'TB']
+
+export const humanFileSize = (size: number, fractionDigits = 2, delimiter = ' ') => {
   const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return [(size / 1024 ** i).toFixed(fractionDigits), ['B', 'KB', 'MB', 'GB', 'TB'][i]].join(
+  return [(size / 1024 ** i).toFixed(fractionDigits), sizeList[i]].join(
     delimiter
   );
 };
+
+export const humanFileProgressSize = (responded: number, total: number, fractionDigits = 2, delimiter = ' '): string => {
+  const i = total === 0 ? 0 : Math.floor(Math.log(total) / Math.log(1024));
+  return [
+    `${(responded / 1024 ** i).toFixed(fractionDigits)} / ${(total / 1024 ** i).toFixed(fractionDigits)}`,
+    sizeList[i]
+  ].join(delimiter)
+}

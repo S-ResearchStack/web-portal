@@ -1,10 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
 
-import { authTokenPayloadSelector } from 'src/modules/auth/auth.slice.authTokenPayloadSelector';
 import { getRolesForStudy } from 'src/modules/auth/userRole';
 import { selectedStudyIdSelector } from 'src/modules/studies/studies.slice';
+import { userRoleSelector } from "src/modules/auth/auth.slice";
 
-export const userRoleSelector = createSelector(
-  [authTokenPayloadSelector, selectedStudyIdSelector],
-  (pl, selectedStudyId) => getRolesForStudy(pl?.roles || [], selectedStudyId)
+export const userRoleForStudySelector = createSelector(
+  [userRoleSelector, selectedStudyIdSelector],
+  (roles, selectedStudyId) => getRolesForStudy(roles || [], selectedStudyId)
 );
+
+export const isStudyResearcher = () => {
+  const userRoles = useSelector(userRoleForStudySelector)?.roles;
+  return !!userRoles && !!userRoles.includes('studyResearcher');
+};

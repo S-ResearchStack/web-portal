@@ -18,7 +18,6 @@ Refer to <a href="https://developer.samsung.com/health/stack" target="_blank">Sa
 - The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-backend.html" target="_blank">backend system installation instructions</a>
 - The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-sdk.html" target="_blank">app SDK installation instructions</a>
 - The <a href="https://developer.samsung.com/health/stack/developer-guide/installation/install-portal.html" target="_blank">web portal installation instructions</a>
-- The <a href="https://developer.samsung.com/codelab/health/research-app.html" target="_blank">getting started tutorial</a>
 
 Follow these instructions to install, build, and verify the web portal.
 

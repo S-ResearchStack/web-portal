@@ -43,4 +43,28 @@ describe('useShowSnackbar', () => {
 
     expect(await screen.findByText('Test snackbar 2')).toBeInTheDocument();
   });
+
+  it('[NEGATIVE] show snackbar with undefined text', async () => {
+    const store = createTestStore({});
+
+    const hook = renderHook(() => useShowSnackbar(), {
+      wrapper: ({ children }) => (
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            {children}
+            <SnackbarContainer useSimpleGrid />
+          </Provider>
+        </ThemeProvider>
+      ),
+    });
+
+    act(() =>
+      hook.result.current({
+        text: undefined as any,
+      })
+    );
+
+    expect(await screen.findByTestId('snackbar-text')).toBeInTheDocument();
+    expect(await screen.findByTestId('snackbar-text')).toHaveTextContent('');
+  });
 });

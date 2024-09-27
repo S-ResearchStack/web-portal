@@ -86,7 +86,7 @@ exports[`ServiceScreen [NEGATIVE] should render with wrong \`type\` property 1`]
 </body>
 `;
 
-exports[`ServiceScreen test empty service screen render 1`] = `
+exports[`ServiceScreen [NEGATIVE] test empty service screen render 1`] = `
 .c0 {
   box-sizing: border-box;
   display: -webkit-box;
@@ -148,7 +148,7 @@ exports[`ServiceScreen test empty service screen render 1`] = `
 </body>
 `;
 
-exports[`ServiceScreen test error service screen render 1`] = `
+exports[`ServiceScreen [NEGATIVE] test error service screen render 1`] = `
 .c5 {
   position: absolute;
   will-change: opacity,transform;
@@ -178,7 +178,6 @@ exports[`ServiceScreen test error service screen render 1`] = `
   width: 100%;
   white-space: nowrap;
   padding: 0;
-  overflow: hidden;
   -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
   -webkit-transition-property: background-color;
