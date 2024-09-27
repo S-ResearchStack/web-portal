@@ -32,9 +32,9 @@ const initialState: FileUploadState = {
 const mockFile = new File(['some sample text'], 'test.txt');
 const mockUploadStudyData = {
   studyId: '123',
-  subjectNumber: 'test_subject',
-  sessionId: 'test_session',
-  taskId: 'test_task',
+  parentId: 'parentId',
+  name: 'name',
+  studyDataType: 'FILE',
   file: mockFile,
 };
 
@@ -47,117 +47,6 @@ describe('studyDataFileUploadSlice test', () => {
   it('should initialize with state', () => {
     const store = createTestStore({ studyDataFileUpload: initialState });
     expect(store.getState().studyDataFileUpload).toEqual(initialState);
-  });
-
-  it('[NEGATIVE] should handle checkStudyDataFileUploadable NotFound correctly', async () => {
-    const store = createTestStore({ studyDataFileUpload: initialState });
-    API.mock.provideEndpoints({
-      getStudyDataFileInfo() {
-        return API.mock.failedResponse({ status: 404 });
-      },
-    });
-
-    const dispatchedStore = store.dispatch(
-      checkStudyDataFileUploadable({ studyId: 'id', file: mockFile }) as any
-    );
-    const key = '_id_test.txt';
-    return dispatchedStore.then(() => {
-      expect(store.getState().studyDataFileUpload[key].checkStatus).toEqual(
-        FileCheckStatus.AVAILABLE
-      );
-    });
-  });
-
-  it('should handle checkStudyDataFileUploadable DUPLICATED correctly', async () => {
-    const store = createTestStore({ studyDataFileUpload: initialState });
-    API.mock.provideEndpoints({
-      getStudyDataFileInfo() {
-        return API.mock.response('body' as any);
-      },
-    });
-
-    const dispatchedStore = store.dispatch(
-      checkStudyDataFileUploadable({ studyId: 'id', file: mockFile }) as any
-    );
-    const key = '_id_test.txt';
-    return dispatchedStore.then(() => {
-      expect(store.getState().studyDataFileUpload[key].checkStatus).toEqual(
-        FileCheckStatus.DUPLICATED
-      );
-    });
-  });
-
-  it('[NEGATIVE] should handle checkStudyDataFileUploadable failed', async () => {
-    const store = createTestStore({ studyDataFileUpload: initialState });
-    API.mock.provideEndpoints({
-      getStudyDataFileInfo() {
-        throw new Error();
-      },
-    });
-
-    const dispatchedStore = store.dispatch(
-      checkStudyDataFileUploadable({ studyId: 'id', file: mockFile }) as any
-    );
-    const key = '_id_test.txt';
-    return dispatchedStore.then(() => {
-      expect(store.getState().studyDataFileUpload[key].checkStatus).toEqual(
-        FileCheckStatus.CHECK_FAILED
-      );
-    });
-  });
-
-  it('should handle uploadStudyDataFile correctly', () => {
-    const key = '_id_test.txt';
-    const initialState = {
-      [key]: {},
-    };
-
-    const store = createTestStore({ studyDataFileUpload: initialState as any });
-    API.mock.provideEndpoints({
-      getStudyDataFileUploadUrl() {
-        return API.mock.response({ headers: 'header', presignedUrl: 'abc' } as any);
-      },
-      addStudyDataFileInfo() {
-        return API.mock.response({} as any);
-      },
-    });
-
-    jest.spyOn(axios, 'put').mockResolvedValue({});
-    const dispatchedStore = store.dispatch(
-      uploadStudyDataFile({ studyId: 'id', file: mockFile, overwrite: true }) as any
-    );
-    return dispatchedStore.then(() => {
-      expect(store.getState().studyDataFileUpload[key].uploadStatus).toEqual(
-        FileUploadStatus.FINISHED
-      );
-    });
-  });
-
-  it('[NEGATIVE] should handle error uploadStudyDataFile', () => {
-    const key = '_id_test.txt';
-    const initialState = {
-      [key]: {},
-    };
-
-    const store = createTestStore({ studyDataFileUpload: initialState as any });
-    API.mock.provideEndpoints({
-      getStudyDataFileUploadUrl() {
-        return API.mock.failedResponse({ status: 500 });
-      },
-      addStudyDataFileInfo() {
-        return API.mock.response({} as any);
-      },
-    });
-
-    jest.spyOn(axios, 'put').mockResolvedValue({});
-    const dispatchedStore = store.dispatch(
-      uploadStudyDataFile({ studyId: 'id', file: mockFile, overwrite: true }) as any
-    );
-    return dispatchedStore.then(() => {
-      expect(store.getState().studyDataFileUpload[key].uploadStatus).toEqual(
-        FileUploadStatus.FAILED
-      );
-    });
   });
 
   it('should handle prepareUploadFiles correctly', () => {

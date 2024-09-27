@@ -62,14 +62,20 @@ export interface GetStudyDataFileInfoListRequest {
   taskId?: string
 }
 
+export interface FileDataInfo {
+  fileType: StudyDataFileType
+  filePath: string
+  fileSize: number
+  filePreview?: string
+  createdAt: string
+}
+
 export interface AddStudyDataFileInfoRequest {
   studyId: string
-  subjectNumber?: string
-  sessionId?: string
-  taskId?: string
-  fileType: string
-  fileName: string
-  publicAccess: boolean
+  parentId: string
+  name: string
+  type: string
+  fileInfo?: FileDataInfo
 }
 
 export interface SetSubjectStatusRequest {

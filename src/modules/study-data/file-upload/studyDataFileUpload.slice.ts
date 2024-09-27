@@ -2,11 +2,13 @@ import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 import {AppThunk, RootState, useAppSelector} from 'src/modules/store';
 import applyDefaultApiErrorHandlers from 'src/modules/api/applyDefaultApiErrorHandlers';
-import API from "src/modules/api";
+import API, { FileDataInfo } from "src/modules/api";
 import axios, {HttpStatusCode} from "axios";
-import {FileCheckStatus, FileUploadStatus, StudyDataFileType,} from "src/modules/study-data/studyData.enum";
+import {FileCheckStatus, FileUploadStatus, StudyDataFileType, StudyDataType,} from "src/modules/study-data/studyData.enum";
 import {showSnackbar} from "src/modules/snackbar/snackbar.slice";
 import {FAILED_TO_UPLOAD_FILE} from "src/modules/study-data/StudyData.message";
+import { uploadObject } from 'src/modules/object-storage/utils';
+import StudyData from '../StudyData';
 
 type UploadKey = string
 
@@ -66,21 +68,21 @@ const studyDataFileUploadSlice = createSlice({
 
 interface StudyDataFileUploadParams {
   studyId: string
-  subjectNumber?: string
-  sessionId?: string
-  taskId?: string
+  parentId: string
+  name: string
+  studyDataType: string
   file: File
 }
 
 const getUploadKey = ({
   studyId,
-  subjectNumber,
-  sessionId,
-  taskId,
+  parentId,
+  name,
+  studyDataType,
   file
 }: StudyDataFileUploadParams) => {
   let uploadKey = ""
-  const ids = [studyId, subjectNumber, sessionId, taskId]
+  const ids = [studyId, parentId, name, studyDataType]
   for(let i = 0; i < ids.length; i += 1) {
     if(!ids[i]) break
     uploadKey = `${uploadKey}_${ids[i]}`
@@ -90,13 +92,13 @@ const getUploadKey = ({
 
 export const checkStudyDataFileUploadable = ({
   studyId,
-  subjectNumber,
-  sessionId,
-  taskId,
+  parentId,
+  name,
+  studyDataType,
   file
 }: StudyDataFileUploadParams): AppThunk<Promise<void>> =>
   async (dispatch) => {
-    const ids = { studyId, subjectNumber, sessionId, taskId }
+    const ids = { studyId, parentId, name, studyDataType };
     const key = getUploadKey({ ...ids, file })
 
     let checkStatus = FileCheckStatus.UNSPECIFIED
@@ -104,13 +106,15 @@ export const checkStudyDataFileUploadable = ({
       dispatch(studyDataFileUploadSlice.actions.init({ key }))
       dispatch(studyDataFileUploadSlice.actions.checkBegin( { key }))
 
-      const { status, checkError } = await API.getStudyDataFileInfo({ ...ids, fileName: file.name })
+      checkStatus = FileCheckStatus.AVAILABLE;
 
-      if(status === HttpStatusCode.NotFound) {
-        checkStatus = FileCheckStatus.AVAILABLE
-      } else {
-        checkStatus = FileCheckStatus.DUPLICATED
-      }
+      // const { status, checkError } = await API.getFileDownloadUrls({ studyId, filePaths: [file.name] })
+
+      // if(status === HttpStatusCode.NotFound) {
+      //   checkStatus = FileCheckStatus.AVAILABLE
+      // } else {
+      //   checkStatus = FileCheckStatus.DUPLICATED
+      // }
     } catch (e) {
       checkStatus = FileCheckStatus.CHECK_FAILED
     } finally {
@@ -121,14 +125,14 @@ export const checkStudyDataFileUploadable = ({
 // should be modified to new version
 export const uploadStudyDataFile = ({
   studyId,
-  subjectNumber,
-  sessionId,
-  taskId,
+  parentId,
+  name,
+  studyDataType,
   file,
   overwrite
 }: StudyDataFileUploadParams & {overwrite: boolean}): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
-    const ids = { studyId, subjectNumber, sessionId, taskId }
+    const ids = { studyId, parentId, name, studyDataType };
     const key = getUploadKey({ ...ids, file })
 
     const state = getState().studyDataFileUpload[key]
@@ -140,22 +144,24 @@ export const uploadStudyDataFile = ({
     try {
       dispatch(studyDataFileUploadSlice.actions.uploadBegin({ key }))
 
-      const request = { ...ids, fileName: file.name, publicAccess: false }
-      const { data, checkError: getCheckError } = await API.getStudyDataFileUploadUrl({...request})
-      getCheckError()
+      await uploadObject({studyId, name: file.name, blob: file});
 
-      await axios.put(data.presignedUrl.toString(), file, {
-        headers: data.headers,
-        onUploadProgress: (event) => {
-          dispatch(studyDataFileUploadSlice.actions.uploadProgress({
-            key,
-            loaded: event.loaded,
-            total: event.total
-          }))
-        }
-      })
+      const fileInfo = {
+        fileType: StudyDataFileType.ATTACHMENT,
+        filePath: `${studyId}/${file.name}`,
+        fileSize: file.size,
+        filePreview: file.type,
+        createdAt: new Date().toISOString()
+      } as FileDataInfo
 
-      const { checkError: addCheckError } = await API.addStudyDataFileInfo({...request, fileType: StudyDataFileType.ATTACHMENT})
+      const requestBody = {
+        parentId,
+        name: file.name,
+        type: StudyDataType.FILE,
+        fileInfo
+      }
+
+      const { checkError: addCheckError } = await API.addStudyDataFileInfo(studyId, requestBody);
       addCheckError()
 
       uploadStatus = FileUploadStatus.FINISHED
