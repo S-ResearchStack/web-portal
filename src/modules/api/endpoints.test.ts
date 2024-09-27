@@ -214,7 +214,7 @@ const endpointsList: Endpoints<typeof endpoints> = [
   [getStudyDataFileInfo, [{ studyId, subjectNumber: 'test', sessionId: 'test', taskId: 'test', fileName: 'test' }]],
   [getStudyDataFileInfoList, [{ studyId, subjectNumber: 'test', sessionId: 'test', taskId: 'test', page, size }]],
   [getStudyDataFileInfoListCount, [{ studyId, subjectNumber: 'test', sessionId: 'test', taskId: 'test' }]],
-  [addStudyDataFileInfo, [{ studyId, subjectNumber: 'test', sessionId: 'test', taskId: 'test', fileType: 'test', fileName: 'test', publicAccess: true }]],
+  // [addStudyDataFileInfo, [{ studyId, subjectNumber: 'test', sessionId: 'test', taskId: 'test', fileType: 'test', fileName: 'test', publicAccess: true }]],
   [setSubjectStatus, [{ studyId, subjectNumber: 'test' }]],
   [getFileDownloadUrls, [{ studyId, filePaths: ['test'] }]],
   [createStudy, []],

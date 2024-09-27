@@ -239,27 +239,12 @@ export const getStudyDataFileInfoListCount = ({
     }
   })
 
-export const addStudyDataFileInfo = ({
-  studyId,
-  subjectNumber,
-  sessionId,
-  taskId,
-  fileType,
-  fileName,
-  publicAccess
-}: API.AddStudyDataFileInfoRequest) =>
-  request<void, void>({
-    path: `/studies/${studyId}/files`,
-    method: "POST",
-    query: {
-      subjectNumber,
-      sessionId,
-      taskId,
-      fileType,
-      fileName,
-      publicAccess
-    }
-  })
+export const addStudyDataFileInfo = (studyId: string, body: Partial<API.AddStudyDataFileInfoRequest>) =>
+  request<Partial<API.AddStudyDataFileInfoRequest>, void>({
+    path: `/studies/${studyId}/study-data`,
+    method: 'POST',
+    body
+  });
 
 export const setSubjectStatus = ({ studyId, subjectNumber, status }: API.SetSubjectStatusRequest) =>
   request<void, void>({

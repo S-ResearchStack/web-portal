@@ -23,6 +23,7 @@ import Button from "@mui/material/Button";
 import {DownloadIconButton, StudyDataText} from "src/modules/study-data/StudyData.style";
 import {
   executeDownload,
+  executeDownloadFiles,
   getFileDownloadUrl,
   getFileDownloadUrls,
   getZippedFileDownloadUrls
@@ -391,9 +392,9 @@ const RenderDownload = (
     event.stopPropagation()
 
     if(!studyId) return
-    const url = await dispatch(getFileDownloadUrl(studyId, row.path))
+    const url = await dispatch(getFileDownloadUrl(studyId, row.name))
     if(url) {
-      executeDownload(url)
+      executeDownloadFiles(url, row.name)
     }
   }
 
@@ -809,7 +810,7 @@ const StudyDataFile = ({isLoadingParent, studyId}: StudyDataFileProps) => {
   ]
 
   const dialogProps = {
-    SlotProps: { backdrop: { sx: { backgroundColor: 'rgba(0, 0, 0, .2)' } }},
+    slotProps: { backdrop: { sx: { backgroundColor: 'rgba(0, 0, 0, .2)' } }},
     PaperProps: { style: {  backgroundColor: 'rgba(255, 255, 255, .9)' }}
   }
 
